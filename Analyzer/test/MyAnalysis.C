@@ -8,6 +8,13 @@
 #include "Analyzer/Analyzer/include/AnalyzeEventShape.h"
 #include "Analyzer/Analyzer/include/Analyze0Lep.h"
 #include "Analyzer/Analyzer/include/AnalyzeStealthTopTagger.h"
+#include "Analyzer/Analyzer/include/AnalyzeSHuHdEventSelection.h"
+#include "Analyzer/Analyzer/include/AnalyzeDataMC.h"
+#include "Analyzer/Analyzer/include/AnalyzeTest.h"
+#include "Analyzer/Analyzer/include/AnalyzeHadTrigger.h"
+#include "Analyzer/Analyzer/include/AnalyzeTemp.h"
+#include "Analyzer/Analyzer/include/AnalyzeCleanJet.h"
+#include "SusyAnaTools/Tools/NTupleReader.h"
 
 #include "Framework/Framework/include/RunTopTagger.h"
 #include "Framework/Framework/include/RunFisher.h"
@@ -62,10 +69,10 @@ template<typename Analyze> void run(std::set<AnaSamples::FileSummary> vvf,
 
         // Register classes/functions that add variables on the fly
         if ( !isSkim ) tr.registerFunction( std::move(*rtt) );
-        tr.registerFunction( std::move(jet) );
-        tr.registerFunction( std::move(runFisher) );
         tr.registerFunction( std::move(muon) );
         tr.registerFunction( std::move(electron) );
+        tr.registerFunction( std::move(jet) );
+        tr.registerFunction( std::move(runFisher) );
         tr.registerFunction( std::move(bjet) );
         tr.registerFunction( std::move(commonVariables) );
         tr.registerFunction( std::move(baseline) );
@@ -114,7 +121,9 @@ int main(int argc, char *argv[])
 {
     int opt, option_index = 0;
     bool doBackground = false, doTopTagger = false, doEventSelection = false, 
-         doEventShape = false, do0Lep = false, doStealthTT = false;
+         doEventShape = false, do0Lep = false, doStealthTT = false, doSHuHd = false, 
+         doDataMC = false, doTest = false, doHadTrigger = false, doTemp = false,
+         doCleanJet = false;
     bool runOnCondor = false;
     bool isSkim = false;
     std::string histFile = "", dataSets = "";
@@ -127,6 +136,12 @@ int main(int argc, char *argv[])
         {"doEventShape",       no_argument, 0, 'p'},
         {"do0Lep",             no_argument, 0, 'z'},
         {"doStealthTT",        no_argument, 0, 'x'},
+        {"doSHuHd",            no_argument, 0, 'k'},
+        {"doDataMC",           no_argument, 0, 'm'},
+        {"doTest",             no_argument, 0, 'a'},
+        {"doHadTrigger",       no_argument, 0, 'T'},
+        {"doTemp",             no_argument, 0, 'e'},
+        {"doCleanJet",         no_argument, 0, 'f'},
         {"condor",             no_argument, 0, 'c'},
         {"histFile",     required_argument, 0, 'H'},
         {"dataSets",     required_argument, 0, 'D'},
@@ -135,7 +150,7 @@ int main(int argc, char *argv[])
         {"numEvts",      required_argument, 0, 'E'},
     };
 
-    while((opt = getopt_long(argc, argv, "btspzxcH:D:N:M:E:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "btspzxkmaTefcH:D:N:M:E:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
@@ -145,6 +160,12 @@ int main(int argc, char *argv[])
             case 'p': doEventShape     = true;              break;
             case 'z': do0Lep           = true;              break;
             case 'x': doStealthTT      = true;              break;
+            case 'k': doSHuHd          = true;              break;
+            case 'm': doDataMC         = true;              break;
+            case 'a': doTest           = true;              break;
+            case 'T': doHadTrigger     = true;              break;
+            case 'e': doTemp           = true;              break;
+            case 'f': doCleanJet       = true;              break;
             case 'c': runOnCondor      = true;              break;
             case 'H': histFile         = optarg;            break;
             case 'D': dataSets         = optarg;            break;
@@ -197,6 +218,36 @@ int main(int argc, char *argv[])
         {
             printf("\n\n running AnalyzeStealthTopTagger\n\n") ;
             run<AnalyzeStealthTopTagger>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
+        }
+        else if(doSHuHd)
+        {
+            printf("\n\n running AnalyzeSHuHdEventSelection\n\n") ;
+            run<AnalyzeSHuHdEventSelection>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
+        }
+        else if(doDataMC)
+        {
+            printf("\n\n running AnalyzeDataMC\n\n") ;
+            run<AnalyzeDataMC>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
+        }
+        else if(doTest)
+        {
+            printf("\n\n running AnalyzeTest\n\n") ;
+            run<AnalyzeTest>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
+        }
+        else if(doTemp)
+        {
+            printf("\n\n running AnalyzeTemp\n\n") ;
+            run<AnalyzeTemp>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
+        }
+        else if(doCleanJet)
+        {
+            printf("\n\n running AnalyzeCleanJet\n\n") ;
+            run<AnalyzeCleanJet>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
+        }
+        else if(doHadTrigger)
+        {
+            printf("\n\n runnning AnalyzeHadTrigger\n\n") ;
+            run<AnalyzeHadTrigger>(vvf,startFile,nFiles,maxEvts,isSkim,outfile);
         }
     
         outfile->Close();
