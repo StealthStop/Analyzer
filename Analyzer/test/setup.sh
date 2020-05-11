@@ -36,7 +36,7 @@ then
     echo "|--------------------------------------|"
     echo "|  Copying scale factor files          |"
     echo "|--------------------------------------|"
-    cp /hdfs/cms/user/hiltbran/store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/SUS-19-004_Final/CSVv2_Moriond17_B_H.csv .
+    cp /hdfs/cms/user/hiltbran/store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/CSVv2_Moriond17_B_H.csv .
 
     cp /hdfs/cms/user/hiltbran/store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/DeepCSV_102XSF_WP_V1.csv .
     cp /hdfs/cms/user/hiltbran/store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/DeepCSV_2016LegacySF_WP_V1.csv .
