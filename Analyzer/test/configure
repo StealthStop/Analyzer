@@ -3785,7 +3785,7 @@ fi
 
 
 
-for ac_header in $TOPTAGGERDIR/CfgParser/include/TTException.h
+for ac_header in $TOPTAGGERDIR/CfgParser/interface/TTException.h
 do
 as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
