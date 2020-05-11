@@ -15,7 +15,7 @@
 #include "TopTagger/TopTagger/interface/TopTagger.h"
 #include "TopTagger/TopTagger/interface/TopTaggerResults.h"
 #include "TopTagger/TopTagger/interface/TopTaggerUtilities.h"
-#include "TopTagger/CfgParser/include/TTException.h"
+#include "TopTagger/CfgParser/interface/TTException.h"
 #include "Framework/Framework/include/SetUpTopTagger.h"
 
 AnalyzeTopTagger::AnalyzeTopTagger() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), histNjet10("Njet10"), histNjet11("Njet11"), 

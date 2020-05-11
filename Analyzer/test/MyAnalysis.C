@@ -4,7 +4,7 @@
 
 #include "Framework/Framework/include/Utility.h"
 
-#include "TopTagger/CfgParser/include/TTException.h"
+#include "TopTagger/CfgParser/interface/TTException.h"
 
 #include "Analyzer/Analyzer/include/AnalyzeBackground.h"
 #include "Analyzer/Analyzer/include/AnalyzeWControlRegion.h"
