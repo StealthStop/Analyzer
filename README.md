@@ -39,7 +39,6 @@ git clone git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
 git checkout -b MN_REU_dev
 git pull origin MN_REU_dev
-cd Analyzer/Analyzer/test
 
 source setup.sh #.csh if in tcsh
 ./configure
