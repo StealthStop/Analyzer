@@ -27,10 +27,19 @@ Now also check out our repository if not done already:
 ```
 cd $CMSSW_BASE/src
 git clone git@github.com:StealthStop/Framework.git
+cd Framework
+git checkout -b MN_REU_dev
+git pull origin MN_REU_dev
+cd ..
+
 git clone -b Stealth git@github.com:susy2015/TopTaggerTools.git
 git clone git@github.com:susy2015/SusyAnaTools.git
+
 git clone git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
+git checkout -b MN_REU_dev
+git pull origin MN_REU_dev
+
 source setup.sh #.csh if in tcsh
 ./configure
 make -j4
