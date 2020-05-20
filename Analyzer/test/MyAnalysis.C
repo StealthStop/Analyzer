@@ -4,7 +4,7 @@
 
 #include "Framework/Framework/include/Utility.h"
 
-#include "TopTagger/CfgParser/include/TTException.h"
+#include "TopTagger/CfgParser/interface/TTException.h"
 
 #include "Analyzer/Analyzer/include/AnalyzeBackground.h"
 #include "Analyzer/Analyzer/include/AnalyzeWControlRegion.h"
@@ -31,7 +31,7 @@
 #include "Analyzer/Analyzer/include/TwoLepAnalyzer.h"
 #include "Analyzer/Analyzer/include/Make2LInputTrees.h"
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
-
+#include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -194,6 +194,7 @@ int main(int argc, char *argv[])
         {"TwoLepAnalyzer",          run<TwoLepAnalyzer>},
         {"Make2LInputTrees",        run<Make2LInputTrees>},
         {"StealthHemispheres",      run<StealthHemispheres>},
+        {"AnalyzeTemplate",         run<AnalyzeTemplate>},
     }; 
 
     try
