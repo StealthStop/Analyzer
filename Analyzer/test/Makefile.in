@@ -20,6 +20,8 @@ STTDir  = $(CMSSW_BASE)/CfgParser/src
 TDIR    = $(CMSSW_BASE)/src
 TTDIR   = $(CMSSW_BASE)/src/TopTagger/
 TTTDIR  = $(TTDIR)/TopTagger/test
+FASTJETBASE = FASTJET_BASE
+FASTJETDIR = $(shell scram tool info fastjet | grep "$(FASTJETBASE)" | sed -n 's/^$(FASTJETBASE)=//p')
 
 # Enable the maximun warning
 CXXFLAGS += -Wall -Wextra -Wpedantic
@@ -33,6 +35,10 @@ CXXDEPFLAGS = -MMD -MP
 
 # Top tagger libraries
 LIBSTOPTAGGER += -L$(TTTDIR) -lTopTagger
+
+# FASTJET libraries
+LIBSFASTJET += -L$(FASTJETDIR)/lib -lfastjet -lfastjetplugins -lfastjettools -lsiscone -lsiscone_spherical
+LIBSFASTJET += -lfastjet -lfastjetplugins -lfastjettools -lsiscone -lsiscone_spherical
 
 # Include ROOT
 INCLUDESDIRS  += $(shell root-config --cflags)
@@ -48,7 +54,7 @@ ifdef TENSORFLOW_DIR
 endif
 
 # Include our code
-INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(SSDIR) -I$(ITTDir) -I$(STTDir)
+INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(SSDIR) -I$(ITTDir) -I$(STTDir) -I$(FASTJETDIR)/include
 
 PROGRAMS = MyAnalysis plot_1l Stack_plot_0l Stack_plot_1l Stack_plot_2l
 
@@ -145,7 +151,7 @@ $(ODIR)/%.o : $(WDIR)/%.cpp
 
 # Make executables
 MyAnalysis: $(ODIR)/MyAnalysis.o $(HELPERS) $(ANALYZERS)
-	$(LD) $^ $(LIBSTOPTAGGER) $(LIBS) -o $@
+	$(LD) $^ $(LIBSTOPTAGGER) $(LIBS) $(LIBSFASTJET) -o $@
 
 plot_1l: $(ODIR)/plot_1l.o
 	$(LD) $^ $(LIBS) -o $@
