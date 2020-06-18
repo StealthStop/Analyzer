@@ -128,7 +128,7 @@ void Analyze0LepCutFlow::Loop(NTupleReader& tr, double, int maxevents, bool)
 
 	// Fill ntops histos with only events which pass the 0 lep baseline
         
-	if( !passBaseline0l && pass_dR_bjets ) continue;
+	if( !( passBaseline0l && pass_dR_bjets ) ) continue;
 
 	if( pass_ge2tops ) {
 

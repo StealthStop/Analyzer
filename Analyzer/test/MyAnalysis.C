@@ -32,6 +32,10 @@
 #include "Analyzer/Analyzer/include/Make2LInputTrees.h"
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
+#include "Analyzer/Analyzer/include/Analyze0LepCutFlow.h"
+#include "Analyzer/Analyzer/include/Analyze0LepJets.h"
+#include "Analyzer/Analyzer/include/AnalyzeNewSignalJets.h"
+#include "Analyzer/Analyzer/include/AnalyzeNewSignalModels.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -194,6 +198,10 @@ int main(int argc, char *argv[])
         {"TwoLepAnalyzer",          run<TwoLepAnalyzer>},
         {"Make2LInputTrees",        run<Make2LInputTrees>},
         {"StealthHemispheres",      run<StealthHemispheres>},
+        {"AnalyzeNewSignalModels",         run<AnalyzeNewSignalModels>},
+        {"AnalyzeNewSignalJets",         run<AnalyzeNewSignalJets>},
+        {"Analyze0LepCutFlow",         run<Analyze0LepCutFlow>},
+        {"Analyze0LepJets",         run<Analyze0LepJets>},
         {"AnalyzeTemplate",         run<AnalyzeTemplate>},
     }; 
 
