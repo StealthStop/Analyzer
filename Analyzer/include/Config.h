@@ -40,8 +40,33 @@ private:
         const auto& filetag               = tr.getVar<std::string>("filetag");
         const auto& TopTaggerCfg          = tr.getVar<std::string>("TopTaggerCfg");       
  
+        std::string suffix = "";
         for(const auto& module : modules)
         {
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+            if     (module=="PartialUnBlinding")           tr.emplaceModule<PartialUnBlinding>();
+            else if(module=="PrepNTupleVars")              tr.emplaceModule<PrepNTupleVars>();
+            else if(module=="RunTopTagger")                tr.emplaceModule<RunTopTagger>(TopTaggerCfg, suffix);
+            else if(module=="Muon")                        tr.emplaceModule<Muon>(suffix);
+            else if(module=="Electron")                    tr.emplaceModule<Electron>(suffix);
+            else if(module=="Photon")                      tr.emplaceModule<Photon>(suffix);
+            else if(module=="Jet")                         tr.emplaceModule<Jet>(suffix);
+            else if(module=="BJet")                        tr.emplaceModule<BJet>(suffix);
+            else if(module=="CommonVariables")             tr.emplaceModule<CommonVariables>(suffix);
+            else if(module=="MakeMVAVariables")            tr.emplaceModule<MakeMVAVariables>(false, suffix);
+            else if(module=="MakeMVAVariables_NonIsoMuon") tr.emplaceModule<MakeMVAVariables>(false, suffix, "NonIsoMuonJets_pt30");
+            else if(module=="Baseline")                    tr.emplaceModule<Baseline>(suffix);
+            else if(module=="StopGenMatch")                tr.emplaceModule<StopGenMatch>(suffix);
+            else if(module=="MegaJetCombine")              tr.emplaceModule<MegaJetCombine>(suffix);
+            else if(module=="MakeMT2Hemispheres_0l")       tr.emplaceModule<MakeMT2Hemispheres>("GoodJets_pt45", "NGoodJets_pt45", "_0l");
+            else if(module=="MakeMT2Hemispheres_1l")       tr.emplaceModule<MakeMT2Hemispheres>("GoodJets_pt30", "NGoodJets_pt30", "_1l");
+            else if(module=="DeepEventShape")              tr.emplaceModule<DeepEventShape>(DeepESMCfg, ModelFile, "Info", true, suffix);
+            else if(module=="DeepEventShape_NonIsoMuon")   tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, ModelFile, "Info", true, suffix);
+            
+=======
+>>>>>>> Stashed changes
             if     (module=="PartialUnBlinding")            tr.emplaceModule<PartialUnBlinding>();
             else if(module=="PrepNTupleVars")               tr.emplaceModule<PrepNTupleVars>();
             else if(module=="RunTopTagger")                 tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
@@ -64,13 +89,17 @@ private:
             else if(module=="DeepEventShape")               tr.emplaceModule<DeepEventShape>(DeepESMCfg, ModelFile);
             else if(module=="DeepEventShape_NonIsoMuon")    tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, ModelFile);
  
+<<<<<<< Updated upstream
+=======
+>>>>>>> 56bdf54294a87d51d6d4393511d4c04bd5086f4b
+>>>>>>> Stashed changes
             if(runtype == "MC")
             {
-                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, puFileName, meanFileName);
+                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, puFileName, meanFileName, suffix);
                 else if(module=="BTagCorrector")
                 {
                     auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, filetag);
-                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
+                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+suffix, "GoodJets_pt30"+suffix, "Jets"+suffix+"_bJetTagDeepCSVtotb", "Jets"+suffix+"_partonFlavor", suffix);
                 }
             }
         }
@@ -185,7 +214,7 @@ public:
         tr.registerDerivedVar("TopTaggerCfg", TopTaggerCfg);
 
         //Register Modules that are needed for each Analyzer
-        if(analyzer=="Analyze0Lep" || analyzer=="AnalyzeTopTagger")
+        if(analyzer=="Analyze0Lep" || analyzer=="AnalyzeTopTagger" || analyzer=="Analyze0LepCutFlow")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -305,20 +334,20 @@ public:
         else if (analyzer=="AnalyzeTest")
         {
             const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
+                //"PrepNTupleVars",
                 "PartialUnBlinding",
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "CommonVariables",
-                "MakeMVAVariables",
-                "Baseline",
-                "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"PrepNTupleVars",
+                //"Muon",
+                //"Electron",
+                //"Photon",
+                //"Jet",
+                ////"BJet",
+                //"CommonVariables",
+                ////"MakeMVAVariables",
+                //"Baseline",
+                ////"DeepEventShape",
+                ////"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
