@@ -24,7 +24,7 @@ public:
     ~Analyze0LepCutFlow(){};
     
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
-    void InitHistos();
+    void InitHistos(std::map<std::string, bool> cutMap);
     void WriteHistos(TFile* outfile);
     
 };

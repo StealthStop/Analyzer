@@ -186,7 +186,7 @@ public:
         tr.registerDerivedVar("TopTaggerCfg", TopTaggerCfg);
 
         //Register Modules that are needed for each Analyzer
-        if(analyzer=="Analyze0Lep" || analyzer=="AnalyzeTopTagger" || analyzer=="Analyze0LepCutFlow")
+        if(analyzer=="Analyze0Lep" || analyzer=="AnalyzeTopTagger" )
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -260,7 +260,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="StealthHemispheres" || analyzer=="Semra_Analyzer")
+        else if(analyzer=="StealthHemispheres" || analyzer=="Semra_Analyzer" || analyzer=="Analyze0LepCutFlow")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
