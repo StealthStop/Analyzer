@@ -31,11 +31,25 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
         my_histos["EventCounter"]->Fill( eventCounter );
 
         const auto& runtype             = tr.getVar<std::string>("runtype");
+//        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+        const auto& GoodLeptonsCharge   = tr.getVec<int>("GoodLeptonsCharge");
+//        const auto& Jets                = tr.getVec<TLorentzVector>("Jets");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
-        const auto& onZ                 = tr.getVar<bool>("onZ");
+//        const auto& onZ                 = tr.getVar<bool>("onZ");
+        const auto& JetID               = tr.getVar<bool>("JetID");
+        const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
+//        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
+//        const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
 
-        const auto& TwoLep_Mbl1         = tr.getVar<double>("TwoLep_Mbl1");
-        const auto& TwoLep_Mbl2         = tr.getVar<double>("TwoLep_Mbl2");
+        const auto& TwoLep_Mbl1              = tr.getVar<double>("TwoLep_Mbl1");
+        const auto& TwoLep_Mbl2              = tr.getVar<double>("TwoLep_Mbl2");
+//        const auto& GoodBJets_pt30           = tr.getVec<bool>("GoodBJets_pt30");
+
+
+
+        bool pass_2l = NGoodLeptons==2;
+        bool pass_2l_opc =  pass_2l ? GoodLeptonsCharge[0]!=GoodLeptonsCharge[1] : false;
+        bool baseline_2l =  JetID && pass_2l_opc && NGoodBJets_pt30 >= 1 && 25 < TwoLep_Mbl1 && 25 < TwoLep_Mbl2;
 
         //------------------------------------
         //-- Print Event Number
@@ -49,16 +63,55 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-----------------------------------
         
         std::set<std::string> variables = {
-            "FirstComboCandidates",
-            "SecComboCandidates",
-            "FirstStopMassSums",
-            "SecStopMassSums",
-            "StopMassDiffs",
-            "StopMT2s",
+//            "FirstComboCandidates",
+//            "SecComboCandidates",
+//            "FirstStopMassSums",
+//            "SecStopMassSums",
+//            "StopMassDiffs",
+//            "StopMT2s",
+
+//            "GM_Stop1",
+//            "GM_Stop2",
+//            "GM_Stop1Gen",
+//            "GM_Stop2Gen",
+//            "GM_Nlino1",
+//            "GM_Nlino2",
+//            "GM_Nlino1Gen",
+//           "GM_Nlino2Gen",
+///            "GM_Single1",
+//            "GM_Single2",
+//            "GM_Single1Gen",
+//            "GM_Single2Gen",
+//            "GM_StopMT2",
+//            "GM_StopGenMT2",
+//            "fracGenMatched",
+            
+            "GoodJetsMass",
+            "GoodJetsPt",
+            "GoodJetsEta",
+            "GoodJetsPhi",
+            "GoodJetsPx",
+            "GoodJetsPy",
+            "GoodJetsPz",
+            "GoodJetsE",
+            "GoodLeptonsMass",
+            "GoodLeptonsPt",
+            "GoodLeptonsEta",
+            "GoodLeptonsPhi",
+            "GoodLeptonsPx",
+            "GoodLeptonsPy",
+            "GoodLeptonsPz",
+            "GoodLeptonsE",
+
+            "NGoodJets_pt30",
+            "NGoodBJets_pt30",
             "TwoLep_Mbl1",
+            "TwoLep_Mbl2",
             "puWeightCorr",
             "Weight",
-            "totalEventWeight",           
+            "totalEventWeight",
+            "NGoodBJets_pt45"
+            
         };
         if( tr.isFirstEvent() ) {
             std::string myTreeName = "myMiniTree";
@@ -78,7 +131,7 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-----------------------------------
         //-- Fill Histograms Below
         //-----------------------------------
-        if( NGoodLeptons == 2 && TwoLep_Mbl1 >= 25 && TwoLep_Mbl2 >= 25 && !onZ) {
+        if( baseline_2l) {
             myMiniTuple->fill();
         }
 

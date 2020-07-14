@@ -19,8 +19,10 @@
 #include "Framework/Framework/include/PartialUnBlinding.h"
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MegaJetCombine.h"
+#include "Framework/Framework/include/TrainingNTupleVars.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 #include "Framework/Framework/include/StopJets.h"
+#include "Framework/Framework/include/FatJetCombine.h"
 
 class Config
 {
@@ -57,6 +59,8 @@ private:
             else if(module=="Baseline")                     tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                 tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")               tr.emplaceModule<MegaJetCombine>();
+            else if(module=="FatJetCombine")                tr.emplaceModule<FatJetCombine>();
+            else if(module=="TrainingNTupleVars")          tr.emplaceModule<TrainingNTupleVars>();
             else if(module=="MakeStopHemispheres_All")      tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",       "NJets",          "_All");
             else if(module=="MakeStopHemispheres_1l")       tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt30", "NGoodJets_pt30", "_1l");
             else if(module=="MakeStopHemispheres_0l")       tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt45", "NGoodJets_pt45", "_0l");
@@ -64,7 +68,7 @@ private:
             else if(module=="StopJets")                     tr.emplaceModule<StopJets>();
             else if(module=="DeepEventShape")               tr.emplaceModule<DeepEventShape>(DeepESMCfg, ModelFile);
             else if(module=="DeepEventShape_NonIsoMuon")    tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, ModelFile);
- 
+            
             if(runtype == "MC")
             {
                 if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, puFileName, meanFileName, suffix);
@@ -191,11 +195,11 @@ public:
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
                 "PrepNTupleVars",
-                "RunTopTagger",
                 "Muon",
                 "Electron",
                 "Photon",
                 "Jet",
+                "RunTopTagger",
                 "BJet",
                 "CommonVariables",
                 "MakeMVAVariables",
@@ -252,11 +256,13 @@ public:
                 "CommonVariables",
                 "MakeMVAVariables",
                 "Baseline",
-                "DeepEventShape",
+//                "DeepEventShape",
                 "StopGenMatch",
-                "MegaJetCombine",
+//                "MegaJetCombine",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "TrainingNTupleVars",
+                "FatJetCombine"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -328,11 +334,11 @@ public:
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
                 "PrepNTupleVars",
-                "RunTopTagger",
                 "Muon",
                 "Electron",
                 "Photon",
                 "Jet",
+                "RunTopTagger",
                 "BJet",
                 "CommonVariables",
                 "MakeMVAVariables",
