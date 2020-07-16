@@ -223,6 +223,8 @@ public:
                 "MakeMVAVariables",
                 "Baseline",
                 "DeepEventShape",
+                "MakeMVAVariables_NonIsoMuon",
+                "DeepEventShape_NonIsoMuon",
                 "BTagCorrector",
                 "ScaleFactors"
             };
