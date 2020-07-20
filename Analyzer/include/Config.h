@@ -63,7 +63,7 @@ private:
             else if(module=="TrainingNTupleVars")          tr.emplaceModule<TrainingNTupleVars>();
             else if(module=="MakeStopHemispheres_All")      tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",       "NJets",          "_All");
             else if(module=="MakeStopHemispheres_1l")       tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt30", "NGoodJets_pt30", "_1l");
-            else if(module=="MakeStopHemispheres_0l")       tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt45", "NGoodJets_pt45", "_0l");
+            else if(module=="MakeStopHemispheres_0l")       tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_0l");
             else if(module=="MakeStopHemispheres_TaggedTop") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TaggedTop");
             else if(module=="StopJets")                     tr.emplaceModule<StopJets>();
             else if(module=="DeepEventShape")               tr.emplaceModule<DeepEventShape>(DeepESMCfg, ModelFile);
