@@ -19,7 +19,7 @@
 #include "Framework/Framework/include/SetUpTopTagger.h"
 
 AnalyzeTopTagger::AnalyzeTopTagger() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), histNjet10("Njet10"), histNjet11("Njet11"), 
-                                                        histNjet12("Njet12"), histNjet13("Njet13"), histNjet14("Njet14"), histNjet15("Njet15") 
+                                                        histNjet12("Njet12"), histNjet13("Njet13"), histNjet14("Njet14"), histNjet15("Njet15")
 {
     InitHistos();
 }
@@ -175,6 +175,8 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
 
 void AnalyzeTopTagger::WriteHistos(TFile* outfile)
 {
+    outfile->cd();
+
     for (const auto &p : my_histos) {
         p.second->Write();
     }
@@ -197,6 +199,6 @@ void AnalyzeTopTagger::WriteHistos(TFile* outfile)
     histNjet13.save(outfile);
     histNjet14.save(outfile);
     histNjet15.save(outfile);
-    outfile->Write();
+    //outfile->Write();
     outfile->Close();
 }
