@@ -32,6 +32,9 @@
 #include "Analyzer/Analyzer/include/Make2LInputTrees.h"
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
+#include "Analyzer/Analyzer/include/AnalyzeWorkspace.h"
+#include "Analyzer/Analyzer/include/AnalyzeWorkspaceOld.h"
+#include "Analyzer/Analyzer/include/AnalyzeRegionsOld.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -195,6 +198,9 @@ int main(int argc, char *argv[])
         {"Make2LInputTrees",        run<Make2LInputTrees>},
         {"StealthHemispheres",      run<StealthHemispheres>},
         {"AnalyzeTemplate",         run<AnalyzeTemplate>},
+	{"AnalyzeWorkspace",        run<AnalyzeWorkspace>},
+	{"AnalyzeWorkspaceOld",     run<AnalyzeWorkspaceOld>},
+	{"AnalyzeRegionsOld",       run<AnalyzeRegionsOld>}, 
     }; 
 
     try

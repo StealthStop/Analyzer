@@ -14,8 +14,8 @@
 #include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/Baseline.h"
 #include "Framework/Framework/include/DeepEventShape.h"
-#include "Framework/Framework/include/BTagCorrector.h"
-#include "Framework/Framework/include/ScaleFactors.h"
+//#include "Framework/Framework/include/BTagCorrector.h"
+//#include "Framework/Framework/include/ScaleFactors.h"
 #include "Framework/Framework/include/PartialUnBlinding.h"
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MegaJetCombine.h"
@@ -65,8 +65,8 @@ private:
                 if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, puFileName, meanFileName);
                 else if(module=="BTagCorrector")
                 {
-                    auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, filetag);
-                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
+                   auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, filetag);
+                   bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
                 }
             }
         }
@@ -196,8 +196,8 @@ public:
                 "MakeMVAVariables",
                 "Baseline",
                 "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -215,8 +215,8 @@ public:
                 "MakeMVAVariables",
                 "Baseline",
                 "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -250,8 +250,8 @@ public:
                 "DeepEventShape",
                 "StopGenMatch",
                 "MegaJetCombine",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -272,8 +272,8 @@ public:
                 "DeepEventShape",
                 "MakeMT2Hemispheres_0l",
                 "MakeMT2Hemispheres_1l",
-                "BTagCorrector",
-                "ScaleFactors",
+                //"BTagCorrector",
+                //"ScaleFactors",
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -289,8 +289,8 @@ public:
                 "BJet",
                 "CommonVariables",
                 "Baseline",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -309,8 +309,8 @@ public:
                 "MakeMVAVariables",
                 "Baseline",
                 "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -331,8 +331,8 @@ public:
                 "DeepEventShape",
                 "MakeMVAVariables_NonIsoMuon",
                 "DeepEventShape_NonIsoMuon",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -350,8 +350,8 @@ public:
                 "MakeMVAVariables",
                 "Baseline",
                 "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors"
+                //"BTagCorrector",
+                //"ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }

@@ -63,6 +63,7 @@ ANALYZERS += $(ODIR)/AnalyzeWControlRegion.o $(ODIR)/MakeMiniTree.o $(ODIR)/Mini
 ANALYZERS += $(ODIR)/AnalyzeBackground.o $(ODIR)/AnalyzeTopTagger.o $(ODIR)/AnalyzeEventSelection.o $(ODIR)/AnalyzeEventShape.o $(ODIR)/Analyze0Lep.o $(ODIR)/Analyze1Lep.o 
 ANALYZERS += $(ODIR)/AnalyzeNjetsMinusOneCSFillDijetHists.o $(ODIR)/AnalyzeNjetsMinusOneCSJetReplacement.o $(ODIR)/Semra_Analyzer.o $(ODIR)/TwoLepAnalyzer.o 
 ANALYZERS += $(ODIR)/AnalyzeHEM.o $(ODIR)/AnalyzeSignalModels.o $(ODIR)/AnalyzeEENoise.o
+ANALYZERS += $(ODIR)/AnalyzeWorkspace.o $(ODIR)/AnalyzeWorkspaceOld.o $(ODIR)/AnalyzeRegionsOld.o
 
 HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/SATException.o $(ODIR)/histio.o 
 HELPERS += $(ODIR)/Make2LInputTrees.o $(ODIR)/MT2Hemispheres.o $(ODIR)/StealthHemispheres.o 

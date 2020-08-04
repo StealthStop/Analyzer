@@ -2,6 +2,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Framework/Framework/include/Utility.h"
 #include "SusyAnaTools/Tools/NTupleReader.h"
+#include "fastjet/ClusterSequence.hh"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -39,6 +40,24 @@ void AnalyzeTest::InitHistos()
 //Put everything you want to do per event here.
 void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
+    std::vector<fastjet::PseudoJet> particles;    // an event with three particles: px py pz E
+    particles.push_back( fastjet::PseudoJet( 99.0, 0.1, 0, 100.0) );
+    particles.push_back( fastjet::PseudoJet( 4.0, -0.1, 0, 5.0) );
+    particles.push_back( fastjet::PseudoJet( -99.0, 0, 0, 99.0) );    // choose a jet definition
+    double R = 0.7;
+    fastjet::JetDefinition jet_def(fastjet::antikt_algorithm, R);     // run the clustering, extract the jets
+    fastjet::ClusterSequence cs(particles, jet_def);
+    std::vector<fastjet::PseudoJet> jets = fastjet::sorted_by_pt(cs.inclusive_jets());    // print out some infos
+    std::cout << "Clustering with " << jet_def.description() << std::endl;    // print the jets
+    std::cout << " pt y phi" << std::endl;
+    for (unsigned i = 0; i < jets.size(); i++) {
+        std::cout << "jet " << i << ": "<< jets[i].perp() << " " 
+        << jets[i].rap() << " " << jets[i].phi() << std::endl;
+        std::vector<fastjet::PseudoJet> constituents = jets[i].constituents();
+        for (unsigned j = 0; j < constituents.size(); j++) {
+            std::cout << " constituent " << j << "'s pt: "<< constituents[j].perp() << std::endl;
+        }
+    }
     while( tr.getNextEvent() )
     {
         //This is added to count the number of events- do not change the next two lines.
