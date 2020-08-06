@@ -39,7 +39,7 @@ def writeDataCard(binVals):
         f.write("Datacard for 2016 %s" % options.signalName)
         f.write( "\n" )
         f.write( "imax %d number of bins\n" % len(binVals[0]) )
-        f.write( "jmax 3 number of processes minus 1\n" )
+        f.write( "jmax 2 number of processes minus 1\n" )
         f.write( "kmax 1 number of nuisance parameters\n" )
         f.write( "\n" )
         f.write( "-------------------------------------------------------------------------------------------------------------------------------------------\n" )
@@ -47,8 +47,8 @@ def writeDataCard(binVals):
         bins        = "bin         "
         observation = "observation "
         for i in range(len(binVals[0])):
-            bins        += "D{0: <4}".format(i+1)
-            observation += "{0: <5}".format("-1")
+            bins        += "D{0: <4}".format(i)
+            observation += "{0: <5}".format(round(binVals[0][i],1))
         f.write( bins+"\n" )
         f.write( observation+"\n" )
         f.write( "-------------------------------------------------------------------------------------------------------------------------------------------\n" )
@@ -105,14 +105,24 @@ def main():
     binInt = 0
     i = 0
 
-    for h in hlist:
-        for x in my_range(1, 150, 30):
-            for y in my_range(1, 150, 30):
+    for x in my_range(1, 150, 30):
+        for y in my_range(1, 150, 30):
+            i = 0
+            temp_binVals = []
+            for h in hlist:
                 binInt = h.Integral(x, x+10, y, y+10)
-                binVals[i].append(round(binInt,1))
-        i += 1
-
-    binVals = checkBins(binVals)
+                if (round(binInt,1) < 0.1):
+                    break
+                else:
+                    temp_binVals.append(round(binInt,1))
+                i += 1
+            j = 0
+            for b in temp_binVals:
+                if (len(temp_binVals) == len(flist)):
+                    binVals[j].append(b)
+                j += 1
+    
+#    binVals = checkBins(binVals)
 
     print binVals
 #    print "TTbar: %d, QCD: %d, Signal: %d" % (len(binVals[0]), len(binVals[1]), len(binVals[2]))
