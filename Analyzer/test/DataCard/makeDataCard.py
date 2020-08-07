@@ -88,7 +88,7 @@ def main():
     flist = []
     hlist = []
 
-    for f in glob.glob("/uscms/home/bcrossma/nobackup/CMSSW_10_2_9/src/Analyzer/Analyzer/test/condor/StopMass_PtRank/output-files/rootFiles/*.root"):
+    for f in glob.glob("/uscms/home/bcrossma/nobackup/CMSSW_10_2_9/src/Analyzer/Analyzer/test/condor/StopMass_PtRank_TopSeed/output-files/rootFiles/*.root"):
         if(f.find(options.signalName) != -1):
             flist = [ROOT.TFile.Open(f)] + flist
         elif (f.find("TT") != -1 or f.find("QCD") != -1):
@@ -97,7 +97,7 @@ def main():
 #    print flist
 
     for f in flist:
-        hlist.append(f.Get("h_stopMasses_diffVSavg_0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets"))
+        hlist.append(f.Get("h_Mass_stop1vsstop2_ScalarPtRank_0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets"))
 
 
     # Define array of bin boundaries
@@ -105,8 +105,12 @@ def main():
     binInt = 0
     i = 0
 
-    for x in my_range(1, 150, 30):
-        for y in my_range(1, 150, 30):
+    binXSize = 1500 / hlist[0].GetNbinsX()
+    binYSize = 1500 / hlist[0].GetNbinsY()
+
+    print "Bin Edges (prints bottom left corner of bins that are kept): "
+    for x in my_range(0, hlist[0].GetNbinsX()-1, (hlist[0].GetNbinsX()/5)):
+        for y in my_range(0, hlist[0].GetNbinsY()-1, (hlist[0].GetNbinsY()/5)):
             i = 0
             temp_binVals = []
             for h in hlist:
@@ -115,6 +119,8 @@ def main():
                     break
                 else:
                     temp_binVals.append(round(binInt,1))
+                    if ( i == 2 ):
+                      print "%d, %d" % (x * binXSize, y * binYSize)
                 i += 1
             j = 0
             for b in temp_binVals:
@@ -124,10 +130,10 @@ def main():
     
 #    binVals = checkBins(binVals)
 
-    print binVals
+#    print binVals
 #    print "TTbar: %d, QCD: %d, Signal: %d" % (len(binVals[0]), len(binVals[1]), len(binVals[2]))
 
-    print len(binVals[0])
+#    print len(binVals[0])
     writeDataCard(binVals)
 
 if __name__ == "__main__":
