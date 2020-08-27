@@ -42,6 +42,15 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
         my_histos.emplace( "h_stop2Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_stop2Eta" + suf + "_" + cutVar.first).c_str(), ("h_stop2Eta" + suf + "_" + cutVar.first).c_str(), 100, -6, 6 ) );
         my_histos.emplace( "h_stop2Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_stop2Phi" + suf + "_" + cutVar.first).c_str(), ("h_stop2Phi" + suf + "_" + cutVar.first).c_str(), 80, -4, 4 ) );
         my_histos.emplace( "h_stop2Pt"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_stop2Pt" + suf + "_" + cutVar.first).c_str(), ("h_stop2Pt" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed1Pt"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Pt" + suf + "_" + cutVar.first).c_str(), ("h_seed1Pt" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed1Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Eta" + suf + "_" + cutVar.first).c_str(), ("h_seed1Eta" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed1Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Phi" + suf + "_" + cutVar.first).c_str(), ("h_seed1Phi" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed1Mass"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Mass" + suf + "_" + cutVar.first).c_str(), ("h_seed1Mass" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed2Pt"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Pt" + suf + "_" + cutVar.first).c_str(), ("h_seed2Pt" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed2Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Eta" + suf + "_" + cutVar.first).c_str(), ("h_seed2Eta" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed2Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Phi" + suf + "_" + cutVar.first).c_str(), ("h_seed2Phi" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed2Mass"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Mass" + suf + "_" + cutVar.first).c_str(), ("h_seed2Mass" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_dR_seed1seed2"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_dR_seed1seed2" + suf + "_" + cutVar.first).c_str(), ("h_dR_seed1seed2" + suf + "_" + cutVar.first).c_str(), 50, 0, 10 ) );
         my_histos.emplace( "h_dR_stop1stop2"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_dR_stop1stop2" + suf + "_" + cutVar.first).c_str(), ("h_dR_stop1stop2" + suf + "_" + cutVar.first).c_str(), 50, 0, 10 ) );
         my_histos.emplace( "h_dPhi_stop1stop2"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_dPhi_stop1stop2" + suf + "_" + cutVar.first).c_str(), ("h_dPhi_stop1stop2" + suf + "_" + cutVar.first).c_str(), 50, 0, 10 ) );
         my_2d_histos.emplace( "h_Mass_stop1vsstop2"+suf + "_" + cutVar.first, std::make_shared<TH2D>( ("h_Mass_stop1vsstop2" + suf + "_" + cutVar.first).c_str(), ("h_Mass_stop1vsstop2" + suf + "_" + cutVar.first).c_str(), 500, 0, 1500, 500, 0, 1500 ) );
@@ -103,6 +112,9 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
          auto stop2Pt            = stop2.M();
          auto dR_stop1stop2      = tr.getVar<double>("dR_stop1stop2" + suf);
          auto dPhi_stop1stop2    = tr.getVar<double>("dPhi_stop1stop2" + suf);
+         auto seed1              = tr.getVar<TLorentzVector>("seed1" + suf);
+         auto seed2              = tr.getVar<TLorentzVector>("seed2" + suf);
+         auto dR_seed1seed2      = seed1.DeltaR(seed2);
         
         // -------------------
         // -- Define weight
@@ -157,15 +169,6 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
             if (cutVar.second) 
             {
 
-            if( suf == "_0l" ) {
-
-                for( auto& j : Jets ) {
-                    std::cout << j.M() << " ";
-                }
-                std::cout << std::endl;
-
-            } 
-
                 my_histos["h_MT2" + suf + "_" + cutVar.first]->Fill( MT2, weight );
                 my_histos["h_stop1Mass" + suf + "_" + cutVar.first]->Fill( stop1Mass, weight );
                 my_histos["h_stop1Eta" + suf + "_" + cutVar.first]->Fill( stop1Eta, weight );
@@ -175,6 +178,17 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_stop2Eta" + suf + "_" + cutVar.first]->Fill( stop2Eta, weight );
                 my_histos["h_stop2Phi" + suf + "_" + cutVar.first]->Fill( stop2Phi, weight );
                 my_histos["h_stop2Pt" + suf + "_" + cutVar.first]->Fill( stop2Pt, weight );
+               
+                my_histos["h_seed1Pt" + suf + "_" + cutVar.first]->Fill( seed1.Pt(), weight );
+                my_histos["h_seed1Eta" + suf + "_" + cutVar.first]->Fill( seed1.Eta(), weight );
+                my_histos["h_seed1Phi" + suf + "_" + cutVar.first]->Fill( seed1.Phi(), weight );
+                my_histos["h_seed1Mass" + suf + "_" + cutVar.first]->Fill( seed1.M(), weight );
+                my_histos["h_seed2Pt" + suf + "_" + cutVar.first]->Fill( seed2.Pt(), weight );
+                my_histos["h_seed2Eta" + suf + "_" + cutVar.first]->Fill( seed2.Eta(), weight );
+                my_histos["h_seed2Phi" + suf + "_" + cutVar.first]->Fill( seed2.Phi(), weight );
+                my_histos["h_seed2Mass" + suf + "_" + cutVar.first]->Fill( seed2.M(), weight );
+                my_histos["h_dR_seed1seed2" + suf + "_" + cutVar.first]->Fill( dR_seed1seed2, weight );
+                
                 my_histos["h_dR_stop1stop2" + suf + "_" + cutVar.first]->Fill( dR_stop1stop2, weight );
                 my_histos["h_dPhi_stop1stop2" + suf + "_" + cutVar.first]->Fill( dPhi_stop1stop2, weight );
                 my_2d_histos["h_Mass_stop1vsstop2" + suf + "_" + cutVar.first]->Fill( stop1Mass, stop2Mass, weight );
