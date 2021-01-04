@@ -172,20 +172,20 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------
         // -- Make Stop Hemispheres variables
         // -------------------------------------
-        const auto& stop1_PtRank               = tr.getVar<TLorentzVector>("stop1_PtRank_TaggedTop_maskedISR");
-        const auto& stop2_PtRank               = tr.getVar<TLorentzVector>("stop2_PtRank_TaggedTop_maskedISR");
-        const auto& stop1_MassRank             = tr.getVar<TLorentzVector>("stop1_MassRank_TaggedTop_maskedISR");
-        const auto& stop2_MassRank             = tr.getVar<TLorentzVector>("stop2_MassRank_TaggedTop_maskedISR");
-        const auto& stop1_ScalarPtRank         = tr.getVar<TLorentzVector>("stop1_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& stop2_ScalarPtRank         = tr.getVar<TLorentzVector>("stop2_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& stop1ScalarPt_ScalarPtRank = tr.getVar<double>("stop1ScalarPt_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& stop2ScalarPt_ScalarPtRank = tr.getVar<double>("stop2ScalarPt_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& MT2                        = tr.getVar<double>("MT2_TaggedTop_maskedISR"); 
-        const auto& dR_stop1stop2              = tr.getVar<double>("dR_stop1stop2_TaggedTop_maskedISR");
-        const auto& dPhi_stop1stop2            = tr.getVar<double>("dPhi_stop1stop2_TaggedTop_maskedISR");
-        const auto& difference_stopMasses      = tr.getVar<double>("difference_stopMasses_TaggedTop_maskedISR");
-        const auto& average_stopMasses         = tr.getVar<double>("average_stopMasses_TaggedTop_maskedISR");
-        const auto& relativeDiff_stopMasses    = tr.getVar<double>("relativeDiff_stopMasses_TaggedTop_maskedISR");
+        const auto& stop1_PtRank               = tr.getVar<TLorentzVector>("stop1_PtRank_TopSeed_maskedISR");
+        const auto& stop2_PtRank               = tr.getVar<TLorentzVector>("stop2_PtRank_TopSeed_maskedISR");
+        const auto& stop1_MassRank             = tr.getVar<TLorentzVector>("stop1_MassRank_TopSeed_maskedISR");
+        const auto& stop2_MassRank             = tr.getVar<TLorentzVector>("stop2_MassRank_TopSeed_maskedISR");
+        const auto& stop1_ScalarPtRank         = tr.getVar<TLorentzVector>("stop1_ScalarPtRank_TopSeed_maskedISR");
+        const auto& stop2_ScalarPtRank         = tr.getVar<TLorentzVector>("stop2_ScalarPtRank_TopSeed_maskedISR");
+        const auto& stop1ScalarPt_ScalarPtRank = tr.getVar<double>("stop1ScalarPt_ScalarPtRank_TopSeed_maskedISR");
+        const auto& stop2ScalarPt_ScalarPtRank = tr.getVar<double>("stop2ScalarPt_ScalarPtRank_TopSeed_maskedISR");
+        const auto& MT2                        = tr.getVar<double>("MT2_TopSeed_maskedISR"); 
+        const auto& dR_stop1stop2              = tr.getVar<double>("dR_stop1stop2_TopSeed_maskedISR");
+        const auto& dPhi_stop1stop2            = tr.getVar<double>("dPhi_stop1stop2_TopSeed_maskedISR");
+        const auto& difference_stopMasses      = tr.getVar<double>("difference_stopMasses_TopSeed_maskedISR");
+        const auto& average_stopMasses         = tr.getVar<double>("average_stopMasses_TopSeed_maskedISR");
+        const auto& relativeDiff_stopMasses    = tr.getVar<double>("relativeDiff_stopMasses_TopSeed_maskedISR");
 
         double stop1Mass_PtRank       = 0.0, stop1Eta_PtRank       = 0.0, stop1Phi_PtRank       = 0.0, stop1Pt_PtRank       = 0.0;
         double stop2Mass_PtRank       = 0.0, stop2Eta_PtRank       = 0.0, stop2Phi_PtRank       = 0.0, stop2Pt_PtRank       = 0.0;

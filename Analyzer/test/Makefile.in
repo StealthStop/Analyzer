@@ -66,7 +66,7 @@ ANALYZERS += $(ODIR)/AnalyzeNjetsMinusOneCSFillDijetHists.o $(ODIR)/AnalyzeNjets
 ANALYZERS += $(ODIR)/AnalyzeHEM.o $(ODIR)/AnalyzeSignalModels.o $(ODIR)/AnalyzeEENoise.o $(ODIR)/MakeNNVariables.o $(ODIR)/AnalyzeDoubleDisCo.o
 
 HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/SATException.o $(ODIR)/histio.o 
-HELPERS += $(ODIR)/Make2LInputTrees.o $(ODIR)/Hemispheres.o $(ODIR)/StealthHemispheres.o 
+HELPERS += $(ODIR)/Make2LInputTrees.o $(ODIR)/Hemispheres.o $(ODIR)/StopHemispheres.o $(ODIR)/StealthHemispheres.o 
 
 all: mkobj sampPyWrap $(PROGRAMS) link
 
