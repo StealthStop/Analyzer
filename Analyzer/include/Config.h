@@ -70,7 +70,6 @@ private:
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
             else if(module=="ISRJets")                               tr.emplaceModule<ISRJets>();
             else if(module=="DeepEventShape")                        tr.emplaceModule<DeepEventShape>(DeepESMCfg, ModelFile);
-            else if(module=="Mass_Regression")                       tr.emplaceModule<DeepEventShape>("Mass_Regression.cfg", "keras_frozen_Regression.pb");
             else if(module=="DeepEventShape_NonIsoMuon")             tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, ModelFile);
             else if(module=="DoubleDisCo_Reg")                       tr.emplaceModule<DeepEventShape>("Keras_Tensorflow_DoubleDisCo_Reg_2016.cfg", "keras_frozen_DoubleDisCo_Reg_2016.pb");           
  
@@ -390,7 +389,6 @@ public:
                 "BTagCorrector",
                 "ScaleFactors",
                 "TrainingNTupleVars",
-                "Mass_Regression",
             };
             registerModules(tr, std::move(modulesList));
         }
