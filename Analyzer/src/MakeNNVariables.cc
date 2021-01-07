@@ -79,7 +79,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             "isSignal",
             "Weight",  
             "totalEventWeight",
-            "deepESM_valReg",
             "HT_trigger_pt30",
             "HT_trigger_pt45",
             "NGoodJets_pt20_double",
