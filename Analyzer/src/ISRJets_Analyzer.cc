@@ -29,8 +29,7 @@ void ISRJets_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap)
     my_histos.emplace( "EventCounter", std::make_shared<TH1D>( "EventCounter", "EventCounter", 2, -1.1, 1.1 ) ) ;
     
     for (const auto& cutVar : cutmap) 
-    {  
-        
+    {   
         // --------------------------------
         // -- ISR gen matching variables
         // --------------------------------
@@ -44,6 +43,33 @@ void ISRJets_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap)
         my_histos.emplace( "h_GM_ISRmatching_bestPtRatio_"+cutVar.first, std::make_shared<TH1D> ( ("h_GM_ISRmatching_bestPtRatio_"+cutVar.first).c_str(), ("h_GM_ISRmatching_bestPtRatio_"+cutVar.first).c_str(), 1000, 0, 10 ) );
         my_histos.emplace( "h_GM_ISRmatching_CutOnDR_PtRatio_"+cutVar.first, std::make_shared<TH1D> ( ("h_GM_ISRmatching_CutOnDR_PtRatio_"+cutVar.first).c_str(), ("h_GM_ISRmatching_CutOnDR_PtRatio_"+cutVar.first).c_str(), 1000, 0, 10 ) );
         my_histos.emplace( "h_GM_ISRmatching_CutOnPtRatio_PtRatio_"+cutVar.first, std::make_shared<TH1D> ( ("h_GM_ISRmatching_CutOnPtRatio_PtRatio_"+cutVar.first).c_str(), ("h_GM_ISRmatching_CutOnPtRatio_PtRatio_"+cutVar.first).c_str(), 1000, 0, 10 ) ); 
+
+        // -----------------------------------------
+        // -- Get the Gen ISR kinematic variables
+        // -----------------------------------------
+        my_histos.emplace( "h_nGenISR_"+cutVar.first, std::make_shared<TH1D> ( ("h_nGenISR_"+cutVar.first).c_str(), ("h_nGenISR_"+cutVar.first).c_str(), 20, 0, 20 ) );
+        my_histos.emplace( "h_GenISR_Mass_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_Mass_"+cutVar.first).c_str(), ("h_GenISR_Mass_"+cutVar.first).c_str(), 500, 0, 1500) );
+        my_histos.emplace( "h_GenISR_Pt_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_Pt_"+cutVar.first).c_str(), ("h_GenISR_Pt_"+cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_GenISR_Phi_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_Phi_"+cutVar.first).c_str(), ("h_GenISR_Phi_"+cutVar.first).c_str(), 80, -4, 4 ) );
+        my_histos.emplace( "h_GenISR_Eta_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_Eta_"+cutVar.first).c_str(), ("h_GenISR_Eta_"+cutVar.first).c_str(), 100, -6, 6 ) );        
+
+        my_histos.emplace( "h_nGenISR_qg_"+cutVar.first, std::make_shared<TH1D> ( ("h_nGenISR_qg_"+cutVar.first).c_str(), ("h_nGenISR_qg_"+cutVar.first).c_str(), 20, 0, 20 ) );
+        my_histos.emplace( "h_GenISR_qg_Mass_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_qg_Mass_"+cutVar.first).c_str(), ("h_GenISR_Mass_"+cutVar.first).c_str(), 500, 0, 1500) );
+        my_histos.emplace( "h_GenISR_qg_Pt_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_qg_Pt_"+cutVar.first).c_str(), ("h_GenISR_qg_Pt_"+cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_GenISR_qg_Phi_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_qg_Phi_"+cutVar.first).c_str(), ("h_GenISR_qg_Phi_"+cutVar.first).c_str(), 80, -4, 4 ) );
+        my_histos.emplace( "h_GenISR_qg_Eta_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_qg_Eta_"+cutVar.first).c_str(), ("h_GenISR_qg_Eta_"+cutVar.first).c_str(), 100, -6, 6 ) ); 
+
+        my_histos.emplace( "h_nGenISR_gq_"+cutVar.first, std::make_shared<TH1D> ( ("h_nGenISR_gq_"+cutVar.first).c_str(), ("h_nGenISR_gq_"+cutVar.first).c_str(), 20, 0, 20 ) );
+        my_histos.emplace( "h_GenISR_gq_Mass_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gq_Mass_"+cutVar.first).c_str(), ("h_GenISR_gq_Mass_"+cutVar.first).c_str(), 500, 0, 1500) );
+        my_histos.emplace( "h_GenISR_gq_Pt_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gq_Pt_"+cutVar.first).c_str(), ("h_GenISR_gq_Pt_"+cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_GenISR_gq_Phi_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gq_Phi_"+cutVar.first).c_str(), ("h_GenISR_gq_Phi_"+cutVar.first).c_str(), 80, -4, 4 ) );
+        my_histos.emplace( "h_GenISR_gq_Eta_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gq_Eta_"+cutVar.first).c_str(), ("h_GenISR_gq_Eta_"+cutVar.first).c_str(), 100, -6, 6 ) );
+
+        my_histos.emplace( "h_nGenISR_gg_"+cutVar.first, std::make_shared<TH1D> ( ("h_nGenISR_gg_"+cutVar.first).c_str(), ("h_nGenISR_gg_"+cutVar.first).c_str(), 20, 0, 20 ) );
+        my_histos.emplace( "h_GenISR_gg_Mass_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gg_Mass_"+cutVar.first).c_str(), ("h_GenISR_gg_Mass_"+cutVar.first).c_str(), 500, 0, 1500) );
+        my_histos.emplace( "h_GenISR_gg_Pt_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gg_Pt_"+cutVar.first).c_str(), ("h_GenISR_gg_Pt_"+cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_GenISR_gg_Phi_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gg_Phi_"+cutVar.first).c_str(), ("h_GenISR_gg_Phi_"+cutVar.first).c_str(), 80, -4, 4 ) );
+        my_histos.emplace( "h_GenISR_gg_Eta_"+cutVar.first, std::make_shared<TH1D> ( ("h_GenISR_gg_Eta_"+cutVar.first).c_str(), ("h_GenISR_gg_Eta_"+cutVar.first).c_str(), 100, -6, 6 ) );
 
         // -----------------------------------------
         // -- ISR & NonISR & Other Jets variables
@@ -107,6 +133,11 @@ void ISRJets_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap)
         my_histos.emplace( "h_OtherJets_neutralMultiplicity_"+cutVar.first, std::make_shared<TH1D> ( ("h_OtherJets_neutralMultiplicity_"+cutVar.first).c_str(), ("h_OtherJets_neutralMultiplicity_"+cutVar.first).c_str(), 1000, 0, 100 ) ); 
         my_histos.emplace( "h_OtherJets_qgLikelihood_"+cutVar.first, std::make_shared<TH1D> ( ("h_OtherJets_qgLikelihood_"+cutVar.first).c_str(), ("h_OtherJets_qgLikelihood_"+cutVar.first).c_str(), 100, 0, 1 ) ); 
         my_histos.emplace( "h_OtherJets_bJetTagDeepCSVtotb_"+cutVar.first, std::make_shared<TH1D> ( ("h_OtherJets_bJetTagDeepCSVtotb_"+cutVar.first).c_str(), ("h_OtherJets_bJetTagDeepCSVtotb_"+cutVar.first).c_str(), 100, 0, 1 ) );
+
+        // -----------------------------------
+        // DeltaEta between GenISR and RecoISR
+        // -----------------------------------
+        my_histos.emplace( "h_dEta_RecoISR_GenISR_"+cutVar.first, std::make_shared<TH1D> ( ("h_dEta_RecoISR_GenISR_"+cutVar.first).c_str(), ("h_dEta_RecoISR_GenISR_"+cutVar.first).c_str(), 100, -2, 2 ) );   
 
         // ----------------------------------- 
         // DeltaR between ISR and Non ISR jets
@@ -234,11 +265,6 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ----------------------
         // -- ISR gen matching
         // ----------------------
-        //const auto& ISRmatched_dr                           = tr.getVec<bool>("ISRmatched_dr");
-        const auto& ISRmatched_dr_ptr                       = tr.getVec<bool>("ISRmatched_dr_ptr");
-        //const auto& NonISRmatched_dr                        = tr.getVec<bool>("NonISRmatched_dr"); // TreeMaker NonISR (Signal Jets) filter
-        const auto& NonISRmatched_dr_ptr                    = tr.getVec<bool>("NonISRmatched_dr_ptr"); 
-        //const auto& OtherJets                               = tr.getVec<bool>("OtherJets"); // TreeMaker OtherJets (ISR+FSR+underlying) filter
         const auto& GM_ISRmatching_allDR                    = tr.getVec<double>("GM_ISRmatching_allDR");
         const auto& GM_ISRmatching_bestDR                   = tr.getVec<double>("GM_ISRmatching_bestDR");
         const auto& GM_ISRmatching_justCutOnDR_DR           = tr.getVec<double>("GM_ISRmatching_justCutOnDR_DR");
@@ -247,6 +273,17 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& GM_ISRmatching_bestPtRatio              = tr.getVec<double>("GM_ISRmatching_bestPtRatio");
         const auto& GM_ISRmatching_justCutOnDR_PtRatio      = tr.getVec<double>("GM_ISRmatching_justCutOnDR_PtRatio");
         const auto& GM_ISRmatching_justCutOnPtRatio_PtRatio = tr.getVec<double>("GM_ISRmatching_justCutOnPtRatio_PtRatio");
+        const auto& nGenISR                                 = tr.getVar<int>("nGenISR");
+        const auto& nGenISR_qg                              = tr.getVar<int>("nGenISR_qg");
+        const auto& nGenISR_gq                              = tr.getVar<int>("nGenISR_gq");
+        const auto& nGenISR_gg                              = tr.getVar<int>("nGenISR_gg");
+        const auto& GenISR                                  = tr.getVec<TLorentzVector>("GenISR");
+        const auto& GenISR_qg                               = tr.getVec<TLorentzVector>("GenISR_qg");
+        const auto& GenISR_gq                               = tr.getVec<TLorentzVector>("GenISR_gq");
+        const auto& GenISR_gg                               = tr.getVec<TLorentzVector>("GenISR_gg");
+        const auto& dEta_RecoISR_GenISR                     = tr.getVec<double>("dEta_RecoISR_GenISR");
+        const auto& ISRmatched_dr_ptr                       = tr.getVec<bool>("ISRmatched_dr_ptr");
+        const auto& NonISRmatched_dr_ptr                    = tr.getVec<bool>("NonISRmatched_dr_ptr"); 
         // AK4 variables from ntuple
         const auto& Jets_axismajor                          = tr.getVec<double>("Jets_axismajor");
         const auto& Jets_axisminor                          = tr.getVec<double>("Jets_axisminor");
@@ -397,7 +434,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const std::map<std::string, bool>& cutmap
         {
             {"", true},
-            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets", passBaseline0l && pass_ge2t && pass_ge1dRbjets},
+            {"0l_baseline", passBaseline0l && pass_ge2t && pass_ge1dRbjets},
         };
 
         if (!inithisto) 
@@ -504,6 +541,85 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                     my_histos["h_GM_ISRmatching_CutOnPtRatio_PtRatio_"+cutVar.first]->GetXaxis()->SetTitle("ISRmatching CutOnPtRatio (Pt^{Reco}/Pt^{Gen})");
                     my_histos["h_GM_ISRmatching_CutOnPtRatio_PtRatio_"+cutVar.first]->GetYaxis()->SetTitle("Events");
                 }            
+
+                // -----------------------------------------
+                // -- Get the Gen ISR kinematic variables
+                // -----------------------------------------
+                my_histos["h_nGenISR_"+cutVar.first]->Fill( nGenISR, weight );
+                my_histos["h_nGenISR_"+cutVar.first]->GetXaxis()->SetTitle("nGenISR");
+                my_histos["h_nGenISR_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                for (unsigned int i = 0;  i < GenISR.size(); i ++)
+                {
+                    my_histos["h_GenISR_Mass_"+cutVar.first]->Fill( GenISR.at(i).M(), weight );
+                    my_histos["h_GenISR_Mass_"+cutVar.first]->GetXaxis()->SetTitle("GenISR Mass");
+                    my_histos["h_GenISR_Mass_"+cutVar.first]->GetYaxis()->SetTitle("Events"); 
+                    my_histos["h_GenISR_Pt_"+cutVar.first]->Fill( GenISR.at(i).Pt(), weight );
+                    my_histos["h_GenISR_Pt_"+cutVar.first]->GetXaxis()->SetTitle("GenISR Pt");
+                    my_histos["h_GenISR_Pt_"+cutVar.first]->GetYaxis()->SetTitle("Events"); 
+                    my_histos["h_GenISR_Phi_"+cutVar.first]->Fill( GenISR.at(i).Phi(), weight );
+                    my_histos["h_GenISR_Phi_"+cutVar.first]->GetXaxis()->SetTitle("GenISR Phi");
+                    my_histos["h_GenISR_Phi_"+cutVar.first]->GetYaxis()->SetTitle("Events"); 
+                    my_histos["h_GenISR_Eta_"+cutVar.first]->Fill( GenISR.at(i).Eta(), weight );
+                    my_histos["h_GenISR_Eta_"+cutVar.first]->GetXaxis()->SetTitle("GenISR Eta");
+                    my_histos["h_GenISR_Eta_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                }
+                
+                my_histos["h_nGenISR_qg_"+cutVar.first]->Fill( nGenISR_qg, weight );
+                my_histos["h_nGenISR_qg_"+cutVar.first]->GetXaxis()->SetTitle("nGenISR_qg");
+                my_histos["h_nGenISR_qg_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                for (unsigned int i = 0;  i < GenISR_qg.size(); i ++)
+                {
+                    my_histos["h_GenISR_qg_Mass_"+cutVar.first]->Fill( GenISR_qg.at(i).M(), weight );
+                    my_histos["h_GenISR_qg_Mass_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_qg Mass");
+                    my_histos["h_GenISR_qg_Mass_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_qg_Pt_"+cutVar.first]->Fill( GenISR_qg.at(i).Pt(), weight );
+                    my_histos["h_GenISR_qg_Pt_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_qg Pt");
+                    my_histos["h_GenISR_qg_Pt_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_qg_Phi_"+cutVar.first]->Fill( GenISR_qg.at(i).Phi(), weight );
+                    my_histos["h_GenISR_qg_Phi_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_qg Phi");
+                    my_histos["h_GenISR_qg_Phi_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_qg_Eta_"+cutVar.first]->Fill( GenISR_qg.at(i).Eta(), weight );
+                    my_histos["h_GenISR_qg_Eta_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_qg Eta");
+                    my_histos["h_GenISR_qg_Eta_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                }
+
+                my_histos["h_nGenISR_gq_"+cutVar.first]->Fill( nGenISR_gq, weight );
+                my_histos["h_nGenISR_gq_"+cutVar.first]->GetXaxis()->SetTitle("nGenISR_gq");
+                my_histos["h_nGenISR_gq_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                for (unsigned int i = 0;  i < GenISR_gq.size(); i ++)
+                {
+                    my_histos["h_GenISR_gq_Mass_"+cutVar.first]->Fill( GenISR_gq.at(i).M(), weight );
+                    my_histos["h_GenISR_gq_Mass_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gq Mass");
+                    my_histos["h_GenISR_gq_Mass_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_gq_Pt_"+cutVar.first]->Fill( GenISR_gq.at(i).Pt(), weight );
+                    my_histos["h_GenISR_gq_Pt_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gq Pt");
+                    my_histos["h_GenISR_gq_Pt_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_gq_Phi_"+cutVar.first]->Fill( GenISR_gq.at(i).Phi(), weight );
+                    my_histos["h_GenISR_gq_Phi_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gq Phi");
+                    my_histos["h_GenISR_gq_Phi_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_gq_Eta_"+cutVar.first]->Fill( GenISR_gq.at(i).Eta(), weight );
+                    my_histos["h_GenISR_gq_Eta_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gq Eta");
+                    my_histos["h_GenISR_gq_Eta_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                }
+
+                my_histos["h_nGenISR_gg_"+cutVar.first]->Fill( nGenISR_gg, weight );
+                my_histos["h_nGenISR_gg_"+cutVar.first]->GetXaxis()->SetTitle("nGenISR_gg");
+                my_histos["h_nGenISR_gg_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                for (unsigned int i = 0;  i < GenISR_gg.size(); i ++)
+                {
+                    my_histos["h_GenISR_gg_Mass_"+cutVar.first]->Fill( GenISR_gg.at(i).M(), weight );
+                    my_histos["h_GenISR_gg_Mass_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gg Mass");
+                    my_histos["h_GenISR_gg_Mass_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_gg_Pt_"+cutVar.first]->Fill( GenISR_gg.at(i).Pt(), weight );
+                    my_histos["h_GenISR_gg_Pt_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gg Pt");
+                    my_histos["h_GenISR_gg_Pt_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_gg_Phi_"+cutVar.first]->Fill( GenISR_gg.at(i).Phi(), weight );
+                    my_histos["h_GenISR_gg_Phi_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gg Phi");
+                    my_histos["h_GenISR_gg_Phi_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                    my_histos["h_GenISR_gg_Eta_"+cutVar.first]->Fill( GenISR_gg.at(i).Eta(), weight );
+                    my_histos["h_GenISR_gg_Eta_"+cutVar.first]->GetXaxis()->SetTitle("GenISR_gg Eta");
+                    my_histos["h_GenISR_gg_Eta_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+                }
 
                 // -----------------------------------------
                 // -- ISR & NonISR & Other Jets variables
@@ -852,6 +968,16 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_nOtherJets_"+cutVar.first]->Fill( nOtherJets, weight );
                 my_histos["h_nOtherJets_"+cutVar.first]->GetXaxis()->SetTitle("nOtherJets");
                 my_histos["h_nOtherJets_"+cutVar.first]->GetYaxis()->SetTitle("Events");
+
+                // -----------------------------------
+                // DeltaEta between RecoISR and GenISR
+                // -----------------------------------
+                for (unsigned int i = 0; i < dEta_RecoISR_GenISR.size(); i++)
+                {
+                    my_histos["h_dEta_RecoISR_GenISR_"+cutVar.first]->Fill( dEta_RecoISR_GenISR.at(i), weight );     
+                    my_histos["h_dEta_RecoISR_GenISR_"+cutVar.first]->GetXaxis()->SetTitle("#DeltaEta(RecoISR,GenISR)");
+                    my_histos["h_dEta_RecoISR_GenISR_"+cutVar.first]->GetYaxis()->SetTitle("Events"); 
+                }
 
                 // --------------------------------------------
                 // DeltaR between each ISR and each NonISR jets
