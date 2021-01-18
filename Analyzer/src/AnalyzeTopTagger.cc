@@ -42,13 +42,21 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );        
 
-        const auto& runtype                = tr.getVar<std::string>("runtype");
-        const auto& dR_bjets               = tr.getVar<double>("dR_bjets");
-        const auto& Jets                   = tr.getVec<TLorentzVector>("Jets");
-        const auto& GoodJets_pt45          = tr.getVec<bool>("GoodJets_pt45");
-        const auto& NGoodJets_pt45         = tr.getVar<int>("NGoodJets_pt45");
-        const bool  passBaseline0l         = tr.getVar<bool>("passBaseline0l_Good");     
-        const bool  pass_ge1dRbjets        = (dR_bjets >= 1.0); 
+        const auto& runtype         = tr.getVar<std::string>("runtype");
+        const auto& Jets            = tr.getVec<TLorentzVector>("Jets");
+        const auto& JetID           = tr.getVar<bool>("JetID");        
+        const auto& passMETFilters  = tr.getVar<bool>("passMETFilters");
+        const auto& passMadHT       = tr.getVar<bool>("passMadHT");
+        const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
+        const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
+        const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
+        const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
+        const auto& dR_bjets        = tr.getVar<double>("dR_bjets");
+        const auto& GoodJets_pt45   = tr.getVec<bool>("GoodJets_pt45");
+        const bool pass_Resolved    = JetID && passMETFilters && passMadHT 
+                                     && NGoodLeptons==0      && HT_trigger_pt45 > 500 
+                                     && NGoodBJets_pt45 >= 2 && NGoodJets_pt45 >= 6
+                                     && dR_bjets >= 1.0;
 
         // -------------------
         // -- Define weight
@@ -90,7 +98,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ----------------
         std::vector<std::pair<std::string, bool>> ttbarCuts =
         {   
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
+            {"pass_Resolved", pass_Resolved},
         };
         hists.fillWithCutFlow(ttbarCuts, tr, weight, &rand);
 
@@ -101,72 +109,72 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         // baseline cuts + Njets == 7
         std::vector<std::pair<std::string, bool>> Njets7 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet7"         , NGoodJets_pt45 == 7},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet7"        , NGoodJets_pt45 == 7},
         };
         histNjet7.fillWithCutFlow(Njets7, tr, weight, &rand);
 
         // baseline cuts + Njets == 8
         std::vector<std::pair<std::string, bool>> Njets8 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets}, 
-            {"Njet8"         , NGoodJets_pt45 == 8},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet8"        , NGoodJets_pt45 == 8},
         };
         histNjet8.fillWithCutFlow(Njets8, tr, weight, &rand);
 
         // baseline cuts + Njets == 9
         std::vector<std::pair<std::string, bool>> Njets9 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet9"         , NGoodJets_pt45 == 9},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet9"        , NGoodJets_pt45 == 9},
         };
         histNjet9.fillWithCutFlow(Njets9, tr, weight, &rand);        
         
         // baseline cuts + Njets == 10
         std::vector<std::pair<std::string, bool>> Njets10 =
-        {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet10"        , NGoodJets_pt45 == 10},
+        {   
+            {"pass_Resolved", pass_Resolved},
+            {"Njet10"       , NGoodJets_pt45 == 10},
         };
         histNjet10.fillWithCutFlow(Njets10, tr, weight, &rand);
 
         // baseline cuts + Njets == 11
         std::vector<std::pair<std::string, bool>> Njets11 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet11"        , NGoodJets_pt45 == 11},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet11"       , NGoodJets_pt45 == 11},
         };
         histNjet11.fillWithCutFlow(Njets11, tr, weight, &rand);
 
         // baseline cuts + Njets == 12
         std::vector<std::pair<std::string, bool>> Njets12 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet12"        , NGoodJets_pt45 == 12},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet12"       , NGoodJets_pt45 == 12},
         };
         histNjet12.fillWithCutFlow(Njets12, tr, weight, &rand);
 
         // baseline cuts + Njets == 13
         std::vector<std::pair<std::string, bool>> Njets13 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet13"        , NGoodJets_pt45 == 13},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet13"       , NGoodJets_pt45 == 13},
         };
         histNjet13.fillWithCutFlow(Njets13, tr, weight, &rand);   
  
         // baseline cuts + Njets == 14
         std::vector<std::pair<std::string, bool>> Njets14 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet10"        , NGoodJets_pt45 == 14},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet14"       , NGoodJets_pt45 == 14},
         };
         histNjet14.fillWithCutFlow(Njets14, tr, weight, &rand);
         
         // baseline cuts + Njets == 15
         std::vector<std::pair<std::string, bool>> Njets15 =
         {
-            {"passBaseline0l", passBaseline0l && pass_ge1dRbjets},
-            {"Njet15"        , NGoodJets_pt45 == 15},
+            {"pass_Resolved", pass_Resolved},
+            {"Njet15"       , NGoodJets_pt45 == 15},
         };
         histNjet14.fillWithCutFlow(Njets14, tr, weight, &rand);
 
