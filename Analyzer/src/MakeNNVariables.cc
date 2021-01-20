@@ -43,7 +43,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
     while( tr.getNextEvent() )
     {
         const auto& eventCounter        = tr.getVar<int>("eventCounter");
-        //const auto& runtype             = tr.getVar<std::string>("runtype");
         const auto& isSignal            = tr.getVar<bool>("isSignal");
         const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l_Good"); 
         const auto& passBaseline1l      = tr.getVar<bool>("passBaseline1l_Good");
@@ -106,10 +105,22 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             "Jet_phi_7",          "Jet_phi_8",          "Jet_phi_9",          "Jet_phi_10",          "Jet_phi_11",          "Jet_phi_12",
             "Jet_pt_1",           "Jet_pt_2",           "Jet_pt_3",           "Jet_pt_4",            "Jet_pt_5",            "Jet_pt_6", 
             "Jet_pt_7",           "Jet_pt_8",           "Jet_pt_9",           "Jet_pt_10",           "Jet_pt_11",           "Jet_pt_12",
-            "Jet_dcsv_1",         "Jet_dcsv_2",         "Jet_dcsv_3",         "Jet_dcsv_4",          "Jet_dcsv_5",          "Jet_dcsv_6", 
-            "Jet_dcsv_7",         "Jet_dcsv_8",         "Jet_dcsv_9",         "Jet_dcsv_10",         "Jet_dcsv_11",         "Jet_dcsv_12",
+            "Jet_flavb_1",        "Jet_flavb_2",        "Jet_flavb_3",        "Jet_flavb_4",         "Jet_flavb_5",         "Jet_flavb_6", 
+            "Jet_flavb_7",        "Jet_flavb_8",        "Jet_flavb_9",        "Jet_flavb_10",        "Jet_flavb_11",        "Jet_flavb_12",
+            "Jet_flavg_1",        "Jet_flavg_2",        "Jet_flavg_3",        "Jet_flavg_4",         "Jet_flavg_5",         "Jet_flavg_6", 
+            "Jet_flavg_7",        "Jet_flavg_8",        "Jet_flavg_9",        "Jet_flavg_10",        "Jet_flavg_11",        "Jet_flavg_12",
+            "Jet_flavq_1",        "Jet_flavq_2",        "Jet_flavq_3",        "Jet_flavq_4",         "Jet_flavq_5",         "Jet_flavq_6", 
+            "Jet_flavq_7",        "Jet_flavq_8",        "Jet_flavq_9",        "Jet_flavq_10",        "Jet_flavq_11",        "Jet_flavq_12",
             "Jet_ptD_1",          "Jet_ptD_2",          "Jet_ptD_3",          "Jet_ptD_4",           "Jet_ptD_5",           "Jet_ptD_6",  
             "Jet_ptD_7",          "Jet_ptD_8",          "Jet_ptD_9",          "Jet_ptD_10",          "Jet_ptD_11",          "Jet_ptD_12",
+            "Jet_nEF_1",          "Jet_nEF_2",          "Jet_nEF_3",          "Jet_nEF_4",           "Jet_nEF_5",           "Jet_nEF_6",  
+            "Jet_nEF_7",          "Jet_nEF_8",          "Jet_nEF_9",          "Jet_nEF_10",          "Jet_nEF_11",          "Jet_nEF_12",
+            "Jet_cEF_1",          "Jet_cEF_2",          "Jet_cEF_3",          "Jet_cEF_4",           "Jet_cEF_5",           "Jet_cEF_6",  
+            "Jet_cEF_7",          "Jet_cEF_8",          "Jet_cEF_9",          "Jet_cEF_10",          "Jet_cEF_11",          "Jet_cEF_12",
+            "Jet_nHF_1",          "Jet_nHF_2",          "Jet_nHF_3",          "Jet_nHF_4",           "Jet_nHF_5",           "Jet_nHF_6",  
+            "Jet_nHF_7",          "Jet_nHF_8",          "Jet_nHF_9",          "Jet_nHF_10",          "Jet_nHF_11",          "Jet_nHF_12",
+            "Jet_cHF_1",          "Jet_cHF_2",          "Jet_cHF_3",          "Jet_cHF_4",           "Jet_cHF_5",           "Jet_cHF_6",  
+            "Jet_cHF_7",          "Jet_cHF_8",          "Jet_cHF_9",          "Jet_cHF_10",          "Jet_cHF_11",          "Jet_cHF_12",
             "Jet_axismajor_1",    "Jet_axismajor_2",    "Jet_axismajor_3",    "Jet_axismajor_4",     "Jet_axismajor_5",     "Jet_axismajor_6", 
             "Jet_axismajor_7",    "Jet_axismajor_8",    "Jet_axismajor_9",    "Jet_axismajor_10",    "Jet_axismajor_11",    "Jet_axismajor_12",
             "Jet_axisminor_1",    "Jet_axisminor_2",    "Jet_axisminor_3",    "Jet_axisminor_4",     "Jet_axisminor_5",     "Jet_axisminor_6", 
@@ -150,6 +161,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             "GoodLeptons_eta_1", "GoodLeptons_eta_2",
             "GoodLeptons_phi_1", "GoodLeptons_phi_2",
             "GoodLeptons_pt_1",  "GoodLeptons_pt_2",
+            "GoodLeptons_miniIso_1",  "GoodLeptons_miniIso_2",
         };
 
         std::set<std::string> varOldSeed =
