@@ -144,6 +144,12 @@ for name, options in histDict.iteritems():
     else:
         mark.DrawLatex(ROOT.gPad.GetLeftMargin() + 0.13, 1 - (ROOT.gPad.GetTopMargin() + 0.05), "Simulation Preliminary")
 
+    mark.SetTextAlign(11)
+    mark.SetTextSize(0.025)
+    mark.SetTextFont(42)
+    mark.DrawLatex(ROOT.gPad.GetLeftMargin() + 0.63, 1 - (ROOT.gPad.GetTopMargin() + 0.05), "arXiv:XXXX.XXXX")
+
+    mark.SetTextSize(0.045);
     mark.SetTextFont(42)
     mark.SetTextAlign(31)
     if year == "2016":
@@ -153,6 +159,7 @@ for name, options in histDict.iteritems():
   
     if args.approved:
         c.SaveAs("%s/%s_%s.pdf"%(outpath,year,name.replace("_1l_ge7j_ge1b", "")))
+        c.SaveAs("%s/%s_%s.png"%(outpath,year,name.replace("_1l_ge7j_ge1b", "")))
     else:
         c.SaveAs("%s/%s_%s_prelim.pdf"%(outpath,year,name.replace("_1l_ge7j_ge1b", "")))
-
+        c.SaveAs("%s/%s_%s_prelim.png"%(outpath,year,name.replace("_1l_ge7j_ge1b", "")))
