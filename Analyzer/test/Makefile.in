@@ -57,7 +57,7 @@ endif
 # Include our code
 INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(SSDIR) -I$(ITTDir) -I$(STTDir)
 
-PROGRAMS = MyAnalysis plot_1l Stack_plot_0l Stack_plot_1l Stack_plot_2l
+PROGRAMS = MyAnalysis plot_1l plot_1l_LegacyAna Stack_plot_0l Stack_plot_1l Stack_plot_2l
 
 ANALYZERS  = $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/MakeMiniTree.o $(ODIR)/AnalyzeLepTrigger.o $(ODIR)/AnalyzeTest.o 
 ANALYZERS += $(ODIR)/AnalyzeWControlRegion.o $(ODIR)/MakeMiniTree.o $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/AnalyzeBTagSF.o $(ODIR)/BTagCalibrationStandalone.o 
@@ -98,6 +98,9 @@ MyAnalysis: $(ODIR)/MyAnalysis.o $(HELPERS) $(ANALYZERS)
 	$(LD) $^ $(LIBSTOPTAGGER) $(LIBS) -o $@
 
 plot_1l: $(ODIR)/plot_1l.o
+	$(LD) $^ $(LIBS) -o $@
+
+plot_1l_LegacyAna: $(ODIR)/plot_1l_LegacyAna.o
 	$(LD) $^ $(LIBS) -o $@
 
 Stack_plot_0l: $(ODIR)/Stack_plot_0l.o
