@@ -27,7 +27,7 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
 
     my_histos.emplace( "EventCounter", std::make_shared<TH1D>( "EventCounter", "EventCounter", 2, -1.1, 1.1 ) ) ;
 
-    std::vector<std::string> sufs = {"_TaggedTop", "_0l"};
+    std::vector<std::string> sufs = {"_TaggedTop", "_0l", "_0l_cm"};
     for (const auto& suf    : sufs  ) 
     {
     for (const auto& cutVar : cutmap)
@@ -43,12 +43,12 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
         my_histos.emplace( "h_stop2Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_stop2Phi" + suf + "_" + cutVar.first).c_str(), ("h_stop2Phi" + suf + "_" + cutVar.first).c_str(), 80, -4, 4 ) );
         my_histos.emplace( "h_stop2Pt"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_stop2Pt" + suf + "_" + cutVar.first).c_str(), ("h_stop2Pt" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
         my_histos.emplace( "h_seed1Pt"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Pt" + suf + "_" + cutVar.first).c_str(), ("h_seed1Pt" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
-        my_histos.emplace( "h_seed1Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Eta" + suf + "_" + cutVar.first).c_str(), ("h_seed1Eta" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
-        my_histos.emplace( "h_seed1Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Phi" + suf + "_" + cutVar.first).c_str(), ("h_seed1Phi" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed1Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Eta" + suf + "_" + cutVar.first).c_str(), ("h_seed1Eta" + suf + "_" + cutVar.first).c_str(), 100, -6, 6 ) );
+        my_histos.emplace( "h_seed1Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Phi" + suf + "_" + cutVar.first).c_str(), ("h_seed1Phi" + suf + "_" + cutVar.first).c_str(), 80, -4, 4 ) );
         my_histos.emplace( "h_seed1Mass"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed1Mass" + suf + "_" + cutVar.first).c_str(), ("h_seed1Mass" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
         my_histos.emplace( "h_seed2Pt"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Pt" + suf + "_" + cutVar.first).c_str(), ("h_seed2Pt" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
-        my_histos.emplace( "h_seed2Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Eta" + suf + "_" + cutVar.first).c_str(), ("h_seed2Eta" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
-        my_histos.emplace( "h_seed2Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Phi" + suf + "_" + cutVar.first).c_str(), ("h_seed2Phi" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_seed2Eta"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Eta" + suf + "_" + cutVar.first).c_str(), ("h_seed2Eta" + suf + "_" + cutVar.first).c_str(), 100, -6, 6 ) );
+        my_histos.emplace( "h_seed2Phi"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Phi" + suf + "_" + cutVar.first).c_str(), ("h_seed2Phi" + suf + "_" + cutVar.first).c_str(), 100, -4, 4 ) );
         my_histos.emplace( "h_seed2Mass"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_seed2Mass" + suf + "_" + cutVar.first).c_str(), ("h_seed2Mass" + suf + "_" + cutVar.first).c_str(), 100, 0, 1000 ) );
         my_histos.emplace( "h_dR_seed1seed2"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_dR_seed1seed2" + suf + "_" + cutVar.first).c_str(), ("h_dR_seed1seed2" + suf + "_" + cutVar.first).c_str(), 50, 0, 10 ) );
         my_histos.emplace( "h_dR_stop1stop2"+suf + "_" + cutVar.first, std::make_shared<TH1D> ( ("h_dR_stop1stop2" + suf + "_" + cutVar.first).c_str(), ("h_dR_stop1stop2" + suf + "_" + cutVar.first).c_str(), 50, 0, 10 ) );
@@ -81,17 +81,21 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );
 
         const auto& runtype             = tr.getVar<std::string>("runtype");
+        const auto& filetag             = tr.getVar<std::string>("filetag");
         const auto& NGoodJets_pt45      = tr.getVar<int>("NGoodJets_pt45");
         const auto& passBaseline0l_Good = tr.getVar<bool>("passBaseline0l_Good");
         const auto& passBaseline1l_Good = tr.getVar<bool>("passBaseline1l_Good");
         const auto& passBaseline2l_Good = tr.getVar<bool>("passBaseline2l_Good");       
         const auto& ntops               = tr.getVar<int>("ntops");       
- 
+        const auto& dR_bjets            = tr.getVar<double>("dR_bjets"); 
+        const auto& isSignal            = tr.getVar<bool>("isSignal");
+        const auto& StopMass            = isSignal ? std::stoi(filetag.substr(filetag.find("-") + 1)) : 0; 
+
         // -------------------------------
         // -- MT2 hemispheres variables
         // -------------------------------
         
-        std::vector<std::string> sufs = {"_TaggedTop", "_0l"};
+        std::vector<std::string> sufs = {"_TaggedTop", "_0l", "_0l_cm"};
 
         for ( auto& suf : sufs ) {
         
@@ -119,41 +123,36 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------
         // -- Define weight
         // -------------------
-        double weight=1.0, weightNoHT=1.0, weightQCDCR=1.0, weightNoBTag=1.0;
-        double eventweight=1.0, leptonweight=1.0, bTagWeight=1.0, prefiringScaleFactor=1.0, pileupWeight=1.0, htDerivedweight=1.0;
-        double weightNoLepton=1.0;
+        double weight               = 1.0;
+        double eventweight          = 1.0;
+        double bTagScaleFactor      = 1.0;
+        double prefiringScaleFactor = 1.0;
+        double puScaleFactor        = 1.0;
         if(runtype == "MC")
         {
-            // Define Lumi weight
-            const auto& Weight       = tr.getVar<double>("Weight");
-            const auto& lumi         = tr.getVar<double>("Lumi");
-            eventweight              = lumi*Weight;
-            
-            const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
-            const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
-            const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF");
-            leptonweight             = eleLepWeight*muLepWeight;
-            
-            pileupWeight             = tr.getVar<double>("puWeightCorr");
-            bTagWeight               = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedweight          = tr.getVar<double>("htDerivedweight");
-            prefiringScaleFactor     = tr.getVar<double>("prefiringScaleFactor");
-            
-            weightQCDCR    *= eventweight*muNonIso*prefiringScaleFactor*pileupWeight;
-            weightNoHT     *= eventweight*leptonweight*bTagWeight*prefiringScaleFactor*pileupWeight;
-            weightNoLepton *= eventweight*bTagWeight*prefiringScaleFactor*pileupWeight*htDerivedweight;
-            weightNoBTag   *= eventweight*leptonweight*prefiringScaleFactor*pileupWeight*htDerivedweight;
-            weight         *= eventweight*leptonweight*bTagWeight*prefiringScaleFactor*pileupWeight*htDerivedweight;
-        }
+            //Define Lumi weight
+            const auto& Weight      = tr.getVar<double>("Weight");
+            const auto& lumi        = tr.getVar<double>("Lumi");
 
+            eventweight             = lumi*Weight;
+
+            bTagScaleFactor         = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor    = tr.getVar<double>("prefiringScaleFactor");
+            puScaleFactor           = tr.getVar<double>("puWeightCorr");
+            
+            weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
+        }
+                                                                                                                         
         // -------------------------------------------------
         // -- Make cuts and fill histograms here & cutmap
         // -------------------------------------------------
         const std::map<std::string, bool>& cutmap
         {
-            {"baseline_0l", passBaseline0l_Good && ntops >= 2},
-            {"baseline_1l", passBaseline1l_Good},
-            {"baseline_2l", passBaseline2l_Good},
+            {"baseline_0l",         passBaseline0l_Good && ntops >= 2 && dR_bjets >= 1},
+            {"baseline_0l_dRle2",   passBaseline0l_Good && ntops >= 2 && dR_bjets >= 1 && dR_seed1seed2 <= 2},
+            {"baseline_0l_dRge2",   passBaseline0l_Good && ntops >= 2 && dR_bjets >= 1 && dR_seed1seed2 >= 2},
+            {"baseline_0l_largeStop_Signal",         passBaseline0l_Good && ntops >= 2 && dR_bjets >= 1 && (stop1Mass >= StopMass + 400 || stop2Mass >= StopMass + 400) && isSignal},
+            {"baseline_0l_largeStop_Background",         passBaseline0l_Good && ntops >= 2 && dR_bjets >= 1 && (stop1Mass >= 1000 || stop2Mass >= 1000) && !isSignal}
         };
 
         if (!inithisto) 

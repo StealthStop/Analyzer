@@ -130,7 +130,7 @@ void Semra_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) // de
         //my_2d_histos.emplace( "h_Mass_NJetsVSstop1_ScalarPtRank_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop1_ScalarPtRank_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop1_ScalarPtRank_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
         //my_2d_histos.emplace( "h_Mass_NJetsVSstop2_ScalarPtRank_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop2_ScalarPtRank_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop2_ScalarPtRank_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
         
-        my_2d_histos.emplace( "h_stopMasses_diffVSavg_"+cutVar.first, std::make_shared<TH2D>( ("h_stopMasses_diffVSavg_"+cutVar.first).c_str(), ( "h_stopMasses_diffVSavg_"+cutVar.first).c_str(), 150, -1500, 1500, 150, 0, 1500 ) );
+        my_2d_histos.emplace( "h_stopMasses_diffVSavg_"+cutVar.first, std::make_shared<TH2D>( ("h_stopMasses_diffVSavg_"+cutVar.first).c_str(), ( "h_stopMasses_diffVSavg_"+cutVar.first).c_str(), 500, 0, 1500, 500, 0, 1500 ) );
 
         // stop Pt combinations 
         //my_2d_histos.emplace( "h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first, std::make_shared<TH2D>( ("h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first).c_str(), ("h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first).c_str(), 100, 0, 1000, 100, 0, 1000) );
@@ -211,7 +211,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         //const auto& GoodJets_pt45   = tr.getVec<bool>("GoodJets_pt45");
         const auto& GoodBJets_pt45  = tr.getVec<bool>("GoodBJets_pt45");
         //const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
-        const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
+        const auto& NGoodJets_pt20  = tr.getVar<int>("NGoodJets_pt20");
         //const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
         //const auto& deepESM_val     = tr.getVar<double>("deepESM_val");
         const auto& dR_bjets        = tr.getVar<double>("dR_bjets");               
@@ -412,15 +412,13 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             //{"baseline_0l_ge2t1j3j_stopMassesle200_ScalarPtRank", passBaseline0l && pass_ge2t1j3j && pass_ge1dRbjets && stop1Mass_ScalarPtRank < 200 && stop2Mass_ScalarPtRank < 200 },
 
             // NJets cuts for stop hemispheres
-            {"baseline_0l_Njet7",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 7  },
-            {"baseline_0l_Njet8",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 8  },
-            {"baseline_0l_Njet9",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 9  },
-            {"baseline_0l_Njet10", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 10 },
-            {"baseline_0l_Njet11", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 11 },
-            {"baseline_0l_Njet12", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 12 },
-            {"baseline_0l_Njet13", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 13 },
-            {"baseline_0l_Njet14", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 14 },
-            {"baseline_0l_Njet15", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt45 == 15 },
+            {"baseline_0l_Njet6",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 == 6  },
+            {"baseline_0l_Njet7",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 == 7  },
+            {"baseline_0l_Njet8",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 == 8  },
+            {"baseline_0l_Njet9",  passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 == 9  },
+            {"baseline_0l_Njet10", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 == 10 },
+            {"baseline_0l_Njet11", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 == 11 },
+            {"baseline_0l_Njetge12", passBaseline0l && pass_ge2t && pass_ge1dRbjets && NGoodJets_pt20 >= 12 },
     
     };
 
