@@ -36,7 +36,7 @@ public:
     Plotter(HistInfoCollection&& hc, const std::string& outpath = "outputPlots") : hc_(hc), outpath_(outpath){}
     Plotter(std::map< std::string, HistInfoCollection >&& mhc, const std::string& outpath = "outputPlots") : mhc_(mhc), outpath_(outpath){}
 
-    void plotStack(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, int rebin = -1, const bool scale = false, const bool doFill = true, const double xmin = 999.9, const double xmax = -999.9, double lumi = 36100, bool approved = true, double padDiv = 0.3)
+    void plotStack(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, int rebin = -1, const bool scale = false, const bool doFill = true, const double xmin = 999.9, const double xmax = -999.9, double lumi = 36100, bool supplementary = false, bool approved = true, double padDiv = 0.3)
     {
         //This is a magic incantation to disassociate opened histograms from their files so the files can be closed
         TH1::AddDirectory(false);
@@ -59,7 +59,9 @@ public:
         pad1->cd();               // pad1 becomes the current pad
         
         //Create TLegend
-        TLegend *leg = new TLegend(0.17, 0.50, 0.35, 0.88);
+        TLegend *leg = nullptr;
+        if (not supplementary) leg = new TLegend(0.17, 0.50, 0.35, 0.88);
+        else leg = new TLegend(0.17, 0.46, 0.35, 0.84);
         leg->SetFillStyle(0);
         leg->SetColumnSeparation(0.15);
         leg->SetBorderSize(0);
@@ -68,7 +70,9 @@ public:
         leg->SetTextFont(42);
         leg->SetTextSize(0.040);
 
-        TLegend *dataleg = new TLegend(0.26, 0.50, 0.40, 0.88);
+        TLegend *dataleg = nullptr;
+        if (not supplementary) dataleg = new TLegend(0.26, 0.50, 0.40, 0.88);
+        else dataleg = new TLegend(0.26, 0.46, 0.40, 0.84);
         dataleg->SetFillStyle(0);
         dataleg->SetColumnSeparation(0.15);
         dataleg->SetBorderSize(0);
@@ -77,7 +81,9 @@ public:
         dataleg->SetTextFont(42);
         dataleg->SetTextSize(0.040);
 
-        TLegend *sigleg = new TLegend(0.40, 0.60, 0.84, 0.89);
+        TLegend *sigleg = nullptr;
+        if (not supplementary) sigleg = new TLegend(0.40, 0.56, 0.84, 0.88);
+        else sigleg = new TLegend(0.56, 0.56, 0.82, 0.85);
         sigleg->SetFillStyle(0);
         sigleg->SetColumnSeparation(0.15);
         sigleg->SetBorderSize(0);
@@ -179,7 +185,7 @@ public:
         significance.SetTextSize(0.030);
 
         //Draw CMS and lumi lables
-        drawLables(lumi, approved);
+        drawLables(lumi, supplementary, approved);
             
         //Draw dummy hist again to get axes on top of histograms
         setupDummy(dummy, sigleg, "", yAxisLabel, isLogY, xmin, xmax, min, max, lmax);
@@ -274,7 +280,7 @@ public:
         
         gpThreshMax = std::max(gpThreshMax, pThreshMax);
         if (isLog) gmax = 10*std::max(gmax, max);
-        else gmax = 1.05*std::max(gmax, max);
+        else gmax = 1.06*std::max(gmax, max);
         gmin = std::min(gmin, min);
     }
 
@@ -309,7 +315,7 @@ public:
         if(xmin < xmax) dummy.h->GetXaxis()->SetRangeUser(xmin, xmax);
     }
 
-    void drawLables(double lumi, bool approved = false)
+    void drawLables(double lumi, bool supplementary = false, bool approved = false)
     {
         //Draw CMS and lumi lables
         char lumistamp[128];
@@ -323,18 +329,22 @@ public:
         mark.SetTextAlign(11);
         mark.SetTextSize(0.065);
         mark.SetTextFont(61);
-        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS"); // #scale[0.8]{#it{Preliminary}}");
-        //mark.SetTextSize(0.040);
+        mark.DrawLatex(gPad->GetLeftMargin(), 1 - (gPad->GetTopMargin() - 0.017), "CMS");
         mark.SetTextFont(52);
-        //mark.DrawLatex(gPad->GetLeftMargin() + 0.1, 1 - (gPad->GetTopMargin() - 0.017), "Stealth 2018");
-        //if (not approved) mark.DrawLatex(gPad->GetLeftMargin() + 0.1025, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
-        if (not approved) mark.DrawLatex(gPad->GetLeftMargin() + 0.1025, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
+        if (not approved and not supplementary) mark.DrawLatex(gPad->GetLeftMargin() + 0.1025, 1 - (gPad->GetTopMargin() - 0.017), "Preliminary");
+        else if (supplementary) mark.DrawLatex(gPad->GetLeftMargin() + 0.1025, 1 - (gPad->GetTopMargin() - 0.017), "Supplementary");
         else mark.DrawLatex(gPad->GetLeftMargin() + 0.1025, 1 - (gPad->GetTopMargin() - 0.017), "");
 
         //Draw lumistamp
         mark.SetTextFont(42);
         mark.SetTextAlign(31);
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);        
+
+        if (supplementary)
+        {
+            mark.SetTextSize(0.04);
+            mark.DrawLatex(gPad->GetLeftMargin() + 0.24, 1 - (gPad->GetTopMargin() + 0.055), "arXiv XXXX.XXXX");
+        }
     }    
 };
 

@@ -13,7 +13,7 @@ public:
     std::string plotName_;
 };
 
-void setHistInfo(const std::string& path, std::vector<histInfo>& data, std::vector<histInfo>& bg, std::vector<histInfo>& sig, std::vector<histInfo>& syst, std::vector<histInfo>& rsyst, const std::string& year, const bool doQCD = false)
+void setHistInfo(const std::string& path, std::vector<histInfo>& data, std::vector<histInfo>& bg, std::vector<histInfo>& sig, std::vector<histInfo>& syst, std::vector<histInfo>& rsyst, const std::string& year, const bool supplementary = false, const bool doQCD = false)
 {
     //entry for data
     //this uses the initializer syntax to initialize the histInfo object
@@ -38,27 +38,30 @@ void setHistInfo(const std::string& path, std::vector<histInfo>& data, std::vect
         };
     }
 
-    //sig = {        
-    //    {"RPV m_{#tilde{t}} = 350 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 4)", path + "/"+year+"_RPV_2t6j_mStop-350.root",  "hist", kMagenta, printNEvents, 4.0, false, 2},
-    //    {"RPV m_{#tilde{t}} = 850 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 16)", path + "/"+year+"_RPV_2t6j_mStop-850.root",  "hist", kRed   , printNEvents, 16.0, false, 3},
-    //    {"Stealth SYY m_{#tilde{t}} = 350 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 4)", path + "/"+year+"_StealthSYY_2t6j_mStop-350.root",  "hist", kCyan + 1, printNEvents, 4.0, false, 1},        
-    //    {"Stealth SYY m_{#tilde{t}} = 850 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 16)", path + "/"+year+"_StealthSYY_2t6j_mStop-850.root",  "hist", kBlue, printNEvents, 16.0, false, 4},        
-    //};
-
-    sig = {        
-        {"RPV m_{#tilde{t}} = 350 GeV)",         path + "/"+year+"_RPV_2t6j_mStop-350.root",        "hist", kMagenta,  1.0, false, 2},
-        {"RPV m_{#tilde{t}} = 850 GeV)",         path + "/"+year+"_RPV_2t6j_mStop-850.root",        "hist", kRed,      1.0, false, 3},
-        {"Stealth SYY m_{#tilde{t}} = 350 GeV)", path + "/"+year+"_StealthSYY_2t6j_mStop-350.root", "hist", kCyan + 1, 1.0, false, 1},        
-        {"Stealth SYY m_{#tilde{t}} = 850 GeV)", path + "/"+year+"_StealthSYY_2t6j_mStop-850.root", "hist", kBlue,     1.0, false, 4},        
-    };
+    if (not supplementary)
+    {
+        sig = {        
+            {"RPV m_{#tilde{t}} = 350 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 4)",          path + "/"+year+"_RPV_2t6j_mStop-350.root",        "hist", kMagenta,  4.0,  false, 2},
+            {"RPV m_{#tilde{t}} = 850 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 16)",         path + "/"+year+"_RPV_2t6j_mStop-850.root",        "hist", kRed   ,   16.0, false, 3},
+            {"Stealth SYY m_{#tilde{t}} = 350 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 4)",  path + "/"+year+"_StealthSYY_2t6j_mStop-350.root", "hist", kCyan + 1, 4.0,  false, 1},        
+            {"Stealth SYY m_{#tilde{t}} = 850 GeV (#sigma_{#tilde{t} #bar{#tilde{t}}} #times 16)", path + "/"+year+"_StealthSYY_2t6j_mStop-850.root", "hist", kBlue,     16.0, false, 4},        
+        };
+    } else {
+        sig = {        
+            {"RPV m_{#tilde{t}} = 350 GeV",         path + "/"+year+"_RPV_2t6j_mStop-350.root",        "hist", kMagenta,  1.0, false, 2},
+            {"RPV m_{#tilde{t}} = 850 GeV",         path + "/"+year+"_RPV_2t6j_mStop-850.root",        "hist", kRed,      1.0, false, 3},
+            {"Stealth SYY m_{#tilde{t}} = 350 GeV", path + "/"+year+"_StealthSYY_2t6j_mStop-350.root", "hist", kCyan + 1, 1.0, false, 1},        
+            {"Stealth SYY m_{#tilde{t}} = 850 GeV", path + "/"+year+"_StealthSYY_2t6j_mStop-850.root", "hist", kBlue,     1.0, false, 4},        
+        };
+    }
 
     if (!doQCD) {
         syst = {
-            {"SYST",   path + "/"+year+"_MC_Syst_wNormUncJan08.root", "hist", kBlack, 1.0, true, 0},
+            {"SYST",   path + "/"+year+"_MC_Syst_wNormUncSept14.root", "hist", kBlack, 1.0, true, 0},
         };
 
         rsyst = {
-            {"RSYST",  path + "/"+year+"_MC_Ratio_Syst_wNormUncJan08.root", "hist", kBlack, 1.0, true, 0},
+            {"RSYST",  path + "/"+year+"_MC_Ratio_Syst_wNormUncSept14.root", "hist", kBlack, 1.0, true, 0},
         };
     }
 }
@@ -71,31 +74,34 @@ int main(int argc, char *argv[])
     std::string year = "2018post";
     std::string directory = "";
     int approved = 0;
+    int supplementary = 0;
 
     static struct option long_options[] = {
         {"year",      required_argument, 0, 'y'},
         {"directory", required_argument, 0, 't'},
         {"approved",  optional_argument, 0, 'a'},
+        {"approved",  optional_argument, 0, 's'},
     };
 
-    while((opt = getopt_long(argc, argv, "y:t:a:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "y:t:a:s:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
             case 't': directory = optarg; break;
             case 'y': year = optarg; break;
             case 'a': approved = std::stoi(optarg); break;
+            case 's': supplementary = std::stoi(optarg); break;
         }
     }
 
     std::string path = "condor/hadded/" + directory + "/" + year;
 
     std::vector<histInfo> data, bg, sig, syst, rsyst;
-    setHistInfo(path, data, bg, sig, syst, rsyst, year);
+    setHistInfo(path, data, bg, sig, syst, rsyst, year, supplementary);
     HistInfoCollection histInfoCollection(data, bg, sig, syst, rsyst);
 
     //make plotter object with the required sources for histograms specified
-    Plotter plt(std::move(histInfoCollection), "PlotsForLegacyAna/" + directory + "/" +year);
+    Plotter plt(std::move(histInfoCollection), "PlotsForLegacyAna/" + year);
 
     double lumi = 0.0;
     if      (year == "2016")     lumi = 35900.0;
@@ -114,22 +120,18 @@ int main(int argc, char *argv[])
 
     for(std::string mycut : mycuts_1l)
     {
-        plt.plotStack("h_deepESM"+mycut, "S_{NN}" ,            "Events",        false, 10, true, true, 999.9, -999.9, lumi, approved);
-        plt.plotStack("h_njets"+mycut,   "N_{jets}" ,          "Events / bin",  true,  -1, true, true, 999.9, -999.9, lumi, approved);
-        plt.plotStack("h_mbl"+mycut,     "M(l,b) [GeV]",       "Events / bin",  true,  10, true, true, 999.9, -999.9, lumi, approved);
-        plt.plotStack("h_ht"+mycut,      "H_{T} [GeV]",        "Events / bin",  true,  10, true, true, 999.9, -999.9, lumi, approved);
-        plt.plotStack("h_lPt"+mycut,     "Lepton p_{T} [GeV]", "Leptons / bin", true,  2,  true, true, 0,     1000,   lumi, approved);
-        plt.plotStack("h_lEta"+mycut,    "Lepton #eta",        "Leptons / bin", false, 10, true, true, 999.9, -999.9, lumi, approved);
-        plt.plotStack("h_lPhi"+mycut,    "Lepton #phi",        "Leptons / bin", false, 2,  true, true, 999.9, -999.9, lumi, approved);
-        plt.plotStack("h_jPt"+mycut,     "Jet p_{T} [GeV]",    "Jets / bin",    true,  2,  true, true, 0,     1000,   lumi, approved);
+        plt.plotStack("h_deepESM"+mycut, "S_{NN}" ,            "Events",        false, 10, true, true, 999.9, -999.9, lumi, false, approved);
+        plt.plotStack("h_njets"+mycut,   "N_{jets}" ,          "Events / bin",  true,  -1, true, true, 999.9, -999.9, lumi, false, approved);
+        plt.plotStack("h_mbl"+mycut,     "M(l,b) [GeV]",       "Events / bin",  true,  10, true, true, 999.9, -999.9, lumi, false, approved);
+        plt.plotStack("h_ht"+mycut,      "H_{T} [GeV]",        "Events / bin",  true,  10, true, true, 999.9, -999.9, lumi, false, approved);
     }
 
-    plt.plotStack( "fwm2_top6_1l_ge7j_ge1b",    "FWM2", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, approved);
-    plt.plotStack( "fwm3_top6_1l_ge7j_ge1b",    "FWM3", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, approved);
-    plt.plotStack( "fwm4_top6_1l_ge7j_ge1b",    "FWM4", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, approved);
-    plt.plotStack( "jmt_ev0_top6_1l_ge7j_ge1b", "JMT0", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, approved);
-    plt.plotStack( "jmt_ev1_top6_1l_ge7j_ge1b", "JMT1", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, approved);
-    plt.plotStack( "jmt_ev2_top6_1l_ge7j_ge1b", "JMT2", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, approved);
+    plt.plotStack( "fwm2_top6_1l_ge7j_ge1b",    "FWM2", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, supplementary, approved);
+    plt.plotStack( "fwm3_top6_1l_ge7j_ge1b",    "FWM3", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, supplementary, approved);
+    plt.plotStack( "fwm4_top6_1l_ge7j_ge1b",    "FWM4", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, supplementary, approved);
+    plt.plotStack( "jmt_ev0_top6_1l_ge7j_ge1b", "JMT0", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, supplementary, approved);
+    plt.plotStack( "jmt_ev1_top6_1l_ge7j_ge1b", "JMT1", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, supplementary, approved);
+    plt.plotStack( "jmt_ev2_top6_1l_ge7j_ge1b", "JMT2", "Events / bin", false, 1, true, true, 999.0, -999.9, lumi, supplementary, approved);
     for(unsigned int i = 0; i < 7; i++)
     {
         std::string order = "";
@@ -144,9 +146,9 @@ int main(int argc, char *argv[])
             case 6: order = "Seventh"; break;
         }
  
-        plt.plotStack("Jet_cm_pt_"+std::to_string(i+1)+"_1l_ge7j_ge1b",  order + " Jet" + " p_{T} [GeV]", "Events / 30 GeV", true,   3, true, true, 0, 1500, lumi, approved);
-        plt.plotStack("Jet_cm_eta_"+std::to_string(i+1)+"_1l_ge7j_ge1b", order + " Jet" + " #eta",        "Events / bin",    false,  1, true, true, -6, 6, lumi, approved);
-        plt.plotStack("Jet_cm_phi_"+std::to_string(i+1)+"_1l_ge7j_ge1b", order + " Jet" + " #phi",        "Events / bin",    false,  1, true, true, -4, 4, lumi, approved);
-        plt.plotStack("Jet_cm_m_"+std::to_string(i+1)  +"_1l_ge7j_ge1b", order + " Jet" + " Mass [GeV]",  "Events / 5 GeV",  false,  5, true, true,  0, 200, lumi, approved);
+        plt.plotStack("Jet_cm_pt_"+std::to_string(i+1)+"_1l_ge7j_ge1b",  order + " Jet" + " p_{T} [GeV]", "Events / 30 GeV", true,   3, true, true, 0,  1500, lumi, supplementary, approved);
+        plt.plotStack("Jet_cm_eta_"+std::to_string(i+1)+"_1l_ge7j_ge1b", order + " Jet" + " #eta",        "Events / bin",    false,  1, true, true, -6, 6,    lumi, supplementary, approved);
+        plt.plotStack("Jet_cm_phi_"+std::to_string(i+1)+"_1l_ge7j_ge1b", order + " Jet" + " #phi",        "Events / bin",    false,  1, true, true, -4, 4,    lumi, supplementary, approved);
+        plt.plotStack("Jet_cm_m_"+std::to_string(i+1)  +"_1l_ge7j_ge1b", order + " Jet" + " Mass [GeV]",  "Events / 5 GeV",  false,  5, true, true, 0,  200,  lumi, supplementary, approved);
     }
 }
