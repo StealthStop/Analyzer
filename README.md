@@ -161,19 +161,27 @@ Once copied the `DataVsMC` folder locally to the `condor/hadded` path with `Anal
 
 ### Making Figure 2 of the Paper
 
-`./plot_1l_LegacyAna -y 2016 -t DataVsMC -a 1`
-`./plot_1l_LegacyAna -y 2020 -t DataVsMC -a 1` # Here 2020 is synonymous with 2017+2018
+```
+./plot_1l_LegacyAna -y 2016 -t DataVsMC -a 1
+./plot_1l_LegacyAna -y 2020 -t DataVsMC -a 1 # Here 2020 is synonymous with 2017+2018
+```
 
 ### Making Figure 9 and 10 of Supplementary Material
 
-`./plot_1l_LegacyAna -y 2016 -t DataVsMC -a 1 -s 1`
-`./plot_1l_LegacyAna -y 2017 -t DataVsMC -a 1 -s 1`
+```
+./plot_1l_LegacyAna -y 2016 -t DataVsMC -a 1 -s 1
+./plot_1l_LegacyAna -y 2017 -t DataVsMC -a 1 -s 1
+```
 
 ### Making Figure 7 and 8 or Supplementary Material
 
-`python ttVsSigNNLegacyAna.py --year 2016 --approved --inputDir ./condor/hadded/DataVsMC`
-`python ttVsSigNNLegacyAna.py --year 2017 --approved --inputDir ./condor/hadded/DataVsMC`
+```
+python ttVsSigNNLegacyAna.py --year 2016 --approved --inputDir ./condor/hadded/DataVsMC
+python ttVsSigNNLegacyAna.py --year 2017 --approved --inputDir ./condor/hadded/DataVsMC
+```
 
 ### Making Figure 1 of the Supplementary Material
 
-`python makeBinEdgePlotLegacyAna.py --approved`
+```
+python makeBinEdgePlotLegacyAna.py --approved
+```
