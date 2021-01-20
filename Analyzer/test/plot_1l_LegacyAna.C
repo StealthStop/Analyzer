@@ -13,7 +13,7 @@ public:
     std::string plotName_;
 };
 
-void setHistInfo(const std::string& path, std::vector<histInfo>& data, std::vector<histInfo>& bg, std::vector<histInfo>& sig, std::vector<histInfo>& syst, std::vector<histInfo>& rsyst, const std::string& year, int color = 0, const bool doQCD = false)
+void setHistInfo(const std::string& path, std::vector<histInfo>& data, std::vector<histInfo>& bg, std::vector<histInfo>& sig, std::vector<histInfo>& syst, std::vector<histInfo>& rsyst, const std::string& year, const bool doQCD = false)
 {
     //entry for data
     //this uses the initializer syntax to initialize the histInfo object
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     std::string path = "condor/hadded/" + directory + "/" + year;
 
     std::vector<histInfo> data, bg, sig, syst, rsyst;
-    setHistInfo(path, data, bg, sig, syst, rsyst, year, 1);
+    setHistInfo(path, data, bg, sig, syst, rsyst, year);
     HistInfoCollection histInfoCollection(data, bg, sig, syst, rsyst);
 
     //make plotter object with the required sources for histograms specified
