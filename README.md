@@ -151,37 +151,3 @@ cd $HOME/../../CMSSW_9_3_3/src/Analyzer/Analyzer/test/
 # For example running on 2018pre
 python njets_systs_comp.py --year 2018pre --fitdir $HOME/../../src/HiggsAnalysis/CombinedLimit/ --fittag Approval_StatErrPlusFullDev_12JetFix --outputdir MYDIR
 ```
-
-## Making Legacy Plots for SUS-19-004
-
-Input ROOT files for making data vs MC stack plots and signal vs background plots, as found in Fig. 2 of the paper and in Fig. 7, 8, 9, and 10 of the supplementary material twiki, are located at:
-`/eos/uscms/store/user/lpcsusyhad/StealthStop/PlotInputs/SUS19004/DataVsMC`
-
-Once copied the `DataVsMC` folder locally to the `condor/hadded` path with `Analyzer/Analyzer/test`, plots can be made using `plot_1l_LegacyAna`.
-
-### Making Figure 2 of the Paper
-
-```
-./plot_1l_LegacyAna -y 2016 -t DataVsMC -a 1
-./plot_1l_LegacyAna -y 2020 -t DataVsMC -a 1 # Here 2020 is synonymous with 2017+2018
-```
-
-### Making Figure 9 and 10 of Supplementary Material
-
-```
-./plot_1l_LegacyAna -y 2016 -t DataVsMC -a 1 -s 1
-./plot_1l_LegacyAna -y 2017 -t DataVsMC -a 1 -s 1
-```
-
-### Making Figure 7 and 8 or Supplementary Material
-
-```
-python ttVsSigNNLegacyAna.py --year 2016 --approved --inputDir ./condor/hadded/DataVsMC
-python ttVsSigNNLegacyAna.py --year 2017 --approved --inputDir ./condor/hadded/DataVsMC
-```
-
-### Making Figure 1 of the Supplementary Material
-
-```
-python makeBinEdgePlotLegacyAna.py --approved
-```
