@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
+#include <getopt.h>
 
 #include "Framework/Framework/include/Utility.h"
 
@@ -92,7 +93,8 @@ public:
 
             //Get number of events and save it as a member variable
             nEvents  = h->Integral();
-            legEntry = legName + " ("+std::to_string(nEvents)+") ";     
+            //legEntry = legName + " ("+std::to_string(nEvents)+") ";     
+            legEntry = legName; // sort but, not put the nEvents 
 
             // rebin the histogram if desired
             if(rebin >0) 
@@ -107,12 +109,12 @@ public:
     {
         h->SetStats(0);
         h->SetTitle(0);
-        h->GetYaxis()->SetTitleOffset(1.2);
+        h->GetYaxis()->SetTitleOffset(1.3);
         h->GetXaxis()->SetTitleOffset(1.1);
         h->GetXaxis()->SetTitleSize(0.045);
-        h->GetXaxis()->SetLabelSize(0.045);
+        h->GetXaxis()->SetLabelSize(0.03);
         h->GetYaxis()->SetTitleSize(0.045);
-        h->GetYaxis()->SetLabelSize(0.045);
+        h->GetYaxis()->SetLabelSize(0.03);
         if(h->GetXaxis()->GetNdivisions() % 100 > 5) 
             h->GetXaxis()->SetNdivisions(6, 5, 0);
     }
@@ -169,6 +171,7 @@ private:
     //vector summarizing background & signal histograms to include in the plot
     std::vector<histInfo> bgEntries_;
     std::vector<histInfo> sigEntries_;
+    std::string output_;
 
     static bool compareNEvents(histInfo h1, histInfo h2) 
     {
@@ -178,12 +181,12 @@ private:
     }
     
 public:
-    Plotter(histInfo&& data, std::vector<histInfo>&& bgEntries, std::vector<histInfo>&& sigEntries) : data_(data), bgEntries_(bgEntries), sigEntries_(sigEntries) {}
+    Plotter(histInfo&& data, std::vector<histInfo>&& bgEntries, std::vector<histInfo>&& sigEntries, std::string output) : data_(data), bgEntries_(bgEntries), sigEntries_(sigEntries), output_(output){}
 
     // ---------------------
     // function for plotting
     // ---------------------   
-    void plot(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const std::string& cutlabel = "", const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, double lumi = 35900) // lumi 2016 = 35900, lumi 2017 = 41500, lumi 2018 = 59740
+    void plot(const std::string& histName, const std::string& xAxisLabel, const std::string& yAxisLabel = "Events", const bool isLogY = false, const std::string& cutlabel = "", const double xmin = 999.9, const double xmax = -999.9, int rebin = -1, const std::string& year = "2016")// double lumi = 35900) // lumi 2016 = 35900, lumi 2017 = 41500, lumi 2018 = 59740
     {
         TH1::AddDirectory(false);
 
@@ -192,7 +195,7 @@ public:
         // ----------------------------------------
         TCanvas *c = new TCanvas("c1", "c1", 800, 800);
         c->cd();
-        TLegend *leg = new TLegend(0.50, 0.56, 0.89, 0.88); 
+        TLegend *leg = new TLegend(0.65, 0.56, 0.89, 0.88); // 0.50, 0.56, 0.89, 0.88
         leg->SetFillStyle(0);
         leg->SetBorderSize(0);
         leg->SetLineWidth(1);
@@ -208,7 +211,7 @@ public:
         // create the THStack for the background
         // ------------------------------------- 
         THStack *bgStack = new THStack();
-        //Make seperate histogram from sum of BG histograms  
+        // Make seperate histogram from sum of BG histograms  
         TH1* hbgSum      = nullptr;
 
         // -----------------------------------------------------------------------
@@ -220,7 +223,7 @@ public:
             h.rebin    = rebin;
             h.retrieveHistogram();
         }
-       
+ 
         // sort the bgEntries by number of events
         std::sort(bgEntries_.begin(), bgEntries_.end(), compareNEvents);
 
@@ -231,7 +234,7 @@ public:
             if(!hbgSum)
                 hbgSum = static_cast<TH1*>(bgEntries_[iBG].h->Clone());
             else
-            hbgSum->Add(bgEntries_[iBG].h.get());
+                hbgSum->Add(bgEntries_[iBG].h.get());
         }
 
         // ------------------------
@@ -286,15 +289,17 @@ public:
         histInfo dummy(new TH1D("dummy", "dummy", 1000, hbgSum->GetBinLowEdge(1), hbgSum->GetBinLowEdge(hbgSum->GetNbinsX()) + hbgSum->GetBinWidth(hbgSum->GetNbinsX())));
         dummy.setupAxes();
         dummy.h->GetYaxis()->SetTitle(yAxisLabel.c_str());
+        dummy.h->GetYaxis()->SetTitleSize(0.035);
         dummy.h->GetXaxis()->SetTitle(xAxisLabel.c_str());
-        
+        dummy.h->GetXaxis()->SetTitleSize(0.035);       
+ 
         // set x-axis range
         if(xmin < xmax)
             dummy.h->GetXaxis()->SetRangeUser(xmin, xmax);
 
         // set y-axis range 
-        if(isLogY) {
-
+        if(isLogY) 
+        {
             double locMin  = std::min(0.2, std::max(0.2, 0.05 * min));
             double legSpan = (log10(3*max) - log10(locMin)) * (leg->GetY1() - gPad->GetBottomMargin()) / ((1 - gPad->GetTopMargin()) - gPad->GetBottomMargin());
             double legMin  = legSpan + log10(locMin);
@@ -342,8 +347,8 @@ public:
         // --------------------------------------------------
         // draw CMS & lumi lables & cut labels & significance
         // --------------------------------------------------
-        char lumistamp[128];
-        sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi / 1000.0);
+        //char lumistamp[128];
+        //sprintf(lumistamp, "%.1f fb^{-1} (13 TeV)", lumi / 1000.0);
     
         TLatex mark;
         mark.SetNDC(true);
@@ -359,12 +364,12 @@ public:
         
         mark.SetTextFont(42); 
         mark.SetTextAlign(31);
-        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), lumistamp);
+        mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), (year + " (13 TeV)").c_str());//lumistamp);
 
-        mark.SetTextAlign(11);
-        mark.SetTextFont(42);
-        mark.SetTextSize(0.030);
-        mark.DrawLatex(0.51, 0.89, cutlabel.c_str()); 
+        //mark.SetTextAlign(11);
+        //mark.SetTextFont(42);
+        //mark.SetTextSize(0.030);
+        //mark.DrawLatex(0.51, 0.89, cutlabel.c_str()); 
 
         // calculate significance bin by bin
         double sig = 0.0;
@@ -382,14 +387,14 @@ public:
         significance.SetNDC(true);
         significance.SetTextAlign(11);
         significance.SetTextFont(52);
-        significance.SetTextSize(0.030);
+        significance.SetTextSize(0.025);
         significance.DrawLatex(0.15, 0.89, ("Significance = "+std::to_string(sig)).c_str());
 
         // -----------------
         // save plots as pdf
         // -----------------
         //c->Print((histName + ".png").c_str());
-        c->Print((histName + ".pdf").c_str());
+        c->Print((output_ + histName + ".pdf").c_str());
 
         // -----------------------
         // clean up dynamic memory
@@ -404,71 +409,81 @@ public:
 // -------------------
 // -- Main function 
 // -------------------
-int main()
+int main(int argc, char *argv[])
 {
+    int opt, option_index = 0;
+    std::string year = "", wp = "";
+    
+    static struct option long_options[] = {
+        {"year",  required_argument, 0, 'y'},
+        {"wp",    required_argument, 0, 'w'},
+    };
+
+    while((opt = getopt_long(argc, argv, "y:w:", long_options, &option_index)) != -1)
+    {
+        switch(opt)
+        {
+            case 'y': year = optarg; break;
+            case 'w': wp   = optarg; break;
+        }
+    }
+
+    std::string path;
+    if      (year == "2016" && wp == "0.92")     path = "condor/hadd_2016_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.95")     path = "condor/hadd_2016_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.96")     path = "condor/hadd_2016_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.97")     path = "condor/hadd_2016_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.98")     path = "condor/hadd_2016_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.99")     path = "condor/hadd_2016_AN_StackPlots_WP_0.99.28.01.2021/" ;
+
+    else if (year == "2017" && wp == "0.92")     path = "condor/hadd_2017_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.95")     path = "condor/hadd_2017_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.96")     path = "condor/hadd_2017_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.97")     path = "condor/hadd_2017_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.98")     path = "condor/hadd_2017_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.99")     path = "condor/hadd_2017_AN_StackPlots_WP_0.99.28.01.2021/" ;
+
+    else if (year == "2018pre" && wp == "0.92")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.95")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.96")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.97")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.98")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.99")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.99.28.01.2021/" ;
+
+
     // --------------
     // entry for data
     // --------------
     // 'leg entry'  'root file'     'draw options'  'draw color'
-    histInfo data = {"Data", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_BG_OTHER.root", "PEX0", kBlack, false};
+    histInfo data = {"Data", path + "/" + year +"_Other.root", "PEX0", kBlack, false};
 
     // ----------------------------------------
     // vector summarizing background histograms 
     // ----------------------------------------
     std::vector<histInfo> bgEntries = {
-
-        //{"t#bar{t}",   "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_TT.root",    "hist", kBlue - 6    },
-        //{"t#bar{t}+X", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_TTX.root",   "hist", kOrange + 2  },
-        //{"QCD",        "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_QCD.root",   "hist", kGreen + 1   },
-        //{"Other",      "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_Other.root", "hist", kMagenta + 2 },
-         
-        {"T#bar{T}",        "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_TT.root",              "hist", kBlue - 6   },
-        {"WJets",           "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_WJets.root",           "hist", kYellow + 1 },
-        {"DYJetsToLL_M-50", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_DYJetsToLL_M-50.root", "hist", kOrange + 2 },
-        {"QCD",             "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_QCD.root",             "hist", kGreen + 1  },
-        {"ST",              "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_ST.root",              "hist", kRed + 1    },
-        {"Diboson",         "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_Diboson.root",         "hist", kMagenta + 1},
-        {"TTX",             "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_TTX.root",             "hist", kCyan + 1   },
-        {"Triboson",        "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_Triboson.root",        "hist", kGray       },        
-
-    
+        {"t#bar{t}",     path + "/" + year +"_TT.root",    "hist", 40 },
+        {"t#bar{t} + X", path + "/" + year +"_TTX.root",   "hist", 38 },
+        {"QCD multijet", path + "/" + year +"_QCD.root",   "hist", 30 },
+        {"Other",        path + "/" + year +"_Other.root", "hist", 41 },
     };
     
     // ------------------------------------
     // vector summarizing signal histograms
     // ------------------------------------ 
     std::vector<histInfo> sigEntries = { 
-
-        {"RPV m_{#tildet} = 350", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_RPV_2t6j_mStop-350.root","hist", kCyan}, 
-        {"RPV m_{#tildet} = 550", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_RPV_2t6j_mStop-550.root","hist", kMagenta},
-        {"RPV m_{#tildet} = 850", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_RPV_2t6j_mStop-850.root","hist", kRed },
-        //{"SYY m_{#tildet} = 900", "condor/hadd_2016_makeStopHemispheres_TopSeed_StopJets_WP98_25.07.2020/2016_StealthSYY_2t6j_mStop-900.root", "hist", kGray },
-    
+        {"RPV m_{ #tilde{t}} = 350 GeV",         path + "/" + year +"_RPV_2t6j_mStop-350.root",        "hist", 2 }, 
+        {"RPV m_{ #tilde{t}} = 550 GeV",         path + "/" + year +"_RPV_2t6j_mStop-550.root",        "hist", 7 }, 
+        {"RPV m_{ #tilde{t}} = 850 GeV",         path + "/" + year +"_RPV_2t6j_mStop-850.root",        "hist", 4 }, 
+        {"Stealth SYY m_{ #tilde{t}} = 900 GeV", path + "/" + year +"_StealthSYY_2t6j_mStop-900.root", "hist", 6 }, 
     };
 
     // -------------------
     // make plotter object
     // ------------------- 
-    Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries));
+    Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries), "AN_0L_2021/StackPlots_WPs_" + year + "_" + wp + "_");
 
     std::vector<std::string> cut {
-
-        //"", "0l", 
-        
-        //"0l_HT500", "0l_HT500_ge2b", "0l_HT500_ge2b_ge6j", 
- 
-        //"0l_HT500_ge2b_ge6j_ge2t", 
-        //"0l_HT500_ge2b_ge6j_ge2t1j", "0l_HT500_ge2b_ge6j_ge2t3j", "0l_HT500_ge2b_ge6j_ge2t1j3j",
-        
         "0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets", 
-        //"0l_HT500_ge2b_ge6j_ge2t1j_ge1dRbjets", "0l_HT500_ge2b_ge6j_ge2t3j_ge1dRbjets", "0l_HT500_ge2b_ge6j_ge2t1j3j_ge1dRbjets",
-        //"baseline_0l_Njet7", "baseline_0l_Njet8", "baseline_0l_Njet9", 
-        //"baseline_0l_Njet10", "baseline_0l_Njet11", "baseline_0l_Njet12",
-        //"baseline_0l_Njet13", "baseline_0l_Njet14", "baseline_0l_Njet15",
-        
-        //"baseline_0l_stopMassesg200_PtRank", "baseline_0l_stopMassesg200_ScalarPtRank",
-        //"baseline_0l_stopMassesle200_PtRank", "baseline_0l_stopMassesle200_ScalarPtRank", 
-
     };
 
     for (const auto& cutlabel : cut) 
@@ -476,8 +491,9 @@ int main()
         // --------------------
         // General Variables
         // --------------------
+
         //plt.plot( "h_ntops_"+cutlabel,         "N_{T}",                "Events", true, cutlabel );
-        //plt.plot( "h_njets_"+cutlabel,         "N_{J}",                "Events", true, cutlabel );
+        plt.plot( "h_njets_"+cutlabel,         "N_{jets}",                "Events", true, year );
         //plt.plot( "h_nbjets_"+cutlabel,        "N_{BJ}",               "Events", true, cutlabel );
         //plt.plot( "h_ht_"+cutlabel,            "HT [GeV]",             "Events", true, cutlabel );
         //plt.plot( "h_met_"+cutlabel,           "MET [GeV]",            "Events", true, cutlabel );
@@ -497,46 +513,5 @@ int main()
         //plt.plot( "h_dR_bjets_"+cutlabel,      "#DeltaR_{bjets}",      "Events", false, cutlabel ); // true: for not log scale
         //plt.plot( "h_dR_top1_top2_"+cutlabel,  "#DeltaR_{t1-t2}",      "Events", false, cutlabel );
         //plt.plot( "h_dR_tops_bjets_"+cutlabel, "#DeltaR_{tops-bjets}", "Events", false, cutlabel ); 
-
-        // -----------------
-        // Stop Variables
-        // -----------------
-        // pt rank
-        //plt.plot( "h_stop1Mass_PtRank_"+cutlabel,           "Pt Rank M_{#tildet}_{1}",               "Events", true, cutlabel, 0, 1500, 5 );
-        //plt.plot( "h_stop1Eta_PtRank_"+cutlabel,            "Pt Rank #eta_{#tildet}_{1}",            "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Phi_PtRank_"+cutlabel,            "Pt Rank #phi_{#tildet}_{1}",            "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Pt_PtRank_"+cutlabel,             "Pt Rank pT_{#tildet}_{1}",              "Events", true, cutlabel, 0, 1500, 5 );        
-        //plt.plot( "h_stop2Mass_PtRank_"+cutlabel,           "Pt Rank M_{#tildet}_{2}",               "Events", true, cutlabel, 0, 1500, 5 );
-        //plt.plot( "h_stop2Eta_PtRank_"+cutlabel,            "Pt Rank #eta_{#tildet}_{2}",            "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Phi_PtRank_"+cutlabel,            "Pt Rank #phi_{#tildet}_{2}",            "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Pt_PtRank_"+cutlabel,             "Pt Rank pT_{#tildet}_{2}",              "Events", true, cutlabel, 0, 1500, 5 );
-        // mass rank
-        plt.plot( "h_stop1Mass_MassRank_"+cutlabel,         "Mass Rank M_{#tildet}_{1}",             "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Eta_MassRank_"+cutlabel,          "Mass Rank #eta_{#tildet}_{1}",          "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Phi_MassRank_"+cutlabel,          "Mass Rank #phi_{#tildet}_{1}",          "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Pt_MassRank_"+cutlabel,           "Mass Rank pT_{#tildet}_{1}",            "Events", true, cutlabel, 0, 1500, 5 );
-        plt.plot( "h_stop2Mass_MassRank_"+cutlabel,         "Mass Rank M_{#tildet}_{2}",             "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Eta_MassRank_"+cutlabel,          "Mass Rank #eta_{#tildet}_{2}",          "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Phi_MassRank_"+cutlabel,          "Mass Rank #phi_{#tildet}_{2}",          "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Pt_MassRank_"+cutlabel,           "Mass Rank pT_{#tildet}_{2}",            "Events", true, cutlabel, 0, 1500, 5 );
-        // scalarPt rank
-        plt.plot( "h_stop1Mass_ScalarPtRank_"+cutlabel,     "ScalarPt Rank M_{#tildet}_{1}",         "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Eta_ScalarPtRank_"+cutlabel,      "ScalarPt Rank #eta_{#tildet}_{1}",      "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Phi_ScalarPtRank_"+cutlabel,      "ScalarPt Rank #phi_{#tildet}_{1}",      "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop1Pt_ScalarPtRank_"+cutlabel,       "ScalarPt Rank pT_{#tildet}_{1}",        "Events", true, cutlabel, 0, 1500, 5 );
-        plt.plot( "h_stop2Mass_ScalarPtRank_"+cutlabel,     "ScalarPt Rank M_{#tildet}_{2}",         "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Eta_ScalarPtRank_"+cutlabel,      "ScalarPt Rank #eta_{#tildet}_{2}",      "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Phi_ScalarPtRank_"+cutlabel,      "ScalarPt Rank #phi_{#tildet}_{2}",      "Events", true, cutlabel, 5 );
-        //plt.plot( "h_stop2Pt_ScalarPtRank_"+cutlabel,       "ScalarPt Rank pT_{#tildet}_{2}",        "Events", true, cutlabel, 0, 1500, 5 );
-        plt.plot( "h_stop1ScalarPt_ScalarPtRank_"+cutlabel, "ScalarPt Rank Scalar pT_{#tildet}_{1}", "Events", true, cutlabel, 5 );
-        plt.plot( "h_stop2ScalarPt_ScalarPtRank_"+cutlabel, "ScalarPt Rank Scalar pT_{#tildet}_{2}", "Events", true, cutlabel, 5 );
-        // others
-        //plt.plot( "h_MT2_"+cutlabel,                        "MT2",                                   "Events", true, cutlabel, 0, 1500, 5 );
-        plt.plot( "h_dR_stop1stop2_"+cutlabel,              "#DeltaR",                               "Events", true, cutlabel, 5 );
-        plt.plot( "h_dPhi_stop1stop2_"+cutlabel,            "#Delta#phi",                            "Events", true, cutlabel, 0, 4 );
-        plt.plot( "h_difference_stopMasses_"+cutlabel,      "difference",                            "Events", true, cutlabel, 5 );
-        plt.plot( "h_average_stopMasses_"+cutlabel,         "average",                               "Events", true, cutlabel, 5 );
-        plt.plot( "h_relativeDiff_stopMasses_"+cutlabel,    "relative difference",                   "Events", true, cutlabel, 0, 100,  5 );
-
     }
 }
