@@ -272,7 +272,28 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="StealthHemispheres" || analyzer=="Semra_Analyzer" || analyzer=="AnalyzeTopTagger" || analyzer=="ISRJets_Analyzer")
+        else if(analyzer=="Semra_Analyzer" || analyzer=="AnalyzeTopTagger")
+        {   
+            const std::vector<std::string> modulesList = {
+                "PartialUnBlinding",
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
+                "CommonVariables",
+                "FatJetCombine",
+                "MakeMVAVariables",
+                "Baseline",
+                "DeepEventShape",
+                "BTagCorrector",
+                "ScaleFactors",
+            };
+            registerModules(tr, std::move(modulesList));
+        } 
+        else if(analyzer=="StealthHemispheres" || analyzer=="ISRJets_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -295,7 +316,7 @@ public:
                 "MakeStopHemispheres_OldSeed_maskedISR",
                 "MakeStopHemispheres_TopSeed",
                 "MakeStopHemispheres_TopSeed_maskedISR",
-                //"StopGenMatch",
+                "StopGenMatch",
                 "BTagCorrector",
                 "ScaleFactors",
             };
@@ -380,12 +401,12 @@ public:
                 "FatJetCombine",
                 "MakeMVAVariables",
                 "DeepEventShape",
-                "ISRJets",
+                //"ISRJets",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_OldSeed_maskedISR",
+                //"MakeStopHemispheres_OldSeed_maskedISR",
                 "MakeStopHemispheres_TopSeed",
-                "MakeStopHemispheres_TopSeed_maskedISR",
+                //"MakeStopHemispheres_TopSeed_maskedISR",
                 "BTagCorrector",
                 "ScaleFactors",
                 "TrainingNTupleVars",
