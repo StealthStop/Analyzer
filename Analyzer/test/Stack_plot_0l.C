@@ -429,26 +429,26 @@ int main(int argc, char *argv[])
     }
 
     std::string path;
-    if      (year == "2016" && wp == "0.92")     path = "condor/hadd_2016_AN_StackPlots_WP_0.92.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.95")     path = "condor/hadd_2016_AN_StackPlots_WP_0.95.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.96")     path = "condor/hadd_2016_AN_StackPlots_WP_0.96.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.97")     path = "condor/hadd_2016_AN_StackPlots_WP_0.97.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.98")     path = "condor/hadd_2016_AN_StackPlots_WP_0.98.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.99")     path = "condor/hadd_2016_AN_StackPlots_WP_0.99.28.01.2021/" ;
+    if      (year == "2016" && wp == "0.92")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.95")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.96")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.97")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.98")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    else if (year == "2016" && wp == "0.99")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.99.28.01.2021/" ;
 
-    else if (year == "2017" && wp == "0.92")     path = "condor/hadd_2017_AN_StackPlots_WP_0.92.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.95")     path = "condor/hadd_2017_AN_StackPlots_WP_0.95.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.96")     path = "condor/hadd_2017_AN_StackPlots_WP_0.96.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.97")     path = "condor/hadd_2017_AN_StackPlots_WP_0.97.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.98")     path = "condor/hadd_2017_AN_StackPlots_WP_0.98.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.99")     path = "condor/hadd_2017_AN_StackPlots_WP_0.99.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.92")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.95")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.96")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.97")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.98")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    else if (year == "2017" && wp == "0.99")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.99.28.01.2021/" ;
 
-    else if (year == "2018pre" && wp == "0.92")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.92.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.95")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.95.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.96")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.96.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.97")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.97.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.98")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.98.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.99")  path = "condor/hadd_2018pre_AN_StackPlots_WP_0.99.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.92") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.95") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.96") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.97") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.98") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    else if (year == "2018pre" && wp == "0.99") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.99.28.01.2021/" ;
 
 
     // --------------
@@ -492,8 +492,17 @@ int main(int argc, char *argv[])
         // General Variables
         // --------------------
 
+        if (year == "2018pre")
+        {
+            plt.plot( "h_njets_"+cutlabel,         "N_{jets}",                "Events", true, "", 999.9, -999.9, -1, "2018" );
+        }
+
+        else
+        {
+            plt.plot( "h_njets_"+cutlabel,         "N_{jets}",                "Events", true, "", 999.9, -999.9, -1, year );
+        }
+            
         //plt.plot( "h_ntops_"+cutlabel,         "N_{T}",                "Events", true, cutlabel );
-        plt.plot( "h_njets_"+cutlabel,         "N_{jets}",                "Events", true, year );
         //plt.plot( "h_nbjets_"+cutlabel,        "N_{BJ}",               "Events", true, cutlabel );
         //plt.plot( "h_ht_"+cutlabel,            "HT [GeV]",             "Events", true, cutlabel );
         //plt.plot( "h_met_"+cutlabel,           "MET [GeV]",            "Events", true, cutlabel );
