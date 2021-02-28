@@ -172,20 +172,20 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------
         // -- Make Stop Hemispheres variables
         // -------------------------------------
-        const auto& stop1_PtRank               = tr.getVar<TLorentzVector>("stop1_PtRank_TaggedTop_maskedISR");
-        const auto& stop2_PtRank               = tr.getVar<TLorentzVector>("stop2_PtRank_TaggedTop_maskedISR");
-        const auto& stop1_MassRank             = tr.getVar<TLorentzVector>("stop1_MassRank_TaggedTop_maskedISR");
-        const auto& stop2_MassRank             = tr.getVar<TLorentzVector>("stop2_MassRank_TaggedTop_maskedISR");
-        const auto& stop1_ScalarPtRank         = tr.getVar<TLorentzVector>("stop1_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& stop2_ScalarPtRank         = tr.getVar<TLorentzVector>("stop2_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& stop1ScalarPt_ScalarPtRank = tr.getVar<double>("stop1ScalarPt_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& stop2ScalarPt_ScalarPtRank = tr.getVar<double>("stop2ScalarPt_ScalarPtRank_TaggedTop_maskedISR");
-        const auto& MT2                        = tr.getVar<double>("MT2_TaggedTop_maskedISR"); 
-        const auto& dR_stop1stop2              = tr.getVar<double>("dR_stop1stop2_TaggedTop_maskedISR");
-        const auto& dPhi_stop1stop2            = tr.getVar<double>("dPhi_stop1stop2_TaggedTop_maskedISR");
-        const auto& difference_stopMasses      = tr.getVar<double>("difference_stopMasses_TaggedTop_maskedISR");
-        const auto& average_stopMasses         = tr.getVar<double>("average_stopMasses_TaggedTop_maskedISR");
-        const auto& relativeDiff_stopMasses    = tr.getVar<double>("relativeDiff_stopMasses_TaggedTop_maskedISR");
+        const auto& Stop1_PtRank               = tr.getVar<TLorentzVector>("Stop1_PtRank_OldSeed_maskedISR");
+        const auto& Stop2_PtRank               = tr.getVar<TLorentzVector>("Stop2_PtRank_OldSeed_maskedISR");
+        const auto& Stop1_MassRank             = tr.getVar<TLorentzVector>("Stop1_MassRank_OldSeed_maskedISR");
+        const auto& Stop2_MassRank             = tr.getVar<TLorentzVector>("Stop2_MassRank_OldSeed_maskedISR");
+        const auto& Stop1_ScalarPtRank         = tr.getVar<TLorentzVector>("Stop1_ScalarPtRank_OldSeed_maskedISR");
+        const auto& Stop2_ScalarPtRank         = tr.getVar<TLorentzVector>("Stop2_ScalarPtRank_OldSeed_maskedISR");
+        const auto& Stop1ScalarPt_ScalarPtRank = tr.getVar<double>("Stop1ScalarPt_ScalarPtRank_OldSeed_maskedISR");
+        const auto& Stop2ScalarPt_ScalarPtRank = tr.getVar<double>("Stop2ScalarPt_ScalarPtRank_OldSeed_maskedISR");
+        const auto& MT2                        = tr.getVar<double>("MT2_OldSeed_maskedISR"); 
+        const auto& dR_Stop1Stop2              = tr.getVar<double>("dR_Stop1Stop2_OldSeed_maskedISR");
+        const auto& dPhi_Stop1Stop2            = tr.getVar<double>("dPhi_Stop1Stop2_OldSeed_maskedISR");
+        const auto& difference_stopMasses      = tr.getVar<double>("difference_stopMasses_OldSeed_maskedISR");
+        const auto& average_stopMasses         = tr.getVar<double>("average_stopMasses_OldSeed_maskedISR");
+        const auto& relativeDiff_stopMasses    = tr.getVar<double>("relativeDiff_stopMasses_OldSeed_maskedISR");
 
         double stop1Mass_PtRank       = 0.0, stop1Eta_PtRank       = 0.0, stop1Phi_PtRank       = 0.0, stop1Pt_PtRank       = 0.0;
         double stop2Mass_PtRank       = 0.0, stop2Eta_PtRank       = 0.0, stop2Phi_PtRank       = 0.0, stop2Pt_PtRank       = 0.0;
@@ -194,32 +194,32 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         double stop1Mass_ScalarPtRank = 0.0, stop1Eta_ScalarPtRank = 0.0, stop1Phi_ScalarPtRank = 0.0, stop1Pt_ScalarPtRank = 0.0;
         double stop2Mass_ScalarPtRank = 0.0, stop2Eta_ScalarPtRank = 0.0, stop2Phi_ScalarPtRank = 0.0, stop2Pt_ScalarPtRank = 0.0;        
         
-        stop1Mass_PtRank       = stop1_PtRank.M();
-        stop1Eta_PtRank        = stop1_PtRank.Eta();
-        stop1Phi_PtRank        = stop1_PtRank.Phi();       
-        stop1Pt_PtRank         = stop1_PtRank.Pt();
-        stop2Mass_PtRank       = stop2_PtRank.M();
-        stop2Eta_PtRank        = stop2_PtRank.Eta();
-        stop2Phi_PtRank        = stop2_PtRank.Phi(); 
-        stop2Pt_PtRank         = stop2_PtRank.Pt();
+        stop1Mass_PtRank       = Stop1_PtRank.M();
+        stop1Eta_PtRank        = Stop1_PtRank.Eta();
+        stop1Phi_PtRank        = Stop1_PtRank.Phi();       
+        stop1Pt_PtRank         = Stop1_PtRank.Pt();
+        stop2Mass_PtRank       = Stop2_PtRank.M();
+        stop2Eta_PtRank        = Stop2_PtRank.Eta();
+        stop2Phi_PtRank        = Stop2_PtRank.Phi(); 
+        stop2Pt_PtRank         = Stop2_PtRank.Pt();
 
-        stop1Mass_MassRank     = stop1_MassRank.M();
-        stop1Eta_MassRank      = stop1_MassRank.Eta();
-        stop1Phi_MassRank      = stop1_MassRank.Phi(); 
-        stop1Pt_MassRank       = stop1_MassRank.Pt();
-        stop2Mass_MassRank     = stop2_MassRank.M();
-        stop2Eta_MassRank      = stop2_MassRank.Eta();
-        stop2Phi_MassRank      = stop2_MassRank.Phi();
-        stop2Pt_MassRank       = stop2_MassRank.Pt();
+        stop1Mass_MassRank     = Stop1_MassRank.M();
+        stop1Eta_MassRank      = Stop1_MassRank.Eta();
+        stop1Phi_MassRank      = Stop1_MassRank.Phi(); 
+        stop1Pt_MassRank       = Stop1_MassRank.Pt();
+        stop2Mass_MassRank     = Stop2_MassRank.M();
+        stop2Eta_MassRank      = Stop2_MassRank.Eta();
+        stop2Phi_MassRank      = Stop2_MassRank.Phi();
+        stop2Pt_MassRank       = Stop2_MassRank.Pt();
 
-        stop1Mass_ScalarPtRank = stop1_ScalarPtRank.M();
-        stop1Eta_ScalarPtRank  = stop1_ScalarPtRank.Eta();
-        stop1Phi_ScalarPtRank  = stop1_ScalarPtRank.Phi();
-        stop1Pt_ScalarPtRank   = stop1_ScalarPtRank.Pt();
-        stop2Mass_ScalarPtRank = stop2_ScalarPtRank.M();
-        stop2Eta_ScalarPtRank  = stop2_ScalarPtRank.Eta();
-        stop2Phi_ScalarPtRank  = stop2_ScalarPtRank.Phi();
-        stop2Pt_ScalarPtRank   = stop2_ScalarPtRank.Pt();        
+        stop1Mass_ScalarPtRank = Stop1_ScalarPtRank.M();
+        stop1Eta_ScalarPtRank  = Stop1_ScalarPtRank.Eta();
+        stop1Phi_ScalarPtRank  = Stop1_ScalarPtRank.Phi();
+        stop1Pt_ScalarPtRank   = Stop1_ScalarPtRank.Pt();
+        stop2Mass_ScalarPtRank = Stop2_ScalarPtRank.M();
+        stop2Eta_ScalarPtRank  = Stop2_ScalarPtRank.Eta();
+        stop2Phi_ScalarPtRank  = Stop2_ScalarPtRank.Phi();
+        stop2Pt_ScalarPtRank   = Stop2_ScalarPtRank.Pt();        
 
         // -------------------
         // -- Define weight
@@ -282,7 +282,6 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         // --------------------------------     
         for (const auto& cutVar: cutmap) 
         { 
-               
             if (cutVar.second) 
             {
                 // ---------------------------
@@ -315,12 +314,12 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_stop2Eta_ScalarPtRank_"+cutVar.first]->Fill( stop2Eta_ScalarPtRank, weight );
                 my_histos["h_stop2Phi_ScalarPtRank_"+cutVar.first]->Fill( stop2Phi_ScalarPtRank, weight );
                 my_histos["h_stop2Pt_ScalarPtRank_"+cutVar.first]->Fill( stop2Pt_ScalarPtRank, weight );
-                my_histos["h_stop1ScalarPt_ScalarPtRank_"+cutVar.first]->Fill( stop1ScalarPt_ScalarPtRank, weight );
-                my_histos["h_stop2ScalarPt_ScalarPtRank_"+cutVar.first]->Fill( stop2ScalarPt_ScalarPtRank, weight );
+                my_histos["h_stop1ScalarPt_ScalarPtRank_"+cutVar.first]->Fill( Stop1ScalarPt_ScalarPtRank, weight );
+                my_histos["h_stop2ScalarPt_ScalarPtRank_"+cutVar.first]->Fill( Stop2ScalarPt_ScalarPtRank, weight );
                 // 1D - others
                 my_histos["h_MT2_"+cutVar.first]->Fill( MT2, weight );
-                my_histos["h_dR_stop1stop2_"+cutVar.first]->Fill( dR_stop1stop2, weight );
-                my_histos["h_dPhi_stop1stop2_"+cutVar.first]->Fill( dPhi_stop1stop2, weight );
+                my_histos["h_dR_stop1stop2_"+cutVar.first]->Fill( dR_Stop1Stop2, weight );
+                my_histos["h_dPhi_stop1stop2_"+cutVar.first]->Fill( dPhi_Stop1Stop2, weight );
                 my_histos["h_difference_stopMasses_"+cutVar.first]->Fill( difference_stopMasses, weight );
                 my_histos["h_average_stopMasses_"+cutVar.first]->Fill( average_stopMasses, weight );
                 my_histos["h_relativeDiff_stopMasses_"+cutVar.first]->Fill( relativeDiff_stopMasses, weight );
@@ -384,7 +383,7 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_2d_histos["h_stopMasses_diffVSavg_"+cutVar.first]->GetXaxis()->SetTitle("difference");
                 my_2d_histos["h_stopMasses_diffVSavg_"+cutVar.first]->GetYaxis()->SetTitle("average");
                 // 2D - stop All Pt combinations
-                my_2d_histos["h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first]->Fill( stop1ScalarPt_ScalarPtRank, stop2ScalarPt_ScalarPtRank, weight );
+                my_2d_histos["h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first]->Fill( Stop1ScalarPt_ScalarPtRank, Stop2ScalarPt_ScalarPtRank, weight );
                 my_2d_histos["h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{1}");
                 my_2d_histos["h_ScalarPt_stop1vsstop2_ScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{2}");
                 my_2d_histos["h_Pt1_PtRankVsScalarPtRank_"+cutVar.first]->Fill( stop1Pt_PtRank, stop1Pt_ScalarPtRank, weight );
@@ -393,10 +392,10 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_2d_histos["h_Pt2_PtRankVsScalarPtRank_"+cutVar.first]->Fill( stop2Pt_PtRank, stop2Pt_ScalarPtRank, weight );
                 my_2d_histos["h_Pt2_PtRankVsScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("Pt Rank pT_{#tildet}_{2}");
                 my_2d_histos["h_Pt2_PtRankVsScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank pT_{#tildet}_{2}");
-                my_2d_histos["h_Pt1_PtRankVsScalarPt1_ScalarPtRank_"+cutVar.first]->Fill( stop1Pt_PtRank, stop1ScalarPt_ScalarPtRank, weight );
+                my_2d_histos["h_Pt1_PtRankVsScalarPt1_ScalarPtRank_"+cutVar.first]->Fill( stop1Pt_PtRank, Stop1ScalarPt_ScalarPtRank, weight );
                 my_2d_histos["h_Pt1_PtRankVsScalarPt1_ScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("Pt Rank pT_{#tildet}_{1}");
                 my_2d_histos["h_Pt1_PtRankVsScalarPt1_ScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{1}");
-                my_2d_histos["h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first]->Fill( stop2Pt_PtRank, stop2ScalarPt_ScalarPtRank, weight );
+                my_2d_histos["h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first]->Fill( stop2Pt_PtRank, Stop2ScalarPt_ScalarPtRank, weight );
                 my_2d_histos["h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first]->GetXaxis()->SetTitle("Pt Rank pT_{#tildet}_{2}");
                 my_2d_histos["h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{2}");
                 // 2D - stops MassVsPt
@@ -418,10 +417,10 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_2d_histos["h_stop2_MassVsPt_ScalarPtRank_"+cutVar.first]->Fill(stop2Mass_ScalarPtRank, stop2Pt_ScalarPtRank, weight);
                 my_2d_histos["h_stop2_MassVsPt_ScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("ScalarPt Rank M_{#tildet}_{2}");
                 my_2d_histos["h_stop2_MassVsPt_ScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank pT_{#tildet}_{2}");
-                my_2d_histos["h_stop1_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->Fill(stop1Mass_ScalarPtRank, stop1ScalarPt_ScalarPtRank, weight);
+                my_2d_histos["h_stop1_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->Fill(stop1Mass_ScalarPtRank, Stop1ScalarPt_ScalarPtRank, weight);
                 my_2d_histos["h_stop1_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("ScalarPt Rank M_{#tildet}_{1}");
                 my_2d_histos["h_stop1_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{1}");
-                my_2d_histos["h_stop2_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->Fill(stop2Mass_ScalarPtRank, stop1ScalarPt_ScalarPtRank, weight);
+                my_2d_histos["h_stop2_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->Fill(stop2Mass_ScalarPtRank, Stop1ScalarPt_ScalarPtRank, weight);
                 my_2d_histos["h_stop2_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("ScalarPt Rank M_{#tildet}_{2}");
                 my_2d_histos["h_stop2_MassVsScalarPt_ScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{2}");
                 // 2D - MT2
