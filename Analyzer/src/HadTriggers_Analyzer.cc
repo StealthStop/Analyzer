@@ -118,9 +118,9 @@ void HadTriggers_Analyzer::InitHistos()
         }
     }
  
-    // -----------------------------------------------
-    // our triggers + reference analysis preselections
-    // -----------------------------------------------
+    // --------------------------------------------------------------
+    // our triggers + reference analysis preselections with nbjet cut
+    // --------------------------------------------------------------
     std::vector<std::string> ourTrigTags { "OurHadIsoMu" };
     
     for( std::string effTag : effTags )
@@ -169,6 +169,30 @@ void HadTriggers_Analyzer::InitHistos()
         }
     }
 
+    // --------------------------------------------------------------
+    // our triggers + reference analysis preselections with njet cuts
+    // --------------------------------------------------------------
+    std::vector<std::string> nJetCutTags { "ge6jetCut", "6jetCut", "7jetCut", "8jetCut", "9jetCut", "ge10jetCut" };
+
+    for( std::string effTag : effTags )
+    {
+        for( std::string ourTrigTag : ourTrigTags )
+        {
+            for( std::string trigTag : trigTags )
+            {
+                for( std::string nJetCutTag : nJetCutTags )
+                {
+                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HT").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HT").c_str(), htbins, htbinEdges ) );
+                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
+                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_NBJet").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
+
+                    my_2d_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
+
+                }
+            }
+        }
+    }
+
 
 } //
 
@@ -207,6 +231,12 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         bool pass_2bjetCut   = NGoodBJets_pt30 == 2; 
         bool pass_3bjetCut   = NGoodBJets_pt30 == 3;
         bool pass_ge4bjetCut = NGoodBJets_pt30 >= 4;
+
+        bool pass_6jetCut    = NGoodJets_pt40 == 6;
+        bool pass_7jetCut    = NGoodJets_pt40 == 7;
+        bool pass_8jetCut    = NGoodJets_pt40 == 8;
+        bool pass_9jetCut    = NGoodJets_pt40 == 9;
+        bool pass_ge10jetCut = NGoodJets_pt40 >= 10;
 
         // -----------------------------------------
         // get the 6th jet pt for reference analysis
@@ -358,9 +388,9 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             };
             fillHistosRefAN(cut_map_theirTriggers, passTriggerRefAN, HT_trigger_pt45, SixthJetPt45, NGoodBJets_pt45, weight);
             
-            // -----------------------------------------------
-            // our triggers + reference analysis preselections
-            // -----------------------------------------------
+            // --------------------------------------------------------------
+            // our triggers + reference analysis preselections with bjet cuts
+            // --------------------------------------------------------------
             const std::map<std::string, bool> cut_map_ourTriggers
             {
                 { "OurHadIsoMu_trig_ge2bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad                    },
@@ -385,6 +415,26 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             };
             fillHistos(cut_map2_hadMuTriggers, passTriggerAllHad, HT_trigger_pt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
 
+            // --------------------------------------------------------------
+            // our triggers + reference analysis preselections with njet cuts
+            // --------------------------------------------------------------
+            const std::map<std::string, bool> cut_map2_ourTriggers
+            {
+                { "OurHadIsoMu_trig_ge6jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad                    },
+                { "OurHadIsoMu_trig_6jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_6jetCut    },
+                { "OurHadIsoMu_trig_7jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_7jetCut    },
+                { "OurHadIsoMu_trig_8jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_8jetCut    },
+                { "OurHadIsoMu_trig_9jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_9jetCut    },
+                { "OurHadIsoMu_trig_ge10jetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge10jetCut },
+
+                { "OurHadIsoMu_noTrig_ge6jetCut",  passBaseline0l_refAN && passTriggerMuonsRefAN                    },
+                { "OurHadIsoMu_noTrig_6jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_6jetCut    },
+                { "OurHadIsoMu_noTrig_7jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_7jetCut    },
+                { "OurHadIsoMu_noTrig_8jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_8jetCut    },
+                { "OurHadIsoMu_noTrig_9jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_9jetCut    },
+                { "OurHadIsoMu_noTrig_ge10jetCut", passBaseline0l_refAN && passTriggerMuonsRefAN && pass_ge10jetCut },
+            };
+            fillHistosRefAN(cut_map2_ourTriggers, passTriggerAllHad, HT_trigger_pt30, SixthJetPt, NGoodBJets_pt30, weight);
         }
     }
 }
