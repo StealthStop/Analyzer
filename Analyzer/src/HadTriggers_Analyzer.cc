@@ -28,45 +28,46 @@ void HadTriggers_Analyzer::InitHistos()
     // for Our Analysis
     // ----------------
     std::vector<std::string> effTags   { "denominator", "numerator" }; 
-    std::vector<std::string> hadTags   { "had", "had_IsoMu"         };
+    //std::vector<std::string> hadTags   { "had", "had_IsoMu"         };
     std::vector<std::string> trigTags  { "trig", "noTrig"           };
     std::vector<std::string> ptTags    { "pt45"                     }; // label for GoodJets_pt45 & GoodBJets_pt45 & HT_trigger_pt45 
  
-    const int nHTbins   = 7;
-    const int nhtBins   = 13;
-    const int nJetBins  = 9;
-    const int nBJetBins = 5;
-    double HTbinEdges[nHTbins + 1]      = {400, 500, 600, 700, 800, 900, 1000, 1100};
-    double htBinEdges[nhtBins + 1 ]     = {0, 200, 400, 600, 800, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000};
-    double njetBinEdges[nJetBins + 1]   = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    double nbjetBinEdges[nBJetBins + 1] = {0, 1, 2, 3, 4, 5};
+    //const int nHTbins   = 7;
+    //const int nhtBins   = 13;
+    //const int nJetBins  = 9;
+    //const int nBJetBins = 5;
+    //double HTbinEdges[nHTbins + 1]      = {400, 500, 600, 700, 800, 900, 1000, 1100};
+    //double htBinEdges[nhtBins + 1 ]     = {0, 200, 400, 600, 800, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000};
+    //double njetBinEdges[nJetBins + 1]   = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    //double nbjetBinEdges[nBJetBins + 1] = {0, 1, 2, 3, 4, 5};
 
-    for( std::string effTag : effTags ) 
-    {
-        for( std::string hadTag : hadTags ) 
-        {
-            for( std::string trigTag : trigTags )
-            {
-                    for( std::string ptTag : ptTags ) 
-                    {
-                        my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_HT").c_str(), nHTbins, HTbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_ht5000", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_ht5000").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_ht5000").c_str(), nhtBins, htBinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJet").c_str(), nJetBins, njetBinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NBJet").c_str(), nBJetBins, nbjetBinEdges ) );                                
+    //for( std::string effTag : effTags ) 
+    //{
+    //    for( std::string hadTag : hadTags ) 
+    //    {
+    //        for( std::string trigTag : trigTags )
+    //        {
+    //                for( std::string ptTag : ptTags ) 
+    //                {
+    //                    my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_HT").c_str(), nHTbins, HTbinEdges ) );
+    //                    my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_ht5000", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_ht5000").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_ht5000").c_str(), nhtBins, htBinEdges ) );
+    //                    my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJet").c_str(), nJetBins, njetBinEdges ) );
+    //                    my_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NBJet").c_str(), nBJetBins, nbjetBinEdges ) );                                
 
-                        my_2d_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHT", std::make_shared<TH2D>( ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHT" ).c_str(), ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHT" ).c_str(), nJetBins, njetBinEdges, nHTbins, HTbinEdges ) );
-                        my_2d_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHt" ).c_str(), ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHt" ).c_str(), nJetBins, njetBinEdges, nhtBins, htBinEdges ) );
-                        my_2d_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet", std::make_shared<TH2D>( ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet" ).c_str(), ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet" ).c_str(), nJetBins, njetBinEdges, nBJetBins, nbjetBinEdges ) );
+    //                    my_2d_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHT", std::make_shared<TH2D>( ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHT" ).c_str(), ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHT" ).c_str(), nJetBins, njetBinEdges, nHTbins, HTbinEdges ) );
+    //                    my_2d_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHt" ).c_str(), ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsHt" ).c_str(), nJetBins, njetBinEdges, nhtBins, htBinEdges ) );
+    //                    my_2d_histos.emplace( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet", std::make_shared<TH2D>( ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet" ).c_str(), ( "h_"+effTag+"_"+hadTag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet" ).c_str(), nJetBins, njetBinEdges, nBJetBins, nbjetBinEdges ) );
 
-                }
-            }
-        }
-    }
+    //            }
+    //        }
+    //    }
+    //}
 
     // ------------------------------------
     // for Reference Analysis - AN-2016/411
+    //     -- with deepCSV
     // ------------------------------------
-    std::vector<std::string> refANTags    { "refAnHad", "refAnHadIsoMu" };
+    std::vector<std::string> refANTags    { "refAnHadIsoMu" };
     std::vector<std::string> nBJetCutTags { "ge2bjetCut", "2bjetCut", "3bjetCut", "ge4bjetCut" };
     const int htbins   = 9;
     const int ptbins   = 7;
@@ -93,34 +94,59 @@ void HadTriggers_Analyzer::InitHistos()
             }
         }
     }
-   
-    // --------------------------------------------------
-    // their triggers + their preselections with our pt45
-    // --------------------------------------------------
-    std::vector<std::string> theirTrigTags { "TheirHadIsoMu" };
+
+    // -------------------------------
+    // for reference analysis triggers
+    //     -- with csv
+    // -------------------------------
+    std::vector<std::string> csvnBJetCutTags { "csvge2bjetCut", "csv2bjetCut", "csv3bjetCut", "csvge4bjetCut" };
 
     for( std::string effTag : effTags )
     {
-        for( std::string theirTrigTag : theirTrigTags )
+        for( std::string refANTag : refANTags )
         {
             for( std::string trigTag : trigTags )
             {
-                for( std::string nBJetCutTag : nBJetCutTags )
+                for( std::string csvnBJetCutTag : csvnBJetCutTags )
                 {
-                    my_histos.emplace( "h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_HT").c_str(), ("h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_HT").c_str(), htbins, htbinEdges ) );
-                    my_histos.emplace( "h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
-                    my_histos.emplace( "h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_NBJet").c_str(), ("h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
+                    my_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_HT").c_str(), ("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_HT").c_str(), htbins, htbinEdges ) );
+                    my_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
+                    my_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_NBJet").c_str(), ("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
 
-                    my_2d_histos.emplace( "h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+theirTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
+                    my_2d_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+csvnBJetCutTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
 
                 }
             }
         }
     }
+   
+    // --------------------------------------------------
+    // their triggers + their preselections with our pt45
+    // --------------------------------------------------
+    for( std::string effTag : effTags )
+    {
+        for( std::string refANTag : refANTags )
+        {
+            for( std::string trigTag : trigTags )
+            {
+                for( std::string nBJetCutTag : nBJetCutTags )
+                {
+                    for( std::string ptTag : ptTags )
+                    {
+                        my_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT").c_str(), htbins, htbinEdges ) );
+                        my_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
+                        my_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
+
+                        my_2d_histos.emplace( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+refANTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
+                    }
+                }
+            }
+        }
+    }
  
-    // --------------------------------------------------------------
-    // our triggers + reference analysis preselections with nbjet cut
-    // --------------------------------------------------------------
+    // ----------------------------------
+    // our triggers + their preselections
+    // ----------------------------------
     std::vector<std::string> ourTrigTags { "OurHadIsoMu" };
     
     for( std::string effTag : effTags )
@@ -142,57 +168,30 @@ void HadTriggers_Analyzer::InitHistos()
         }
     }
     
-    // -------------------------------------------
-    // our tighter preselections with our triggers
-    // -------------------------------------------
-    std::vector<std::string> had2Tags { "hadIsoMu2" };
-
+    // ------------------------------------------------
+    // our triggers + their preselections with our pt45
+    // ------------------------------------------------
     for( std::string effTag : effTags )
     {   
-        for( std::string had2Tag : had2Tags )
+        for( std::string ourTrigTag : ourTrigTags )
         {   
             for( std::string trigTag : trigTags )
             {       
+                for( std::string nBJetCutTag : nBJetCutTags )
+                {
                     for( std::string ptTag : ptTags )
                     {   
-                        my_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_HT").c_str(), nHTbins, HTbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_ht5000", std::make_shared<TH1D>(("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_ht5000").c_str(), ("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_ht5000").c_str(), nhtBins, htBinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJet").c_str(), nJetBins, njetBinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NBJet").c_str(), nBJetBins, nbjetBinEdges ) );
-                        
-                        my_2d_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsHT", std::make_shared<TH2D>( ( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsHT" ).c_str(), ( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsHT" ).c_str(), nJetBins, njetBinEdges, nHTbins, HTbinEdges ) );
-                        my_2d_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsHt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsHt" ).c_str(), ( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsHt" ).c_str(), nJetBins, njetBinEdges, nhtBins, htBinEdges ) );
-                        my_2d_histos.emplace( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet", std::make_shared<TH2D>( ( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet" ).c_str(), ( "h_"+effTag+"_"+had2Tag+"_"+trigTag+"_"+ptTag+"_NJetVsNBJet" ).c_str(), nJetBins, njetBinEdges, nBJetBins, nbjetBinEdges ) );
-                
+                        my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT").c_str(), htbins, htbinEdges ) ); 
+                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
+                        my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
+                    
+                        my_2d_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
+
+                    }
                 }
             }
         }
     }
-
-    // --------------------------------------------------------------
-    // our triggers + reference analysis preselections with njet cuts
-    // --------------------------------------------------------------
-    std::vector<std::string> nJetCutTags { "ge6jetCut", "6jetCut", "7jetCut", "8jetCut", "9jetCut", "ge10jetCut" };
-
-    for( std::string effTag : effTags )
-    {
-        for( std::string ourTrigTag : ourTrigTags )
-        {
-            for( std::string trigTag : trigTags )
-            {
-                for( std::string nJetCutTag : nJetCutTags )
-                {
-                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HT").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HT").c_str(), htbins, htbinEdges ) );
-                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
-                    my_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_NBJet").c_str(), ("h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
-
-                    my_2d_histos.emplace( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+ourTrigTag+"_"+trigTag+"_"+nJetCutTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
-
-                }
-            }
-        }
-    }
-
 
 } //
 
@@ -213,7 +212,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passBaseline0l_hadTrig    = tr.getVar<bool>("passBaseline0l_hadTrig");
         const auto& passBaseline0l_hadMuTrig  = tr.getVar<bool>("passBaseline0l_hadMuTrig");
         const auto& passTriggerAllHad         = tr.getVar<bool>("passTriggerAllHad");
-        // for reference analysis AN-2016/411 
+        // for reference analysis AN-2016/411 with deepCSV 
         const auto& Jets                      = tr.getVec<TLorentzVector>("Jets");
         const auto& GoodJets_pt40             = tr.getVec<bool>("GoodJets_pt40");
         const auto& NGoodJets_pt40            = tr.getVar<int>("NGoodJets_pt40");
@@ -225,18 +224,17 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // their triggers + their preselections with our pt45
         const auto& GoodJets_pt45             = tr.getVec<bool>("GoodJets_pt45");
         const auto& passBaseline0l_refAN_pt45 = tr.getVar<bool>("passBaseline0l_refAN_pt45");
-        // our tighter preselections with our triggers
-        const auto& passBaseline0l_hadMuTrig2 = tr.getVar<bool>("passBaseline0l_hadMuTrig2");
+        // for reference analysis with csv
+        const auto& NGoodBJetsCSV_pt30        = tr.getVar<int>("NGoodBJetsCSV_pt30");
+        const auto& passBaseline0l_csv_refAN  = tr.getVar<bool>("passBaseline0l_csv_refAN");
 
-        bool pass_2bjetCut   = NGoodBJets_pt30 == 2; 
-        bool pass_3bjetCut   = NGoodBJets_pt30 == 3;
-        bool pass_ge4bjetCut = NGoodBJets_pt30 >= 4;
 
-        bool pass_6jetCut    = NGoodJets_pt40 == 6;
-        bool pass_7jetCut    = NGoodJets_pt40 == 7;
-        bool pass_8jetCut    = NGoodJets_pt40 == 8;
-        bool pass_9jetCut    = NGoodJets_pt40 == 9;
-        bool pass_ge10jetCut = NGoodJets_pt40 >= 10;
+        bool pass_2bjetCut      = NGoodBJets_pt30 == 2; 
+        bool pass_3bjetCut      = NGoodBJets_pt30 == 3;
+        bool pass_ge4bjetCut    = NGoodBJets_pt30 >= 4;
+        bool pass_csv2bjetCut   = NGoodBJetsCSV_pt30 == 2;
+        bool pass_csv3bjetCut   = NGoodBJetsCSV_pt30 == 3;
+        bool pass_csvge4bjetCut = NGoodBJetsCSV_pt30 >= 4;
 
         // -----------------------------------------
         // get the 6th jet pt for reference analysis
@@ -303,41 +301,6 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }
-
-        // ----------------------------------------------------
-        // -- Trigger Efficiency on the JetHT Dataset and MC
-        // ----------------------------------------------------
-        
-        if( (filetag.find("Data_JetHT") != std::string::npos || runtype == "MC") ) 
-        {
-            // -------------------------
-            // for our analysis triggers
-            // -------------------------
-            const std::map<std::string, bool> cut_map_hadTriggers 
-            {
-                { "had_trig_pt45",   passBaseline0l_hadTrig && passTriggerAllHad },                                               
-                { "had_noTrig_pt45", passBaseline0l_hadTrig }, 
-            };
-            fillHistos(cut_map_hadTriggers, passTriggerAllHad, HT_trigger_pt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
-
-            // -------------------------------
-            // for reference analysis triggers
-            // -------------------------------
-            const std::map<std::string, bool> cut_map_refAnTriggers
-            {  
-                { "refAnHad_trig_ge2bjetCut", passBaseline0l_refAN && passTriggerRefAN                    }, 
-                { "refAnHad_trig_2bjetCut",   passBaseline0l_refAN && passTriggerRefAN && pass_2bjetCut   },
-                { "refAnHad_trig_3bjetCut",   passBaseline0l_refAN && passTriggerRefAN && pass_3bjetCut   },
-                { "refAnHad_trig_ge4bjetCut", passBaseline0l_refAN && passTriggerRefAN && pass_ge4bjetCut },
-
-                { "refAnHad_noTrig_ge2bjetCut", passBaseline0l_refAN                    },
-                { "refAnHad_noTrig_2bjetCut",   passBaseline0l_refAN && pass_2bjetCut   },
-                { "refAnHad_noTrig_3bjetCut",   passBaseline0l_refAN && pass_3bjetCut   },
-                { "refAnHad_noTrig_ge4bjetCut", passBaseline0l_refAN && pass_ge4bjetCut },
-            };
-            fillHistosRefAN(cut_map_refAnTriggers, passTriggerRefAN, HT_trigger_pt30, SixthJetPt, NGoodBJets_pt30, weight);
-
-        }
         
         // ---------------------------------------------------------
         // -- Trigger Efficiency on the SingleMuon Dataset and MC
@@ -347,22 +310,23 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             // -------------------------
             // for our analysis triggers
             // -------------------------
-            const std::map<std::string, bool> cut_map_hadMuTriggers
-            {   
-                { "had_IsoMu_trig_pt45",   passBaseline0l_hadMuTrig && passTriggerAllHad},
-                { "had_IsoMu_noTrig_pt45", passBaseline0l_hadMuTrig },  
-            };
-            fillHistos(cut_map_hadMuTriggers, passTriggerAllHad, HT_trigger_pt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
+            //const std::map<std::string, bool> cut_map_hadMuTriggers
+            //{   
+            //    { "had_IsoMu_trig_pt45",   passBaseline0l_hadMuTrig && passTriggerAllHad},
+            //    { "had_IsoMu_noTrig_pt45", passBaseline0l_hadMuTrig },  
+            //};
+            //fillHistos(cut_map_hadMuTriggers, passTriggerAllHad, HT_trigger_pt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
 
             // -------------------------------
             // for reference analysis triggers
+            //     -- with deepCSV
             // -------------------------------
             const std::map<std::string, bool> cut_map_refAnMuTriggers
             {
-                { "refAnHadIsoMu_trig_ge2bjetCut", passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN                    },
-                { "refAnHadIsoMu_trig_2bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_2bjetCut   },
-                { "refAnHadIsoMu_trig_3bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_3bjetCut   },
-                { "refAnHadIsoMu_trig_ge4bjetCut", passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_ge4bjetCut },
+                { "refAnHadIsoMu_trig_ge2bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN                    },
+                { "refAnHadIsoMu_trig_2bjetCut",     passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_2bjetCut   },
+                { "refAnHadIsoMu_trig_3bjetCut",     passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_3bjetCut   },
+                { "refAnHadIsoMu_trig_ge4bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_ge4bjetCut },
 
                 { "refAnHadIsoMu_noTrig_ge2bjetCut", passBaseline0l_refAN && passTriggerMuonsRefAN                    },
                 { "refAnHadIsoMu_noTrig_2bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && pass_2bjetCut   },
@@ -370,27 +334,45 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 { "refAnHadIsoMu_noTrig_ge4bjetCut", passBaseline0l_refAN && passTriggerMuonsRefAN && pass_ge4bjetCut },
             };
             fillHistosRefAN(cut_map_refAnMuTriggers, passTriggerRefAN, HT_trigger_pt30, SixthJetPt, NGoodBJets_pt30, weight);
-            
+           
+            // -------------------------------
+            // for reference analysis triggers 
+            //     -- with csv
+            // -------------------------------
+            const std::map<std::string, bool> cut_map_csv_refAnMuTriggers
+            {
+                { "refAnHadIsoMu_trig_csvge2bjetCut",   passBaseline0l_csv_refAN && passTriggerMuonsRefAN && passTriggerRefAN                       },
+                { "refAnHadIsoMu_trig_csv2bjetCut",     passBaseline0l_csv_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_csv2bjetCut   },
+                { "refAnHadIsoMu_trig_csv3bjetCut",     passBaseline0l_csv_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_csv3bjetCut   },
+                { "refAnHadIsoMu_trig_csvge4bjetCut",   passBaseline0l_csv_refAN && passTriggerMuonsRefAN && passTriggerRefAN && pass_csvge4bjetCut },
+
+                { "refAnHadIsoMu_noTrig_csvge2bjetCut", passBaseline0l_csv_refAN && passTriggerMuonsRefAN                       },
+                { "refAnHadIsoMu_noTrig_csv2bjetCut",   passBaseline0l_csv_refAN && passTriggerMuonsRefAN && pass_csv2bjetCut   },
+                { "refAnHadIsoMu_noTrig_csv3bjetCut",   passBaseline0l_csv_refAN && passTriggerMuonsRefAN && pass_csv3bjetCut   },
+                { "refAnHadIsoMu_noTrig_csvge4bjetCut", passBaseline0l_csv_refAN && passTriggerMuonsRefAN && pass_csvge4bjetCut },
+            };
+            fillHistosRefAN(cut_map_csv_refAnMuTriggers, passTriggerRefAN, HT_trigger_pt30, SixthJetPt, NGoodBJetsCSV_pt30, weight);
+ 
             // --------------------------------------------------
             // their triggers + their preselections with our pt45
             // --------------------------------------------------
             const std::map<std::string, bool> cut_map_theirTriggers
             {   
-                { "TheirHadIsoMu_trig_ge2bjetCut",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN                    },
-                { "TheirHadIsoMu_trig_2bjetCut",     passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN && pass_2bjetCut   },
-                { "TheirHadIsoMu_trig_3bjetCut",     passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN && pass_3bjetCut   },
-                { "TheirHadIsoMu_trig_ge4bjetCut",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN && pass_ge4bjetCut },
+                { "refAnHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN                    },
+                { "refAnHadIsoMu_trig_2bjetCut_pt45",     passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN && pass_2bjetCut   },
+                { "refAnHadIsoMu_trig_3bjetCut_pt45",     passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN && pass_3bjetCut   },
+                { "refAnHadIsoMu_trig_ge4bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerRefAN && pass_ge4bjetCut },
                 
-                { "TheirHadIsoMu_noTrig_ge2bjetCut", passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN                    },
-                { "TheirHadIsoMu_noTrig_2bjetCut",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_2bjetCut   },
-                { "TheirHadIsoMu_noTrig_3bjetCut",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_3bjetCut   },
-                { "TheirHadIsoMu_noTrig_ge4bjetCut", passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_ge4bjetCut },
+                { "refAnHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN                    },
+                { "refAnHadIsoMu_noTrig_2bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_2bjetCut   },
+                { "refAnHadIsoMu_noTrig_3bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_3bjetCut   },
+                { "refAnHadIsoMu_noTrig_ge4bjetCut_pt45", passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_ge4bjetCut },
             };
             fillHistosRefAN(cut_map_theirTriggers, passTriggerRefAN, HT_trigger_pt45, SixthJetPt45, NGoodBJets_pt45, weight);
             
-            // --------------------------------------------------------------
-            // our triggers + reference analysis preselections with bjet cuts
-            // --------------------------------------------------------------
+            // ----------------------------------
+            // our triggers + their preselections
+            // ----------------------------------
             const std::map<std::string, bool> cut_map_ourTriggers
             {
                 { "OurHadIsoMu_trig_ge2bjetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad                    },
@@ -405,36 +387,23 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             };
             fillHistosRefAN(cut_map_ourTriggers, passTriggerAllHad, HT_trigger_pt30, SixthJetPt, NGoodBJets_pt30, weight);
 
-            // -------------------------------------------
-            // our tighter preselections with our triggers
-            // -------------------------------------------
+            // ------------------------------------------------
+            // our triggers + their preselections with our pt45
+            // ------------------------------------------------
             const std::map<std::string, bool> cut_map2_hadMuTriggers
             {
-                { "hadIsoMu2_trig_pt45",   passBaseline0l_hadMuTrig2 && passTriggerAllHad},
-                { "hadIsoMu2_noTrig_pt45", passBaseline0l_hadMuTrig2 },
-            };
-            fillHistos(cut_map2_hadMuTriggers, passTriggerAllHad, HT_trigger_pt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
+                { "OurHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerAllHad                    },
+                { "OurHadIsoMu_trig_2bjetCut_pt45",     passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_2bjetCut   },
+                { "OurHadIsoMu_trig_3bjetCut_pt45",     passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_3bjetCut   },
+                { "OurHadIsoMu_trig_ge4bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge4bjetCut },
 
-            // --------------------------------------------------------------
-            // our triggers + reference analysis preselections with njet cuts
-            // --------------------------------------------------------------
-            const std::map<std::string, bool> cut_map2_ourTriggers
-            {
-                { "OurHadIsoMu_trig_ge6jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad                    },
-                { "OurHadIsoMu_trig_6jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_6jetCut    },
-                { "OurHadIsoMu_trig_7jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_7jetCut    },
-                { "OurHadIsoMu_trig_8jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_8jetCut    },
-                { "OurHadIsoMu_trig_9jetCut",      passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_9jetCut    },
-                { "OurHadIsoMu_trig_ge10jetCut",   passBaseline0l_refAN && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge10jetCut },
-
-                { "OurHadIsoMu_noTrig_ge6jetCut",  passBaseline0l_refAN && passTriggerMuonsRefAN                    },
-                { "OurHadIsoMu_noTrig_6jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_6jetCut    },
-                { "OurHadIsoMu_noTrig_7jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_7jetCut    },
-                { "OurHadIsoMu_noTrig_8jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_8jetCut    },
-                { "OurHadIsoMu_noTrig_9jetCut",    passBaseline0l_refAN && passTriggerMuonsRefAN && pass_9jetCut    },
-                { "OurHadIsoMu_noTrig_ge10jetCut", passBaseline0l_refAN && passTriggerMuonsRefAN && pass_ge10jetCut },
+                { "OurHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN                    },
+                { "OurHadIsoMu_noTrig_2bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_2bjetCut   },
+                { "OurHadIsoMu_noTrig_3bjetCut_pt45",   passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_3bjetCut   },
+                { "OurHadIsoMu_noTrig_ge4bjetCut_pt45", passBaseline0l_refAN_pt45 && passTriggerMuonsRefAN && pass_ge4bjetCut },
             };
-            fillHistosRefAN(cut_map2_ourTriggers, passTriggerAllHad, HT_trigger_pt30, SixthJetPt, NGoodBJets_pt30, weight);
+            fillHistosRefAN(cut_map2_hadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodBJets_pt45, weight);
+
         }
     }
 }
