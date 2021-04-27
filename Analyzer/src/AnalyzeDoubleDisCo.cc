@@ -65,49 +65,57 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
     while( tr.getNextEvent() )
     {
-        const auto& ntops               = tr.getVar<int>("ntops");
-        const auto& runtype             = tr.getVar<std::string>("runtype");     
-        const auto& Jets                = tr.getVec<TLorentzVector>("Jets");
-        const auto& GoodJets_pt30       = tr.getVec<bool>("GoodJets_pt30");
-        const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
-        const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
-        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
-        const auto& correct2018Split    = tr.getVar<bool>("correct2018Split");
-        const auto& passTrigger         = tr.getVar<bool>("passTrigger");
-        const auto& passTriggerMC       = tr.getVar<bool>("passTriggerMC");
-        const auto& passMETFilters      = tr.getVar<bool>("passMETFilters");
-        const auto& passMadHT           = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline1l_Good = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passHEMVeto         = tr.getVar<bool>("passHEMVeto");
-        const auto& Mbl                 = tr.getVar<double>("Mbl");
-        const auto& passBlind           = tr.getVar<bool>("passBlindLep_Good");            
-        const auto& DoubleDisCo_binA    = tr.getVar<bool>("DoubleDisCo_binA");
-        const auto& DoubleDisCo_binB    = tr.getVar<bool>("DoubleDisCo_binB");
-        const auto& DoubleDisCo_binC    = tr.getVar<bool>("DoubleDisCo_binC");
-        const auto& DoubleDisCo_binD    = tr.getVar<bool>("DoubleDisCo_binD");
-        const auto& DoubleDisCo_massReg = tr.getVar<double>("DoubleDisCo_massReg");
-        const auto& DoubleDisCo_disc1   = tr.getVar<double>("DoubleDisCo_disc1");
-        const auto& DoubleDisCo_disc2   = tr.getVar<double>("DoubleDisCo_disc2");
-        const auto& fwm2_top6           = tr.getVar<double>("fwm2_top6");
-        const auto& fwm3_top6           = tr.getVar<double>("fwm3_top6");
-        const auto& fwm4_top6           = tr.getVar<double>("fwm4_top6");
-        const auto& fwm5_top6           = tr.getVar<double>("fwm5_top6");
-        const auto& fwm6_top6           = tr.getVar<double>("fwm6_top6");
-        const auto& fwm7_top6           = tr.getVar<double>("fwm7_top6");
-        const auto& fwm8_top6           = tr.getVar<double>("fwm8_top6");
-        const auto& fwm9_top6           = tr.getVar<double>("fwm9_top6");
-        const auto& fwm10_top6          = tr.getVar<double>("fwm10_top6");
-        const auto& jmt_ev0_top6        = tr.getVar<double>("jmt_ev0_top6");
-        const auto& jmt_ev1_top6        = tr.getVar<double>("jmt_ev1_top6");
-        const auto& jmt_ev2_top6        = tr.getVar<double>("jmt_ev2_top6");
-        const auto& lvMET_pt            = tr.getVar<double>("lvMET_cm_pt");
-        const auto& lvMET_eta           = tr.getVar<double>("lvMET_cm_eta");
-        const auto& lvMET_phi           = tr.getVar<double>("lvMET_cm_phi");
-        const auto& lvMET_m             = tr.getVar<double>("lvMET_cm_m");
-        const auto& Jets_cm_top6        = tr.getVec<TLorentzVector>("Jets_cm_top6");
-        const auto& eventCounter        = tr.getVar<int>("eventCounter");
-        const auto& nMVAJets            = tr.getVar<unsigned int>("nMVAJets");
+        const auto& ntops                = tr.getVar<int>("ntops");
+        const auto& runtype              = tr.getVar<std::string>("runtype");     
+        const auto& Jets                 = tr.getVec<TLorentzVector>("Jets");
+        const auto& GoodJets_pt30        = tr.getVec<bool>("GoodJets_pt30");
+        const auto& NGoodJets_pt30       = tr.getVar<int>("NGoodJets_pt30");
+        const auto& NGoodBJets_pt30      = tr.getVar<int>("NGoodBJets_pt30");
+        const auto& GoodLeptons          = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+        const auto& HT_trigger_pt30      = tr.getVar<double>("HT_trigger_pt30");
+        const auto& correct2018Split     = tr.getVar<bool>("correct2018Split");
+        const auto& passTrigger          = tr.getVar<bool>("passTrigger");
+        const auto& passTriggerMC        = tr.getVar<bool>("passTriggerMC");
+        const auto& passMETFilters       = tr.getVar<bool>("passMETFilters");
+        const auto& passMadHT            = tr.getVar<bool>("passMadHT");
+        const auto& passBaseline1l_Good  = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& passHEMVeto          = tr.getVar<bool>("passHEMVeto");
+        const auto& Mbl                  = tr.getVar<double>("Mbl");
+        const auto& passBlind            = tr.getVar<bool>("passBlindLep_Good");            
+        const auto& DoubleDisCo_binA     = tr.getVar<bool>("DoubleDisCo_binA");
+        const auto& DoubleDisCo_binB     = tr.getVar<bool>("DoubleDisCo_binB");
+        const auto& DoubleDisCo_binC     = tr.getVar<bool>("DoubleDisCo_binC");
+        const auto& DoubleDisCo_binD     = tr.getVar<bool>("DoubleDisCo_binD");
+        const auto& DoubleDisCo_massReg  = tr.getVar<double>("DoubleDisCo_massReg");
+        const auto& DoubleDisCo_disc1    = tr.getVar<double>("DoubleDisCo_disc1");
+        const auto& DoubleDisCo_disc2    = tr.getVar<double>("DoubleDisCo_disc2");
+        const auto& fwm2_top6            = tr.getVar<double>("fwm2_top6");
+        const auto& fwm3_top6            = tr.getVar<double>("fwm3_top6");
+        const auto& fwm4_top6            = tr.getVar<double>("fwm4_top6");
+        const auto& fwm5_top6            = tr.getVar<double>("fwm5_top6");
+        const auto& fwm6_top6            = tr.getVar<double>("fwm6_top6");
+        const auto& fwm7_top6            = tr.getVar<double>("fwm7_top6");
+        const auto& fwm8_top6            = tr.getVar<double>("fwm8_top6");
+        const auto& fwm9_top6            = tr.getVar<double>("fwm9_top6");
+        const auto& fwm10_top6           = tr.getVar<double>("fwm10_top6");
+        const auto& jmt_ev0_top6         = tr.getVar<double>("jmt_ev0_top6");
+        const auto& jmt_ev1_top6         = tr.getVar<double>("jmt_ev1_top6");
+        const auto& jmt_ev2_top6         = tr.getVar<double>("jmt_ev2_top6");
+        const auto& lvMET_pt             = tr.getVar<double>("lvMET_cm_pt");
+        const auto& lvMET_eta            = tr.getVar<double>("lvMET_cm_eta");
+        const auto& lvMET_phi            = tr.getVar<double>("lvMET_cm_phi");
+        const auto& lvMET_m              = tr.getVar<double>("lvMET_cm_m");
+        const auto& Jets_cm_top6         = tr.getVec<TLorentzVector>("Jets_cm_top6");
+        const auto& eventCounter         = tr.getVar<int>("eventCounter");
+        const auto& nMVAJets             = tr.getVar<unsigned int>("nMVAJets");
+        const auto& Stop1_pt_cm_OldSeed  = tr.getVar<double>("Stop1_pt_cm_OldSeed");
+        const auto& Stop1_eta_cm_OldSeed = tr.getVar<double>("Stop1_eta_cm_OldSeed");
+        const auto& Stop1_phi_cm_OldSeed = tr.getVar<double>("Stop1_phi_cm_OldSeed");
+        const auto& Stop1_mass_cm_OldSeed   = tr.getVar<double>("Stop1_mass_cm_OldSeed");
+        const auto& Stop2_pt_cm_OldSeed  = tr.getVar<double>("Stop2_pt_cm_OldSeed");
+        const auto& Stop2_eta_cm_OldSeed = tr.getVar<double>("Stop2_eta_cm_OldSeed");
+        const auto& Stop2_phi_cm_OldSeed = tr.getVar<double>("Stop2_phi_cm_OldSeed");
+        const auto& Stop2_mass_cm_OldSeed   = tr.getVar<double>("Stop2_mass_cm_OldSeed");
 
         // ------------------------
         // -- Print event number
@@ -125,11 +133,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& Weight  = tr.getVar<double>("Weight");
             const auto& lumi = tr.getVar<double>("Lumi");
             eventweight = lumi*Weight;
-            
+           
             const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
             const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
             leptonweight = eleLepWeight*muLepWeight;
-            
+          
             pileupWeight = tr.getVar<double>("puWeightCorr");
             bTagWeight   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             htDerivedweight = tr.getVar<double>("htDerivedweight");
@@ -142,7 +150,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -- Define cuts
         // -------------------------------
         bool pass_general    = passTriggerMC && passTrigger && passMadHT && passBlind && passMETFilters && passHEMVeto && correct2018Split;
-        
         const std::map<int, bool> njetsMap = {{-1, true},
                                               {7,  NGoodJets_pt30==7},
                                               {8,  NGoodJets_pt30==8},
@@ -182,6 +189,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"GoodLeptons_eta_1",     100, -6, 6},
             {"GoodLeptons_phi_1",     80,  -4, 4},
             {"GoodLeptons_m_1",       20,  0, 200},
+            {"Stop1_pt_cm_OldSeed",      72, 0, 1500},
+            {"Stop1_eta_cm_OldSeed",     80, -6, 6},
+            {"Stop1_phi_cm_OldSeed",     64,  -4, 4},
+            {"Stop1_mass_cm_OldSeed",       72,  0, 1500},
+            {"Stop2_pt_cm_OldSeed",      72, 0, 1500},
+            {"Stop2_eta_cm_OldSeed",     80, -6, 6},
+            {"Stop2_phi_cm_OldSeed",     64,  -4, 4},
+            {"Stop2_mass_cm_OldSeed",       72,  0, 1500},
             {"lvMET_pt",              150, 0, 1500},
             {"lvMET_eta",             100, -6, 6},
             {"lvMET_phi",             80,  -4, 4},
@@ -216,11 +231,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             histInfos.push_back({"Jet_cm_eta_"          + std::to_string(i), 100, -6, 6});
             histInfos.push_back({"Jet_cm_phi_"          + std::to_string(i), 80, -4, 4});
             histInfos.push_back({"Jet_cm_m_"            + std::to_string(i), 20, 0, 200});
-            histInfos.push_back({"Jet_cm_dcsv_"         + std::to_string(i), 80, 0, 1});
             histInfos.push_back({"Jet_cm_ptD_"          + std::to_string(i), 80, 0, 1});
             histInfos.push_back({"Jet_cm_axismajor_"    + std::to_string(i), 80, 0, 0.4});
             histInfos.push_back({"Jet_cm_axisminor_"    + std::to_string(i), 80, 0, 0.4});
             histInfos.push_back({"Jet_cm_multiplicity_" + std::to_string(i), 121, -0.5, 120.5});
+            histInfos.push_back({"Jet_cm_flavb_"        + std::to_string(i), 80, 0, 1});
+            histInfos.push_back({"Jet_cm_flavc_"        + std::to_string(i), 80, 0, 1});
+            histInfos.push_back({"Jet_cm_flavg_"        + std::to_string(i), 80, 0, 1});
+            histInfos.push_back({"Jet_cm_flavuds_"        + std::to_string(i), 80, 0, 1});
+
         }
 
         std::vector<TH2DInfo> hist2DInfos = {
@@ -249,16 +268,19 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 for(auto& jpass : ABCDmap)
                 {
+
                     std::string regionStr = "";
                     if (jpass.first != "") regionStr = "_" + jpass.first;
 
                     if(kv.second and ipass.second and jpass.second)
                     {
+
                         std::string name = kv.first+njetStr+regionStr;
                         double w = weight;
 
                         if (passBaseline1l_Good)
                         {
+
                             my_histos["fwm2_top6"         + name]->Fill(fwm2_top6, w);
                             my_histos["fwm3_top6"         + name]->Fill(fwm3_top6, w);
                             my_histos["fwm4_top6"         + name]->Fill(fwm4_top6, w);
@@ -279,18 +301,26 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             my_histos["lvMET_eta"         + name]->Fill(lvMET_eta, w);
                             my_histos["lvMET_phi"         + name]->Fill(lvMET_phi, w);
                             my_histos["lvMET_m"           + name]->Fill(lvMET_m, w);
+                            my_histos["Stop1_pt_cm_OldSeed"  + name]->Fill(Stop1_pt_cm_OldSeed, w);
+                            my_histos["Stop1_eta_cm_OldSeed" + name]->Fill(Stop1_eta_cm_OldSeed, w);
+                            my_histos["Stop1_phi_cm_OldSeed" + name]->Fill(Stop1_phi_cm_OldSeed, w);
+                            my_histos["Stop1_mass_cm_OldSeed"   + name]->Fill(Stop1_mass_cm_OldSeed, w);
+                            my_histos["Stop2_pt_cm_OldSeed"  + name]->Fill(Stop2_pt_cm_OldSeed, w);
+                            my_histos["Stop2_eta_cm_OldSeed" + name]->Fill(Stop2_eta_cm_OldSeed, w);
+                            my_histos["Stop2_phi_cm_OldSeed" + name]->Fill(Stop2_phi_cm_OldSeed, w);
+                            my_histos["Stop2_mass_cm_OldSeed"   + name]->Fill(Stop2_mass_cm_OldSeed, w);
 
                             unsigned int nJets = Jets_cm_top6.size();
                             unsigned int iVec  = 0;
 
                             for(unsigned int i = 1; i <= nMVAJets; i++)
                             {
+
                                 double pt           = (iVec < nJets) ? static_cast<double>(Jets_cm_top6.at(iVec).Pt())  : 0.0;
                                 double eta          = (iVec < nJets) ? static_cast<double>(Jets_cm_top6.at(iVec).Eta()) : 0.0;
                                 double phi          = (iVec < nJets) ? static_cast<double>(Jets_cm_top6.at(iVec).Phi()) : 0.0;
                                 double m            = (iVec < nJets) ? static_cast<double>(Jets_cm_top6.at(iVec).M())   : 0.0;
-    
-                                double dcsv         = (iVec < nJets) ? tr.getVar<double>("Jet_dcsv_"         + std::to_string(i)) : 0.0;
+   
                                 double axismajor    = (iVec < nJets) ? tr.getVar<double>("Jet_axismajor_"    + std::to_string(i)) : 0.0;
                                 double axisminor    = (iVec < nJets) ? tr.getVar<double>("Jet_axisminor_"    + std::to_string(i)) : 0.0;
                                 double ptD          = (iVec < nJets) ? tr.getVar<double>("Jet_ptD_"          + std::to_string(i)) : 0.0;
@@ -300,7 +330,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                 my_histos["Jet_cm_eta_"          + std::to_string(i) + name]->Fill(eta, w);
                                 my_histos["Jet_cm_phi_"          + std::to_string(i) + name]->Fill(phi, w);
                                 my_histos["Jet_cm_m_"            + std::to_string(i) + name]->Fill(m, w);
-                                my_histos["Jet_cm_dcsv_"         + std::to_string(i) + name]->Fill(dcsv, w);
                                 my_histos["Jet_cm_axismajor_"    + std::to_string(i) + name]->Fill(axismajor, w);
                                 my_histos["Jet_cm_axisminor_"    + std::to_string(i) + name]->Fill(axisminor, w);
                                 my_histos["Jet_cm_ptD_"          + std::to_string(i) + name]->Fill(ptD, w);
@@ -319,6 +348,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                         my_histos["h_ht"                      + name]->Fill(HT_trigger_pt30, w);
                         my_histos["h_mbl"                     + name]->Fill(Mbl, w);
                         my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1, DoubleDisCo_disc2, w);
+
                         for(const auto& l : GoodLeptons)
                         {
                             my_histos["h_lPt"          + name]->Fill(l.second.Pt(), w);
@@ -326,9 +356,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             my_histos["h_lPhi"         + name]->Fill(l.second.Phi(), w);
                             my_2d_histos["h_lEta_lPhi" + name]->Fill(l.second.Eta(), l.second.Phi(), w);
                         }
+
                         for(unsigned int j = 0; j < Jets.size(); j++)
                         {
                             if(!GoodJets_pt30[j]) continue;
+
                             my_histos["h_jPt"          + name]->Fill(Jets.at(j).Pt(), w);
                             my_histos["h_jEta"         + name]->Fill(Jets.at(j).Eta(), w);
                             my_histos["h_jPhi"         + name]->Fill(Jets.at(j).Phi(), w);
@@ -353,6 +385,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             for(unsigned int j = 0; j < Jets.size(); j++)
                             {
                                 if(!GoodJets_pt30[j]) continue;
+
                                 my_histos["blind_jPt"          + name]->Fill(Jets.at(j).Pt(), w);
                                 my_histos["blind_jEta"         + name]->Fill(Jets.at(j).Eta(), w);
                                 my_histos["blind_jPhi"         + name]->Fill(Jets.at(j).Phi(), w);

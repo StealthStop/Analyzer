@@ -65,7 +65,31 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
         const auto& passBaseline        = tr.getVar<bool>("passBaseline1l_Good");
-       
+        const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l_Good");
+      
+        const auto& recoStopMass1       = tr.getVar<TLorentzVector>("GM_Stop1");
+        const auto& recoStopMass2       = tr.getVar<TLorentzVector>("GM_Stop2");
+
+        const auto& Stop1pdgs       = tr.getVec<int>("GM_Stop1_pdgs");
+        const auto& Stop2pdgs       = tr.getVec<int>("GM_Stop2_pdgs");
+
+        const auto& Stop1mom       = tr.getVec<int>("GM_Stop1_mom");
+        const auto& Stop2mom       = tr.getVec<int>("GM_Stop2_mom");
+
+        const auto& Stop1etas       = tr.getVec<double>("GM_Stop1_etas");
+        const auto& Stop2etas       = tr.getVec<double>("GM_Stop2_etas");
+
+        const auto& Stop1pts       = tr.getVec<double>("GM_Stop1_pts");
+        const auto& Stop2pts       = tr.getVec<double>("GM_Stop2_pts");
+
+        const auto& Stop1DR       = tr.getVec<double>("GM_Stop1_DR");
+        const auto& Stop2DR       = tr.getVec<double>("GM_Stop2_DR");
+        const auto& Stop1PT       = tr.getVec<double>("GM_Stop1_PT");
+        const auto& Stop2PT       = tr.getVec<double>("GM_Stop2_PT");
+
+        const auto& genStopMass1       = tr.getVar<TLorentzVector>("GM_Stop1Gen");
+        const auto& genStopMass2       = tr.getVar<TLorentzVector>("GM_Stop2Gen");
+
         if(maxevents != -1 && tr.getEvtNum() >= maxevents) break;        
         if ( tr.getEvtNum() % 1000 == 0 ) printf("  Event %i\n", tr.getEvtNum() ) ;
 
@@ -106,7 +130,20 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         }
         
         //Make cuts and fill histograms here
-        if( passBaseline ) {
+        if( passBaseline0l ) {
+            std::cout << "STOP1 PARTICLES:" << std::endl;
+            for (unsigned int p=0; p<Stop1pdgs.size(); p++) {
+                std::cout << "    " << Stop1mom[p] << " --> " << Stop1pdgs[p] << " PT: " << Stop1pts[p] << " ETA: " << Stop1etas[p] << " dR: " << Stop1DR[p] << " dPT: " << Stop1PT[p] << std::endl;
+            }
+            std::cout << "STOP2 PARTICLES:" << std::endl;
+            for (unsigned int p=0; p<Stop2pdgs.size(); p++) {
+                std::cout << "    " << Stop2mom[p] << " --> " << Stop2pdgs[p] << " PT: " << Stop2pts[p] << " ETA: " << Stop2etas[p] << " dR: " << Stop2DR[p] << " dPT: " << Stop2PT[p] << std::endl;
+            }
+
+            std::cout << "STOP1: M: " << recoStopMass1.M() << " ETA: " << recoStopMass1.Eta() << " PT: " << recoStopMass1.Pt() << std::endl;
+            std::cout << "STOP2: M: " << recoStopMass2.M() << " ETA: " << recoStopMass2.Eta() << " PT: " << recoStopMass2.Pt() << std::endl;
+            std::cout << std::endl;
+
             my_histos["h_njets"]->Fill( NGoodJets_pt30, weight ); 
             my_2d_histos["h_njets_MVA"]->Fill( NGoodJets_pt30, weight );
         }

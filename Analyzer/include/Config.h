@@ -339,7 +339,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if (analyzer=="AnalyzeTest")
+        else if (analyzer=="AnalyzeTest" or analyzer=="AnalyzeGenStop")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -356,7 +356,8 @@ public:
                 "Baseline",
                 "DeepEventShape",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "StopGenMatch"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -375,9 +376,6 @@ public:
                 "FatJetCombine",
                 "MakeMVAVariables",
                 "Baseline",
-                "DeepEventShape",
-                "MakeMVAVariables_NonIsoMuon",
-                "DeepEventShape_NonIsoMuon",
                 "BTagCorrector",
                 "ScaleFactors",
                 "MakeStopHemispheres_OldSeed",
@@ -409,6 +407,7 @@ public:
                 //"MakeStopHemispheres_TopSeed_maskedISR",
                 "BTagCorrector",
                 "ScaleFactors",
+                "StopGenMatch",
                 "TrainingNTupleVars",
             };
             registerModules(tr, std::move(modulesList));
