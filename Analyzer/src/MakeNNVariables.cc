@@ -85,6 +85,11 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             "NGoodJets_pt45_double",
             "NGoodBJets_pt30_double",
             "NGoodBJets_pt45_double",          
+            "stop1_ptrank_mass",
+            "stop2_ptrank_mass",
+            "stop1_mrank_mass",
+            "stop2_mrank_mass",
+            "stop_avemass",
         };
 
         std::set<std::string> varEventShape = 
