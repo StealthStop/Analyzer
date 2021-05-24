@@ -36,6 +36,7 @@
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
+#include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -203,6 +204,7 @@ int main(int argc, char *argv[])
         {"StealthHemispheres",      run<StealthHemispheres>},
         {"AnalyzeTemplate",         run<AnalyzeTemplate>},
         {"MakeNNVariables",         run<MakeNNVariables>},
+        {"AnalyzeGenStop",          run<AnalyzeGenStop>},
     }; 
 
     try
