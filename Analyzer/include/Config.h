@@ -30,18 +30,24 @@ class Config
 private:
     void registerModules(NTupleReader& tr, const std::vector<std::string>&& modules) const
     {
-        const auto& runtype               = tr.getVar<std::string>("runtype");
-        const auto& runYear               = tr.getVar<std::string>("runYear");
-        const auto& DeepESMCfg            = tr.getVar<std::string>("DeepESMCfg");
+        const auto& runtype               = tr.getVar<std::string>("runtype"              );
+        const auto& runYear               = tr.getVar<std::string>("runYear"              );
+        const auto& DeepESMCfg            = tr.getVar<std::string>("DeepESMCfg"           );
+        const auto& DeepESMModel          = tr.getVar<std::string>("DeepESMModel"         );
         const auto& DeepESMCfg_NonIsoMuon = tr.getVar<std::string>("DeepESMCfg_NonIsoMuon");
-        const auto& ModelFile             = tr.getVar<std::string>("ModelFile");
-        const auto& leptonFileName        = tr.getVar<std::string>("leptonFileName");
-        const auto& puFileName            = tr.getVar<std::string>("puFileName");
-        const auto& meanFileName          = tr.getVar<std::string>("meanFileName");
-        const auto& bjetFileName          = tr.getVar<std::string>("bjetFileName");
-        const auto& bjetCSVFileName       = tr.getVar<std::string>("bjetCSVFileName");
-        const auto& filetag               = tr.getVar<std::string>("filetag");
-        const auto& TopTaggerCfg          = tr.getVar<std::string>("TopTaggerCfg");       
+        //const auto& DoubleDisco_Cfg_0l    = tr.getVar<std::string>("DoubleDisco_Cfg_0l"   );
+        //const auto& DoubleDisco_Model_0l  = tr.getVar<std::string>("DoubleDisco_Model_0l" );
+        //const auto& DoubleDisco_Cfg_1l    = tr.getVar<std::string>("DoubleDisco_Cfg_1l"   );  
+        //const auto& DoubleDisco_Model_1l  = tr.getVar<std::string>("DoubleDisco_Model_1l" );    
+        //const auto& DoubleDisco_Cfg_2l    = tr.getVar<std::string>("DoubleDisco_Cfg_2l"   ); 
+        //const auto& DoubleDisco_Model_2l  = tr.getVar<std::string>("DoubleDisco_Model_2l" );
+        const auto& puFileName            = tr.getVar<std::string>("puFileName"           );
+        const auto& leptonFileName        = tr.getVar<std::string>("leptonFileName"       );
+        const auto& bjetFileName          = tr.getVar<std::string>("bjetFileName"         );
+        const auto& bjetCSVFileName       = tr.getVar<std::string>("bjetCSVFileName"      );
+        const auto& filetag               = tr.getVar<std::string>("filetag"              );
+        const auto& meanFileName          = tr.getVar<std::string>("meanFileName"         );
+        const auto& TopTaggerCfg          = tr.getVar<std::string>("TopTaggerCfg"         );       
  
         for(const auto& module : modules)
         {
@@ -54,9 +60,10 @@ private:
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
-            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12);
+            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45", false, true, 12, 0, "_0l");
+            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "_1l");
             else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30");
-            else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20");
+            else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 0, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
@@ -69,9 +76,12 @@ private:
             else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR", Hemisphere::TopSeed);
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
             else if(module=="ISRJets")                               tr.emplaceModule<ISRJets>();
-            else if(module=="DeepEventShape")                        tr.emplaceModule<DeepEventShape>(DeepESMCfg, ModelFile);
-            else if(module=="DeepEventShape_NonIsoMuon")             tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, ModelFile);
+            else if(module=="DeepEventShape")                        tr.emplaceModule<DeepEventShape>(DeepESMCfg, DeepESMModel);
+            else if(module=="DeepEventShape_NonIsoMuon")             tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, DeepESMModel);
             else if(module=="DoubleDisCo_Reg")                       tr.emplaceModule<DeepEventShape>("Keras_Tensorflow_DoubleDisCo_Reg_2016.cfg", "keras_frozen_DoubleDisCo_Reg_2016.pb");           
+            //else if(module=="DoubleDisCo_0l")                        tr.emplaceModule<DeepEventShape>(DoubleDisco_Cfg_0l, DoubleDisco_Model_0l);
+            //else if(module=="DoubleDisCo_1l")                        tr.emplaceModule<DeepEventShape>(DoubleDisco_Cfg_1l, DoubleDisco_Model_1l); 
+            //else if(module=="DoubleDisCo_2l")                        tr.emplaceModule<DeepEventShape>(DoubleDisco_Cfg_2l, DoubleDisco_Model_2l);
  
             if(runtype == "MC")
             {
@@ -93,129 +103,136 @@ public:
     void setUp(NTupleReader& tr) const
     {
         //Get and make needed info
-        const auto& filetag = tr.getVar<std::string>("filetag");
+        const auto& filetag  = tr.getVar<std::string>("filetag");
         const auto& analyzer = tr.getVar<std::string>("analyzer");
-        const bool isSignal = (filetag.find("_stop") != std::string::npos || filetag.find("_mStop") != std::string::npos || filetag.find("VLQ_2t4b") != std::string::npos) ? true : false;
+        const bool isSignal  = (filetag.find("_stop") != std::string::npos || filetag.find("_mStop") != std::string::npos || filetag.find("VLQ_2t4b") != std::string::npos) ? true : false;
 
-        std::string runYear, puFileName, DeepESMCfg, DeepESMCfg_NonIsoMuon, ModelFile, leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
-        
+        std::string runYear, DeepESMCfg_NonIsoMuon, DeepESMCfg, DeepESMModel;
+        std::string DoubleDisco_Cfg_0l, DoubleDisco_Model_0l; 
+        //std::string DoubleDisco_Cfg_1l, DoubleDisco_Model_1l; 
+        //std::string DoubleDisco_Cfg_2l, DoubleDisco_Model_2l;      
+        std::string puFileName, leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
+ 
         double Lumi=0.0, deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
 
         if(filetag.find("2016") != std::string::npos)
         {
-            runYear = "2016";
-            Lumi = 35900.0;
-            deepCSV_WP_loose  = 0.2217;
-            deepCSV_WP_medium = 0.6321;
-            deepCSV_WP_tight  = 0.8953;            
-            puFileName = "PileupHistograms_0121_69p2mb_pm4p6.root";
-            DeepESMCfg = "DeepEventShape_2016.cfg";
+            runYear               = "2016";
+            Lumi                  = 35900.0;
+            deepCSV_WP_loose      = 0.2217;
+            deepCSV_WP_medium     = 0.6321;
+            deepCSV_WP_tight      = 0.8953;            
+            DeepESMCfg            = "DeepEventShape_2016.cfg";
+            DeepESMModel          = "keras_frozen_2016.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2016.cfg";
-            ModelFile = "keras_frozen_2016.pb";
-            leptonFileName = "allInOne_leptonSF_2016.root";
-            bjetFileName = "allInOne_BTagEff.root";
-            bjetCSVFileName = "DeepCSV_2016LegacySF_WP_V1.csv";
-            meanFileName = "allInOne_SFMean.root";
-            blind = false;
-            TopTaggerCfg = "TopTaggerCfg_2016.cfg";
+            //DoubleDisco_Cfg_0l    = "DoubleDisCo_0l_2016.cfg";           
+            //DoubleDisco_Model_0l  = "DoubleDisCo_0l_2016.pb",
+            //DoubleDisco_Cfg_1l    = "DoubleDisCo_1l_2016.cfg";
+            //DoubleDisco_Model_1l  = "DoubleDisCo_1l_2016.pb",
+            //DoubleDisco_Cfg_2l    = "DoubleDisCo_2l_2016.cfg";
+            //DoubleDisco_Model_2l  = "DoubleDisCo_2l_2016.pb",
+            puFileName            = "PileupHistograms_0121_69p2mb_pm4p6.root";
+            leptonFileName        = "allInOne_leptonSF_2016.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
         }
         else if(filetag.find("2017") != std::string::npos)
         { 
-            runYear = "2017";
-            Lumi = 41525.0;
-            deepCSV_WP_loose  = 0.1522;
-            deepCSV_WP_medium = 0.4941;       
-            deepCSV_WP_tight  = 0.8001;
-            puFileName = "pu_ratio.root";
-            DeepESMCfg = "DeepEventShape_2017.cfg";
+            runYear               = "2017";
+            Lumi                  = 41525.0;
+            deepCSV_WP_loose      = 0.1522;
+            deepCSV_WP_medium     = 0.4941;       
+            deepCSV_WP_tight      = 0.8001;
+            DeepESMCfg            = "DeepEventShape_2017.cfg";
+            DeepESMModel          = "keras_frozen_2017.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2017.cfg";
-            ModelFile = "keras_frozen_2017.pb";
-            leptonFileName = "allInOne_leptonSF_2017.root";
-            bjetFileName = "allInOne_BTagEff.root";
-            bjetCSVFileName = "DeepCSV_94XSF_WP_V4_B_F.csv";
-            meanFileName = "allInOne_SFMean.root";
-            blind = false;
-            TopTaggerCfg = "TopTaggerCfg_2017.cfg";
+            //DoubleDisco_Cfg_0l    = "DoubleDisCo_0l_2017.cfg";    
+            //DoubleDisco_Model_0l  = "DoubleDisCo_0l_2017.pb",
+            //DoubleDisco_Cfg_1l    = "DoubleDisCo_1l_2017.cfg";
+            //DoubleDisco_Model_1l  = "DoubleDisCo_1l_2017.pb",
+            //DoubleDisco_Cfg_2l    = "DoubleDisCo_2l_2017.cfg";
+            //DoubleDisco_Model_2l  = "DoubleDisCo_2l_2017.pb",
+            puFileName            = "pu_ratio.root";
+            leptonFileName        = "allInOne_leptonSF_2017.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_94XSF_WP_V4_B_F.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2017.cfg";
         }
         else if(filetag.find("2018pre") != std::string::npos) 
         {
-            runYear = "2018pre";
-            Lumi = 21071.0;
-            deepCSV_WP_loose  = 0.1241;
-            deepCSV_WP_medium = 0.4184;       
-            deepCSV_WP_tight  = 0.7527;
-            puFileName = "PileupHistograms_2018_69mb_pm5.root";
-            DeepESMCfg = "DeepEventShape_2018pre.cfg";
+            runYear               = "2018pre";
+            Lumi                  = 21071.0;
+            deepCSV_WP_loose      = 0.1241;
+            deepCSV_WP_medium     = 0.4184;       
+            deepCSV_WP_tight      = 0.7527;
+            DeepESMCfg            = "DeepEventShape_2018pre.cfg";
+            DeepESMModel          = "keras_frozen_2018pre.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018pre.cfg";
-            ModelFile = "keras_frozen_2018pre.pb";
-            leptonFileName = "allInOne_leptonSF_2018.root";
-            bjetFileName = "allInOne_BTagEff.root";
-            bjetCSVFileName = "DeepCSV_102XSF_WP_V1.csv";
-            meanFileName = "allInOne_SFMean.root";
-            blind = false;
-            TopTaggerCfg = "TopTaggerCfg_2018.cfg";
+            //DoubleDisco_Cfg_0l    = "DoubleDisCo_0l_2018pre.cfg";    
+            //DoubleDisco_Model_0l  = "DoubleDisCo_0l_2018pre.pb",
+            //DoubleDisco_Cfg_1l    = "DoubleDisCo_1l_2018pre.cfg";
+            //DoubleDisco_Model_1l  = "DoubleDisCo_1l_2018pre.pb",
+            //DoubleDisco_Cfg_2l    = "DoubleDisCo_2l_2018pre.cfg";
+            //DoubleDisco_Model_2l  = "DoubleDisCo_2l_2018pre.pb",
+            puFileName            = "PileupHistograms_2018_69mb_pm5.root";
+            leptonFileName        = "allInOne_leptonSF_2018.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }
         else if(filetag.find("2018post") != std::string::npos) 
         {
-            runYear = "2018post";
-            Lumi = 38654.0;
-            deepCSV_WP_loose  = 0.1241;
-            deepCSV_WP_medium = 0.4184;       
-            deepCSV_WP_tight  = 0.7527;
-            puFileName = "PileupHistograms_2018_69mb_pm5.root";
-            DeepESMCfg = "DeepEventShape_2018post.cfg";
+            runYear               = "2018post";
+            Lumi                  = 38654.0;
+            deepCSV_WP_loose      = 0.1241;
+            deepCSV_WP_medium     = 0.4184;       
+            deepCSV_WP_tight      = 0.7527;
+            DeepESMCfg            = "DeepEventShape_2018post.cfg";
+            DeepESMModel          = "keras_frozen_2018post.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018post.cfg";
-            ModelFile = "keras_frozen_2018post.pb";
-            leptonFileName = "allInOne_leptonSF_2018.root";
-            bjetFileName = "allInOne_BTagEff.root";
-            bjetCSVFileName = "DeepCSV_102XSF_WP_V1.csv";
-            meanFileName = "allInOne_SFMean.root";
-            blind = false;
-            TopTaggerCfg = "TopTaggerCfg_2018.cfg";
+            //DoubleDisco_Cfg_0l    = "DoubleDisCo_0l_2018post.cfg";    
+            //DoubleDisco_Model_0l  = "DoubleDisCo_0l_2018post.pb",
+            //DoubleDisco_Cfg_1l    = "DoubleDisCo_1l_2018post.cfg";
+            //DoubleDisco_Model_1l  = "DoubleDisCo_1l_2018post.pb",
+            //DoubleDisco_Cfg_2l    = "DoubleDisCo_2l_2018post.cfg";
+            //DoubleDisco_Model_2l  = "DoubleDisCo_2l_2018post.pb",
+            puFileName            = "PileupHistograms_2018_69mb_pm5.root";
+            leptonFileName        = "allInOne_leptonSF_2018.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }
 
-        tr.registerDerivedVar("runYear",runYear);
-        tr.registerDerivedVar("Lumi",Lumi);
-        tr.registerDerivedVar("deepCSV_WP_loose",deepCSV_WP_loose);
-        tr.registerDerivedVar("deepCSV_WP_medium",deepCSV_WP_medium);
-        tr.registerDerivedVar("deepCSV_WP_tight",deepCSV_WP_tight);
-        tr.registerDerivedVar("isSignal",isSignal);
-        tr.registerDerivedVar("DeepESMCfg",DeepESMCfg);
-        tr.registerDerivedVar("DeepESMCfg_NonIsoMuon",DeepESMCfg_NonIsoMuon);
-        tr.registerDerivedVar("ModelFile",ModelFile);        
-        tr.registerDerivedVar("puFileName",puFileName);
-        tr.registerDerivedVar("leptonFileName",leptonFileName);        
-        tr.registerDerivedVar("bjetFileName",bjetFileName);        
-        tr.registerDerivedVar("bjetCSVFileName",bjetCSVFileName);        
-        tr.registerDerivedVar("meanFileName",meanFileName);        
-        tr.registerDerivedVar("etaCut",2.4); 
-        tr.registerDerivedVar("blind",blind);
-        tr.registerDerivedVar("TopTaggerCfg", TopTaggerCfg);
+        tr.registerDerivedVar("runYear",               runYear              );
+        tr.registerDerivedVar("Lumi",                  Lumi                 );
+        tr.registerDerivedVar("deepCSV_WP_loose",      deepCSV_WP_loose     );
+        tr.registerDerivedVar("deepCSV_WP_medium",     deepCSV_WP_medium    );
+        tr.registerDerivedVar("deepCSV_WP_tight",      deepCSV_WP_tight     );
+        tr.registerDerivedVar("isSignal",              isSignal             );
+        tr.registerDerivedVar("DeepESMCfg",            DeepESMCfg           );
+        tr.registerDerivedVar("DeepESMCfg_NonIsoMuon", DeepESMCfg_NonIsoMuon);
+        tr.registerDerivedVar("DeepESMModel",          DeepESMModel         );        
+        tr.registerDerivedVar("puFileName",            puFileName           );
+        tr.registerDerivedVar("leptonFileName",        leptonFileName       );        
+        tr.registerDerivedVar("bjetFileName",          bjetFileName         );        
+        tr.registerDerivedVar("bjetCSVFileName",       bjetCSVFileName      );        
+        tr.registerDerivedVar("meanFileName",          meanFileName         );        
+        tr.registerDerivedVar("etaCut",                2.4                  ); 
+        tr.registerDerivedVar("blind",                 blind                );
+        tr.registerDerivedVar("TopTaggerCfg",          TopTaggerCfg         );
 
-        //Register Modules that are needed for each Analyzer
-        if(analyzer=="Analyze0Lep" || analyzer=="AnalyzeTopTagger")
-        {
-            const std::vector<std::string> modulesList = {
-                "PartialUnBlinding",
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "RunTopTagger",
-                "BJet",
-                "CommonVariables",
-                "FatJetCombine",
-                "MakeMVAVariables",
-                "Baseline",
-                "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors"
-            };
-            registerModules(tr, std::move(modulesList));
-        }
-        else if(analyzer=="MakeNJetDists")
+        // Register Modules that are needed for each Analyzer
+        if(analyzer=="MakeNJetDists")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -227,7 +244,8 @@ public:
                 "BJet",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
                 "Baseline",
                 "DeepEventShape",
                 "BTagCorrector",
@@ -249,7 +267,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="TwoLepAnalyzer" || analyzer=="Make2LInputTrees")
+        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -260,15 +278,9 @@ public:
                 "Jet",
                 "BJet",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
-                "MakeMVAVariables",
-                //"DeepEventShape",
-                "StopGenMatch",
-                //"MegaJetCombine",
                 "BTagCorrector",
-                "ScaleFactors",
-                "TrainingNTupleVars",
+                "ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -285,7 +297,7 @@ public:
                 "RunTopTagger",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables",
+                "MakeMVAVariables_0l",
                 "Baseline",
                 "DeepEventShape",
                 "BTagCorrector",
@@ -306,7 +318,7 @@ public:
                 "RunTopTagger",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables",
+                "MakeMVAVariables_0l",
                 "Baseline",
                 "DeepEventShape",
                 "ISRJets",
@@ -319,45 +331,6 @@ public:
                 "StopGenMatch",
                 "BTagCorrector",
                 "ScaleFactors",
-            };
-            registerModules(tr, std::move(modulesList));
-        }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="CalculateSFMean")
-        {
-            const std::vector<std::string> modulesList = {
-                "PartialUnBlinding",
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "CommonVariables",
-                "Baseline",
-                "BTagCorrector",
-                "ScaleFactors"
-            };
-            registerModules(tr, std::move(modulesList));
-        }
-        else if (analyzer=="AnalyzeTest" or analyzer=="AnalyzeGenStop")
-        {
-            const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
-                "PartialUnBlinding",
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "CommonVariables",
-                "FatJetCombine",
-                "MakeMVAVariables",
-                "Baseline",
-                "DeepEventShape",
-                "BTagCorrector",
-                "ScaleFactors",
-                "StopGenMatch"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -374,12 +347,36 @@ public:
                 "BJet",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
                 "MakeStopHemispheres_OldSeed",
                 "DoubleDisCo_Reg",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="TwoLepAnalyzer" || analyzer=="Make2LInputTrees")
+        {
+            const std::vector<std::string> modulesList = {
+                "PartialUnBlinding",
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "FatJetCombine",
+                "Baseline",
+                "MakeMVAVariables_2l",
+                //"DeepEventShape",
+                "StopGenMatch",
+                //"MegaJetCombine",
+                "BTagCorrector",
+                "ScaleFactors",
+                "TrainingNTupleVars",
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -397,8 +394,9 @@ public:
                 "CommonVariables",
                 "Baseline",
                 "FatJetCombine",
-                "MakeMVAVariables",
-                "DeepEventShape",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
+                //"MakeMVAVariables_2l",
                 //"ISRJets",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
@@ -408,7 +406,7 @@ public:
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
-                "TrainingNTupleVars",
+                //"TrainingNTupleVars",
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -424,7 +422,9 @@ public:
                 "BJet",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
+                "MakeMVAVariables_2l",
                 "Baseline",
                 "DeepEventShape",
                 "BTagCorrector",
