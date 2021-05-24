@@ -322,7 +322,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="CalculateSFMean")
+        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="CalculateSFMean" || analyzer=="HadTriggers_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",

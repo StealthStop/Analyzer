@@ -30,6 +30,7 @@
 #include "Analyzer/Analyzer/include/Config.h"
 #include "Analyzer/Analyzer/include/Semra_Analyzer.h"
 #include "Analyzer/Analyzer/include/ISRJets_Analyzer.h"
+#include "Analyzer/Analyzer/include/HadTriggers_Analyzer.h"
 #include "Analyzer/Analyzer/include/TwoLepAnalyzer.h"
 #include "Analyzer/Analyzer/include/Make2LInputTrees.h"
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
@@ -197,6 +198,7 @@ int main(int argc, char *argv[])
         {"AnalyzeNjetsMinusOneCSJetReplacement", run<AnalyzeNjetsMinusOneCSJetReplacement>},
         {"Semra_Analyzer",          run<Semra_Analyzer>},
         {"ISRJets_Analyzer",        run<ISRJets_Analyzer>},
+        {"HadTriggers_Analyzer",    run<HadTriggers_Analyzer>},
         {"TwoLepAnalyzer",          run<TwoLepAnalyzer>},
         {"Make2LInputTrees",        run<Make2LInputTrees>},
         {"StealthHemispheres",      run<StealthHemispheres>},
