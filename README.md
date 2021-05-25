@@ -49,7 +49,8 @@ getDeepESMCfg.sh -t Keras_Tensorflow_2017_v1.2 -o -s 2017
 getDeepESMCfg.sh -t Keras_Tensorflow_2018pre_v1.2 -o -s 2018pre
 getDeepESMCfg.sh -t Keras_Tensorflow_2018post_v1.2 -o -s 2018post
 getDeepESMCfg.sh -t Reg_V1 -o -f Mass -F Mass_NonIsoMuon -s Regression
-getDeepESMCfg.sh -t DoubleDisCo_Reg_2016_v1.0 -o -m DoubleDisCo_Reg.cfg -f Keras_Tensorflow -s DoubleDisCo_Reg_2016 -Q
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_2016_v1.0 -o -m DoubleDisCo_Reg.cfg -f Keras_Tensorflow -s DoubleDisCo_Reg_0l_2016 -Q
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_2016_v3.0 -o -m DoubleDisCo_Reg.cfg -f Keras_Tensorflow -s DoubleDisCo_Reg_1l_2016 -Q
 ```
 
 Example of running MyAnalysis interactively
