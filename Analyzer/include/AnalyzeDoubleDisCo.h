@@ -36,15 +36,24 @@ private:
     };
 
 public:
-    std::map<std::string, std::shared_ptr<TH1D>>  my_histos;
-    std::map<std::string, std::shared_ptr<TH2D>>  my_2d_histos;
+    std::map<std::string, std::shared_ptr<TH1D>> my_histos;
+    std::map<std::string, std::shared_ptr<TH2D>> my_2d_histos;
     bool initHistos;
+
+    std::vector<TH1DInfo> histInfos;
+    std::vector<TH2DInfo> hist2DInfos;
+
+    std::vector<std::string> abcds;
+    std::vector<std::string> njets;
+
+    unsigned int nMVAJets;
     
     AnalyzeDoubleDisCo();
     ~AnalyzeDoubleDisCo(){};
     
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
-    void InitHistos(const std::map<std::string, bool>& cutMap, const std::map<int, bool>& njetsMap, const std::map<std::string, bool>& ABCDmap, const std::vector<TH1DInfo>& histInfos, const std::vector<TH2DInfo>& hist2DInfos);
+    void Preinit(unsigned int);
+    void InitHistos(const std::map<std::string, bool>& cutMap);
     void WriteHistos(TFile* outfile);
 };
 
