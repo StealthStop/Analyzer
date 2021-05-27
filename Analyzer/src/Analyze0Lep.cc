@@ -18,13 +18,9 @@ void Analyze0Lep::InitHistos(const std::map<std::string, bool>& cutMap)
 {
     TH1::SetDefaultSumw2();
 
-    int fB = 200;
-
     // Declare all your histograms here, that way we can fill them for multiple chains
     my_histos.emplace("h_met",      std::make_shared<TH1D>("h_met",     "h_met",      20,  0,    200  ) );
     my_histos.emplace("h_ht",       std::make_shared<TH1D>("h_ht",      "h_ht",       60,  0,   3000  ) );
-    my_histos.emplace("h_bdt",      std::make_shared<TH1D>("h_bdt",     "h_bdt",      40, -0.5,    0.5) );
-    my_histos.emplace("h_fisher",   std::make_shared<TH1D>("h_fisher",  "h_fisher",   fB, -0.5,    0.5) );
     my_histos.emplace("h_njets",    std::make_shared<TH1D>("h_njets",   "h_njets",    20,  0,     20  ) );
     my_histos.emplace("h_nb",       std::make_shared<TH1D>("h_nb",      "h_nb",       10,  0,     10  ) );
     my_histos.emplace("h_ntops",    std::make_shared<TH1D>("h_ntops",   "h_ntops",    10,  0,     10  ) );
@@ -34,8 +30,6 @@ void Analyze0Lep::InitHistos(const std::map<std::string, bool>& cutMap)
 
     my_histos.emplace("blind_met",      std::make_shared<TH1D>("blind_met",     "blind_met",      20,  0,    200  ) );
     my_histos.emplace("blind_ht",       std::make_shared<TH1D>("blind_ht",      "blind_ht",       60,  0,   3000  ) );
-    my_histos.emplace("blind_bdt",      std::make_shared<TH1D>("blind_bdt",     "blind_bdt",      40, -0.5,    0.5) );
-    my_histos.emplace("blind_fisher",   std::make_shared<TH1D>("blind_fisher",  "blind_fisher",   fB, -0.5,    0.5) );
     my_histos.emplace("blind_njets",    std::make_shared<TH1D>("blind_njets",   "blind_njets",    20,  0,     20  ) );
     my_histos.emplace("blind_nb",       std::make_shared<TH1D>("blind_nb",      "blind_nb",       10,  0,     10  ) );
     my_histos.emplace("blind_ntops",    std::make_shared<TH1D>("blind_ntops",   "blind_ntops",    10,  0,     10  ) );
@@ -49,21 +43,13 @@ void Analyze0Lep::InitHistos(const std::map<std::string, bool>& cutMap)
         my_histos.emplace("h_ntops_0l_"+mycut.first, std::make_shared<TH1D>(("h_ntops_0l_"+mycut.first).c_str(),("h_ntops_0l_"+mycut.first).c_str(), 10, 0, 10));
         my_histos.emplace("h_nb_0l_"+mycut.first,    std::make_shared<TH1D>(("h_nb_0l_"+mycut.first).c_str(),("h_nb_0l_"+mycut.first).c_str(), 10, 0, 10));
         my_histos.emplace("h_HT_0l_"+mycut.first,    std::make_shared<TH1D>(("h_HT_0l_"+mycut.first).c_str(),("h_HT_0l_"+mycut.first).c_str(), 60, 0, 3000));
-        my_histos.emplace("h_bdt_0l_"+mycut.first,   std::make_shared<TH1D>(("h_bdt_0l_"+mycut.first).c_str(),("h_bdt_0l_"+mycut.first).c_str(), 40, -0.5, 0.5));
-        my_histos.emplace("h_fisher_0l_"+mycut.first,std::make_shared<TH1D>(("h_fisher_0l_"+mycut.first).c_str(),("h_fisher_0l_"+mycut.first).c_str(), fB, -0.5, 0.5));
     
-        my_2d_histos.emplace("h_njets_bdt_0l_"+mycut.first, std::make_shared<TH2D>(("h_njets_bdt_0l_"+mycut.first).c_str(),("h_njets_bdt_0l_"+mycut.first).c_str(), 15, 0, 15, 40, -0.5, 0.5));
-        my_2d_histos.emplace("h_njets_fisher_0l_"+mycut.first, std::make_shared<TH2D>(("h_njets_fisher_0l_"+mycut.first).c_str(),("h_njets_fisher_0l_"+mycut.first).c_str(), 15, 0, 15, fB, -0.5, 0.5));
 
         my_histos.emplace("blind_njets_0l_"+mycut.first, std::make_shared<TH1D>(("blind_njets_0l_"+mycut.first).c_str(),("blind_njets_0l_"+mycut.first).c_str(), 20, 0, 20));
         my_histos.emplace("blind_ntops_0l_"+mycut.first, std::make_shared<TH1D>(("blind_ntops_0l_"+mycut.first).c_str(),("blind_ntops_0l_"+mycut.first).c_str(), 10, 0, 10));
         my_histos.emplace("blind_nb_0l_"+mycut.first,    std::make_shared<TH1D>(("blind_nb_0l_"+mycut.first).c_str(),("blind_nb_0l_"+mycut.first).c_str(), 10, 0, 10));
         my_histos.emplace("blind_HT_0l_"+mycut.first,    std::make_shared<TH1D>(("blind_HT_0l_"+mycut.first).c_str(),("blind_HT_0l_"+mycut.first).c_str(), 60, 0, 3000));
-        my_histos.emplace("blind_bdt_0l_"+mycut.first,   std::make_shared<TH1D>(("blind_bdt_0l_"+mycut.first).c_str(),("blind_bdt_0l_"+mycut.first).c_str(), 40, -0.5, 0.5));
-        my_histos.emplace("blind_fisher_0l_"+mycut.first,std::make_shared<TH1D>(("blind_fisher_0l_"+mycut.first).c_str(),("blind_fisher_0l_"+mycut.first).c_str(), fB, -0.5, 0.5));
     
-        my_2d_histos.emplace("blind_njets_bdt_0l_"+mycut.first, std::make_shared<TH2D>(("blind_njets_bdt_0l_"+mycut.first).c_str(),("blind_njets_bdt_0l_"+mycut.first).c_str(), 15, 0, 15, 40, -0.5, 0.5));
-        my_2d_histos.emplace("blind_njets_fisher_0l_"+mycut.first, std::make_shared<TH2D>(("blind_njets_fisher_0l_"+mycut.first).c_str(),("blind_njets_fisher_0l_"+mycut.first).c_str(), 15, 0, 15, fB, -0.5, 0.5));
     }
 
     // Cut flows
@@ -97,12 +83,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& NBJets             = tr.getVar<int>("NGoodBJets");
         const auto& NBJets_pt45        = tr.getVar<int>("NGoodBJets_pt45");
         const auto& NGoodLeptons       = tr.getVar<int>("NGoodLeptons");
-        const auto& fisher_bin1        = tr.getVar<bool>("fisher_bin1");
-        const auto& fisher_bin2        = tr.getVar<bool>("fisher_bin2");
-        const auto& fisher_bin3        = tr.getVar<bool>("fisher_bin3");
-        const auto& fisher_bin4        = tr.getVar<bool>("fisher_bin4");
-        const auto& eventshape_bdt_val = tr.getVar<double>("eventshape_bdt_val");
-        const auto& fisher_val         = tr.getVar<double>("fisher_val");
         const auto& passBaseline0l     = tr.getVar<bool>("passBaseline0l_Good");
         const auto& passBlindHad       = tr.getVar<bool>("passBlindHad_Good");
         const auto& passTrigger        = tr.getVar<bool>("passTrigger");
@@ -148,36 +128,24 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ---------------------------
         //exactly selections
         bool pass_1t    = ntops==1;
-        bool pass_1t_f1 = pass_1t && fisher_bin1, pass_1t_f2 = pass_1t && fisher_bin2, pass_1t_f3 = pass_1t && fisher_bin3, pass_1t_f4 = pass_1t && fisher_bin4;
-
         bool pass_1t1 = pass_1t && ntops_1jet==1;
         bool pass_1t2 = pass_1t && ntops_2jet==1;
         bool pass_1t3 = pass_1t && ntops_3jet==1;
         bool pass_1t2or3 = pass_1t2 or pass_1t3;
 
-        bool pass_1t1_f1 = pass_1t1 && fisher_bin1, pass_1t1_f2 = pass_1t1 && fisher_bin2, pass_1t1_f3 = pass_1t1 && fisher_bin3, pass_1t1_f4 = pass_1t1 && fisher_bin4;
-        bool pass_1t2_f1 = pass_1t2 && fisher_bin1, pass_1t2_f2 = pass_1t2 && fisher_bin2, pass_1t2_f3 = pass_1t2 && fisher_bin3, pass_1t2_f4 = pass_1t2 && fisher_bin4;
-        bool pass_1t3_f1 = pass_1t3 && fisher_bin1, pass_1t3_f2 = pass_1t3 && fisher_bin2, pass_1t3_f3 = pass_1t3 && fisher_bin3, pass_1t3_f4 = pass_1t3 && fisher_bin4;
-        bool pass_1t2or3_f1 = pass_1t2or3 && fisher_bin1, pass_1t2or3_f2 = pass_1t2or3 && fisher_bin2, pass_1t2or3_f3 = pass_1t2or3 && fisher_bin3, pass_1t2or3_f4 = pass_1t2or3 && fisher_bin4;
-
         //at least selections
         bool pass_ge1t    = ntops>=1;
-        bool pass_ge1t_f1 = pass_ge1t && fisher_bin1, pass_ge1t_f2 = pass_ge1t && fisher_bin2, pass_ge1t_f3 = pass_ge1t && fisher_bin3, pass_ge1t_f4 = pass_ge1t && fisher_bin4;
 
         bool pass_ge1t1 = pass_ge1t && ntops_1jet>=1;
         bool pass_ge1t2 = pass_ge1t && ntops_2jet>=1;
         bool pass_ge1t3 = pass_ge1t && ntops_3jet>=1;
 
-        bool pass_ge1t1_f1 = pass_ge1t1 && fisher_bin1, pass_ge1t1_f2 = pass_ge1t1 && fisher_bin2, pass_ge1t1_f3 = pass_ge1t1 && fisher_bin3, pass_ge1t1_f4 = pass_ge1t1 && fisher_bin4;
-        bool pass_ge1t2_f1 = pass_ge1t2 && fisher_bin1, pass_ge1t2_f2 = pass_ge1t2 && fisher_bin2, pass_ge1t2_f3 = pass_ge1t2 && fisher_bin3, pass_ge1t2_f4 = pass_ge1t2 && fisher_bin4;
-        bool pass_ge1t3_f1 = pass_ge1t3 && fisher_bin1, pass_ge1t3_f2 = pass_ge1t3 && fisher_bin2, pass_ge1t3_f3 = pass_ge1t3 && fisher_bin3, pass_ge1t3_f4 = pass_ge1t3 && fisher_bin4;
         // ---------------------------
         // --    2 Top selection
         // ---------------------------
 
         // exactly selections
         bool pass_2t    = ntops==2;
-        bool pass_2t_f1 = pass_2t && fisher_bin1, pass_2t_f2 = pass_2t && fisher_bin2, pass_2t_f3 = pass_2t && fisher_bin3, pass_2t_f4 = pass_2t && fisher_bin4;
 
         bool pass_2t11 = pass_2t && ntops_1jet==2;
         bool pass_2t12 = pass_2t && ntops_1jet==1 && ntops_2jet==1;
@@ -186,16 +154,8 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         bool pass_2t23 = pass_2t && ntops_2jet==1 && ntops_3jet==1;
         bool pass_2t33 = pass_2t && ntops_3jet==2;
 
-        bool pass_2t11_f1 = pass_2t11 && fisher_bin1, pass_2t11_f2 = pass_2t11 && fisher_bin2, pass_2t11_f3 = pass_2t11 && fisher_bin3, pass_2t11_f4 = pass_2t11 && fisher_bin4;
-        bool pass_2t12_f1 = pass_2t12 && fisher_bin1, pass_2t12_f2 = pass_2t12 && fisher_bin2, pass_2t12_f3 = pass_2t12 && fisher_bin3, pass_2t12_f4 = pass_2t12 && fisher_bin4;
-        bool pass_2t13_f1 = pass_2t13 && fisher_bin1, pass_2t13_f2 = pass_2t13 && fisher_bin2, pass_2t13_f3 = pass_2t13 && fisher_bin3, pass_2t13_f4 = pass_2t13 && fisher_bin4;
-        bool pass_2t22_f1 = pass_2t22 && fisher_bin1, pass_2t22_f2 = pass_2t22 && fisher_bin2, pass_2t22_f3 = pass_2t22 && fisher_bin3, pass_2t22_f4 = pass_2t22 && fisher_bin4;
-        bool pass_2t23_f1 = pass_2t23 && fisher_bin1, pass_2t23_f2 = pass_2t23 && fisher_bin2, pass_2t23_f3 = pass_2t23 && fisher_bin3, pass_2t23_f4 = pass_2t23 && fisher_bin4;
-        bool pass_2t33_f1 = pass_2t33 && fisher_bin1, pass_2t33_f2 = pass_2t33 && fisher_bin2, pass_2t33_f3 = pass_2t33 && fisher_bin3, pass_2t33_f4 = pass_2t33 && fisher_bin4;
-
         // at least selections
         bool pass_ge2t    = ntops>=2;
-        bool pass_ge2t_f1 = pass_ge2t && fisher_bin1, pass_ge2t_f2 = pass_ge2t && fisher_bin2, pass_ge2t_f3 = pass_ge2t && fisher_bin3, pass_ge2t_f4 = pass_ge2t && fisher_bin4;
 
         bool pass_ge2t11 = pass_ge2t && ntops_1jet>=2;
         bool pass_ge2t12 = pass_ge2t && ntops_1jet>=1 && ntops_2jet>=1;
@@ -208,16 +168,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         bool pass_Merge = ntops_1jet >= 1, pass_noMerge = ntops_1jet == 0;
         bool pass_ge2t11or12or13 = pass_Merge   && (pass_ge2t11 or pass_ge2t12 or pass_ge2t13);
         bool pass_ge2t22or23or33 = pass_noMerge && (pass_ge2t22 or pass_ge2t23 or pass_ge2t33);
-
-        bool pass_ge2t11_f1 = pass_ge2t11 && fisher_bin1, pass_ge2t11_f2 = pass_ge2t11 && fisher_bin2, pass_ge2t11_f3 = pass_ge2t11 && fisher_bin3, pass_ge2t11_f4 = pass_ge2t11 && fisher_bin4;
-        bool pass_ge2t12_f1 = pass_ge2t12 && fisher_bin1, pass_ge2t12_f2 = pass_ge2t12 && fisher_bin2, pass_ge2t12_f3 = pass_ge2t12 && fisher_bin3, pass_ge2t12_f4 = pass_ge2t12 && fisher_bin4;
-        bool pass_ge2t13_f1 = pass_ge2t13 && fisher_bin1, pass_ge2t13_f2 = pass_ge2t13 && fisher_bin2, pass_ge2t13_f3 = pass_ge2t13 && fisher_bin3, pass_ge2t13_f4 = pass_ge2t13 && fisher_bin4;
-        bool pass_ge2t22_f1 = pass_ge2t22 && fisher_bin1, pass_ge2t22_f2 = pass_ge2t22 && fisher_bin2, pass_ge2t22_f3 = pass_ge2t22 && fisher_bin3, pass_ge2t22_f4 = pass_ge2t22 && fisher_bin4;
-        bool pass_ge2t23_f1 = pass_ge2t23 && fisher_bin1, pass_ge2t23_f2 = pass_ge2t23 && fisher_bin2, pass_ge2t23_f3 = pass_ge2t23 && fisher_bin3, pass_ge2t23_f4 = pass_ge2t23 && fisher_bin4;
-        bool pass_ge2t33_f1 = pass_ge2t33 && fisher_bin1, pass_ge2t33_f2 = pass_ge2t33 && fisher_bin2, pass_ge2t33_f3 = pass_ge2t33 && fisher_bin3, pass_ge2t33_f4 = pass_ge2t33 && fisher_bin4;
-
-        bool pass_ge2t11or12or13_f1 = pass_ge2t11or12or13 && fisher_bin1, pass_ge2t11or12or13_f2 = pass_ge2t11or12or13 && fisher_bin2, pass_ge2t11or12or13_f3 = pass_ge2t11or12or13 && fisher_bin3, pass_ge2t11or12or13_f4 = pass_ge2t11or12or13 && fisher_bin4;
-        bool pass_ge2t22or23or33_f1 = pass_ge2t22or23or33 && fisher_bin1, pass_ge2t22or23or33_f2 = pass_ge2t22or23or33 && fisher_bin2, pass_ge2t22or23or33_f3 = pass_ge2t22or23or33 && fisher_bin3, pass_ge2t22or23or33_f4 = pass_ge2t22or23or33 && fisher_bin4;
 
         // -------------------
         // --- Fill Histos ---
@@ -235,10 +185,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"ge6j_HT500"                        , pass_0l && pass_njet_pt45 && pass_HT_trigger                        },
             {"ge6j_HT500_ge1b"                   , pass_0l && pass_njet_pt45 && pass_HT_trigger && pass_njet_pt45_1btag},
             {"ge6j_HT500_ge2b"                   , passBaseline0l                                                      },                         
-            {"ge6j_HT500_ge2b_f1"                , passBaseline0l && fisher_bin1                                       },                         
-            {"ge6j_HT500_ge2b_f2"                , passBaseline0l && fisher_bin2                                       },                         
-            {"ge6j_HT500_ge2b_f3"                , passBaseline0l && fisher_bin3                                       },                         
-            {"ge6j_HT500_ge2b_f4"                , passBaseline0l && fisher_bin4                                       },                         
             {"6j_HT500_ge2b"                     , passBaseline0l && NJets_pt45 == 6                                   },
             {"7j_HT500_ge2b"                     , passBaseline0l && NJets_pt45 == 7                                   },
             {"8j_HT500_ge2b"                     , passBaseline0l && NJets_pt45 == 8                                   },
@@ -251,62 +197,18 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"15j_HT500_ge2b"                    , passBaseline0l && NJets_pt45 == 15                                  },
                                                  
             {"ge6j_HT500_ge2b_1t"                , passBaseline0l && pass_1t                                           },
-            {"ge6j_HT500_ge2b_1t_f1"             , passBaseline0l && pass_1t_f1                                        },
-            {"ge6j_HT500_ge2b_1t_f2"             , passBaseline0l && pass_1t_f2                                        }, 
-            {"ge6j_HT500_ge2b_1t_f3"             , passBaseline0l && pass_1t_f3                                        }, 
-            {"ge6j_HT500_ge2b_1t_f4"             , passBaseline0l && pass_1t_f4                                        },
             {"ge6j_HT500_ge2b_ge1t"              , passBaseline0l && pass_ge1t                                         },
-            {"ge6j_HT500_ge2b_ge1t_f1"           , passBaseline0l && pass_ge1t_f1                                      },
-            {"ge6j_HT500_ge2b_ge1t_f2"           , passBaseline0l && pass_ge1t_f2                                      }, 
-            {"ge6j_HT500_ge2b_ge1t_f3"           , passBaseline0l && pass_ge1t_f3                                      }, 
-            {"ge6j_HT500_ge2b_ge1t_f4"           , passBaseline0l && pass_ge1t_f4                                      },
                                                  
             {"ge6j_HT500_ge2b_1t1"               , passBaseline0l && pass_1t1                                          },
             {"ge6j_HT500_ge2b_1t2"               , passBaseline0l && pass_1t2                                          },
             {"ge6j_HT500_ge2b_1t3"               , passBaseline0l && pass_1t3                                          },
             {"ge6j_HT500_ge2b_1t2or3"            , passBaseline0l && pass_1t2or3                                       },
-            {"ge6j_HT500_ge2b_1t1_f1"            , passBaseline0l && pass_1t1_f1                                       },
-            {"ge6j_HT500_ge2b_1t1_f2"            , passBaseline0l && pass_1t1_f2                                       },
-            {"ge6j_HT500_ge2b_1t1_f3"            , passBaseline0l && pass_1t1_f3                                       },
-            {"ge6j_HT500_ge2b_1t1_f4"            , passBaseline0l && pass_1t1_f4                                       },
-            {"ge6j_HT500_ge2b_1t2_f1"            , passBaseline0l && pass_1t2_f1                                       },
-            {"ge6j_HT500_ge2b_1t2_f2"            , passBaseline0l && pass_1t2_f2                                       },
-            {"ge6j_HT500_ge2b_1t2_f3"            , passBaseline0l && pass_1t2_f3                                       },
-            {"ge6j_HT500_ge2b_1t2_f4"            , passBaseline0l && pass_1t2_f4                                       },
-            {"ge6j_HT500_ge2b_1t3_f1"            , passBaseline0l && pass_1t3_f1                                       },
-            {"ge6j_HT500_ge2b_1t3_f2"            , passBaseline0l && pass_1t3_f2                                       },
-            {"ge6j_HT500_ge2b_1t3_f3"            , passBaseline0l && pass_1t3_f3                                       },
-            {"ge6j_HT500_ge2b_1t3_f4"            , passBaseline0l && pass_1t3_f4                                       },
-            {"ge6j_HT500_ge2b_1t2or3_f1"         , passBaseline0l && pass_1t2or3_f1                                    },
-            {"ge6j_HT500_ge2b_1t2or3_f2"         , passBaseline0l && pass_1t2or3_f2                                    },
-            {"ge6j_HT500_ge2b_1t2or3_f3"         , passBaseline0l && pass_1t2or3_f3                                    },
-            {"ge6j_HT500_ge2b_1t2or3_f4"         , passBaseline0l && pass_1t2or3_f4                                    },
             {"ge6j_HT500_ge2b_ge1t1"             , passBaseline0l && pass_ge1t1                                        },
             {"ge6j_HT500_ge2b_ge1t2"             , passBaseline0l && pass_ge1t2                                        },
             {"ge6j_HT500_ge2b_ge1t3"             , passBaseline0l && pass_ge1t3                                        },
-            {"ge6j_HT500_ge2b_ge1t1_f1"          , passBaseline0l && pass_ge1t1_f1                                     },
-            {"ge6j_HT500_ge2b_ge1t1_f2"          , passBaseline0l && pass_ge1t1_f2                                     },
-            {"ge6j_HT500_ge2b_ge1t1_f3"          , passBaseline0l && pass_ge1t1_f3                                     },
-            {"ge6j_HT500_ge2b_ge1t1_f4"          , passBaseline0l && pass_ge1t1_f4                                     },
-            {"ge6j_HT500_ge2b_ge1t2_f1"          , passBaseline0l && pass_ge1t2_f1                                     },
-            {"ge6j_HT500_ge2b_ge1t2_f2"          , passBaseline0l && pass_ge1t2_f2                                     },
-            {"ge6j_HT500_ge2b_ge1t2_f3"          , passBaseline0l && pass_ge1t2_f3                                     },
-            {"ge6j_HT500_ge2b_ge1t2_f4"          , passBaseline0l && pass_ge1t2_f4                                     },
-            {"ge6j_HT500_ge2b_ge1t3_f1"          , passBaseline0l && pass_ge1t3_f1                                     },
-            {"ge6j_HT500_ge2b_ge1t3_f2"          , passBaseline0l && pass_ge1t3_f2                                     },
-            {"ge6j_HT500_ge2b_ge1t3_f3"          , passBaseline0l && pass_ge1t3_f3                                     },
-            {"ge6j_HT500_ge2b_ge1t3_f4"          , passBaseline0l && pass_ge1t3_f4                                     },
                                                  
             {"ge6j_HT500_ge2b_2t"                , passBaseline0l && pass_2t                                           },
-            {"ge6j_HT500_ge2b_2t_f1"             , passBaseline0l && pass_2t_f1                                        },
-            {"ge6j_HT500_ge2b_2t_f2"             , passBaseline0l && pass_2t_f2                                        }, 
-            {"ge6j_HT500_ge2b_2t_f3"             , passBaseline0l && pass_2t_f3                                        }, 
-            {"ge6j_HT500_ge2b_2t_f4"             , passBaseline0l && pass_2t_f4                                        },
             {"ge6j_HT500_ge2b_ge2t"              , passBaseline0l && pass_ge2t                                         },
-            {"ge6j_HT500_ge2b_ge2t_f1"           , passBaseline0l && pass_ge2t_f1                                      },
-            {"ge6j_HT500_ge2b_ge2t_f2"           , passBaseline0l && pass_ge2t_f2                                      }, 
-            {"ge6j_HT500_ge2b_ge2t_f3"           , passBaseline0l && pass_ge2t_f3                                      }, 
-            {"ge6j_HT500_ge2b_ge2t_f4"           , passBaseline0l && pass_ge2t_f4                                      },
                                                  
             {"ge6j_HT500_ge2b_2t11"              , passBaseline0l && pass_2t11                                         },
             {"ge6j_HT500_ge2b_2t12"              , passBaseline0l && pass_2t12                                         },
@@ -314,30 +216,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"ge6j_HT500_ge2b_2t22"              , passBaseline0l && pass_2t22                                         },
             {"ge6j_HT500_ge2b_2t23"              , passBaseline0l && pass_2t23                                         },
             {"ge6j_HT500_ge2b_2t33"              , passBaseline0l && pass_2t33                                         },
-            {"ge6j_HT500_ge2b_2t11_f1"           , passBaseline0l && pass_2t11_f1                                      },
-            {"ge6j_HT500_ge2b_2t11_f2"           , passBaseline0l && pass_2t11_f2                                      },
-            {"ge6j_HT500_ge2b_2t11_f3"           , passBaseline0l && pass_2t11_f3                                      },
-            {"ge6j_HT500_ge2b_2t11_f4"           , passBaseline0l && pass_2t11_f4                                      },
-            {"ge6j_HT500_ge2b_2t12_f1"           , passBaseline0l && pass_2t12_f1                                      },
-            {"ge6j_HT500_ge2b_2t12_f2"           , passBaseline0l && pass_2t12_f2                                      },
-            {"ge6j_HT500_ge2b_2t12_f3"           , passBaseline0l && pass_2t12_f3                                      },
-            {"ge6j_HT500_ge2b_2t12_f4"           , passBaseline0l && pass_2t12_f4                                      },
-            {"ge6j_HT500_ge2b_2t13_f1"           , passBaseline0l && pass_2t13_f1                                      },
-            {"ge6j_HT500_ge2b_2t13_f2"           , passBaseline0l && pass_2t13_f2                                      },
-            {"ge6j_HT500_ge2b_2t13_f3"           , passBaseline0l && pass_2t13_f3                                      },
-            {"ge6j_HT500_ge2b_2t13_f4"           , passBaseline0l && pass_2t13_f4                                      },
-            {"ge6j_HT500_ge2b_2t22_f1"           , passBaseline0l && pass_2t22_f1                                      },
-            {"ge6j_HT500_ge2b_2t22_f2"           , passBaseline0l && pass_2t22_f2                                      },
-            {"ge6j_HT500_ge2b_2t22_f3"           , passBaseline0l && pass_2t22_f3                                      },
-            {"ge6j_HT500_ge2b_2t22_f4"           , passBaseline0l && pass_2t22_f4                                      },
-            {"ge6j_HT500_ge2b_2t23_f1"           , passBaseline0l && pass_2t23_f1                                      },
-            {"ge6j_HT500_ge2b_2t23_f2"           , passBaseline0l && pass_2t23_f2                                      },
-            {"ge6j_HT500_ge2b_2t23_f3"           , passBaseline0l && pass_2t23_f3                                      },
-            {"ge6j_HT500_ge2b_2t23_f4"           , passBaseline0l && pass_2t23_f4                                      },
-            {"ge6j_HT500_ge2b_2t33_f1"           , passBaseline0l && pass_2t33_f1                                      },
-            {"ge6j_HT500_ge2b_2t33_f2"           , passBaseline0l && pass_2t33_f2                                      },
-            {"ge6j_HT500_ge2b_2t33_f3"           , passBaseline0l && pass_2t33_f3                                      },
-            {"ge6j_HT500_ge2b_2t33_f4"           , passBaseline0l && pass_2t33_f4                                      },
             {"ge6j_HT500_ge2b_ge2t11"            , passBaseline0l && pass_ge2t11                                       },
             {"ge6j_HT500_ge2b_ge2t12"            , passBaseline0l && pass_ge2t12                                       },
             {"ge6j_HT500_ge2b_ge2t13"            , passBaseline0l && pass_ge2t13                                       },
@@ -346,38 +224,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"ge6j_HT500_ge2b_ge2t23"            , passBaseline0l && pass_ge2t23                                       },
             {"ge6j_HT500_ge2b_ge2t33"            , passBaseline0l && pass_ge2t33                                       },
             {"ge6j_HT500_ge2b_ge2t22or23or33"    , passBaseline0l && pass_ge2t22or23or33                               },
-            {"ge6j_HT500_ge2b_ge2t11_f1"         , passBaseline0l && pass_ge2t11_f1                                    },
-            {"ge6j_HT500_ge2b_ge2t11_f2"         , passBaseline0l && pass_ge2t11_f2                                    },
-            {"ge6j_HT500_ge2b_ge2t11_f3"         , passBaseline0l && pass_ge2t11_f3                                    },
-            {"ge6j_HT500_ge2b_ge2t11_f4"         , passBaseline0l && pass_ge2t11_f4                                    },
-            {"ge6j_HT500_ge2b_ge2t12_f1"         , passBaseline0l && pass_ge2t12_f1                                    },
-            {"ge6j_HT500_ge2b_ge2t12_f2"         , passBaseline0l && pass_ge2t12_f2                                    },
-            {"ge6j_HT500_ge2b_ge2t12_f3"         , passBaseline0l && pass_ge2t12_f3                                    },
-            {"ge6j_HT500_ge2b_ge2t12_f4"         , passBaseline0l && pass_ge2t12_f4                                    },
-            {"ge6j_HT500_ge2b_ge2t13_f1"         , passBaseline0l && pass_ge2t13_f1                                    },
-            {"ge6j_HT500_ge2b_ge2t13_f2"         , passBaseline0l && pass_ge2t13_f2                                    },
-            {"ge6j_HT500_ge2b_ge2t13_f3"         , passBaseline0l && pass_ge2t13_f3                                    },
-            {"ge6j_HT500_ge2b_ge2t13_f4"         , passBaseline0l && pass_ge2t13_f4                                    },
-            {"ge6j_HT500_ge2b_ge2t11or12or13_f1" , passBaseline0l && pass_ge2t11or12or13_f1                            },
-            {"ge6j_HT500_ge2b_ge2t11or12or13_f2" , passBaseline0l && pass_ge2t11or12or13_f2                            },
-            {"ge6j_HT500_ge2b_ge2t11or12or13_f3" , passBaseline0l && pass_ge2t11or12or13_f3                            },
-            {"ge6j_HT500_ge2b_ge2t11or12or13_f4" , passBaseline0l && pass_ge2t11or12or13_f4                            },
-            {"ge6j_HT500_ge2b_ge2t22_f1"         , passBaseline0l && pass_ge2t22_f1                                    },
-            {"ge6j_HT500_ge2b_ge2t22_f2"         , passBaseline0l && pass_ge2t22_f2                                    },
-            {"ge6j_HT500_ge2b_ge2t22_f3"         , passBaseline0l && pass_ge2t22_f3                                    },
-            {"ge6j_HT500_ge2b_ge2t22_f4"         , passBaseline0l && pass_ge2t22_f4                                    },
-            {"ge6j_HT500_ge2b_ge2t23_f1"         , passBaseline0l && pass_ge2t23_f1                                    },
-            {"ge6j_HT500_ge2b_ge2t23_f2"         , passBaseline0l && pass_ge2t23_f2                                    },
-            {"ge6j_HT500_ge2b_ge2t23_f3"         , passBaseline0l && pass_ge2t23_f3                                    },
-            {"ge6j_HT500_ge2b_ge2t23_f4"         , passBaseline0l && pass_ge2t23_f4                                    },
-            {"ge6j_HT500_ge2b_ge2t33_f1"         , passBaseline0l && pass_ge2t33_f1                                    },
-            {"ge6j_HT500_ge2b_ge2t33_f2"         , passBaseline0l && pass_ge2t33_f2                                    },
-            {"ge6j_HT500_ge2b_ge2t33_f3"         , passBaseline0l && pass_ge2t33_f3                                    },
-            {"ge6j_HT500_ge2b_ge2t33_f4"         , passBaseline0l && pass_ge2t33_f4                                    },
-            {"ge6j_HT500_ge2b_ge2t22or23or33_f1" , passBaseline0l && pass_ge2t22or23or33_f1                            },
-            {"ge6j_HT500_ge2b_ge2t22or23or33_f2" , passBaseline0l && pass_ge2t22or23or33_f2                            },
-            {"ge6j_HT500_ge2b_ge2t22or23or33_f3" , passBaseline0l && pass_ge2t22or23or33_f3                            },
-            {"ge6j_HT500_ge2b_ge2t22or23or33_f4" , passBaseline0l && pass_ge2t22or23or33_f4                            },
         };
 
         // Initialize Histograms
@@ -395,11 +241,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_ntops_0l_"   +kv.first]->Fill(ntops, eventweight);
                 my_histos["h_nb_0l_"      +kv.first]->Fill(NBJets, eventweight);
                 my_histos["h_HT_0l_"      +kv.first]->Fill(HT_trigger, eventweight);
-                my_histos["h_bdt_0l_"     +kv.first]->Fill(eventshape_bdt_val, eventweight);
-                my_histos["h_fisher_0l_"  +kv.first]->Fill(fisher_val, eventweight);
-
-                my_2d_histos["h_njets_bdt_0l_"+kv.first]->Fill(NJets_pt30, eventshape_bdt_val, eventweight);
-                my_2d_histos["h_njets_fisher_0l_"+kv.first]->Fill(NJets_pt30, fisher_val, eventweight);
 
                 if ( NJets_pt30 < 9 )
                 {
@@ -407,11 +248,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
                     my_histos["blind_ntops_0l_"   +kv.first]->Fill(ntops, eventweight);
                     my_histos["blind_nb_0l_"      +kv.first]->Fill(NBJets, eventweight);
                     my_histos["blind_HT_0l_"      +kv.first]->Fill(HT_trigger, eventweight);
-                    my_histos["blind_bdt_0l_"     +kv.first]->Fill(eventshape_bdt_val, eventweight);
-                    my_histos["blind_fisher_0l_"  +kv.first]->Fill(fisher_val, eventweight);
-                
-                    my_2d_histos["blind_njets_bdt_0l_"+kv.first]->Fill(NJets_pt30, eventshape_bdt_val, eventweight);
-                    my_2d_histos["blind_njets_fisher_0l_"+kv.first]->Fill(NJets_pt30, fisher_val, eventweight);
                 }
             }
         }
@@ -456,8 +292,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         // No local cuts applied here
         my_histos["h_met"     ]->Fill(MET, eventweight);
         my_histos["h_ht"      ]->Fill(HT_trigger, eventweight);
-        my_histos["h_bdt"     ]->Fill(eventshape_bdt_val, eventweight);
-        my_histos["h_fisher"  ]->Fill(fisher_val, eventweight);
         my_histos["h_njets"   ]->Fill(NJets_pt30, eventweight);
         my_histos["h_nb"      ]->Fill(NBJets, eventweight);
         my_histos["h_ntops"   ]->Fill(ntops, eventweight);        
@@ -470,8 +304,6 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             my_histos["blind_met"     ]->Fill(MET, eventweight);
             my_histos["blind_ht"      ]->Fill(HT_trigger, eventweight);
-            my_histos["blind_bdt"     ]->Fill(eventshape_bdt_val, eventweight);
-            my_histos["blind_fisher"  ]->Fill(fisher_val, eventweight);
             my_histos["blind_njets"   ]->Fill(NJets_pt30, eventweight);
             my_histos["blind_nb"      ]->Fill(NBJets, eventweight);
             my_histos["blind_ntops"   ]->Fill(ntops, eventweight);        
