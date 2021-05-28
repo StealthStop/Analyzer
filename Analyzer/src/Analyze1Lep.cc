@@ -92,9 +92,9 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
     while( tr.getNextEvent() )
     {
+
         const auto& MET                       = tr.getVar<double>("MET");
         const auto& METPhi                    = tr.getVar<double>("METPhi");
-        const auto& ntops                     = tr.getVar<int>("ntops");
         const auto& runtype                   = tr.getVar<std::string>("runtype");     
         const auto& filetag                   = tr.getVar<std::string>("filetag");
         const auto& Jets                      = tr.getVec<TLorentzVector>("Jets");
@@ -343,8 +343,6 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
             {    "h_njetsQCDCR",        20,   0.0,   20.0},
             {    "h_ngjets",            20,   0.0,   20.0},
             {    "h_ngjets_pt30",       20,   0.0,   20.0},
-            {    "h_ntops",             10,   0.0,   10.0},
-            {"blind_ntops",             10,   0.0,   10.0},
             {    "h_nb",                10,   0.0,   10.0},
             {"blind_nb",                10,   0.0,   10.0},
             {    "h_deepESM",          200,   0.0,    1.0},
@@ -426,7 +424,6 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_ngjets"              +kv.first]->Fill(NGenJets, eventweight);
                 my_histos["h_ngjets_pt30"         +kv.first]->Fill(NGenJets_pt30, eventweight);
                 my_histos["h_njetsQCDCR"          +kv.first]->Fill(NNonIsoMuonJets_pt30, w);
-                my_histos["h_ntops"               +kv.first]->Fill(ntops, w);
                 my_histos["h_nb"                  +kv.first]->Fill(NGoodBJets_pt30, w);
                 my_histos["h_deepESM"             +kv.first]->Fill(deepESM_val, w);
                 my_histos["h_deepESMQCDCR"        +kv.first]->Fill(deepESM_valNonIsoMuon, w);
@@ -475,7 +472,6 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
                 if( NGoodJets_pt30 <= 8 )
                 {
                     my_histos["blind_njets"         +kv.first]->Fill(NGoodJets_pt30, w);
-                    my_histos["blind_ntops"         +kv.first]->Fill(ntops, w);
                     my_histos["blind_nb"            +kv.first]->Fill(NGoodBJets_pt30, w);
                     my_histos["blind_deepESM"       +kv.first]->Fill(deepESM_val, w);
                     my_histos["blind_deepESMMerged" +kv.first]->Fill(deepESM_binNum, w);
@@ -566,7 +562,6 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(true && pass_general && pass_1l && pass_ht && JetID && pass_1btag_pt30 && pass_MBL) my_histos["h_cutFlow"]->Fill(6.5, weight);
         if(true && pass_general && pass_1l && pass_ht && JetID && pass_1btag_pt30 && pass_MBL && pass_njet_pt30) my_histos["h_cutFlow"]->Fill(7.5, weight);
         if(true && pass_general && pass_1l && pass_ht && JetID && pass_1btag_pt30 && pass_MBL && pass_njet_pt30 && passHEMVeto) my_histos["h_cutFlow"]->Fill(8.5, weight);   
-
     } // end of event loop
 }
 
