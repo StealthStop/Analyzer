@@ -16,25 +16,13 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_DoubleDisCo_disc1",   80,  0, 1},
         {"h_DoubleDisCo_disc2",   80,  0, 1},
         {"h_DoubleDisCo_massReg", 150, 0, 1500},
-        {"h_DoubleDisCo_disc1",   80,  0, 1},
-        {"h_DoubleDisCo_disc2",   80,  0, 1},
-        {"h_DoubleDisCo_massReg", 150, 0, 1500},
         {"fwm2_top6",             50,  0, 1},
         {"fwm3_top6",             50,  0, 1},
         {"fwm4_top6",             50,  0, 1},
         {"fwm5_top6",             50,  0, 1},
-        {"fwm6_top6",             50,  0, 1},
-        {"fwm7_top6",             50,  0, 1},
-        {"fwm8_top6",             50,  0, 1},
-        {"fwm9_top6",             50,  0, 1},
-        {"fwm10_top6",            50,  0, 1},
         {"jmt_ev0_top6",          50,  0, 1},
         {"jmt_ev1_top6",          50,  0, 1},
         {"jmt_ev2_top6",          50,  0, 1},
-        {"GoodLeptons_pt_1",      150, 0, 1500},
-        {"GoodLeptons_eta_1",     100, -6, 6},
-        {"GoodLeptons_phi_1",     80,  -4, 4},
-        {"GoodLeptons_m_1",       20,  0, 200},
         {"Stop1_pt_cm_OldSeed",      72, 0, 1500},
         {"Stop1_eta_cm_OldSeed",     80, -6, 6},
         {"Stop1_phi_cm_OldSeed",     64,  -4, 4},
@@ -47,33 +35,13 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"blind_njets",           20,   0.0,   20.0},
         {    "h_ntops",           10,   0.0,   10.0},
         {"blind_ntops",           10,   0.0,   10.0},
-        {    "h_nb",              10,   0.0,   10.0},
-        {"blind_nb",              10,   0.0,   10.0},
         {    "h_ht",              500,   0.0, 5000.0},
         {"blind_ht",              500,   0.0, 5000.0},
-        {    "h_mbl",             300,   0.0,  300.0},
-        {"blind_mbl",             300,   0.0,  300.0},
-        {    "h_lPt",             150,   0.0, 1500.0},
-        {"blind_lPt",             150,   0.0, 1500.0},
-        {    "h_lEta",            100,  -6.0,    6.0},
-        {"blind_lEta",            100,  -6.0,    6.0},
-        {    "h_lPhi",            80,  -4.0,    4.0},
-        {"blind_lPhi",            80,  -4.0,    4.0},
-        {    "h_jPt",             150,   0.0, 1500.0},
-        {"blind_jPt",             150,   0.0, 1500.0},
-        {    "h_jEta",            100,  -6.0,    6.0},
-        {"blind_jEta",            100,  -6.0,    6.0},
-        {    "h_jPhi",            80,  -4.0,    4.0},
-        {"blind_jPhi",            80,  -4.0,    4.0},
     };
 
     hist2DInfos = {
         {"h_DoubleDisCo_disc1_disc2",  80,    0,    1, 80,     0,     1}, 
         {"h_DoubleDisCo_disc1_disc2",  80,    0,    1, 80,     0,     1}, 
-        {    "h_lEta_lPhi",         100, -6.0,  6.0, 80,  -4.0,   4.0},
-        {"blind_lEta_lPhi",         100, -6.0,  6.0, 80,  -4.0,   4.0},
-        {    "h_jEta_jPhi",         100, -6.0,  6.0, 80,  -4.0,   4.0},
-        {"blind_jEta_jPhi",         100, -6.0,  6.0, 80,  -4.0,   4.0},
     };
 
     abcds = {"", "A", "B", "C", "D"};
@@ -155,7 +123,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& ntops                  = tr.getVar<int>("ntops");
         const auto& runtype                = tr.getVar<std::string>("runtype");     
 
-        const auto& Jets                   = tr.getVec<TLorentzVector>("Jets");
         const auto& GoodJets_pt30          = tr.getVec<bool>("GoodJets_pt30");
         const auto& GoodJets_pt45          = tr.getVec<bool>("GoodJets_pt45");
         const auto& NGoodJets_pt30         = tr.getVar<int>("NGoodJets_pt30");
@@ -167,8 +134,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const std::vector<int> NGoodJets{NGoodJets_pt45, NGoodJets_pt30};
         const std::vector<int> NGoodBJets{NGoodBJets_pt45, NGoodBJets_pt30};
-
-        const auto& GoodLeptons            = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
 
         const auto& HT_trigger_pt30        = tr.getVar<double>("HT_trigger_pt30");
         const auto& HT_trigger_pt45        = tr.getVar<double>("HT_trigger_pt45");
@@ -182,7 +147,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passMadHT              = tr.getVar<bool>("passMadHT");
         const auto& passHEMVeto            = tr.getVar<bool>("passHEMVeto");
 
-        const auto& Mbl                    = tr.getVar<double>("Mbl");
         const auto& passBlind              = tr.getVar<bool>("passBlindLep_Good");            
         const auto& passBaseline0l_Good    = tr.getVar<bool>("passBaseline0l_Good");
         const auto& passBaseline1l_Good    = tr.getVar<bool>("passBaseline1l_Good");
@@ -214,11 +178,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& fwm3_top6_0l              = tr.getVar<double>("fwm3_top6_0l");
         const auto& fwm4_top6_0l              = tr.getVar<double>("fwm4_top6_0l");
         const auto& fwm5_top6_0l              = tr.getVar<double>("fwm5_top6_0l");
-        const auto& fwm6_top6_0l              = tr.getVar<double>("fwm6_top6_0l");
-        const auto& fwm7_top6_0l              = tr.getVar<double>("fwm7_top6_0l");
-        const auto& fwm8_top6_0l              = tr.getVar<double>("fwm8_top6_0l");
-        const auto& fwm9_top6_0l              = tr.getVar<double>("fwm9_top6_0l");
-        const auto& fwm10_top6_0l             = tr.getVar<double>("fwm10_top6_0l");
         const auto& jmt_ev0_top6_0l           = tr.getVar<double>("jmt_ev0_top6_0l");
         const auto& jmt_ev1_top6_0l           = tr.getVar<double>("jmt_ev1_top6_0l");
         const auto& jmt_ev2_top6_0l           = tr.getVar<double>("jmt_ev2_top6_0l");
@@ -226,11 +185,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& fwm3_top6_1l              = tr.getVar<double>("fwm3_top6_1l");
         const auto& fwm4_top6_1l              = tr.getVar<double>("fwm4_top6_1l");
         const auto& fwm5_top6_1l              = tr.getVar<double>("fwm5_top6_1l");
-        const auto& fwm6_top6_1l              = tr.getVar<double>("fwm6_top6_1l");
-        const auto& fwm7_top6_1l              = tr.getVar<double>("fwm7_top6_1l");
-        const auto& fwm8_top6_1l              = tr.getVar<double>("fwm8_top6_1l");
-        const auto& fwm9_top6_1l              = tr.getVar<double>("fwm9_top6_1l");
-        const auto& fwm10_top6_1l             = tr.getVar<double>("fwm10_top6_1l");
         const auto& jmt_ev0_top6_1l           = tr.getVar<double>("jmt_ev0_top6_1l");
         const auto& jmt_ev1_top6_1l           = tr.getVar<double>("jmt_ev1_top6_1l");
         const auto& jmt_ev2_top6_1l           = tr.getVar<double>("jmt_ev2_top6_1l");
@@ -239,11 +193,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const std::vector<double> fwm3_top6{fwm3_top6_0l,    fwm3_top6_1l};
         const std::vector<double> fwm4_top6{fwm4_top6_0l,    fwm4_top6_1l};
         const std::vector<double> fwm5_top6{fwm5_top6_0l,    fwm5_top6_1l};
-        const std::vector<double> fwm6_top6{fwm6_top6_0l,    fwm6_top6_1l};
-        const std::vector<double> fwm7_top6{fwm7_top6_0l,    fwm7_top6_1l};
-        const std::vector<double> fwm8_top6{fwm8_top6_0l,    fwm8_top6_1l};
-        const std::vector<double> fwm9_top6{fwm9_top6_0l,    fwm9_top6_1l};
-        const std::vector<double> fwm10_top6{fwm10_top6_0l,   fwm10_top6_1l};
         const std::vector<double> jmt_ev0_top6{jmt_ev0_top6_0l, jmt_ev0_top6_1l};
         const std::vector<double> jmt_ev1_top6{jmt_ev1_top6_0l, jmt_ev1_top6_1l};
         const std::vector<double> jmt_ev2_top6{jmt_ev2_top6_0l, jmt_ev2_top6_1l};
@@ -319,7 +268,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             int channel = std::stoi(kv.first.substr(1,1));
 
-            njetsMap = {{"Incl",   true},
+            njetsMap = {{"Incl",     true},
                           {"6",      NGoodJets[channel]==6},
                           {"7",      NGoodJets[channel]==7},
                           {"8",      NGoodJets[channel]==8},
@@ -359,22 +308,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                         my_histos["fwm3_top6"               + name]->Fill(fwm3_top6[channel], w);
                         my_histos["fwm4_top6"               + name]->Fill(fwm4_top6[channel], w);
                         my_histos["fwm5_top6"               + name]->Fill(fwm5_top6[channel], w);
-                        my_histos["fwm6_top6"               + name]->Fill(fwm6_top6[channel], w);
-                        my_histos["fwm7_top6"               + name]->Fill(fwm7_top6[channel], w);
-                        my_histos["fwm8_top6"               + name]->Fill(fwm8_top6[channel], w);
-                        my_histos["fwm9_top6"               + name]->Fill(fwm9_top6[channel], w);
-                        my_histos["fwm10_top6"              + name]->Fill(fwm10_top6[channel], w);
                         my_histos["jmt_ev0_top6"            + name]->Fill(jmt_ev0_top6[channel], w);
                         my_histos["jmt_ev1_top6"            + name]->Fill(jmt_ev1_top6[channel], w);
                         my_histos["jmt_ev2_top6"            + name]->Fill(jmt_ev2_top6[channel], w);
-
-                        if (channel == 1)
-                        {
-                            my_histos["GoodLeptons_pt_1"        + name]->Fill(GoodLeptons.at(0).second.Pt(), w);
-                            my_histos["GoodLeptons_eta_1"       + name]->Fill(GoodLeptons.at(0).second.Eta(), w);
-                            my_histos["GoodLeptons_phi_1"       + name]->Fill(GoodLeptons.at(0).second.Phi(), w);
-                            my_histos["GoodLeptons_m_1"         + name]->Fill(GoodLeptons.at(0).second.M(), w);
-                        }
 
                         my_histos["Stop1_pt_cm_OldSeed"     + name]->Fill(Stop1_pt_cm_OldSeed, w);
                         my_histos["Stop1_eta_cm_OldSeed"    + name]->Fill(Stop1_eta_cm_OldSeed, w);
@@ -418,62 +354,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                         my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
                         my_histos["h_njets"                   + name]->Fill(NGoodJets[channel], w);
                         my_histos["h_ntops"                   + name]->Fill(ntops, w);
-                        my_histos["h_nb"                      + name]->Fill(NGoodBJets_pt30, w);
                         my_histos["h_ht"                      + name]->Fill(HT_trigger[channel], w);
-                        my_histos["h_mbl"                     + name]->Fill(Mbl, w);
                         my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
-
-                        if (channel == 1)
-                        {
-                            for(const auto& l : GoodLeptons)
-                            {
-                                my_histos["h_lPt"          + name]->Fill(l.second.Pt(), w);
-                                my_histos["h_lEta"         + name]->Fill(l.second.Eta(), w);
-                                my_histos["h_lPhi"         + name]->Fill(l.second.Phi(), w);
-                                my_2d_histos["h_lEta_lPhi" + name]->Fill(l.second.Eta(), l.second.Phi(), w);
-                            }
-                        }
-
-                        for(unsigned int j = 0; j < Jets.size(); j++)
-                        {
-                            if(!GoodJets[channel][j]) continue;
-
-                            my_histos["h_jPt"          + name]->Fill(Jets.at(j).Pt(), w);
-                            my_histos["h_jEta"         + name]->Fill(Jets.at(j).Eta(), w);
-                            my_histos["h_jPhi"         + name]->Fill(Jets.at(j).Phi(), w);
-                            my_2d_histos["h_jEta_jPhi" + name]->Fill(Jets.at(j).Eta(), Jets.at(j).Phi(), w);
-
-                        }
 
                         if( NGoodJets[channel] <= 8 )
                         {
                             my_histos["blind_njets" + name]->Fill(NGoodJets[channel], w);
                             my_histos["blind_ntops" + name]->Fill(ntops, w);
-                            my_histos["blind_nb"    + name]->Fill(NGoodBJets[channel], w);
                             my_histos["blind_ht"    + name]->Fill(HT_trigger[channel], w);
-                            my_histos["blind_mbl"   + name]->Fill(Mbl, w);
 
-                            if (channel == 1)
-                            {
-                                for(const auto l : GoodLeptons)
-                                {
-                                    my_histos["blind_lPt"          + name]->Fill(l.second.Pt(), w);
-                                    my_histos["blind_lEta"         + name]->Fill(l.second.Eta(), w);
-                                    my_histos["blind_lPhi"         + name]->Fill(l.second.Phi(), w);
-                                    my_2d_histos["blind_lEta_lPhi" + name]->Fill(l.second.Eta(), l.second.Phi(), w);
-                                }
-                            }
-
-                            for(unsigned int j = 0; j < Jets.size(); j++)
-                            {
-                                if(!GoodJets[channel][j]) continue;
-
-                                my_histos["blind_jPt"          + name]->Fill(Jets.at(j).Pt(), w);
-                                my_histos["blind_jEta"         + name]->Fill(Jets.at(j).Eta(), w);
-                                my_histos["blind_jPhi"         + name]->Fill(Jets.at(j).Phi(), w);
-                                my_2d_histos["blind_jEta_jPhi" + name]->Fill(Jets.at(j).Eta(), Jets.at(j).Phi(), w);
-
-                            }
                         }
                     }
                 }
