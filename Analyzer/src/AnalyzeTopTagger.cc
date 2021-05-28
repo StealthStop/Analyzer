@@ -18,7 +18,7 @@
 #include "TopTagger/CfgParser/interface/TTException.h"
 #include "Framework/Framework/include/SetUpTopTagger.h"
 
-AnalyzeTopTagger::AnalyzeTopTagger() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), histNjet10("Njet10"), histNjet11("Njet11"), 
+AnalyzeTopTagger::AnalyzeTopTagger() : hists("histos"), histNjet6("Njet6"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), histNjet10("Njet10"), histNjet11("Njet11"), 
                                                         histNjet12("Njet12"), histNjet13("Njet13"), histNjet14("Njet14"), histNjet15("Njet15")
 {
     InitHistos();
@@ -42,21 +42,23 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );        
 
-        const auto& runtype         = tr.getVar<std::string>("runtype");
-        const auto& Jets            = tr.getVec<TLorentzVector>("Jets");
-        const auto& JetID           = tr.getVar<bool>("JetID");        
-        const auto& passMETFilters  = tr.getVar<bool>("passMETFilters");
-        const auto& passMadHT       = tr.getVar<bool>("passMadHT");
-        const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
-        const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
-        const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
-        const auto& dR_bjets        = tr.getVar<double>("dR_bjets");
-        const auto& GoodJets_pt45   = tr.getVec<bool>("GoodJets_pt45");
-        const bool pass_Resolved    = JetID && passMETFilters && passMadHT 
-                                     && NGoodLeptons==0      && HT_trigger_pt45 > 500 
-                                     && NGoodBJets_pt45 >= 2 && NGoodJets_pt45 >= 6
-                                     && dR_bjets >= 1.0;
+        const auto& runtype          = tr.getVar<std::string>("runtype");
+        const auto& Jets             = tr.getVec<TLorentzVector>("Jets");
+        const auto& JetID            = tr.getVar<bool>("JetID");        
+        const auto& passMETFilters   = tr.getVar<bool>("passMETFilters");
+        const auto& passMadHT        = tr.getVar<bool>("passMadHT");
+        const auto& passTriggerHadMC = tr.getVar<bool>("passTriggerHadMC");
+        const auto& NGoodLeptons     = tr.getVar<int>("NGoodLeptons");
+        const auto& HT_trigger_pt45  = tr.getVar<double>("HT_trigger_pt45");
+        const auto& NGoodBJets_pt45  = tr.getVar<int>("NGoodBJets_pt45");
+        const auto& NGoodJets_pt45   = tr.getVar<int>("NGoodJets_pt45");
+        const auto& dR_bjets         = tr.getVar<double>("dR_bjets");
+        const auto& GoodJets_pt45    = tr.getVec<bool>("GoodJets_pt45");
+        const bool pass_Resolved     = JetID && passMETFilters && passMadHT && passTriggerHadMC 
+                                      && NGoodLeptons==0       && HT_trigger_pt45 > 500 
+                                      && NGoodBJets_pt45 >= 2  && NGoodJets_pt45 >= 6
+                                      && dR_bjets >= 1.0;
+
 
         // -------------------
         // -- Define weight
@@ -105,7 +107,14 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------------------
         // for MVA score distribution as a function of Njets
         // -------------------------------------------------
-        
+        // baseline cuts + Njets == 6        
+        std::vector<std::pair<std::string, bool>> Njets6 =
+        {
+            {"pass_Resolved", pass_Resolved},
+            {"Njet6"        , NGoodJets_pt45 == 6},
+        };
+        histNjet6.fillWithCutFlow(Njets6, tr, weight, &rand);
+
         // baseline cuts + Njets == 7
         std::vector<std::pair<std::string, bool>> Njets7 =
         {
@@ -198,6 +207,7 @@ void AnalyzeTopTagger::WriteHistos(TFile* outfile)
     }
    
     hists.save(outfile);
+    histNjet6.save(outfile);
     histNjet7.save(outfile);
     histNjet8.save(outfile);
     histNjet9.save(outfile);

@@ -48,7 +48,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& isSignal            = tr.getVar<bool>("isSignal");
         const auto& filetag             = tr.getVar<std::string>("filetag");
         const auto& eventCounter        = tr.getVar<int>("eventCounter");
-        const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l"); 
+        const auto& passBaseline0l_Good = tr.getVar<bool>("passBaseline0l_Good"); 
         const auto& passBaseline1l      = tr.getVar<bool>("passBaseline1l_Good");
         //const auto& passBaseline2l_pt20 = tr.getVar<bool>("passBaseline2l_pt20");
 
@@ -106,7 +106,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             "GoodLeptons_eta_1",     "GoodLeptons_eta_2",
             "GoodLeptons_phi_1",     "GoodLeptons_phi_2",
             "GoodLeptons_pt_1",      "GoodLeptons_pt_2",
-            "GoodLeptons_miniIso_1", "GoodLeptons_miniIso_2",
         };
 
         std::set<std::string> varOldSeed =
@@ -324,7 +323,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-- Fill Histograms Below
         //-----------------------------------
         // for 0 lepton 
-        if ( passBaseline0l )
+        if ( passBaseline0l_Good )
         {
             int mod = count_0l % 10;
             if(mod < 8)
