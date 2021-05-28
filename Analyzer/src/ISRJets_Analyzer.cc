@@ -263,7 +263,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& GoodJets_pt20         = tr.getVec<bool>("GoodJets_pt20");
         const auto& GoodBJets_pt45        = tr.getVec<bool>("GoodBJets_pt45");
         //const auto& GenParticles          = tr.getVec<TLorentzVector>("GenParticles");
-        const auto& passBaseline0l        = tr.getVar<bool>("passBaseline0l_Good");
+        const auto& passBaseline0l_Good   = tr.getVar<bool>("passBaseline0l_Good");
         const auto& ntops                 = tr.getVar<int>("ntops");
         const auto& topsLV                = tr.getVec<TLorentzVector>("topsLV");
         const auto& dR_bjets              = tr.getVar<double>("dR_bjets");
@@ -445,7 +445,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const std::map<std::string, bool>& cutmap
         {
             {"", true},
-            {"0l_baseline", passBaseline0l && pass_ge2t && pass_ge1dRbjets},
+            {"0l_baseline", passBaseline0l_Good && pass_ge2t && pass_ge1dRbjets},
         };
 
         if (!inithisto) 
