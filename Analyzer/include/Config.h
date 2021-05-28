@@ -61,9 +61,9 @@ private:
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
             else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 1, "");
             else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45", false, true, 12, 0, "_0l");
             else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "_1l");
-            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 1, "");
             else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 0, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
@@ -226,6 +226,8 @@ public:
         tr.registerDerivedVar("DoubleDisCo_Model_0l",  DoubleDisCo_Model_0l );
         tr.registerDerivedVar("DoubleDisCo_Cfg_1l",    DoubleDisCo_Cfg_1l   );
         tr.registerDerivedVar("DoubleDisCo_Model_1l",  DoubleDisCo_Model_1l );
+        //tr.registerDerivedVar("DoubleDisCo_Cfg_2l",    DoubleDisCo_Cfg_2l   );
+        //tr.registerDerivedVar("DoubleDisCo_Model_2l",  DoubleDisCo_Model_2l );
         tr.registerDerivedVar("puFileName",            puFileName           );
         tr.registerDerivedVar("leptonFileName",        leptonFileName       );        
         tr.registerDerivedVar("bjetFileName",          bjetFileName         );        
@@ -236,7 +238,7 @@ public:
         tr.registerDerivedVar("TopTaggerCfg",          TopTaggerCfg         );
 
         // Register Modules that are needed for each Analyzer
-        if(analyzer=="MakeNJetDists")
+        if(analyzer=="MakeNJetDists") // for legacy 1l
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -248,8 +250,7 @@ public:
                 "BJet",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
+                "MakeMVAVariables",
                 "Baseline",
                 "DeepEventShape",
                 "BTagCorrector",
@@ -257,21 +258,36 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="CalculateBTagSF")
+        else if(analyzer=="AnalyzeDoubleDisCo" || analyzer=="MakeNNVariables")
         {
             const std::vector<std::string> modulesList = {
+                "PartialUnBlinding",
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
                 "Photon",
                 "Jet",
                 "BJet",
+                "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
+                "FatJetCombine",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
+                //"MakeMVAVariables_2l",
+                "StopJets",
+                "MakeStopHemispheres_OldSeed",
+                "MakeStopHemispheres_TopSeed",
+                "BTagCorrector",
+                "ScaleFactors",
+                "StopGenMatch",
+                "DoubleDisCo_0l",
+                "DoubleDisCo_1l",
+                //"DoubleDisCo_2l",
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateSFMean")
+        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateBTagSF" || analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -301,9 +317,7 @@ public:
                 "RunTopTagger",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables_0l",
                 "Baseline",
-                "DeepEventShape",
                 "BTagCorrector",
                 "ScaleFactors",
             };
@@ -322,16 +336,16 @@ public:
                 "RunTopTagger",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables_0l",
                 "Baseline",
-                "DeepEventShape",
+                "MakeMVAVariables_0l",
+                //"MakeMVAVariables_1l",
                 "ISRJets",
                 "StopJets",
                 "MakeStopHemispheres_All",
                 "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_OldSeed_maskedISR",
+                //"MakeStopHemispheres_OldSeed_maskedISR",
                 "MakeStopHemispheres_TopSeed",
-                "MakeStopHemispheres_TopSeed_maskedISR",
+                //"MakeStopHemispheres_TopSeed_maskedISR",
                 "StopGenMatch",
                 "BTagCorrector",
                 "ScaleFactors",
@@ -360,33 +374,8 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeDoubleDisCo")
-        {
-            const std::vector<std::string> modulesList = {
-                "PartialUnBlinding",
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "RunTopTagger",
-                "BJet",
-                "CommonVariables",
-                "FatJetCombine",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
-                "Baseline",
-                "BTagCorrector",
-                "ScaleFactors",
-                "MakeStopHemispheres_OldSeed",
-                "DoubleDisCo_0l",
-                "DoubleDisCo_1l",
-            };
-            registerModules(tr, std::move(modulesList));
-
-        }
         else if(analyzer=="TwoLepAnalyzer" || analyzer=="Make2LInputTrees")
-        {
+        {   
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
                 "PrepNTupleVars",
@@ -403,36 +392,6 @@ public:
                 "BTagCorrector",
                 "ScaleFactors",
                 "TrainingNTupleVars",
-            };
-            registerModules(tr, std::move(modulesList));
-        }
-        else if(analyzer=="MakeNNVariables")
-        {
-            const std::vector<std::string> modulesList = {
-                "PartialUnBlinding",
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "RunTopTagger",
-                "CommonVariables",
-                "Baseline",
-                "FatJetCombine",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
-                //"MakeMVAVariables_2l",
-                //"ISRJets",
-                "StopJets",
-                "MakeStopHemispheres_OldSeed",
-                //"MakeStopHemispheres_OldSeed_maskedISR",
-                "MakeStopHemispheres_TopSeed",
-                //"MakeStopHemispheres_TopSeed_maskedISR",
-                "BTagCorrector",
-                "ScaleFactors",
-                "StopGenMatch",
-                //"TrainingNTupleVars",
             };
             registerModules(tr, std::move(modulesList));
         }

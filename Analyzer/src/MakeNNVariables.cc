@@ -106,7 +106,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             "GoodLeptons_eta_1",     "GoodLeptons_eta_2",
             "GoodLeptons_phi_1",     "GoodLeptons_phi_2",
             "GoodLeptons_pt_1",      "GoodLeptons_pt_2",
-            "GoodLeptons_miniIso_1", "GoodLeptons_miniIso_2",
         };
 
         std::set<std::string> varOldSeed =
