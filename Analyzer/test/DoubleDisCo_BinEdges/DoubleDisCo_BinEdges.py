@@ -97,7 +97,13 @@ def main():
         histBkg = files["TT"].Get(histNames + njet)
         histSig = files["%s%s"%(args.model,args.mass)].Get(histNames + njet)
         getBinEdges(histBkg,histSig)
- 
+
+        # put the xbin and ybin edges to txt file
+        d = open("BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
+        d.write("x bin edges: %.3f \n" %(xBinEdges))
+        d.write("y bin edges: %.3f \n" %(yBinEdges))
+
+    d.close() 
  
 if __name__ == '__main__':
     main()
