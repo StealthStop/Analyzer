@@ -1,4 +1,5 @@
 import ROOT
+import os
 import sys
 import math
 import argparse
@@ -64,13 +65,20 @@ def getBinEdges(histBkg, histSig):
     print "y bin edges: ", yBinEdges
 
 
-def main():    
+def main():   
+
+    # -----------------------------------------------------------------------------------
+    # command to run this script
+    #   -- python DoubleDisCo_BinEdges.py --year 2016 --model RPV --mass 550 --channel 0l
+    #   -- python DoubleDisCo_BinEdges.py --year 2016 --model RPV --mass 550 --channel 1l
+    # -----------------------------------------------------------------------------------   
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--year",  dest="year",  help="which year",            required=True)
-    parser.add_argument("--path",  dest="path",  help="Input dir with histos", default="./2016_DisCo")
-    parser.add_argument("--model", dest="model", help="signal model",          default="RPV")
-    parser.add_argument("--mass",  dest="mass",  help="signal mass",           default="550")
+    parser.add_argument("--year",    dest="year",    help="which year",            required=True)
+    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/Bryan/2016_DisCo_0l_1l_Inputs/")
+    parser.add_argument("--model",   dest="model",   help="signal model",          default="RPV")
+    parser.add_argument("--mass",    dest="mass",    help="signal mass",           default="550")
+    parser.add_argument("--channel", dest="channel", help="0l, 1l",                required=True)
     args = parser.parse_args()
 
     modelDecay = "2t6j"
@@ -81,22 +89,38 @@ def main():
         "TT"                          : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"),
         "QCD"                         : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD.root"),  
         "%s%s"%(args.model,args.mass) : ROOT.TFile.Open(args.path + "/" + args.year + "_%s_%s_mStop-%s.root"%(args.model,modelDecay,args.mass)),
-    }
-   
-    histNames = "h_DoubleDisCo_disc1_disc2_1l_HT300_ge7j_ge1b_Mbl" 
+    }   
+ 
+    os.system("rm BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel))}
 
-    njets = [
-        "_Njets7",
-        "_Njets8",
-        "_Njets9",
-        "_Njets10",
-        "_Njets11",
-    ]
+    # for 0-lepton 
+    if args.channel == "0l":
+        histNames = "h_DoubleDisCo_disc1_disc2_0l"
+        njets = [
+            "_Njets7",
+            "_Njets8",
+            "_Njets9",
+            "_Njets10",
+            "_Njets11",
+            "_Njets12",
+        ]
 
+    # for 1-lepton
+    else:
+        histNames = "h_DoubleDisCo_disc1_disc2_1l"
+        njets = [
+            "_Njets7",
+            "_Njets8",
+            "_Njets9",
+            "_Njets10",
+            "_Njets11",
+        ]
+
+    # loop over njets 
     for njet in njets: 
         histBkg = files["TT"].Get(histNames + njet)
         histSig = files["%s%s"%(args.model,args.mass)].Get(histNames + njet)
-        getBinEdges(histBkg,histSig)
+        xBinEdges,yBinEdges = getBinEdges(histBkg,histSig)
 
         # put the xbin and ybin edges to txt file
         d = open("BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
