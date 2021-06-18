@@ -11,7 +11,6 @@ mpl.use('Agg')
 
 import matplotlib.lines as ml
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 
 from matplotlib.colors import LogNorm
 from ROOT import TFile, gROOT, gStyle, TLatex
@@ -275,6 +274,54 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
 
     return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD 
 
+# --------------------------------------------------------------
+# plot significance and closure error as a function of bin edges 
+# --------------------------------------------------------------
+def plot_SigClosure_BinEdges(inverseSignificance, closureErr, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, channel, Njets = -1):
+
+    nBins = int( (1.0 + binWidth) / binWidth )
+
+    # significance as a function of bin edges
+    fig = plt.figure()
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=np.reciprocal(inverseSignificance), cmin=10e-10, cmax=10.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed")
+    l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    #ax.add_line(l1)
+    #ax.add_line(l2)
+
+    if Njets == -1: 
+        fig.savefig("plots/Sign_vs_Disc1Disc2_%s.pdf"%(channel), dpi=fig.dpi)
+    else:           
+        fig.savefig("plots/Sign_vs_Disc1Disc2_Njets%s_%s.pdf"%(Njets,channel), dpi=fig.dpi)
+    plt.close(fig)
+
+    # closure error as a function of bin edges
+    fig = plt.figure()
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=closureErr, cmin=10e-10, cmax=2.5)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed")
+    l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    #ax.add_line(l1)
+    #ax.add_line(l2)
+
+    if Njets == -1: 
+        fig.savefig("plots/CloseErr_vs_Disc1Disc2_%s.pdf"%(channel), dpi=fig.dpi)
+    else:           
+        fig.savefig("plots/CloseErr_vs_Disc1Disc2_Njets%s_%s.pdf"%(Njets,channel), dpi=fig.dpi)
+    plt.close(fig)
 
 # --------------------------------
 # calculate everything for closure
@@ -382,17 +429,6 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, channel):
 
     return totalChi2, ndof
 
-
-# --------------------------------
-# plot Disc1VsDisc2 - significance
-# --------------------------------
-#def plot_Disc1vsDisc2_Significance(inverseSignificance, closureErr, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, edgeWidth, Njets = -1):
-
-    
-
-
-
-
 # ------------------------------
 # plot Disc1VsDisc2 - comparison
 # ------------------------------
@@ -406,7 +442,7 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, channel):
 #def plot_Disc1vsDisc2_Percentage(sigFracsA, sigFracsB, sigFracsC, sigFracsD,
 #                                 sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, 
 #                                 bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, 
-#                                 disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, edgeWidth, Njets = -1): 
+#                                 disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, Njets = -1): 
 
 
 
@@ -489,12 +525,18 @@ def main():
         
         finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD = calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)
 
-        # ------------------------------------
         # put the latest bin edges to txt file
-        # ------------------------------------
         d = open("BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
         d.write("x bin edges: %s \n" %(finalDisc1Key))
         d.write("y bin edges: %s \n" %(finalDisc2Key))
+
+        # --------------------------------------------------------------------
+        # make significance and closure error as a function of bin edges plots
+        # --------------------------------------------------------------------
+        minEdge  = histBkg.GetXaxis().GetBinLowEdge(1) 
+        maxEdge  = histBkg.GetXaxis().GetBinUpEdge(histBkg.GetNbinsX())
+        binWidth = histBkg.GetXaxis().GetBinWidth(1)
+        plot_SigClosure_BinEdges(inverseSignificance, closureErr, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.channel, njets)
 
         # -----------------------------
         # calculate simple closure ABCD
@@ -551,7 +593,14 @@ def main():
         Njets = [7, 8, 9, 10, 11, 12]
     else:
         Njets = [7, 8, 9, 10, 11]
+    
     totalChi2, ndof = plot_ClosureNjets(bkgNjets["A"], bkgNjetsErr["A"], bkgNjetsPred_A["value"], bkgNjetsPred_A["error"], Njets, args.year, args.channel)
+
+    
+    
+
+
+
 
     d.close()
  
