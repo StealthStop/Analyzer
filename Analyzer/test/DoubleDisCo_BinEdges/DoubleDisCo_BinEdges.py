@@ -17,7 +17,7 @@ import matplotlib.gridspec as gridspec
 #plt.style.use({'legend.frameon':False,'legend.fontsize':16,'legend.edgecolor':'black'})
 
 from matplotlib.colors import LogNorm
-
+from ROOT import TFile, gROOT, gStyle, TLatex
 
 
 # ------------------------
@@ -273,8 +273,8 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
 
     # print out the disc1 and disc2 edges
     #print "tempSignificance", tempSignificance
-    #print "disc1 (x bin) low bin edges: ", finalDisc1Key
-    #print "disc2 (y bin) low bin edges: ", finalDisc2Key
+    print "disc1 (x bin) low bin edges: ", finalDisc1Key
+    print "disc2 (y bin) low bin edges: ", finalDisc2Key
 
     return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD 
 
@@ -325,8 +325,6 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, channel):
 
     totalChi2 = 0.0; ndof = 0
 
-    print "bkg Unc: ", bkgUnc
-
     for i in range(0, len(Njets)):
         
         if bkgUnc[i] != 0.0:
@@ -344,13 +342,12 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, channel):
             totalChi2         += pull**2.0
             ndof              += 1    
         
-    fig = plt.figure()
-    gs  = fig.add_gridspec(8, 1)
+    fig = plt.figure(figsize=(5,5))
     ax  = fig.add_subplot(111)
-    ax1 = fig.add_subplot(gs[0:6])
-    ax2 = fig.add_subplot(gs[6:8], sharex=ax1)    
-    
     fig.subplots_adjust(hspace=0)
+
+    lowerNjets  = Njets[0]
+    higherNjets = Njets[-1]
 
     ax.spines['top'].set_color('none')
     ax.spines['bottom'].set_color('none')
@@ -358,32 +355,31 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, channel):
     ax.spines['right'].set_color('none')
     ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
 
-    x1.set_yscale("log")
-    ax1.text(0.05, 0.1, "$\chi^2$ / ndof = %3.2f"%(totalChi2/float(ndof)), horizontalalignment="left", verticalalignment="center", transform=ax1.transAxes, fontsize=18)
-       
-    ax1.errorbar(binCenters, pred, yerr=predUnc, label="Observed",  xerr=xErr, fmt='', color="red",   lw=0, elinewidth=2, marker="o", markerfacecolor="red")
-    ax1.errorbar(binCenters, obs,  yerr=unc,     label="Predicted", xerr=xErr, fmt='', color="black", lw=0, elinewidth=2, marker="o", markerfacecolor="black")
-
-    lowerNjets  = Njets[0]
-    higherNjets = Njets[-1]
-
+    ax1 = fig.add_subplot(3,1,(1,2))
+    ax1.set_yscale("log")
     ax1.set_xlim([lowerNjets-0.5,higherNjets+0.5])
-        
-    plt.xticks(Njets)
+    ax1.text(0.05, 0.1,  "$\chi^2$ / ndof = %3.2f"%(totalChi2/float(ndof)), horizontalalignment="left", verticalalignment="center", transform=ax1.transAxes, fontsize=10)
+    ax1.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right') 
+    ax1.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax1.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+    ax1.set_ylabel('Unweighted Event Counts')
+    ax1.errorbar(binCenters, pred, yerr=predUnc, label="Observed",  xerr=xErr, fmt='', color="red",   lw=0, elinewidth=2, marker="o", markerfacecolor="red",   markersize=4.0)
+    ax1.errorbar(binCenters, obs,  yerr=unc,     label="Predicted", xerr=xErr, fmt='', color="black", lw=0, elinewidth=2, marker="o", markerfacecolor="black", markersize=4.0)
 
-    ax2.errorbar(binCenters, abcdError, yerr=None, xerr=xErr, fmt='', color="blue",  lw=0, elinewidth=2, marker="o", markerfacecolor="blue")
+    ax2 = fig.add_subplot(3,1,3)
+    ax2.set_xlim([lowerNjets-0.5,higherNjets+0.5])
+    ax2.errorbar(binCenters, abcdError, yerr=None, xerr=xErr, fmt='', color="blue",  lw=0, elinewidth=2, marker="o", markerfacecolor="blue", markersize=4.0)
     ax2.axhline(y=0.0, color="black", linestyle="dashed", lw=1)
-    ax2.grid(color="black", which="both", axis="y")
-
-    #hep.cms.label(data=True, paper=False, year=year, ax=ax1)
-    
+    ax2.grid(axis="y", color="black", linestyle="dashed", which="both")
     ax2.set_xlabel('Number of jets')
     ax2.set_ylabel('1 - Pred./Obs.', fontsize="small")
-    ax1.set_ylabel('Unweighted Event Counts')
-    ax1.legend(loc='best')
     ax2.set_ylim([-1.6, 1.6])
-    
-    fig.savefig("plots/%s/Njets_Region_A_PredVsActual.pdf" %(channel))
+ 
+    plt.xticks(Njets)
+
+    ax1.legend(loc='best', frameon=False)
+ 
+    fig.savefig("plots/Njets_Region_A_PredVsActual_%s.pdf" %(channel))
 
     plt.close(fig)
 
@@ -496,6 +492,13 @@ def main():
         
         finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD = calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)
 
+        # ------------------------------------
+        # put the latest bin edges to txt file
+        # ------------------------------------
+        d = open("BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
+        d.write("x bin edges: %s \n" %(finalDisc1Key))
+        d.write("y bin edges: %s \n" %(finalDisc2Key))
+
         # -----------------------------
         # calculate simple closure ABCD
         # -----------------------------
@@ -553,7 +556,7 @@ def main():
         Njets = [7, 8, 9, 10, 11]
     totalChi2, ndof = plot_ClosureNjets(bkgNjets["A"], bkgNjetsErr["A"], bkgNjetsPred_A["value"], bkgNjetsPred_A["error"], Njets, args.year, args.channel)
 
-
+    d.close()
  
 if __name__ == '__main__':
     main()
