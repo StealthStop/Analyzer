@@ -49,10 +49,8 @@ def cal_OptMetricOfBinEdges(significance, closureError):
 # -------------------------------------------------------
 def count_Events_inBinEdges(histBkg, histSig):
 
-    lastXBin = histBkg.GetNbinsX()
-    lastYBin = histBkg.GetNbinsY()
-    nXBins   = range(2, lastXBin+1)
-    nYBins   = range(2, lastYBin+1)
+    lastXBin = histBkg.GetNbinsX();  lastYBin = histBkg.GetNbinsY()
+    nXBins   = range(2, lastXBin+1); nYBins   = range(2, lastYBin+1)
 
     nTotSigCount_ABCD = { 
         "nSigEvents_A" : {},    "nSigEvents_B" : {},    "nSigEvents_C" : {},    "nSigEvents_D" : {}, 
@@ -71,25 +69,16 @@ def count_Events_inBinEdges(histBkg, histSig):
         xBinKey     = "%.2f"%xLowBinEdge
 
         if xBinKey not in nTotSigCount_ABCD["nSigEventsErr_A"]:
-            nTotSigCount_ABCD["nSigEvents_A"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEvents_B"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEvents_C"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEvents_D"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEventsErr_B"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEventsErr_C"][xBinKey] = {}
-            nTotSigCount_ABCD["nSigEventsErr_D"][xBinKey] = {}
-
+            nTotSigCount_ABCD["nSigEvents_A"][xBinKey] = {}; nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey] = {} 
+            nTotSigCount_ABCD["nSigEvents_B"][xBinKey] = {}; nTotSigCount_ABCD["nSigEventsErr_B"][xBinKey] = {}
+            nTotSigCount_ABCD["nSigEvents_C"][xBinKey] = {}; nTotSigCount_ABCD["nSigEventsErr_C"][xBinKey] = {}
+            nTotSigCount_ABCD["nSigEvents_D"][xBinKey] = {}; nTotSigCount_ABCD["nSigEventsErr_D"][xBinKey] = {}
 
         if xBinKey not in nTotBkgCount_ABCD["nBkgEventsErr_A"]:
-            nTotBkgCount_ABCD["nBkgEvents_A"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEventsErr_A"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey] = {}
-            nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey] = {}
+            nTotBkgCount_ABCD["nBkgEvents_A"][xBinKey] = {}; nTotBkgCount_ABCD["nBkgEventsErr_A"][xBinKey] = {} 
+            nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey] = {}; nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey] = {}
+            nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey] = {}; nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey] = {}
+            nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey] = {}; nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey] = {}
 
         # loop over the y bins
         for yBin in nYBins:
@@ -98,24 +87,16 @@ def count_Events_inBinEdges(histBkg, histSig):
             yBinKey     = "%.2f"%yLowBinEdge
 
             if yBinKey not in nTotSigCount_ABCD["nSigEventsErr_A"]:
-                nTotSigCount_ABCD["nSigEvents_A"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEvents_B"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEvents_C"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEvents_D"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEventsErr_B"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEventsErr_C"][xBinKey][yBinKey] = 0.0
-                nTotSigCount_ABCD["nSigEventsErr_D"][xBinKey][yBinKey] = 0.0
+                nTotSigCount_ABCD["nSigEvents_A"][xBinKey][yBinKey] = 0.0; nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey][yBinKey] = 0.0  
+                nTotSigCount_ABCD["nSigEvents_B"][xBinKey][yBinKey] = 0.0; nTotSigCount_ABCD["nSigEventsErr_B"][xBinKey][yBinKey] = 0.0
+                nTotSigCount_ABCD["nSigEvents_C"][xBinKey][yBinKey] = 0.0; nTotSigCount_ABCD["nSigEventsErr_C"][xBinKey][yBinKey] = 0.0
+                nTotSigCount_ABCD["nSigEvents_D"][xBinKey][yBinKey] = 0.0; nTotSigCount_ABCD["nSigEventsErr_D"][xBinKey][yBinKey] = 0.0
 
             if yBinKey not in nTotBkgCount_ABCD["nBkgEventsErr_A"]:
-                nTotBkgCount_ABCD["nBkgEvents_A"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEventsErr_A"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey][yBinKey] = 0.0
-                nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey][yBinKey] = 0.0
+                nTotBkgCount_ABCD["nBkgEvents_A"][xBinKey][yBinKey] = 0.0; nTotBkgCount_ABCD["nBkgEventsErr_A"][xBinKey][yBinKey] = 0.0 
+                nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey][yBinKey] = 0.0; nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey][yBinKey] = 0.0 
+                nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey][yBinKey] = 0.0; nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey][yBinKey] = 0.0
+                nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey][yBinKey] = 0.0; nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey][yBinKey] = 0.0
 
             # count signal and background events and errors in bin edges
             nSigEventsErr_A = ROOT.Double(0.0); nSigEventsErr_B = ROOT.Double(0.0); nSigEventsErr_C = ROOT.Double(0.0); nSigEventsErr_D = ROOT.Double(0.0)
@@ -129,23 +110,15 @@ def count_Events_inBinEdges(histBkg, histSig):
             nBkgEvents_C = ( histBkg.IntegralAndError(xBin, lastXBin, 1, yBin-1, nBkgEventsErr_C) )
             nBkgEvents_D = ( histBkg.IntegralAndError(1, xBin-1, 1, yBin-1, nBkgEventsErr_D) )
             
-            nTotSigCount_ABCD["nSigEvents_A"][xBinKey][yBinKey] = nSigEvents_A
-            nTotSigCount_ABCD["nSigEvents_B"][xBinKey][yBinKey] = nSigEvents_B
-            nTotSigCount_ABCD["nSigEvents_C"][xBinKey][yBinKey] = nSigEvents_C
-            nTotSigCount_ABCD["nSigEvents_D"][xBinKey][yBinKey] = nSigEvents_D
-            nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey][yBinKey] = nSigEventsErr_A
-            nTotSigCount_ABCD["nSigEventsErr_B"][xBinKey][yBinKey] = nSigEventsErr_B
-            nTotSigCount_ABCD["nSigEventsErr_C"][xBinKey][yBinKey] = nSigEventsErr_C
-            nTotSigCount_ABCD["nSigEventsErr_D"][xBinKey][yBinKey] = nSigEventsErr_D
+            nTotSigCount_ABCD["nSigEvents_A"][xBinKey][yBinKey] = nSigEvents_A; nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey][yBinKey] = nSigEventsErr_A 
+            nTotSigCount_ABCD["nSigEvents_B"][xBinKey][yBinKey] = nSigEvents_B; nTotSigCount_ABCD["nSigEventsErr_B"][xBinKey][yBinKey] = nSigEventsErr_B
+            nTotSigCount_ABCD["nSigEvents_C"][xBinKey][yBinKey] = nSigEvents_C; nTotSigCount_ABCD["nSigEventsErr_C"][xBinKey][yBinKey] = nSigEventsErr_C
+            nTotSigCount_ABCD["nSigEvents_D"][xBinKey][yBinKey] = nSigEvents_D; nTotSigCount_ABCD["nSigEventsErr_D"][xBinKey][yBinKey] = nSigEventsErr_D
 
-            nTotBkgCount_ABCD["nBkgEvents_A"][xBinKey][yBinKey] = nBkgEvents_A
-            nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey][yBinKey] = nBkgEvents_B
-            nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey][yBinKey] = nBkgEvents_C
-            nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey][yBinKey] = nBkgEvents_D
-            nTotBkgCount_ABCD["nBkgEventsErr_A"][xBinKey][yBinKey] = nBkgEventsErr_A
-            nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey][yBinKey] = nBkgEventsErr_B
-            nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey][yBinKey] = nBkgEventsErr_C
-            nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey][yBinKey] = nBkgEventsErr_D
+            nTotBkgCount_ABCD["nBkgEvents_A"][xBinKey][yBinKey] = nBkgEvents_A; nTotBkgCount_ABCD["nBkgEventsErr_A"][xBinKey][yBinKey] = nBkgEventsErr_A 
+            nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey][yBinKey] = nBkgEvents_B; nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey][yBinKey] = nBkgEventsErr_B
+            nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey][yBinKey] = nBkgEvents_C; nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey][yBinKey] = nBkgEventsErr_C
+            nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey][yBinKey] = nBkgEvents_D; nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey][yBinKey] = nBkgEventsErr_D
 
     return nTotSigCount_ABCD, nTotBkgCount_ABCD
 
@@ -156,7 +129,6 @@ def count_Events_inBinEdges(histBkg, histSig):
 #   -- in region B : Nsig / (Nbkg + Nsig) 
 #   -- in region C : Nsig / (Nbkg + Nsig) 
 #   -- in region D : Nsig / (Nbkg + Nsig) 
-#
 # Total (A+B+C+D) signal fraction calculation
 # look at (SIG) events in each region, how many events are signal
 #   Ntotal = NA + NB + NC + ND
@@ -179,15 +151,10 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
         for disc2Key, nEvents in disc2s.items():
 
             # number of signal and background events in aech A, B, C, D region
-            nSigEvents_A = nTotSigCount_ABCD["nSigEvents_A"][disc1Key][disc1Key] 
-            nSigEvents_B = nTotSigCount_ABCD["nSigEvents_B"][disc1Key][disc1Key]
-            nSigEvents_C = nTotSigCount_ABCD["nSigEvents_C"][disc1Key][disc1Key]
-            nSigEvents_D = nTotSigCount_ABCD["nSigEvents_D"][disc1Key][disc1Key]
-            
-            nBkgEvents_A = nTotBkgCount_ABCD["nBkgEvents_A"][disc1Key][disc1Key]
-            nBkgEvents_B = nTotBkgCount_ABCD["nBkgEvents_B"][disc1Key][disc1Key]
-            nBkgEvents_C = nTotBkgCount_ABCD["nBkgEvents_C"][disc1Key][disc1Key]
-            nBkgEvents_D = nTotBkgCount_ABCD["nBkgEvents_D"][disc1Key][disc1Key]
+            nSigEvents_A = nTotSigCount_ABCD["nSigEvents_A"][disc1Key][disc1Key]; nBkgEvents_A = nTotBkgCount_ABCD["nBkgEvents_A"][disc1Key][disc1Key] 
+            nSigEvents_B = nTotSigCount_ABCD["nSigEvents_B"][disc1Key][disc1Key]; nBkgEvents_B = nTotBkgCount_ABCD["nBkgEvents_B"][disc1Key][disc1Key]
+            nSigEvents_C = nTotSigCount_ABCD["nSigEvents_C"][disc1Key][disc1Key]; nBkgEvents_C = nTotBkgCount_ABCD["nBkgEvents_C"][disc1Key][disc1Key];
+            nSigEvents_D = nTotSigCount_ABCD["nSigEvents_D"][disc1Key][disc1Key]; nBkgEvents_D = nTotBkgCount_ABCD["nBkgEvents_D"][disc1Key][disc1Key]
 
             # Region by region signal fraction calculation
             # get some plots based on region by region signal fraction
@@ -214,15 +181,10 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
             tempSigTotFracsA = -1.0; tempSigTotFracsB = -1.0; tempSigTotFracsC = -1.0; tempSigTotFracsD = -1.0
             tempBkgTotFracsA = -1.0; tempBkgTotFracsB = -1.0; tempBkgTotFracsC = -1.0; tempBkgTotFracsD = -1.0
             
-            tempSigTotFracsA = nSigEvents_A / nTot_Sig_ABCD 
-            tempSigTotFracsB = nSigEvents_B / nTot_Sig_ABCD
-            tempSigTotFracsC = nSigEvents_C / nTot_Sig_ABCD 
-            tempSigTotFracsD = nSigEvents_D / nTot_Sig_ABCD
-            
-            tempBkgTotFracsA = nBkgEvents_A / nTot_Bkg_ABCD   
-            tempBkgTotFracsB = nBkgEvents_B / nTot_Bkg_ABCD  
-            tempBkgTotFracsC = nBkgEvents_C / nTot_Bkg_ABCD 
-            tempBkgTotFracsD = nBkgEvents_D / nTot_Bkg_ABCD
+            tempSigTotFracsA = nSigEvents_A / nTot_Sig_ABCD; tempBkgTotFracsA = nBkgEvents_A / nTot_Bkg_ABCD 
+            tempSigTotFracsB = nSigEvents_B / nTot_Sig_ABCD; tempBkgTotFracsB = nBkgEvents_B / nTot_Bkg_ABCD
+            tempSigTotFracsC = nSigEvents_C / nTot_Sig_ABCD; tempBkgTotFracsC = nBkgEvents_C / nTot_Bkg_ABCD
+            tempSigTotFracsD = nSigEvents_D / nTot_Sig_ABCD; tempBkgTotFracsD = nBkgEvents_D / nTot_Bkg_ABCD
 
             # significance and closure error for optimization of bin edges
             tempSignificance = 0.0; tempClosureErr = -999.0; tempOptMetric = 999.0
@@ -247,15 +209,10 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
                 disc1KeyOut.append(float(disc1Key))
                 disc2KeyOut.append(float(disc2Key)) 
         
-                sigTotFracsA.append(float(tempSigTotFracsA))
-                sigTotFracsB.append(float(tempSigTotFracsB))
-                sigTotFracsC.append(float(tempSigTotFracsC))
-                sigTotFracsD.append(float(tempSigTotFracsD))
-
-                bkgTotFracsA.append(float(tempBkgTotFracsA))
-                bkgTotFracsB.append(float(tempBkgTotFracsB))
-                bkgTotFracsC.append(float(tempBkgTotFracsC))
-                bkgTotFracsD.append(float(tempBkgTotFracsD))
+                sigTotFracsA.append(float(tempSigTotFracsA)); bkgTotFracsA.append(float(tempBkgTotFracsA)) 
+                sigTotFracsB.append(float(tempSigTotFracsB)); bkgTotFracsB.append(float(tempBkgTotFracsB))
+                sigTotFracsC.append(float(tempSigTotFracsC)); bkgTotFracsC.append(float(tempBkgTotFracsC))
+                sigTotFracsD.append(float(tempSigTotFracsD)); bkgTotFracsD.append(float(tempBkgTotFracsD))
 
             if (tempBkgTotFracsA > minBkgFrac) and (tempBkgTotFracsB > minBkgFrac) and (tempBkgTotFracsC > minBkgFrac) and (tempBkgTotFracsD > minBkgFrac):                
                 tempOptMetric = cal_OptMetricOfBinEdges(tempSignificance, tempClosureErr)
@@ -268,7 +225,6 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
                 optMetric     = tempOptMetric
 
     # print out the disc1 and disc2 edges
-    #print "tempSignificance", tempSignificance
     print "disc1 (x bin) low bin edges: ", finalDisc1Key
     print "disc2 (y bin) low bin edges: ", finalDisc2Key
 
@@ -294,8 +250,8 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1Edge
     ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
     l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed")
     l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
-    #ax.add_line(l1)
-    #ax.add_line(l2)
+    ax.add_line(l1)
+    ax.add_line(l2)
 
     if Njets == -1: 
         fig.savefig("plots/%s_%s/Sign_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
@@ -316,8 +272,8 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1Edge
     ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
     l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed")
     l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
-    #ax.add_line(l1)
-    #ax.add_line(l2)
+    ax.add_line(l1)
+    ax.add_line(l2)
 
     if Njets == -1: 
         fig.savefig("plots/%s_%s/CloseErr_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
@@ -354,6 +310,247 @@ def plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSigni
     else:
         fig.savefig("plots/%s_%s/InvSign_vs_CloseErr_Njets%s_%s.pdf"%(model, mass, Njets,channel), dpi=fig.dpi)        
 
+    plt.close(fig)
+
+# ---------------------------------------------
+# plot Frac vs Edges
+#   -- SigFrac vs Disc1Disc2 in each A, B, C, D
+#   -- TotSigFrac vs Disc1Disc2
+#   -- BkgFrac vs Disc1Disc2 in each A, B, C, D
+#   -- TotBkgFrac vs Disc1Disc2
+# ---------------------------------------------
+def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
+
+    nBins = int( (1.0 + binWidth) / binWidth )
+
+    # SigFracA vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5)) 
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsA, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1: 
+        fig.savefig("plots/%s_%s/SigFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:           
+        fig.savefig("plots/%s_%s/SigFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig) 
+
+    # SigFracB vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5)) 
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsB, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+    
+    if Njets == -1: 
+        fig.savefig("plots/%s_%s/SigFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:           
+        fig.savefig("plots/%s_%s/SigFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig) 
+
+    # SigFracC vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5)) 
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsC, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+    
+    if Njets == -1: 
+        fig.savefig("plots/%s_%s/SigFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:           
+        fig.savefig("plots/%s_%s/SigFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig) 
+  
+    # SigFracD vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5)) 
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsD, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+    
+    if Njets == -1: 
+        fig.savefig("plots/%s_%s/SigFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:           
+        fig.savefig("plots/%s_%s/SigFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig) 
+    
+    ############################
+
+    # sigTotFracsA vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsA, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/SigTotFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/SigTotFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)
+ 
+    # sigTotFracsB vs Disc1Disc2 
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsB, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/SigTotFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/SigTotFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)
+
+    # sigTotFracsC vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsC, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/SigTotFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/SigTotFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)
+ 
+    # sigTotFracsD vs Disc1Disc2 
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsD, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/SigTotFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/SigTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)  
+
+    # bkgTotFracsA vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsA, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/BkgTotFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/BkgTotFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)
+
+    # bkgTotFracsB vs Disc1Disc2 
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsB, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/BkgTotFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/BkgTotFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)
+
+    # bkgTotFracsC vs Disc1Disc2
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsC, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/BkgTotFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/BkgTotFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+    plt.close(fig)
+
+    # bkgTotFracsD vs Disc1Disc2 
+    fig = plt.figure(figsize=(5,5))
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsD, cmin = 0.00001, cmax = 1.0)
+    plt.colorbar()
+    ax = plt.gca()
+    ax.set_xlabel("Disc. 1 Bin Edge")
+    ax.set_ylabel("Disc. 2 Bin Edge")
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+    ax.add_line(l1); ax.add_line(l2)
+
+    if Njets == -1:
+        fig.savefig("plots/%s_%s/BkgTotFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+    else:
+        fig.savefig("plots/%s_%s/BkgTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
 # --------------------------------
@@ -462,22 +659,6 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, model, mass
 
     return totalChi2, ndof
 
-# ------------------------------
-# plot Disc1VsDisc2 - percentage
-# ------------------------------
-#def plot_Disc1vsDisc2_Percentage(sigFracsA, sigFracsB, sigFracsC, sigFracsD,
-#                                 sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, 
-#                                 bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, 
-#                                 disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, Njets = -1): 
-
-
-
-
-
-
-
-
-
 
 def main():
 
@@ -570,6 +751,16 @@ def main():
         edges = np.arange(minEdge, maxEdge, binWidth)
         plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, finalDisc1Key, finalDisc2Key, args.year, args.model, args.mass, args.channel, njet)
 
+        
+        # ---------------------------------------------
+        # plot Frac vs Edges
+        #   -- SigFrac vs Disc1Disc2 in each A, B, C, D
+        #   -- TotSigFrac vs Disc1Disc2
+        #   -- BkgFrac vs Disc1Disc2 in each A, B, C, D
+        #   -- TotBkgFrac vs Disc1Disc2
+        # ---------------------------------------------
+        plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+
         # -----------------------------
         # calculate simple closure ABCD
         # -----------------------------
@@ -589,35 +780,23 @@ def main():
         
         else:
 
-            closure, closureUnc, pred_A, predUnc_A = cal_simpleClosureABCD( nTotBkgCount_ABCD["nBkgEvents_A"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEvents_B"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEvents_C"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEvents_D"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEventsErr_A"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEventsErr_B"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEventsErr_C"][finalDisc1Key][finalDisc2Key], 
-                                                                            nTotBkgCount_ABCD["nBkgEventsErr_D"][finalDisc1Key][finalDisc2Key] )
+            closure, closureUnc, pred_A, predUnc_A = cal_simpleClosureABCD( nTotBkgCount_ABCD["nBkgEvents_A"][finalDisc1Key][finalDisc2Key],    nTotBkgCount_ABCD["nBkgEvents_B"][finalDisc1Key][finalDisc2Key], 
+                                                                            nTotBkgCount_ABCD["nBkgEvents_C"][finalDisc1Key][finalDisc2Key],    nTotBkgCount_ABCD["nBkgEvents_D"][finalDisc1Key][finalDisc2Key], 
+                                                                            nTotBkgCount_ABCD["nBkgEventsErr_A"][finalDisc1Key][finalDisc2Key], nTotBkgCount_ABCD["nBkgEventsErr_B"][finalDisc1Key][finalDisc2Key], 
+                                                                            nTotBkgCount_ABCD["nBkgEventsErr_C"][finalDisc1Key][finalDisc2Key], nTotBkgCount_ABCD["nBkgEventsErr_D"][finalDisc1Key][finalDisc2Key] )
 
             # ---------------------
             # make the closure plot
             # ---------------------
-            sigNjets["A"].append(nTotSigCount_ABCD["nSigEvents_A"][finalDisc1Key][finalDisc2Key])
-            sigNjets["B"].append(nTotSigCount_ABCD["nSigEvents_B"][finalDisc1Key][finalDisc2Key])
-            sigNjets["C"].append(nTotSigCount_ABCD["nSigEvents_C"][finalDisc1Key][finalDisc2Key])
-            sigNjets["D"].append(nTotSigCount_ABCD["nSigEvents_D"][finalDisc1Key][finalDisc2Key])
-            sigNjetsErr["A"].append(nTotSigCount_ABCD["nSigEventsErr_A"][finalDisc1Key][finalDisc2Key])
-            sigNjetsErr["B"].append(nTotSigCount_ABCD["nSigEventsErr_B"][finalDisc1Key][finalDisc2Key])
-            sigNjetsErr["C"].append(nTotSigCount_ABCD["nSigEventsErr_C"][finalDisc1Key][finalDisc2Key])
-            sigNjetsErr["D"].append(nTotSigCount_ABCD["nSigEventsErr_D"][finalDisc1Key][finalDisc2Key])
+            sigNjets["A"].append(nTotSigCount_ABCD["nSigEvents_A"][finalDisc1Key][finalDisc2Key]); sigNjetsErr["A"].append(nTotSigCount_ABCD["nSigEventsErr_A"][finalDisc1Key][finalDisc2Key]) 
+            sigNjets["B"].append(nTotSigCount_ABCD["nSigEvents_B"][finalDisc1Key][finalDisc2Key]); sigNjetsErr["B"].append(nTotSigCount_ABCD["nSigEventsErr_B"][finalDisc1Key][finalDisc2Key])
+            sigNjets["C"].append(nTotSigCount_ABCD["nSigEvents_C"][finalDisc1Key][finalDisc2Key]); sigNjetsErr["C"].append(nTotSigCount_ABCD["nSigEventsErr_C"][finalDisc1Key][finalDisc2Key])
+            sigNjets["D"].append(nTotSigCount_ABCD["nSigEvents_D"][finalDisc1Key][finalDisc2Key]); sigNjetsErr["D"].append(nTotSigCount_ABCD["nSigEventsErr_D"][finalDisc1Key][finalDisc2Key])
 
-            bkgNjets["A"].append(nTotBkgCount_ABCD["nBkgEvents_A"][finalDisc1Key][finalDisc2Key]) 
-            bkgNjets["B"].append(nTotBkgCount_ABCD["nBkgEvents_B"][finalDisc1Key][finalDisc2Key]) 
-            bkgNjets["C"].append(nTotBkgCount_ABCD["nBkgEvents_C"][finalDisc1Key][finalDisc2Key]) 
-            bkgNjets["D"].append(nTotBkgCount_ABCD["nBkgEvents_D"][finalDisc1Key][finalDisc2Key])
-            bkgNjetsErr["A"].append(nTotBkgCount_ABCD["nBkgEventsErr_A"][finalDisc1Key][finalDisc2Key]) 
-            bkgNjetsErr["B"].append(nTotBkgCount_ABCD["nBkgEventsErr_B"][finalDisc1Key][finalDisc2Key]) 
-            bkgNjetsErr["C"].append(nTotBkgCount_ABCD["nBkgEventsErr_C"][finalDisc1Key][finalDisc2Key]) 
-            bkgNjetsErr["D"].append(nTotBkgCount_ABCD["nBkgEventsErr_D"][finalDisc1Key][finalDisc2Key])  
+            bkgNjets["A"].append(nTotBkgCount_ABCD["nBkgEvents_A"][finalDisc1Key][finalDisc2Key]); bkgNjetsErr["A"].append(nTotBkgCount_ABCD["nBkgEventsErr_A"][finalDisc1Key][finalDisc2Key]) 
+            bkgNjets["B"].append(nTotBkgCount_ABCD["nBkgEvents_B"][finalDisc1Key][finalDisc2Key]); bkgNjetsErr["B"].append(nTotBkgCount_ABCD["nBkgEventsErr_B"][finalDisc1Key][finalDisc2Key])
+            bkgNjets["C"].append(nTotBkgCount_ABCD["nBkgEvents_C"][finalDisc1Key][finalDisc2Key]); bkgNjetsErr["C"].append(nTotBkgCount_ABCD["nBkgEventsErr_C"][finalDisc1Key][finalDisc2Key])
+            bkgNjets["D"].append(nTotBkgCount_ABCD["nBkgEvents_D"][finalDisc1Key][finalDisc2Key]); bkgNjetsErr["D"].append(nTotBkgCount_ABCD["nBkgEventsErr_D"][finalDisc1Key][finalDisc2Key])
 
             bkgNjetsPred_A["value"].append(pred_A); bkgNjetsPred_A["error"].append(predUnc_A)
 
