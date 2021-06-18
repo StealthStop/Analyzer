@@ -12,9 +12,6 @@ mpl.use('Agg')
 import matplotlib.lines as ml
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-#import mplhep as hep
-#plt.style.use([hep.style.ROOT,hep.style.CMS]) # For now ROOT defaults to CMS
-#plt.style.use({'legend.frameon':False,'legend.fontsize':16,'legend.edgecolor':'black'})
 
 from matplotlib.colors import LogNorm
 from ROOT import TFile, gROOT, gStyle, TLatex
@@ -40,9 +37,9 @@ def cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D):
 # --------------------------------------------
 # Optimization metric of bin edges calculation
 # --------------------------------------------
-def cal_OptMetricOfBinEdges(inverseSignificance, closureError):
+def cal_OptMetricOfBinEdges(significance, closureError):
     #inverseSignificance = (1.0 / significance)
-    optimizationMetric  = (closureError)**2 + (inverseSignificance)**2
+    optimizationMetric  = (closureError)**2 + (1.0 / significance)**2
     return optimizationMetric
 
 # -------------------------------------------------------
@@ -446,7 +443,7 @@ def main():
         "%s%s"%(args.model,args.mass) : ROOT.TFile.Open(args.path + "/" + args.year + "_%s_%s_mStop-%s.root"%(args.model,modelDecay,args.mass)),
     }
 
-    #os.system("rm BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel))
+    os.system("rm BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel))
 
     # for 0-lepton 
     if args.channel == "0l":
