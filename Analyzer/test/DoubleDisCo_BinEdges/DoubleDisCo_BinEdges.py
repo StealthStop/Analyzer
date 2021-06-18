@@ -277,7 +277,7 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
 # --------------------------------------------------------------
 # plot significance and closure error as a function of bin edges 
 # --------------------------------------------------------------
-def plot_SigClosure_BinEdges(inverseSignificance, closureErr, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, channel, Njets = -1):
+def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, channel, Njets = -1):
 
     nBins = int( (1.0 + binWidth) / binWidth )
 
@@ -321,6 +321,36 @@ def plot_SigClosure_BinEdges(inverseSignificance, closureErr, disc1Edges, disc2E
         fig.savefig("plots/CloseErr_vs_Disc1Disc2_%s.pdf"%(channel), dpi=fig.dpi)
     else:           
         fig.savefig("plots/CloseErr_vs_Disc1Disc2_Njets%s_%s.pdf"%(Njets,channel), dpi=fig.dpi)
+    plt.close(fig)
+
+# --------------------------------------
+# plot inverseSignificance vs ClosureErr 
+# --------------------------------------
+def plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, disc1Edge, disc2Edge, year, channel, Njets = -1):
+
+    fig = plt.figure()
+    ax = plt.gca()
+    ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+    ax.text(0.33, 1.04, "Preliminary",        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+    ax.text(0.99, 1.04, "%s (13 TeV)"%(year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+    plt.scatter(inverseSignificance, closureErrsList, color='xkcd:black', marker="o", label="1 - Pred./Obs. vs 1 / Significance")
+
+    if significance != 0.0: 
+        plt.scatter([1.0 / significance], [closureErr], color='xkcd:red', marker="o", label="Chosen Solution")
+    plt.xlabel('1 / Significance')
+    plt.xlim(left=0)
+    plt.ylabel('|1 - Pred./Obs.|')
+    plt.legend(loc='best')
+    plt.ylim(bottom=0)
+    plt.gca().invert_yaxis()
+    plt.text(0.50, 0.85, r"$%.2f < \bf{Disc.\;1\;Edge}$ = %s < %.2f"%(edges[0],disc1Edge,edges[-1]), transform=ax.transAxes, fontsize=16)
+    plt.text(0.50, 0.80, r"$%.2f < \bf{Disc.\;2\;Edge}$ = %s < %.2f"%(edges[0],disc2Edge,edges[-1]), transform=ax.transAxes, fontsize=16)
+
+    if Njets == -1:
+        fig.savefig("plots/InvSign_vs_CloseErr_%s.pdf"%(channel), dpi=fig.dpi)        
+    else:
+        fig.savefig("plots/InvSign_vs_CloseErr_Njets%s_%s.pdf"%(Njets,channel), dpi=fig.dpi)        
+
     plt.close(fig)
 
 # --------------------------------
@@ -430,13 +460,6 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, channel):
     return totalChi2, ndof
 
 # ------------------------------
-# plot Disc1VsDisc2 - comparison
-# ------------------------------
-#def plot_Disc1vsDisc2_Comparison(finalSignificance, finalClosureErr, inverseSignificance, closureErr, edges, disc1Edge, disc2Edge, Njets = -1):
-
-
-
-# ------------------------------
 # plot Disc1VsDisc2 - percentage
 # ------------------------------
 #def plot_Disc1vsDisc2_Percentage(sigFracsA, sigFracsB, sigFracsC, sigFracsD,
@@ -536,7 +559,13 @@ def main():
         minEdge  = histBkg.GetXaxis().GetBinLowEdge(1) 
         maxEdge  = histBkg.GetXaxis().GetBinUpEdge(histBkg.GetNbinsX())
         binWidth = histBkg.GetXaxis().GetBinWidth(1)
-        plot_SigClosure_BinEdges(inverseSignificance, closureErr, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.channel, njets)
+        #plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.channel, njet)
+
+        # --------------------------------------
+        # plot inverseSignificance vs ClosureErr 
+        # --------------------------------------
+        edges = np.arange(minEdge, maxEdge, binWidth) 
+        plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, disc1KeyOut, disc2KeyOut, args.year, args.channel, njet)
 
         # -----------------------------
         # calculate simple closure ABCD
@@ -595,10 +624,6 @@ def main():
         Njets = [7, 8, 9, 10, 11]
     
     totalChi2, ndof = plot_ClosureNjets(bkgNjets["A"], bkgNjetsErr["A"], bkgNjetsPred_A["value"], bkgNjetsPred_A["error"], Njets, args.year, args.channel)
-
-    
-    
-
 
 
 
