@@ -11,6 +11,9 @@ mpl.use('Agg')
 
 import matplotlib.lines as ml
 import matplotlib.pyplot as plt
+#mpl.__version__
+#print mpl.__version__
+# mpl version is 2.2.5
 
 from matplotlib.colors import LogNorm
 from ROOT import TFile, gROOT, gStyle, TLatex
@@ -151,10 +154,10 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
         for disc2Key, nEvents in disc2s.items():
 
             # number of signal and background events in aech A, B, C, D region
-            nSigEvents_A = nTotSigCount_ABCD["nSigEvents_A"][disc1Key][disc1Key]; nBkgEvents_A = nTotBkgCount_ABCD["nBkgEvents_A"][disc1Key][disc1Key] 
-            nSigEvents_B = nTotSigCount_ABCD["nSigEvents_B"][disc1Key][disc1Key]; nBkgEvents_B = nTotBkgCount_ABCD["nBkgEvents_B"][disc1Key][disc1Key]
-            nSigEvents_C = nTotSigCount_ABCD["nSigEvents_C"][disc1Key][disc1Key]; nBkgEvents_C = nTotBkgCount_ABCD["nBkgEvents_C"][disc1Key][disc1Key];
-            nSigEvents_D = nTotSigCount_ABCD["nSigEvents_D"][disc1Key][disc1Key]; nBkgEvents_D = nTotBkgCount_ABCD["nBkgEvents_D"][disc1Key][disc1Key]
+            nSigEvents_A = nTotSigCount_ABCD["nSigEvents_A"][disc1Key][disc2Key]; nBkgEvents_A = nTotBkgCount_ABCD["nBkgEvents_A"][disc1Key][disc2Key] 
+            nSigEvents_B = nTotSigCount_ABCD["nSigEvents_B"][disc1Key][disc2Key]; nBkgEvents_B = nTotBkgCount_ABCD["nBkgEvents_B"][disc1Key][disc2Key]
+            nSigEvents_C = nTotSigCount_ABCD["nSigEvents_C"][disc1Key][disc2Key]; nBkgEvents_C = nTotBkgCount_ABCD["nBkgEvents_C"][disc1Key][disc2Key]
+            nSigEvents_D = nTotSigCount_ABCD["nSigEvents_D"][disc1Key][disc2Key]; nBkgEvents_D = nTotBkgCount_ABCD["nBkgEvents_D"][disc1Key][disc2Key]
 
             # Region by region signal fraction calculation
             # get some plots based on region by region signal fraction
@@ -233,13 +236,12 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
 # --------------------------------------------------------------
 # plot significance and closure error as a function of bin edges 
 # --------------------------------------------------------------
-def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
+def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
 
     nBins = int( (1.0 + binWidth) / binWidth )
 
     # significance as a function of bin edges
-    #fig = plt.figure()
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=np.reciprocal(inverseSignificance), cmin=10e-10, cmax=10.0)
     plt.colorbar()
     ax = plt.gca()
@@ -260,9 +262,8 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1Edge
     plt.close(fig)
 
     # closure error as a function of bin edges
-    #fig = plt.figure()
-    fig = plt.figure(figsize=(5,5))
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=closureErr, cmin=10e-10, cmax=2.5)
+    fig = plt.figure()
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=closureErrsList, cmin=10e-10, cmax=2.5)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -286,7 +287,6 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1Edge
 # --------------------------------------
 def plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, disc1Edge, disc2Edge, year, model, mass, channel, Njets = -1):
 
-    #fig = plt.figure()
     fig = plt.figure(figsize=(5,5))
     ax = plt.gca()
     ax.text(0.12, 1.05, "CMS",                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
@@ -743,7 +743,7 @@ def main():
         minEdge  = histBkg.GetXaxis().GetBinLowEdge(1) 
         maxEdge  = histBkg.GetXaxis().GetBinUpEdge(histBkg.GetNbinsX())
         binWidth = histBkg.GetXaxis().GetBinWidth(1)
-        #plot_SignificanceClosure_BinEdges(inverseSignificance, closureErr, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+        plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
 
         # --------------------------------------
         # plot inverseSignificance vs ClosureErr 
@@ -759,7 +759,7 @@ def main():
         #   -- BkgFrac vs Disc1Disc2 in each A, B, C, D
         #   -- TotBkgFrac vs Disc1Disc2
         # ---------------------------------------------
-        plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+        #plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
 
         # -----------------------------
         # calculate simple closure ABCD
@@ -807,6 +807,15 @@ def main():
     
     totalChi2, ndof = plot_ClosureNjets(bkgNjets["A"], bkgNjetsErr["A"], bkgNjetsPred_A["value"], bkgNjetsPred_A["error"], Njets, args.year, args.model, args.mass, args.channel)
 
+    #print "inverseSignificance : ", inverseSignificance
+    #print "closureErrsList     :" , closureErrsList
+    #print "disc1Edges          : ", disc1KeyOut
+    #print "disc2Edges          : ", disc2KeyOut
+    #print "finalDisc1Key       : ", float(finalDisc1Key)
+    #print "finalDisc2Key       : ", float(finalDisc2Key)
+    #print "minEdge             :" , minEdge
+    #print "maxEdge             :" , maxEdge
+    #print "binWidth            :" , binWidth
 
     d.close()
  
