@@ -165,22 +165,28 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
             nTot_SigBkg_B = nSigEvents_B + nBkgEvents_B
             nTot_SigBkg_C = nSigEvents_C + nBkgEvents_C
             nTot_SigBkg_D = nSigEvents_D + nBkgEvents_D
-            tempSigFracA = -1.0; tempSigFracB = -1.0; tempSigFracC = -1.0; tempSigFracD = -1.0
+            
+            tempSigFracsA = -1.0; tempSigFracsB = -1.0; tempSigFracsC = -1.0; tempSigFracsD = -1.0
 
-            if nTot_SigBkg_A > 0.0: tempSigFracsA = nSigEvents_A / nTot_SigBkg_A
-            if nTot_SigBkg_B > 0.0: tempSigFracsB = nSigEvents_B / nTot_SigBkg_B
-            if nTot_SigBkg_C > 0.0: tempSigFracsC = nSigEvents_C / nTot_SigBkg_C
-            if nTot_SigBkg_D > 0.0: tempSigFracsD = nSigEvents_D / nTot_SigBkg_D
+            if nTot_SigBkg_A > 0.0: 
+                tempSigFracsA = nSigEvents_A / nTot_SigBkg_A
+            if nTot_SigBkg_B > 0.0: 
+                tempSigFracsB = nSigEvents_B / nTot_SigBkg_B
+            if nTot_SigBkg_C > 0.0: 
+                tempSigFracsC = nSigEvents_C / nTot_SigBkg_C
+            if nTot_SigBkg_D > 0.0: 
+                tempSigFracsD = nSigEvents_D / nTot_SigBkg_D
 
-            sigFracsA.append(float(tempSigFracA))
-            sigFracsB.append(float(tempSigFracB))
-            sigFracsC.append(float(tempSigFracC))
-            sigFracsD.append(float(tempSigFracD))
+            #sigFracsA.append(float(tempSigFracsA))
+            #sigFracsB.append(float(tempSigFracsB))
+            #sigFracsC.append(float(tempSigFracsC))
+            #sigFracsD.append(float(tempSigFracsD))
 
             # Total signal (and background) fractions in aech A, B, C, D region
             # get the latest bin edges based on total signal fraction
             nTot_Sig_ABCD = nSigEvents_A + nSigEvents_B + nSigEvents_C + nSigEvents_D
             nTot_Bkg_ABCD = nBkgEvents_A + nBkgEvents_B + nBkgEvents_C + nBkgEvents_D
+            
             tempSigTotFracsA = -1.0; tempSigTotFracsB = -1.0; tempSigTotFracsC = -1.0; tempSigTotFracsD = -1.0
             tempBkgTotFracsA = -1.0; tempBkgTotFracsB = -1.0; tempBkgTotFracsC = -1.0; tempBkgTotFracsD = -1.0
             
@@ -212,6 +218,13 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
                 disc1KeyOut.append(float(disc1Key))
                 disc2KeyOut.append(float(disc2Key)) 
         
+                # Region by region fraction
+                sigFracsA.append(float(tempSigFracsA))
+                sigFracsB.append(float(tempSigFracsB))
+                sigFracsC.append(float(tempSigFracsC))
+                sigFracsD.append(float(tempSigFracsD))
+
+                # Total fraction
                 sigTotFracsA.append(float(tempSigTotFracsA)); bkgTotFracsA.append(float(tempBkgTotFracsA)) 
                 sigTotFracsB.append(float(tempSigTotFracsB)); bkgTotFracsB.append(float(tempBkgTotFracsB))
                 sigTotFracsC.append(float(tempSigTotFracsC)); bkgTotFracsC.append(float(tempBkgTotFracsC))
@@ -228,8 +241,8 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
                 optMetric     = tempOptMetric
 
     # print out the disc1 and disc2 edges
-    print "disc1 (x bin) low bin edges: ", finalDisc1Key
-    print "disc2 (y bin) low bin edges: ", finalDisc2Key
+    #print "disc1 (x bin) low bin edges: ", finalDisc1Key
+    #print "disc2 (y bin) low bin edges: ", finalDisc2Key
 
     return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD 
 
@@ -256,9 +269,9 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc
     ax.add_line(l2)
 
     if Njets == -1: 
-        fig.savefig("plots/%s_%s/Sign_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:           
-        fig.savefig("plots/%s_%s/Sign_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets,channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
     # closure error as a function of bin edges
@@ -277,9 +290,9 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc
     ax.add_line(l2)
 
     if Njets == -1: 
-        fig.savefig("plots/%s_%s/CloseErr_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:           
-        fig.savefig("plots/%s_%s/CloseErr_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets,channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
 # --------------------------------------
@@ -306,9 +319,9 @@ def plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSigni
     plt.text(0.40, 0.80, r"$%.2f < \bf{Disc.\;2\;Edge}$ = %s < %.2f"%(edges[0],disc2Edge,edges[-1]), transform=ax.transAxes, fontsize=8)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/InvSign_vs_CloseErr_%s.pdf"%(model, mass, channel), dpi=fig.dpi)        
+        fig.savefig("plots/%s_%s/%s/%s_InvSign_vs_CloseErr_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)        
     else:
-        fig.savefig("plots/%s_%s/InvSign_vs_CloseErr_Njets%s_%s.pdf"%(model, mass, Njets,channel), dpi=fig.dpi)        
+        fig.savefig("plots/%s_%s/%s/%s_InvSign_vs_CloseErr_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)        
 
     plt.close(fig)
 
@@ -324,7 +337,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     nBins = int( (1.0 + binWidth) / binWidth )
 
     # SigFracA vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5)) 
+    fig = plt.figure() 
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsA, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -337,13 +350,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1: 
-        fig.savefig("plots/%s_%s/SigFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:           
-        fig.savefig("plots/%s_%s/SigFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig) 
 
     # SigFracB vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5)) 
+    fig = plt.figure() 
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsB, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -356,13 +369,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
     
     if Njets == -1: 
-        fig.savefig("plots/%s_%s/SigFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:           
-        fig.savefig("plots/%s_%s/SigFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig) 
 
     # SigFracC vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5)) 
+    fig = plt.figure() 
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsC, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -375,13 +388,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
     
     if Njets == -1: 
-        fig.savefig("plots/%s_%s/SigFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:           
-        fig.savefig("plots/%s_%s/SigFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig) 
   
     # SigFracD vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5)) 
+    fig = plt.figure() 
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsD, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -394,15 +407,15 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
     
     if Njets == -1: 
-        fig.savefig("plots/%s_%s/SigFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:           
-        fig.savefig("plots/%s_%s/SigFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig) 
     
     ############################
 
     # sigTotFracsA vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsA, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -415,13 +428,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/SigTotFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/SigTotFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
  
     # sigTotFracsB vs Disc1Disc2 
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsB, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -434,13 +447,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/SigTotFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/SigTotFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
     # sigTotFracsC vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsC, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -453,13 +466,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/SigTotFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/SigTotFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
  
     # sigTotFracsD vs Disc1Disc2 
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsD, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -472,13 +485,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/SigTotFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/SigTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_SigTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)  
 
     # bkgTotFracsA vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsA, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -491,13 +504,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/BkgTotFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracA_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/BkgTotFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracA_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
     # bkgTotFracsB vs Disc1Disc2 
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsB, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -510,13 +523,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/BkgTotFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracB_vs_Disc1Disc2_%s.pdf"%(model, mass, channel, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/BkgTotFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracB_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
     # bkgTotFracsC vs Disc1Disc2
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsC, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -529,13 +542,13 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/BkgTotFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracC_vs_Disc1Disc2_%s.pdf"%(model, mass, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/BkgTotFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracC_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
     # bkgTotFracsD vs Disc1Disc2 
-    fig = plt.figure(figsize=(5,5))
+    fig = plt.figure()
     plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsD, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
@@ -548,9 +561,9 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
     ax.add_line(l1); ax.add_line(l2)
 
     if Njets == -1:
-        fig.savefig("plots/%s_%s/BkgTotFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2_%s.pdf"%(model, mass, year, channel), dpi=fig.dpi)
     else:
-        fig.savefig("plots/%s_%s/BkgTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, Njets, channel), dpi=fig.dpi)
+        fig.savefig("plots/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
 # --------------------------------
@@ -653,7 +666,7 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, model, mass
 
     ax1.legend(loc='best', frameon=False)
  
-    fig.savefig("plots/%s_%s/Njets_Region_A_PredVsActual_%s.pdf" %(model, mass, channel))
+    fig.savefig("plots/%s_%s/%s/%s_Njets_Region_A_PredVsActual_%s.pdf" %(model, mass, channel, year, channel))
 
     plt.close(fig)
 
@@ -734,8 +747,10 @@ def main():
 
         # put the latest bin edges to txt file
         d = open("BinEdges_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
+        d.write("%s bin edges: \n" %(njet))
         d.write("x bin edges: %s \n" %(finalDisc1Key))
         d.write("y bin edges: %s \n" %(finalDisc2Key))
+        d.write("\n")
 
         # --------------------------------------------------------------------
         # make significance and closure error as a function of bin edges plots
@@ -750,7 +765,6 @@ def main():
         # --------------------------------------
         edges = np.arange(minEdge, maxEdge, binWidth)
         plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, finalDisc1Key, finalDisc2Key, args.year, args.model, args.mass, args.channel, njet)
-
         
         # ---------------------------------------------
         # plot Frac vs Edges
@@ -759,7 +773,7 @@ def main():
         #   -- BkgFrac vs Disc1Disc2 in each A, B, C, D
         #   -- TotBkgFrac vs Disc1Disc2
         # ---------------------------------------------
-        #plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, finalDisc1Key, finalDisc2Key, minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+        plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
 
         # -----------------------------
         # calculate simple closure ABCD
@@ -807,15 +821,6 @@ def main():
     
     totalChi2, ndof = plot_ClosureNjets(bkgNjets["A"], bkgNjetsErr["A"], bkgNjetsPred_A["value"], bkgNjetsPred_A["error"], Njets, args.year, args.model, args.mass, args.channel)
 
-    #print "inverseSignificance : ", inverseSignificance
-    #print "closureErrsList     :" , closureErrsList
-    #print "disc1Edges          : ", disc1KeyOut
-    #print "disc2Edges          : ", disc2KeyOut
-    #print "finalDisc1Key       : ", float(finalDisc1Key)
-    #print "finalDisc2Key       : ", float(finalDisc2Key)
-    #print "minEdge             :" , minEdge
-    #print "maxEdge             :" , maxEdge
-    #print "binWidth            :" , binWidth
 
     d.close()
  
