@@ -2,6 +2,7 @@ import ROOT
 import os
 import sys
 import math
+import ctypes
 import argparse
 import numpy as np
 import array as arr
@@ -104,6 +105,8 @@ def count_Events_inBinEdges(histBkg, histSig):
             # count signal and background events and errors in bin edges
             nSigEventsErr_A = ROOT.Double(0.0); nSigEventsErr_B = ROOT.Double(0.0); nSigEventsErr_C = ROOT.Double(0.0); nSigEventsErr_D = ROOT.Double(0.0)
             nBkgEventsErr_A = ROOT.Double(0.0); nBkgEventsErr_B = ROOT.Double(0.0); nBkgEventsErr_C = ROOT.Double(0.0); nBkgEventsErr_D = ROOT.Double(0.0)
+            #nSigEventsErr_A = ctypes.c_double(0.0); nSigEventsErr_B = ctypes.c_double(0.0); nSigEventsErr_C = ctypes.c_double(0.0); nSigEventsErr_D = ctypes.c_double(0.0)
+            #nBkgEventsErr_A = ctypes.c_double(0.0); nBkgEventsErr_B = ctypes.c_double(0.0); nBkgEventsErr_C = ctypes.c_double(0.0); nBkgEventsErr_D = ctypes.c_double(0.0)
             nSigEvents_A = ( histSig.IntegralAndError(xBin, lastXBin, yBin, lastYBin, nSigEventsErr_A) )
             nSigEvents_B = ( histSig.IntegralAndError(1, xBin-1, yBin, lastYBin, nSigEventsErr_B) )
             nSigEvents_C = ( histSig.IntegralAndError(xBin, lastXBin, 1, yBin-1, nSigEventsErr_C) )
@@ -584,7 +587,7 @@ def cal_simpleClosureABCD(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D
     if nBkgEvents_D > 0.0:
         nPredBkgEvents_A    = ( numerator / nBkgEvents_D )
         nPredBkgUncEvents_A = ( ( (nBkgEvents_C * nBkgEventsErr_B) / nBkgEvents_D )**2.0 
-                              + ( (nBkgEvents_B * nBkgEventsErr_C) / nBkgEvents_B )**2.0 
+                              + ( (nBkgEvents_B * nBkgEventsErr_C) / nBkgEvents_D )**2.0 
                               + ( (nBkgEvents_B * nBkgEvents_C * nBkgEventsErr_D) / nBkgEvents_D**2.0 )**2.0 )**0.5
 
     if denominator > 0.0:
