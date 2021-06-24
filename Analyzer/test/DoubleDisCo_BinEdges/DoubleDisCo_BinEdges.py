@@ -68,7 +68,7 @@ def count_Events_inBinEdges(histBkg, histSig):
     # loop over the x bins
     for xBin in nXBins:
 
-        xLowBinEdge = histBkg.GetXaxis().GetBinLowEdge(xBin)
+        xLowBinEdge = histBkg.GetXaxis().GetBinCenter(xBin)
         xBinKey     = "%.2f"%xLowBinEdge
 
         if xBinKey not in nTotSigCount_ABCD["nSigEventsErr_A"]:
@@ -86,7 +86,7 @@ def count_Events_inBinEdges(histBkg, histSig):
         # loop over the y bins
         for yBin in nYBins:
 
-            yLowBinEdge = histBkg.GetYaxis().GetBinLowEdge(yBin)
+            yLowBinEdge = histBkg.GetYaxis().GetBinCenter(yBin)
             yBinKey     = "%.2f"%yLowBinEdge
 
             if yBinKey not in nTotSigCount_ABCD["nSigEventsErr_A"]:
@@ -249,13 +249,13 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
 # --------------------------------------------------------------
 # plot significance and closure error as a function of bin edges 
 # --------------------------------------------------------------
-def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
+def plot_SignificanceClosure_BinEdges(nBins, inverseSignificance, closureErrsList, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
 
-    nBins = int( (1.0 + binWidth) / binWidth )
+    #nBins = int( (1.0 + binWidth) / binWidth )
 
     # significance as a function of bin edges
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=np.reciprocal(inverseSignificance), cmin=10e-10, cmax=10.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=np.reciprocal(inverseSignificance), cmin=10e-10, cmax=10.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -276,7 +276,7 @@ def plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc
 
     # closure error as a function of bin edges
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=closureErrsList, cmin=10e-10, cmax=2.5)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=closureErrsList, cmin=10e-10, cmax=2.5)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -332,13 +332,13 @@ def plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSigni
 #   -- BkgFrac vs Disc1Disc2 in each A, B, C, D
 #   -- TotBkgFrac vs Disc1Disc2
 # ---------------------------------------------
-def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
+def plot_SigBkgFrac_vsEdges(nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, year, model, mass, channel, Njets = -1):
 
-    nBins = int( (1.0 + binWidth) / binWidth )
+    #nBins = int( (1.0 + binWidth) / binWidth )
 
     # SigFracA vs Disc1Disc2
     fig = plt.figure() 
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsA, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigFracsA, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -357,7 +357,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # SigFracB vs Disc1Disc2
     fig = plt.figure() 
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsB, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigFracsB, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -376,7 +376,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # SigFracC vs Disc1Disc2
     fig = plt.figure() 
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsC, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigFracsC, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -395,7 +395,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
   
     # SigFracD vs Disc1Disc2
     fig = plt.figure() 
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigFracsD, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigFracsD, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -416,7 +416,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # sigTotFracsA vs Disc1Disc2
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsA, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigTotFracsA, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -435,7 +435,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
  
     # sigTotFracsB vs Disc1Disc2 
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsB, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigTotFracsB, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -454,7 +454,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # sigTotFracsC vs Disc1Disc2
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsC, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigTotFracsC, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -473,7 +473,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
  
     # sigTotFracsD vs Disc1Disc2 
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=sigTotFracsD, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=sigTotFracsD, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -492,7 +492,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # bkgTotFracsA vs Disc1Disc2
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsA, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=bkgTotFracsA, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -511,7 +511,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # bkgTotFracsB vs Disc1Disc2 
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsB, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=bkgTotFracsB, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -530,7 +530,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # bkgTotFracsC vs Disc1Disc2
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsC, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=bkgTotFracsC, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -549,7 +549,7 @@ def plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFr
 
     # bkgTotFracsD vs Disc1Disc2 
     fig = plt.figure()
-    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=bkgTotFracsD, cmin = 0.00001, cmax = 1.0)
+    plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]],cmap=plt.cm.jet, weights=bkgTotFracsD, cmin = 0.00001, cmax = 1.0)
     plt.colorbar()
     ax = plt.gca()
     ax.set_xlabel("Disc. 1 Bin Edge")
@@ -755,10 +755,11 @@ def main():
         # --------------------------------------------------------------------
         # make significance and closure error as a function of bin edges plots
         # --------------------------------------------------------------------
-        minEdge  = histBkg.GetXaxis().GetBinLowEdge(1) 
-        maxEdge  = histBkg.GetXaxis().GetBinUpEdge(histBkg.GetNbinsX())
-        binWidth = histBkg.GetXaxis().GetBinWidth(1)
-        plot_SignificanceClosure_BinEdges(inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+        minEdge  = histSig.GetXaxis().GetBinLowEdge(1) 
+        maxEdge  = histSig.GetXaxis().GetBinUpEdge(histBkg.GetNbinsX())
+        binWidth = histSig.GetXaxis().GetBinWidth(1)
+        nBins    = histSig.GetNbinsX()
+        plot_SignificanceClosure_BinEdges(nBins, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
 
         # --------------------------------------
         # plot inverseSignificance vs ClosureErr 
@@ -773,7 +774,7 @@ def main():
         #   -- BkgFrac vs Disc1Disc2 in each A, B, C, D
         #   -- TotBkgFrac vs Disc1Disc2
         # ---------------------------------------------
-        plot_SigBkgFrac_vsEdges(sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+        plot_SigBkgFrac_vsEdges(nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
 
         # -----------------------------
         # calculate simple closure ABCD
