@@ -900,31 +900,11 @@ def main():
         ]
 
     # initialize all variables
-    sigNjets       = { 
-                        "A"  : [], "B"  : [], "C"  : [], "D"  : [], 
-                        "A2" : [], "B2" : [], "C2" : [], "D2" : []
-    }
-
-    sigNjetsErr    = { 
-                        "A"  : [], "B"  : [], "C"  : [], "D"  : [],
-                        "A2" : [], "B2" : [], "C2" : [], "D2" : []
-    }
-
-    bkgNjets       = { 
-                        "A"  : [], "B"  : [], "C"  : [], "D"  : [],
-                        "A2" : [], "B2" : [], "C2" : [], "D2" : []
-    }
-
-    bkgNjetsErr    = { 
-                        "A"  : [], "B"  : [], "C"  : [], "D"  : [],
-                        "A2" : [], "B2" : [], "C2" : [], "D2" : []
-    }
-
-    bkgNjetsPred_A = { 
-                        "value"     : [], "error"     : [],
-                        "value_val" : [], "error_val" : []
-    }
-    
+    sigNjets       = {"A" : [], "B" : [], "C" : [], "D" : [], "A2" : [], "B2" : [], "C2" : [], "D2" : []}
+    sigNjetsErr    = {"A" : [], "B" : [], "C" : [], "D" : [], "A2" : [], "B2" : [], "C2" : [], "D2" : []}
+    bkgNjets       = {"A" : [], "B" : [], "C" : [], "D" : [], "A2" : [], "B2" : [], "C2" : [], "D2" : []}
+    bkgNjetsErr    = {"A" : [], "B" : [], "C" : [], "D" : [], "A2" : [], "B2" : [], "C2" : [], "D2" : []}
+    bkgNjetsPred_A = {"value" : [], "error" : [], "value_val" : [], "error_val" : []}
     Njets = None
 
     # loop over njets 
