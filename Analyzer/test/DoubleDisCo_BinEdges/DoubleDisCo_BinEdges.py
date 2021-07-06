@@ -935,11 +935,11 @@ def main():
         finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val = make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, minBkgFrac = 0.01)   
 
         # put the latest bin edges to txt file
-        d = open("BinEdges_Val_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
-        d.write("%s bin edges: \n" %(njet))
-        d.write("x bin edges: %s \n" %(finalDisc1Key_Val))
-        d.write("y bin edges: %s \n" %(finalDisc2Key_Val))
-        d.write("\n")
+        f = open("BinEdges_Val_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
+        f.write("%s bin edges: \n" %(njet))
+        f.write("x bin edges: %s \n" %(finalDisc1Key_Val))
+        f.write("y bin edges: %s \n" %(finalDisc2Key_Val))
+        f.write("\n")
 
         # --------------------------------------------------------------------
         # make significance and closure error as a function of bin edges plots
@@ -1053,6 +1053,7 @@ def main():
 
 
     d.close()
+    f.close()
  
 if __name__ == '__main__':
     main()
