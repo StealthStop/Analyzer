@@ -183,11 +183,6 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
             if nTot_SigBkg_D > 0.0: 
                 tempSigFracsD = nSigEvents_D / nTot_SigBkg_D
 
-            #sigFracsA.append(float(tempSigFracsA))
-            #sigFracsB.append(float(tempSigFracsB))
-            #sigFracsC.append(float(tempSigFracsC))
-            #sigFracsD.append(float(tempSigFracsD))
-
             # Total signal (and background) fractions in aech A, B, C, D region
             # get the latest bin edges based on total signal fraction
             nTot_Sig_ABCD = nSigEvents_A + nSigEvents_B + nSigEvents_C + nSigEvents_D
@@ -252,6 +247,212 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
 
     return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD 
 
+# -------------------------------
+# calculate the Bin Edges Closure
+# -------------------------------
+def cal_simpleClosureABCD(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D):
+
+    # Define A: > c1, > c2        C    |    A    
+    # Define B: > c1, < c2   __________|__________        
+    # Define C: < c1, > c2             |        
+    # Define D: < c1, < c2        D    |    B   
+
+    numerator   = nBkgEvents_B * nBkgEvents_C
+    denominator = nBkgEvents_A * nBkgEvents_D
+
+    nPredBkgEvents_A = -1.0; nPredBkgUncEvents_A = 0.0
+
+    if nBkgEvents_D > 0.0:
+        nPredBkgEvents_A    = ( numerator / nBkgEvents_D )
+        nPredBkgUncEvents_A = ( ( (nBkgEvents_C * nBkgEventsErr_B) / nBkgEvents_D )**2.0
+                              + ( (nBkgEvents_B * nBkgEventsErr_C) / nBkgEvents_D )**2.0
+                              + ( (nBkgEvents_B * nBkgEvents_C * nBkgEventsErr_D) / nBkgEvents_D**2.0 )**2.0 )**0.5
+
+    if denominator > 0.0:
+        closureErr = ( ( (nBkgEvents_B * nBkgEventsErr_C) / denominator )**2.0
+                     + ( (nBkgEvents_C * nBkgEventsErr_B) / denominator )**2.0
+                     + ( (numerator * nBkgEventsErr_A) / (denominator * nBkgEvents_A) )**2.0
+                     + ( (numerator * nBkgEventsErr_D) / (denominator * nBkgEvents_D) )**2.0 )**0.5
+        closure = numerator / denominator
+
+    else:
+        closureErr = -999.0
+        closure    = -999.0
+
+    return closure, closureErr, nPredBkgEvents_A, nPredBkgUncEvents_A
+
+# ---------------------------------------------------------------------------------
+#                                   VALIDATION REGIONS
+# ---------------------------------------------------------------------------------
+# -------------------------------
+# get the number of events:
+#   -- for applying the disc1 cut
+#   -- in validation regions 
+# -------------------------------
+def count_Events_inValidationRegions(histBkg, histSig, finalDisc1Edge, finalDisc2Edge):
+
+    lastXBin = histBkg.GetNbinsX();  lastYBin = histBkg.GetNbinsY()
+    nXBins   = range(2, lastXBin+1); nYBins   = range(2, lastYBin+1)
+
+    yBin = histBkg.GetYaxis().FindBin(finalDisc2Edge)
+
+    nTotSigCount_ABCD2 = {
+        "nSigEvents_A2" : {},    "nSigEvents_B2" : {},    "nSigEvents_C2" : {},    "nSigEvents_D2" : {},
+        "nSigEventsErr_A2" : {}, "nSigEventsErr_B2" : {}, "nSigEventsErr_C2" : {}, "nSigEventsErr_D2" : {}
+    }
+
+    nTotBkgCount_ABCD2 = {
+        "nBkgEvents_A2" : {},    "nBkgEvents_B2" : {},    "nBkgEvents_C2" : {},    "nBkgEvents_D2" : {},
+        "nBkgEventsErr_A2" : {}, "nBkgEventsErr_B2" : {}, "nBkgEventsErr_C2" : {}, "nBkgEventsErr_D2" : {}
+    }
+
+    for xBin in nXBins:
+
+        xLowBinEdge = histBkg.GetXaxis().GetBinCenter(xBin)
+
+        if (xLowBinEdge > finalDisc1Edge): break
+
+        xBinKey     = "%.2f"%xLowBinEdge
+
+        if xBinKey not in nTotSigCount_ABCD2["nSigEventsErr_A2"]:
+            nTotSigCount_ABCD2["nSigEvents_A2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_A2"][xBinKey] = {}
+            nTotSigCount_ABCD2["nSigEvents_B2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_B2"][xBinKey] = {}
+            nTotSigCount_ABCD2["nSigEvents_C2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_C2"][xBinKey] = {}
+            nTotSigCount_ABCD2["nSigEvents_D2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_D2"][xBinKey] = {}
+
+        if xBinKey not in nTotBkgCount_ABCD2["nBkgEventsErr_A2"]:
+            nTotBkgCount_ABCD2["nBkgEvents_A2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_A2"][xBinKey] = {}
+            nTotBkgCount_ABCD2["nBkgEvents_B2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_B2"][xBinKey] = {}
+            nTotBkgCount_ABCD2["nBkgEvents_C2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_C2"][xBinKey] = {}
+            nTotBkgCount_ABCD2["nBkgEvents_D2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_D2"][xBinKey] = {}
+
+        # count signal and  background events and errors in validation regions (A2, B2, C2, D2)
+        nSigEventsErr_A2 = ROOT.Double(0.0); nSigEventsErr_B2 = ROOT.Double(0.0); nSigEventsErr_C2 = ROOT.Double(0.0); nSigEventsErr_D2 = ROOT.Double(0.0)
+        nBkgEventsErr_A2 = ROOT.Double(0.0); nBkgEventsErr_B2 = ROOT.Double(0.0); nBkgEventsErr_C2 = ROOT.Double(0.0); nBkgEventsErr_D2 = ROOT.Double(0.0)
+
+        nSigEvents_A2 = ( histSig.IntegralAndError(xBin, lastXBin, yBin, lastYBin, nSigEventsErr_A2) )
+        nSigEvents_B2 = ( histSig.IntegralAndError(1,    xBin-1,   yBin, lastYBin, nSigEventsErr_B2) )
+        nSigEvents_C2 = ( histSig.IntegralAndError(xBin, lastXBin, 1,    yBin-1,   nSigEventsErr_C2) )
+        nSigEvents_D2 = ( histSig.IntegralAndError(1,    xBin-1,   1,    yBin-1,   nSigEventsErr_D2) )
+        nBkgEvents_A2 = ( histBkg.IntegralAndError(xBin, lastXBin, yBin, lastYBin, nBkgEventsErr_A2) )
+        nBkgEvents_B2 = ( histBkg.IntegralAndError(1,    xBin-1,   yBin, lastYBin, nBkgEventsErr_B2) )
+        nBkgEvents_C2 = ( histBkg.IntegralAndError(xBin, lastXBin, 1,    yBin-1,   nBkgEventsErr_C2) )
+        nBkgEvents_D2 = ( histBkg.IntegralAndError(1,    xBin-1,   1,    yBin-1,   nBkgEventsErr_D2) )
+
+        nTotSigCount_ABCD2["nSigEvents_A2"][xBinKey][finalDisc2Edge] = nSigEvents_A2; nTotSigCount_ABCD2["nSigEventsErr_A2"][xBinKey][finalDisc2Edge] = nSigEventsErr_A2
+        nTotSigCount_ABCD2["nSigEvents_B2"][xBinKey][finalDisc2Edge] = nSigEvents_B2; nTotSigCount_ABCD2["nSigEventsErr_B2"][xBinKey][finalDisc2Edge] = nSigEventsErr_B2
+        nTotSigCount_ABCD2["nSigEvents_C2"][xBinKey][finalDisc2Edge] = nSigEvents_C2; nTotSigCount_ABCD2["nSigEventsErr_C2"][xBinKey][finalDisc2Edge] = nSigEventsErr_C2
+        nTotSigCount_ABCD2["nSigEvents_D2"][xBinKey][finalDisc2Edge] = nSigEvents_D2; nTotSigCount_ABCD2["nSigEventsErr_D2"][xBinKey][finalDisc2Edge] = nSigEventsErr_D2
+
+        nTotBkgCount_ABCD2["nBkgEvents_A2"][xBinKey][finalDisc2Edge] = nBkgEvents_A2; nTotBkgCount_ABCD2["nBkgEventsErr_A2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_A2
+        nTotBkgCount_ABCD2["nBkgEvents_B2"][xBinKey][finalDisc2Edge] = nBkgEvents_B2; nTotBkgCount_ABCD2["nBkgEventsErr_B2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_B2
+        nTotBkgCount_ABCD2["nBkgEvents_C2"][xBinKey][finalDisc2Edge] = nBkgEvents_C2; nTotBkgCount_ABCD2["nBkgEventsErr_C2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_C2
+        nTotBkgCount_ABCD2["nBkgEvents_D2"][xBinKey][finalDisc2Edge] = nBkgEvents_D2; nTotBkgCount_ABCD2["nBkgEventsErr_D2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_D2
+
+    return nTotSigCount_ABCD2, nTotBkgCount_ABCD2
+
+# ---------------------------
+# make the validation regions
+# ---------------------------
+def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, minBkgFrac = 0.01):
+
+    significance_Val = 0.0; finalDisc1Key_Val = -1.0; finalDisc2Key_Val = -1.0; closureErr_Val   = 0.0; optMetric_Val  = 999.0
+    inverseSignificance_Val = []; closureErrsList_Val = []; disc1KeyOut_Val = []; disc2KeyOut_Val = []
+    bkgTotFracsA2           = []; bkgTotFracsB2       = []; bkgTotFracsC2   = []; bkgTotFracsD2   = []
+
+    for disc1CutKey, disc2s in nTotBkgCount_ABCD2["nBkgEvents_A2"].items():
+
+        for disc2Key, nEvents in disc2s.items():
+
+            # number of signal and background events in aech A2, B2, C2, D2 region
+            nSigEvents_A2 = nTotSigCount_ABCD2["nSigEvents_A2"][disc1CutKey][disc2Key]; nBkgEvents_A2 = nTotBkgCount_ABCD2["nBkgEvents_A2"][disc1CutKey][disc2Key]
+            nSigEvents_B2 = nTotSigCount_ABCD2["nSigEvents_B2"][disc1CutKey][disc2Key]; nBkgEvents_B2 = nTotBkgCount_ABCD2["nBkgEvents_B2"][disc1CutKey][disc2Key]
+            nSigEvents_C2 = nTotSigCount_ABCD2["nSigEvents_C2"][disc1CutKey][disc2Key]; nBkgEvents_C2 = nTotBkgCount_ABCD2["nBkgEvents_C2"][disc1CutKey][disc2Key]
+            nSigEvents_D2 = nTotSigCount_ABCD2["nSigEvents_D2"][disc1CutKey][disc2Key]; nBkgEvents_D2 = nTotBkgCount_ABCD2["nBkgEvents_D2"][disc1CutKey][disc2Key]
+
+            # Total background fractions in aech A2, B2, C2, D2 region
+            nTot_Bkg_ABCD2 = nBkgEvents_A2 + nBkgEvents_B2 + nBkgEvents_C2 + nBkgEvents_D2
+
+            tempBkgTotFracsA2 = -1.0; tempBkgTotFracsB2 = -1.0; tempBkgTotFracsC2 = -1.0; tempBkgTotFracsD2 = -1.0
+
+            tempBkgTotFracsA2 = nBkgEvents_A2 / nTot_Bkg_ABCD2
+            tempBkgTotFracsB2 = nBkgEvents_B2 / nTot_Bkg_ABCD2
+            tempBkgTotFracsC2 = nBkgEvents_C2 / nTot_Bkg_ABCD2
+            tempBkgTotFracsD2 = nBkgEvents_D2 / nTot_Bkg_ABCD2
+
+            # significance and closure error for validation 
+            tempSignificance_Val = 0.0; tempClosureErr_Val = -999.0; tempOptMetric_Val = 999.0
+
+            if nBkgEvents_A2 > 0.0:
+                tempSignificance_Val += ( nSigEvents_A2 / ( nBkgEvents_A2 + (0.3 * nBkgEvents_A2)**2.0 )**0.5 )**2.0
+            if nBkgEvents_B2 > 0.0:
+                tempSignificance_Val += ( nSigEvents_B2 / ( nBkgEvents_B2 + (0.3 * nBkgEvents_B2)**2.0 )**0.5 )**2.0
+            if nBkgEvents_C2 > 0.0:
+                tempSignificance_Val += ( nSigEvents_C2 / ( nBkgEvents_C2 + (0.3 * nBkgEvents_C2)**2.0 )**0.5 )**2.0
+            if nBkgEvents_D2 > 0.0:
+                tempSignificance_Val += ( nSigEvents_D2 / ( nBkgEvents_D2 + (0.3 * nBkgEvents_D2)**2.0 )**0.5 )**2.0
+
+            if nBkgEvents_A2 > 0.0 and nBkgEvents_D2 > 0.0:
+                tempClosureErr_Val = cal_ClosureError(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2)
+
+            tempSignificance_Val = tempSignificance_Val**0.5
+
+            if tempSignificance_Val > 0.0 and tempClosureErr_Val > 0.0:
+                inverseSignificance_Val.append(1.0 / tempSignificance_Val)
+                closureErrsList_Val.append(abs(tempClosureErr_Val))
+                disc1KeyOut_Val.append(float(disc1CutKey))
+                disc2KeyOut_Val.append(float(disc2Key))
+
+            if tempOptMetric_Val < optMetric_Val:
+                finalDisc1Key_Val = disc1CutKey
+                finalDisc2Key_Val = disc2Key
+                significance_Val  = tempSignificance_Val
+                closureErr_Val    = tempClosureErr_Val
+                optMetric_Val     = tempOptMetric_Val
+
+        # print out the disc1Cut and disc2 edges
+        #print "disc1 (x bin) low bin edges: ", finalDisc1Key_Val
+        #print "disc2 (y bin) low bin edges: ", finalDisc2Key_Val
+
+        return finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val
+
+# --------------------------------
+# calculate the Validation closure
+# --------------------------------
+def cal_simpleClosureABCD2(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2, nBkgEventsErr_A2, nBkgEventsErr_B2, nBkgEventsErr_C2, nBkgEventsErr_D2):
+
+    # Define A: > c1, > c2        C2   |    A2    
+    # Define B: > c1, < c2   __________|__________        
+    # Define C: < c1, > c2             |        
+    # Define D: < c1, < c2        D2   |    B2   
+
+    numerator2   = nBkgEvents_B2 * nBkgEvents_C2
+    denominator2 = nBkgEvents_A2 * nBkgEvents_D2
+
+    nPredBkgEvents_A2 = -1.0; nPredBkgUncEvents_A2 = 0.0
+
+    if nBkgEvents_D2 > 0.0:
+        nPredBkgEvents_A2    = ( numerator2 / nBkgEvents_D2 )
+        nPredBkgUncEvents_A2 = ( ( (nBkgEvents_C2 * nBkgEventsErr_B2) / nBkgEvents_D2 )**2.0
+                               + ( (nBkgEvents_B2 * nBkgEventsErr_C2) / nBkgEvents_D2 )**2.0
+                               + ( (nBkgEvents_B2 * nBkgEvents_C2 * nBkgEventsErr_D2) / nBkgEvents_D2**2.0 )**2.0 )**0.5
+
+    if denominator2 > 0.0:
+        closureErr_Val = ( ( (nBkgEvents_B2 * nBkgEventsErr_C2) / denominator2 )**2.0
+                        + ( (nBkgEvents_C2 * nBkgEventsErr_B2) / denominator2 )**2.0
+                        + ( (numerator2 * nBkgEventsErr_A2) / (denominator2 * nBkgEvents_A2) )**2.0
+                        + ( (numerator2 * nBkgEventsErr_D2) / (denominator2 * nBkgEvents_D2) )**2.0 )**0.5
+        closure_Val = numerator2 / denominator2
+
+    else:
+        closureErr_Val = -999.0
+        closure_Val    = -999.0
+
+    return closure_Val, closureErr_Val, nPredBkgEvents_A2, nPredBkgUncEvents_A2
+
+# ---------------------------------------------------------------------------------
+#                                   ALL PLOTTERS
+# ---------------------------------------------------------------------------------
 # --------------------------------------------------------------
 # plot significance and closure error as a function of bin edges 
 # --------------------------------------------------------------
@@ -572,40 +773,6 @@ def plot_SigBkgFrac_vsEdges(nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, s
         fig.savefig("plots/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf"%(model, mass, channel, year, Njets, channel), dpi=fig.dpi)
     plt.close(fig)
 
-# -------------------------------
-# calculate the Bin Edges Closure
-# -------------------------------
-def cal_simpleClosureABCD(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D):
-
-    # Define A: > c1, > c2        C    |    A    
-    # Define B: > c1, < c2   __________|__________        
-    # Define C: < c1, > c2             |        
-    # Define D: < c1, < c2        D    |    B   
-
-    numerator   = nBkgEvents_B * nBkgEvents_C 
-    denominator = nBkgEvents_A * nBkgEvents_D
-
-    nPredBkgEvents_A = -1.0; nPredBkgUncEvents_A = 0.0
-
-    if nBkgEvents_D > 0.0:
-        nPredBkgEvents_A    = ( numerator / nBkgEvents_D )
-        nPredBkgUncEvents_A = ( ( (nBkgEvents_C * nBkgEventsErr_B) / nBkgEvents_D )**2.0 
-                              + ( (nBkgEvents_B * nBkgEventsErr_C) / nBkgEvents_D )**2.0 
-                              + ( (nBkgEvents_B * nBkgEvents_C * nBkgEventsErr_D) / nBkgEvents_D**2.0 )**2.0 )**0.5
-
-    if denominator > 0.0:
-        closureErr = ( ( (nBkgEvents_B * nBkgEventsErr_C) / denominator )**2.0 
-                     + ( (nBkgEvents_C * nBkgEventsErr_B) / denominator )**2.0 
-                     + ( (numerator * nBkgEventsErr_A) / (denominator * nBkgEvents_A) )**2.0 
-                     + ( (numerator * nBkgEventsErr_D) / (denominator * nBkgEvents_D) )**2.0 )**0.5
-        closure = numerator / denominator
-    
-    else:
-        closureErr = -999.0
-        closure    = -999.0
-
-    return closure, closureErr, nPredBkgEvents_A, nPredBkgUncEvents_A 
-
 # -------------------------------------------------------------------------
 # plot closure for Bin Edges (A,B,C,D) and Validation Regions (A2,B2,C2,D2)
 #   -- chi2 is way to measure the closure    
@@ -678,177 +845,6 @@ def plot_ClosureNjets(bkg, bkgUnc, bkgPred, bkgPredUnc, Njets, year, model, mass
     plt.close(fig)
 
     return totalChi2, ndof
-
-
-# ---------------------------------------------------------------------------------
-#                                   VALIDATION REGIONS
-# ---------------------------------------------------------------------------------
-# -------------------------------
-# get the number of events:
-#   -- for applying the disc1 cut
-#   -- in validation regions 
-# -------------------------------
-def count_Events_inValidationRegions(histBkg, histSig, finalDisc1Edge, finalDisc2Edge):
-
-    lastXBin = histBkg.GetNbinsX();  lastYBin = histBkg.GetNbinsY()
-    nXBins   = range(2, lastXBin+1); nYBins   = range(2, lastYBin+1)
-    
-    yBin = histBkg.GetYaxis().FindBin(finalDisc2Edge)
-
-    nTotSigCount_ABCD2 = {
-        "nSigEvents_A2" : {},    "nSigEvents_B2" : {},    "nSigEvents_C2" : {},    "nSigEvents_D2" : {},
-        "nSigEventsErr_A2" : {}, "nSigEventsErr_B2" : {}, "nSigEventsErr_C2" : {}, "nSigEventsErr_D2" : {}
-    }
-
-    nTotBkgCount_ABCD2 = {
-        "nBkgEvents_A2" : {},    "nBkgEvents_B2" : {},    "nBkgEvents_C2" : {},    "nBkgEvents_D2" : {},
-        "nBkgEventsErr_A2" : {}, "nBkgEventsErr_B2" : {}, "nBkgEventsErr_C2" : {}, "nBkgEventsErr_D2" : {}
-    }
-
-    for xBin in nXBins:
-
-        xLowBinEdge = histBkg.GetXaxis().GetBinCenter(xBin)
-        
-        if (xLowBinEdge > finalDisc1Edge): break 
-
-        xBinKey     = "%.2f"%xLowBinEdge
-
-        if xBinKey not in nTotSigCount_ABCD2["nSigEventsErr_A2"]:
-            nTotSigCount_ABCD2["nSigEvents_A2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_A2"][xBinKey] = {}
-            nTotSigCount_ABCD2["nSigEvents_B2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_B2"][xBinKey] = {}
-            nTotSigCount_ABCD2["nSigEvents_C2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_C2"][xBinKey] = {}
-            nTotSigCount_ABCD2["nSigEvents_D2"][xBinKey] = {}; nTotSigCount_ABCD2["nSigEventsErr_D2"][xBinKey] = {}
-
-        if xBinKey not in nTotBkgCount_ABCD2["nBkgEventsErr_A2"]:
-            nTotBkgCount_ABCD2["nBkgEvents_A2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_A2"][xBinKey] = {}
-            nTotBkgCount_ABCD2["nBkgEvents_B2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_B2"][xBinKey] = {}
-            nTotBkgCount_ABCD2["nBkgEvents_C2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_C2"][xBinKey] = {}
-            nTotBkgCount_ABCD2["nBkgEvents_D2"][xBinKey] = {}; nTotBkgCount_ABCD2["nBkgEventsErr_D2"][xBinKey] = {}
-
-        # count signal and  background events and errors in validation regions (A2, B2, C2, D2)
-        nSigEventsErr_A2 = ROOT.Double(0.0); nSigEventsErr_B2 = ROOT.Double(0.0); nSigEventsErr_C2 = ROOT.Double(0.0); nSigEventsErr_D2 = ROOT.Double(0.0)
-        nBkgEventsErr_A2 = ROOT.Double(0.0); nBkgEventsErr_B2 = ROOT.Double(0.0); nBkgEventsErr_C2 = ROOT.Double(0.0); nBkgEventsErr_D2 = ROOT.Double(0.0)
-
-        nSigEvents_A2 = ( histSig.IntegralAndError(xBin, lastXBin, yBin, lastYBin, nSigEventsErr_A2) )
-        nSigEvents_B2 = ( histSig.IntegralAndError(1,    xBin-1,   yBin, lastYBin, nSigEventsErr_B2) )
-        nSigEvents_C2 = ( histSig.IntegralAndError(xBin, lastXBin, 1,    yBin-1,   nSigEventsErr_C2) )
-        nSigEvents_D2 = ( histSig.IntegralAndError(1,    xBin-1,   1,    yBin-1,   nSigEventsErr_D2) )
-        nBkgEvents_A2 = ( histBkg.IntegralAndError(xBin, lastXBin, yBin, lastYBin, nBkgEventsErr_A2) )
-        nBkgEvents_B2 = ( histBkg.IntegralAndError(1,    xBin-1,   yBin, lastYBin, nBkgEventsErr_B2) )
-        nBkgEvents_C2 = ( histBkg.IntegralAndError(xBin, lastXBin, 1,    yBin-1,   nBkgEventsErr_C2) )
-        nBkgEvents_D2 = ( histBkg.IntegralAndError(1,    xBin-1,   1,    yBin-1,   nBkgEventsErr_D2) )
-
-        nTotSigCount_ABCD2["nSigEvents_A2"][xBinKey][finalDisc2Edge] = nSigEvents_A2; nTotSigCount_ABCD2["nSigEventsErr_A2"][xBinKey][finalDisc2Edge] = nSigEventsErr_A2
-        nTotSigCount_ABCD2["nSigEvents_B2"][xBinKey][finalDisc2Edge] = nSigEvents_B2; nTotSigCount_ABCD2["nSigEventsErr_B2"][xBinKey][finalDisc2Edge] = nSigEventsErr_B2
-        nTotSigCount_ABCD2["nSigEvents_C2"][xBinKey][finalDisc2Edge] = nSigEvents_C2; nTotSigCount_ABCD2["nSigEventsErr_C2"][xBinKey][finalDisc2Edge] = nSigEventsErr_C2
-        nTotSigCount_ABCD2["nSigEvents_D2"][xBinKey][finalDisc2Edge] = nSigEvents_D2; nTotSigCount_ABCD2["nSigEventsErr_D2"][xBinKey][finalDisc2Edge] = nSigEventsErr_D2
-
-        nTotBkgCount_ABCD2["nBkgEvents_A2"][xBinKey][finalDisc2Edge] = nBkgEvents_A2; nTotBkgCount_ABCD2["nBkgEventsErr_A2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_A2
-        nTotBkgCount_ABCD2["nBkgEvents_B2"][xBinKey][finalDisc2Edge] = nBkgEvents_B2; nTotBkgCount_ABCD2["nBkgEventsErr_B2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_B2
-        nTotBkgCount_ABCD2["nBkgEvents_C2"][xBinKey][finalDisc2Edge] = nBkgEvents_C2; nTotBkgCount_ABCD2["nBkgEventsErr_C2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_C2
-        nTotBkgCount_ABCD2["nBkgEvents_D2"][xBinKey][finalDisc2Edge] = nBkgEvents_D2; nTotBkgCount_ABCD2["nBkgEventsErr_D2"][xBinKey][finalDisc2Edge] = nBkgEventsErr_D2
-
-    return nTotSigCount_ABCD2, nTotBkgCount_ABCD2
-
-# ---------------------------
-# make the validation regions
-# ---------------------------
-def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, minBkgFrac = 0.01):
-
-    significance_Val = 0.0; finalDisc1Key_Val = -1.0; finalDisc2Key_Val = -1.0; closureErr_Val   = 0.0; optMetric_Val  = 999.0
-    inverseSignificance_Val = []; closureErrsList_Val = []; disc1KeyOut_Val = []; disc2KeyOut_Val = []
-    bkgTotFracsA2           = []; bkgTotFracsB2       = []; bkgTotFracsC2   = []; bkgTotFracsD2   = []
-
-    for disc1CutKey, disc2s in nTotBkgCount_ABCD2["nBkgEvents_A2"].items():
-    
-        for disc2Key, nEvents in disc2s.items():
-
-            # number of signal and background events in aech A2, B2, C2, D2 region
-            nSigEvents_A2 = nTotSigCount_ABCD2["nSigEvents_A2"][disc1CutKey][disc2Key]; nBkgEvents_A2 = nTotBkgCount_ABCD2["nBkgEvents_A2"][disc1CutKey][disc2Key]  
-            nSigEvents_B2 = nTotSigCount_ABCD2["nSigEvents_B2"][disc1CutKey][disc2Key]; nBkgEvents_B2 = nTotBkgCount_ABCD2["nBkgEvents_B2"][disc1CutKey][disc2Key]
-            nSigEvents_C2 = nTotSigCount_ABCD2["nSigEvents_C2"][disc1CutKey][disc2Key]; nBkgEvents_C2 = nTotBkgCount_ABCD2["nBkgEvents_C2"][disc1CutKey][disc2Key]
-            nSigEvents_D2 = nTotSigCount_ABCD2["nSigEvents_D2"][disc1CutKey][disc2Key]; nBkgEvents_D2 = nTotBkgCount_ABCD2["nBkgEvents_D2"][disc1CutKey][disc2Key]
-
-            # Total background fractions in aech A2, B2, C2, D2 region
-            nTot_Bkg_ABCD2 = nBkgEvents_A2 + nBkgEvents_B2 + nBkgEvents_C2 + nBkgEvents_D2
-            
-            tempBkgTotFracsA2 = -1.0; tempBkgTotFracsB2 = -1.0; tempBkgTotFracsC2 = -1.0; tempBkgTotFracsD2 = -1.0
-           
-            tempBkgTotFracsA2 = nBkgEvents_A2 / nTot_Bkg_ABCD2 
-            tempBkgTotFracsB2 = nBkgEvents_B2 / nTot_Bkg_ABCD2
-            tempBkgTotFracsC2 = nBkgEvents_C2 / nTot_Bkg_ABCD2
-            tempBkgTotFracsD2 = nBkgEvents_D2 / nTot_Bkg_ABCD2
-
-            # significance and closure error for validation 
-            tempSignificance_Val = 0.0; tempClosureErr_Val = -999.0; tempOptMetric_Val = 999.0
-
-            if nBkgEvents_A2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_A2 / ( nBkgEvents_A2 + (0.3 * nBkgEvents_A2)**2.0 )**0.5 )**2.0 
-            if nBkgEvents_B2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_B2 / ( nBkgEvents_B2 + (0.3 * nBkgEvents_B2)**2.0 )**0.5 )**2.0
-            if nBkgEvents_C2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_C2 / ( nBkgEvents_C2 + (0.3 * nBkgEvents_C2)**2.0 )**0.5 )**2.0
-            if nBkgEvents_D2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_D2 / ( nBkgEvents_D2 + (0.3 * nBkgEvents_D2)**2.0 )**0.5 )**2.0
-
-            if nBkgEvents_A2 > 0.0 and nBkgEvents_D2 > 0.0: 
-                tempClosureErr_Val = cal_ClosureError(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2)
-
-            tempSignificance_Val = tempSignificance_Val**0.5
-
-            if tempSignificance_Val > 0.0 and tempClosureErr_Val > 0.0:
-                inverseSignificance_Val.append(1.0 / tempSignificance_Val) 
-                closureErrsList_Val.append(abs(tempClosureErr_Val))
-                disc1KeyOut_Val.append(float(disc1CutKey))
-                disc2KeyOut_Val.append(float(disc2Key)) 
-
-            if tempOptMetric_Val < optMetric_Val:
-                finalDisc1Key_Val = disc1CutKey 
-                finalDisc2Key_Val = disc2Key
-                significance_Val  = tempSignificance_Val
-                closureErr_Val    = tempClosureErr_Val
-                optMetric_Val     = tempOptMetric_Val
-
-        # print out the disc1Cut and disc2 edges
-        #print "disc1 (x bin) low bin edges: ", finalDisc1Key_Val
-        #print "disc2 (y bin) low bin edges: ", finalDisc2Key_Val
-
-        return finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val  
-
-
-# --------------------------------
-# calculate the Validation closure
-# --------------------------------
-def cal_simpleClosureABCD2(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2, nBkgEventsErr_A2, nBkgEventsErr_B2, nBkgEventsErr_C2, nBkgEventsErr_D2):
-
-    # Define A: > c1, > c2        C2   |    A2    
-    # Define B: > c1, < c2   __________|__________        
-    # Define C: < c1, > c2             |        
-    # Define D: < c1, < c2        D2   |    B2   
-
-    numerator2   = nBkgEvents_B2 * nBkgEvents_C2 
-    denominator2 = nBkgEvents_A2 * nBkgEvents_D2
-
-    nPredBkgEvents_A2 = -1.0; nPredBkgUncEvents_A2 = 0.0
-
-    if nBkgEvents_D2 > 0.0:
-        nPredBkgEvents_A2    = ( numerator2 / nBkgEvents_D2 )
-        nPredBkgUncEvents_A2 = ( ( (nBkgEvents_C2 * nBkgEventsErr_B2) / nBkgEvents_D2 )**2.0 
-                               + ( (nBkgEvents_B2 * nBkgEventsErr_C2) / nBkgEvents_D2 )**2.0 
-                               + ( (nBkgEvents_B2 * nBkgEvents_C2 * nBkgEventsErr_D2) / nBkgEvents_D2**2.0 )**2.0 )**0.5
-
-    if denominator2 > 0.0:
-        closureErr_Val = ( ( (nBkgEvents_B2 * nBkgEventsErr_C2) / denominator2 )**2.0 
-                        + ( (nBkgEvents_C2 * nBkgEventsErr_B2) / denominator2 )**2.0 
-                        + ( (numerator2 * nBkgEventsErr_A2) / (denominator2 * nBkgEvents_A2) )**2.0 
-                        + ( (numerator2 * nBkgEventsErr_D2) / (denominator2 * nBkgEvents_D2) )**2.0 )**0.5
-        closure_Val = numerator2 / denominator2
-    
-    else:
-        closureErr_Val = -999.0
-        closure_Val    = -999.0
-
-    return closure_Val, closureErr_Val, nPredBkgEvents_A2, nPredBkgUncEvents_A2 
 
 
 def main():
