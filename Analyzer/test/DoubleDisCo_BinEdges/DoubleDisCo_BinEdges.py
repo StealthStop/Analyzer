@@ -358,6 +358,7 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
 
     significance_Val = 0.0; finalDisc1Key_Val = -1.0; finalDisc2Key_Val = -1.0; closureErr_Val   = 0.0; optMetric_Val  = 999.0
     inverseSignificance_Val = []; closureErrsList_Val = []; disc1KeyOut_Val = []; disc2KeyOut_Val = []
+    sigFracsA2              = []; sigFracsB2          = []; sigFracsC2      = []; sigFracsD2      = []
     bkgTotFracsA2           = []; bkgTotFracsB2       = []; bkgTotFracsC2   = []; bkgTotFracsD2   = []
 
     for disc1CutKey, disc2s in nTotBkgCount_ABCD2["nBkgEvents_A2"].items():
@@ -369,6 +370,23 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
             nSigEvents_B2 = nTotSigCount_ABCD2["nSigEvents_B2"][disc1CutKey][disc2Key]; nBkgEvents_B2 = nTotBkgCount_ABCD2["nBkgEvents_B2"][disc1CutKey][disc2Key]
             nSigEvents_C2 = nTotSigCount_ABCD2["nSigEvents_C2"][disc1CutKey][disc2Key]; nBkgEvents_C2 = nTotBkgCount_ABCD2["nBkgEvents_C2"][disc1CutKey][disc2Key]
             nSigEvents_D2 = nTotSigCount_ABCD2["nSigEvents_D2"][disc1CutKey][disc2Key]; nBkgEvents_D2 = nTotBkgCount_ABCD2["nBkgEvents_D2"][disc1CutKey][disc2Key]
+
+            # Signal fractions in each A2, B2, C2, D2 region
+            nTot_SigBkg_A2 = nSigEvents_A2 + nBkgEvents_A2 
+            nTot_SigBkg_B2 = nSigEvents_B2 + nBkgEvents_B2
+            nTot_SigBkg_C2 = nSigEvents_C2 + nBkgEvents_C2
+            nTot_SigBkg_D2 = nSigEvents_D2 + nBkgEvents_D2
+
+            tempSigFracsA2 = -1.0; tempSigFracsB2 = -1.0; tempSigFracsC2 = -1.0; tempSigFracsD2 = -1.0
+
+            if nTot_SigBkg_A2 > 0.0: 
+                tempSigFracsA2 = nSigEvents_A2 / nTot_SigBkg_A2 
+            if nTot_SigBkg_B2 > 0.0: 
+                tempSigFracsB2 = nSigEvents_B2 / nTot_SigBkg_B2
+            if nTot_SigBkg_C2 > 0.0: 
+                tempSigFracsC2 = nSigEvents_C2 / nTot_SigBkg_C2
+            if nTot_SigBkg_D2 > 0.0: 
+                tempSigFracsD2 = nSigEvents_D2 / nTot_SigBkg_D2
 
             # Total background fractions in aech A2, B2, C2, D2 region
             nTot_Bkg_ABCD2 = nBkgEvents_A2 + nBkgEvents_B2 + nBkgEvents_C2 + nBkgEvents_D2
@@ -403,6 +421,21 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
                 disc1KeyOut_Val.append(float(disc1CutKey))
                 disc2KeyOut_Val.append(float(disc2Key))
 
+                # Signal fractions
+                sigFracsA2.append(float(tempSigFracsA2))
+                sigFracsB2.append(float(tempSigFracsB2))
+                sigFracsC2.append(float(tempSigFracsC2))
+                sigFracsD2.append(float(tempSigFracsD2))
+
+                # Total background fractions
+                bkgTotFracsA2.append(float(tempBkgTotFracsA2)) 
+                bkgTotFracsB2.append(float(tempBkgTotFracsB2))
+                bkgTotFracsC2.append(float(tempBkgTotFracsC2))
+                bkgTotFracsD2.append(float(tempBkgTotFracsD2))
+
+            if (tempBkgTotFracsA2 > minBkgFrac) and (tempBkgTotFracsB2 > minBkgFrac) and (tempBkgTotFracsC2 > minBkgFrac) and (tempBkgTotFracsD2 > minBkgFrac):                
+                tempOptMetric_Val = cal_OptMetricOfBinEdges(tempSignificance_Val, tempClosureErr_Val)
+
             if tempOptMetric_Val < optMetric_Val:
                 finalDisc1Key_Val = disc1CutKey
                 finalDisc2Key_Val = disc2Key
@@ -414,7 +447,7 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
         #print "disc1 (x bin) low bin edges: ", finalDisc1Key_Val
         #print "disc2 (y bin) low bin edges: ", finalDisc2Key_Val
 
-        return finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val
+        return finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val, sigFracsA2, sigFracsB2, sigFracsC2, sigFracsD2
 
 # --------------------------------
 # calculate the Validation closure
