@@ -37,13 +37,24 @@ def cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D):
     closureError = abs(1.0 - ( (nBkgEvents_B * nBkgEvents_C) / (nBkgEvents_A * nBkgEvents_D) ) )
     return closureError
 
-# --------------------------------------------
-# Optimization metric of bin edges calculation
-# --------------------------------------------
+# ------------------------------------------
+# Calculate optimization metric of bin edges
+# ------------------------------------------
 def cal_OptMetricOfBinEdges(significance, closureError):
     #inverseSignificance = (1.0 / significance)
     optimizationMetric  = (closureError)**2 + (1.0 / significance)**2
     return optimizationMetric
+
+# --------------------------------------
+# Calculate metric of validation regions
+# --------------------------------------
+def cal_MetricOfValidationRegion(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2, tempBkgTotFracsA2, tempBkgTotFracsB2, tempBkgTotFracsC2, tempBkgTotFracsD2, minBkgFrac = 0.01):
+
+    if (tempBkgTotFracsA2 > minBkgFrac) and (tempBkgTotFracsB2 > minBkgFrac) and (tempBkgTotFracsC2 > minBkgFrac) and (tempBkgTotFracsD2 > minBkgFrac):  
+        #validationMetric = abs(1.0 - ( (nBkgEvents_A2 + nBkgEvents_B2) / (nBkgEvents_C2 + nBkgEvents_D2) ) )
+        validationMetric = abs(1.0 - ( (nBkgEvents_A2 + nBkgEvents_C2) / (nBkgEvents_B2 + nBkgEvents_D2) ) )
+
+    return validationMetric        
 
 # ---------------------------------------------------------------------------------
 #                               FINAL BIN EDGES
@@ -356,14 +367,16 @@ def count_Events_inValidationRegions(histBkg, histSig, finalDisc1Edge, finalDisc
 # ---------------------------
 def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, minBkgFrac = 0.01):
 
-    significance_Val = 0.0; finalDisc1Key_Val = -1.0; finalDisc2Key_Val = -1.0; closureErr_Val   = 0.0; optMetric_Val  = 999.0
-    inverseSignificance_Val = []; closureErrsList_Val = []; disc1KeyOut_Val = []; disc2KeyOut_Val = []
-    sigFracsA2              = []; sigFracsB2          = []; sigFracsC2      = []; sigFracsD2      = []
-    bkgTotFracsA2           = []; bkgTotFracsB2       = []; bkgTotFracsC2   = []; bkgTotFracsD2   = []
+    disc1KeyOut_Val = []; disc2KeyOut_Val = []; finalDisc1Key_Val = -1.0; finalDisc2Key_Val = -1.0; validationMetric  = 999.0 
+    sigFracsA2      = []; sigFracsB2      = []; sigFracsC2        = [];   sigFracsD2        = []
+    bkgTotFracsA2   = []; bkgTotFracsB2   = []; bkgTotFracsC2     = [];   bkgTotFracsD2     = []
 
     for disc1CutKey, disc2s in nTotBkgCount_ABCD2["nBkgEvents_A2"].items():
 
         for disc2Key, nEvents in disc2s.items():
+
+            disc1KeyOut_Val.append(float(disc1CutKey))
+            disc2KeyOut_Val.append(float(disc2Key))
 
             # number of signal and background events in aech A2, B2, C2, D2 region
             nSigEvents_A2 = nTotSigCount_ABCD2["nSigEvents_A2"][disc1CutKey][disc2Key]; nBkgEvents_A2 = nTotBkgCount_ABCD2["nBkgEvents_A2"][disc1CutKey][disc2Key]
@@ -387,6 +400,11 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
                 tempSigFracsC2 = nSigEvents_C2 / nTot_SigBkg_C2
             if nTot_SigBkg_D2 > 0.0: 
                 tempSigFracsD2 = nSigEvents_D2 / nTot_SigBkg_D2
+    
+            sigFracsA2.append(float(tempSigFracsA2))
+            sigFracsB2.append(float(tempSigFracsB2))
+            sigFracsC2.append(float(tempSigFracsC2))
+            sigFracsD2.append(float(tempSigFracsD2))
 
             # Total background fractions in aech A2, B2, C2, D2 region
             nTot_Bkg_ABCD2 = nBkgEvents_A2 + nBkgEvents_B2 + nBkgEvents_C2 + nBkgEvents_D2
@@ -398,56 +416,20 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
             tempBkgTotFracsC2 = nBkgEvents_C2 / nTot_Bkg_ABCD2
             tempBkgTotFracsD2 = nBkgEvents_D2 / nTot_Bkg_ABCD2
 
-            # significance and closure error for validation 
-            tempSignificance_Val = 0.0; tempClosureErr_Val = -999.0; tempOptMetric_Val = 999.0
+            # calculate the validation metric
+            temp_ValidationMetric = 999.0
+            temp_ValidationMetric = cal_MetricOfValidationRegion(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2, tempBkgTotFracsA2, tempBkgTotFracsB2, tempBkgTotFracsC2, tempBkgTotFracsD2, minBkgFrac = 0.01)
 
-            if nBkgEvents_A2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_A2 / ( nBkgEvents_A2 + (0.3 * nBkgEvents_A2)**2.0 )**0.5 )**2.0
-            if nBkgEvents_B2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_B2 / ( nBkgEvents_B2 + (0.3 * nBkgEvents_B2)**2.0 )**0.5 )**2.0
-            if nBkgEvents_C2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_C2 / ( nBkgEvents_C2 + (0.3 * nBkgEvents_C2)**2.0 )**0.5 )**2.0
-            if nBkgEvents_D2 > 0.0:
-                tempSignificance_Val += ( nSigEvents_D2 / ( nBkgEvents_D2 + (0.3 * nBkgEvents_D2)**2.0 )**0.5 )**2.0
-
-            if nBkgEvents_A2 > 0.0 and nBkgEvents_D2 > 0.0:
-                tempClosureErr_Val = cal_ClosureError(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2)
-
-            tempSignificance_Val = tempSignificance_Val**0.5
-
-            if tempSignificance_Val > 0.0 and tempClosureErr_Val > 0.0:
-                inverseSignificance_Val.append(1.0 / tempSignificance_Val)
-                closureErrsList_Val.append(abs(tempClosureErr_Val))
-                disc1KeyOut_Val.append(float(disc1CutKey))
-                disc2KeyOut_Val.append(float(disc2Key))
-
-                # Signal fractions
-                sigFracsA2.append(float(tempSigFracsA2))
-                sigFracsB2.append(float(tempSigFracsB2))
-                sigFracsC2.append(float(tempSigFracsC2))
-                sigFracsD2.append(float(tempSigFracsD2))
-
-                # Total background fractions
-                bkgTotFracsA2.append(float(tempBkgTotFracsA2)) 
-                bkgTotFracsB2.append(float(tempBkgTotFracsB2))
-                bkgTotFracsC2.append(float(tempBkgTotFracsC2))
-                bkgTotFracsD2.append(float(tempBkgTotFracsD2))
-
-            if (tempBkgTotFracsA2 > minBkgFrac) and (tempBkgTotFracsB2 > minBkgFrac) and (tempBkgTotFracsC2 > minBkgFrac) and (tempBkgTotFracsD2 > minBkgFrac):                
-                tempOptMetric_Val = cal_OptMetricOfBinEdges(tempSignificance_Val, tempClosureErr_Val)
-
-            if tempOptMetric_Val < optMetric_Val:
+            if temp_ValidationMetric < validationMetric:
                 finalDisc1Key_Val = disc1CutKey
                 finalDisc2Key_Val = disc2Key
-                significance_Val  = tempSignificance_Val
-                closureErr_Val    = tempClosureErr_Val
-                optMetric_Val     = tempOptMetric_Val
+                validationMetric  = temp_ValidationMetric
 
         # print out the disc1Cut and disc2 edges
         #print "disc1 (x bin) low bin edges: ", finalDisc1Key_Val
         #print "disc2 (y bin) low bin edges: ", finalDisc2Key_Val
 
-        return finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val, sigFracsA2, sigFracsB2, sigFracsC2, sigFracsD2
+        return finalDisc1Key_Val, finalDisc2Key_Val, disc1KeyOut_Val, disc2KeyOut_Val, sigFracsA2, sigFracsB2, sigFracsC2, sigFracsD2
 
 # --------------------------------
 # calculate the Validation closure
@@ -965,7 +947,7 @@ def main():
         # --------------------------
         nTotSigCount_ABCD2, nTotBkgCount_ABCD2 = count_Events_inValidationRegions(histBkg, histSig, finalDisc1Key, finalDisc2Key)
 
-        finalDisc1Key_Val, finalDisc2Key_Val, significance_Val, closureErr_Val, inverseSignificance_Val, closureErrsList_Val, disc1KeyOut_Val, disc2KeyOut_Val = make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, minBkgFrac = 0.01)   
+        finalDisc1Key_Val, finalDisc2Key_Val, disc1KeyOut_Val, disc2KeyOut_Val, sigFracsA2, sigFracsB2, sigFracsC2, sigFracsD2 = make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, minBkgFrac = 0.01)   
 
         # put the latest bin edges to txt file
         f = open("BinEdges_Val_%s_%s_%s.txt" %(args.model, args.mass, args.channel), "a")
@@ -997,6 +979,9 @@ def main():
         #   -- TotBkgFrac vs Disc1Disc2
         # ---------------------------------------------
         plot_SigBkgFrac_vsEdges(nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, args.year, args.model, args.mass, args.channel, njet)
+
+        # Signal fractions for each A2, B2, C2, D2 validation region
+         
 
         # -----------------------------
         # calculate simple closure ABCD
@@ -1074,7 +1059,7 @@ def main():
             bkgNjets["C2"].append(nTotBkgCount_ABCD2["nBkgEvents_C2"][finalDisc1Key_Val][finalDisc2Key_Val]); bkgNjetsErr["C2"].append(nTotBkgCount_ABCD2["nBkgEventsErr_C2"][finalDisc1Key_Val][finalDisc2Key_Val])
             bkgNjets["D2"].append(nTotBkgCount_ABCD2["nBkgEvents_D2"][finalDisc1Key_Val][finalDisc2Key_Val]); bkgNjetsErr["D2"].append(nTotBkgCount_ABCD2["nBkgEventsErr_D2"][finalDisc1Key_Val][finalDisc2Key_Val])
 
-            bkgNjetsPred_A["value_val"].append(pred_A2); bkgNjetsPred_A2["error_val"].append(predUnc_A2)
+            bkgNjetsPred_A["value_val"].append(pred_A2); bkgNjetsPred_A["error_val"].append(predUnc_A2)
 
     if args.channel == "0l":
         Njets = [7, 8, 9, 10, 11, 12]
