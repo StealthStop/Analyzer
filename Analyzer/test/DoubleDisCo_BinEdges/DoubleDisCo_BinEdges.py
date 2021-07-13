@@ -50,7 +50,9 @@ def cal_OptMetricOfBinEdges(significance, closureError):
 # --------------------------------------
 def cal_MetricOfValidationRegion(nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2, tempBkgTotFracsA2, tempBkgTotFracsB2, tempBkgTotFracsC2, tempBkgTotFracsD2, minBkgFrac = 0.01):
 
+    validationMetric = 999.0
     if (tempBkgTotFracsA2 > minBkgFrac) and (tempBkgTotFracsB2 > minBkgFrac) and (tempBkgTotFracsC2 > minBkgFrac) and (tempBkgTotFracsD2 > minBkgFrac):  
+        
         #validationMetric = abs(1.0 - ( (nBkgEvents_A2 + nBkgEvents_B2) / (nBkgEvents_C2 + nBkgEvents_D2) ) )
         validationMetric = abs(1.0 - ( (nBkgEvents_A2 + nBkgEvents_C2) / (nBkgEvents_B2 + nBkgEvents_D2) ) )
 
@@ -142,21 +144,21 @@ def count_Events_inBinEdges(histBkg, histSig):
 
     return nTotSigCount_ABCD, nTotBkgCount_ABCD
 
-# -------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Region by region signal fraction calculation
-# look at (SIG + BKG) events in each region, how much signal is in each bin
-#   -- in region A : Nsig / (Nbkg + Nsig) 
-#   -- in region B : Nsig / (Nbkg + Nsig) 
-#   -- in region C : Nsig / (Nbkg + Nsig) 
-#   -- in region D : Nsig / (Nbkg + Nsig) 
+# look at (SIG + BKG) events in each region, how much signal is in each region
+#   -- SigFragA = Nsig / (Nbkg + Nsig) 
+#   -- SigFragB = Nsig / (Nbkg + Nsig) 
+#   -- SigFragC = Nsig / (Nbkg + Nsig) 
+#   -- SigFragD = Nsig / (Nbkg + Nsig) 
 # Total (A+B+C+D) signal fraction calculation
 # look at (SIG) events in each region, how many events are signal
-#   Ntotal = NA + NB + NC + ND
-#   -- SigFragA = NA / Ntotal
-#   -- SigFragB = NB / Ntotal
-#   -- SigFragC = NC / Ntotal
-#   -- SigFragD = ND / Ntotal 
-# -------------------------------------------------------------------------
+#   NtotalSig = NA + NB + NC + ND
+#   -- SigTotFragA = NA / Ntotal
+#   -- SigTotFragB = NB / Ntotal
+#   -- SigTotFragC = NC / Ntotal
+#   -- SigTotFragD = ND / Ntotal 
+# ----------------------------------------------------------------------------
 def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1):
   
     significance = 0.0; finalDisc1Key = -1.0; finalDisc2Key = -1.0; closureErr   = 0.0; optMetric  = 999.0
@@ -425,11 +427,11 @@ def make_ValidationRegionCount_ABCD2(nTotSigCount_ABCD2, nTotBkgCount_ABCD2, min
                 finalDisc2Key_Val = disc2Key
                 validationMetric  = temp_ValidationMetric
 
-        # print out the disc1Cut and disc2 edges
-        #print "disc1 (x bin) low bin edges: ", finalDisc1Key_Val
-        #print "disc2 (y bin) low bin edges: ", finalDisc2Key_Val
+    # print out the disc1Cut and disc2 edges
+    #print "disc1 (x bin) low bin edges: ", finalDisc1Key_Val
+    #print "disc2 (y bin) low bin edges: ", finalDisc2Key_Val
 
-        return finalDisc1Key_Val, finalDisc2Key_Val, disc1KeyOut_Val, disc2KeyOut_Val, sigFracsA2, sigFracsB2, sigFracsC2, sigFracsD2
+    return finalDisc1Key_Val, finalDisc2Key_Val, disc1KeyOut_Val, disc2KeyOut_Val, sigFracsA2, sigFracsB2, sigFracsC2, sigFracsD2
 
 # --------------------------------
 # calculate the Validation closure
