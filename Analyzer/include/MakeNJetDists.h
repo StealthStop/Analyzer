@@ -172,7 +172,7 @@ public:
         const auto& filetag = tr.getVar<std::string>("filetag");
         const auto& runYear = tr.getVar<std::string>("runYear");
         const auto& DeepESMCfg = tr.getVar<std::string>("DeepESMCfg");
-        const auto& ModelFile = tr.getVar<std::string>("ModelFile");
+        const auto& ModelFile = tr.getVar<std::string>("DeepESMModel");
         const auto& bjetFileName = tr.getVar<std::string>("bjetFileName");
         const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
         const auto& leptonFileName = tr.getVar<std::string>("leptonFileName");
