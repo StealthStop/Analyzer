@@ -37,17 +37,20 @@ private:
         const auto& DeepESMCfg_NonIsoMuon = tr.getVar<std::string>("DeepESMCfg_NonIsoMuon");
         const auto& DoubleDisCo_Cfg_0l    = tr.getVar<std::string>("DoubleDisCo_Cfg_0l"   );
         const auto& DoubleDisCo_Model_0l  = tr.getVar<std::string>("DoubleDisCo_Model_0l" );
+        const auto& DoubleDisCo_Cfg_NonIsoMuon_0l = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_0l");
         const auto& DoubleDisCo_Cfg_1l    = tr.getVar<std::string>("DoubleDisCo_Cfg_1l"   );  
         const auto& DoubleDisCo_Model_1l  = tr.getVar<std::string>("DoubleDisCo_Model_1l" );    
+        const auto& DoubleDisCo_Cfg_NonIsoMuon_1l = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_1l");
         //const auto& DoubleDisCo_Cfg_2l    = tr.getVar<std::string>("DoubleDisCo_Cfg_2l"   ); 
         //const auto& DoubleDisCo_Model_2l  = tr.getVar<std::string>("DoubleDisCo_Model_2l" );
+        //const auto& DoubleDisCo_Cfg_NonIsoMuon_2l = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l");
         const auto& puFileName            = tr.getVar<std::string>("puFileName"           );
         const auto& leptonFileName        = tr.getVar<std::string>("leptonFileName"       );
         const auto& bjetFileName          = tr.getVar<std::string>("bjetFileName"         );
         const auto& bjetCSVFileName       = tr.getVar<std::string>("bjetCSVFileName"      );
         const auto& filetag               = tr.getVar<std::string>("filetag"              );
         const auto& meanFileName          = tr.getVar<std::string>("meanFileName"         );
-        const auto& TopTaggerCfg          = tr.getVar<std::string>("TopTaggerCfg"         );       
+        const auto& TopTaggerCfg          = tr.getVar<std::string>("TopTaggerCfg"         );
  
         for(const auto& module : modules)
         {
@@ -60,19 +63,22 @@ private:
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
-            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 1, "");
             else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 1, "");
             else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45", false, true, 12, 0, "_0l");
-            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "_1l");
-            else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 0, "_2l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt45", false, true, 12, 0, "_0l");
+            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 1, "_1l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 1, "_1l");
+            else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
             else if(module=="FatJetCombine")                         tr.emplaceModule<FatJetCombine>();
             else if(module=="TrainingNTupleVars")                    tr.emplaceModule<TrainingNTupleVars>();
-            else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",                 "NJets",                    "_All",               Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",           Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR", Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets", "AllJets",                 "NJets",                    "_All",               Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets", "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",           Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_NonIsoMuon_OldSeed")tr.emplaceModule<MakeStopHemispheres>("Jets", "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_NonIsoMuon_OldSeed",Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets", "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_TopSeed")           tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",            "NGoodStopJets",            "_TopSeed",           Hemisphere::TopSeed);
             else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR", Hemisphere::TopSeed);
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
@@ -80,7 +86,9 @@ private:
             else if(module=="DeepEventShape")                        tr.emplaceModule<DeepEventShape>(DeepESMCfg, DeepESMModel);
             else if(module=="DeepEventShape_NonIsoMuon")             tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, DeepESMModel);
             else if(module=="DoubleDisCo_0l")                        tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_0l, DoubleDisCo_Model_0l);
+            else if(module=="DoubleDisCo_NonIsoMuon_0l")             tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_0l, DoubleDisCo_Model_0l);
             else if(module=="DoubleDisCo_1l")                        tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l, DoubleDisCo_Model_1l); 
+            else if(module=="DoubleDisCo_NonIsoMuon_1l")             tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l, DoubleDisCo_Model_1l);
             //else if(module=="DoubleDisCo_2l")                        tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l);
  
             if(runtype == "MC")
@@ -108,9 +116,9 @@ public:
         const bool isSignal  = (filetag.find("_stop") != std::string::npos || filetag.find("_mStop") != std::string::npos || filetag.find("VLQ_2t4b") != std::string::npos) ? true : false;
 
         std::string runYear, DeepESMCfg_NonIsoMuon, DeepESMCfg, DeepESMModel;
-        std::string DoubleDisCo_Cfg_0l, DoubleDisCo_Model_0l; 
-        std::string DoubleDisCo_Cfg_1l, DoubleDisCo_Model_1l; 
-        //std::string DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l;      
+        std::string DoubleDisCo_Cfg_0l, DoubleDisCo_Model_0l, DoubleDisCo_Cfg_NonIsoMuon_0l; 
+        std::string DoubleDisCo_Cfg_1l, DoubleDisCo_Model_1l, DoubleDisCo_Cfg_NonIsoMuon_1l; 
+        //std::string DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l, DoubleDisCo_Cfg_NonIsoMuon_2l;      
         std::string puFileName, leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
  
         double Lumi=0.0, deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
@@ -127,11 +135,14 @@ public:
             DeepESMModel          = "keras_frozen_2016.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2016.cfg";
             DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2016.cfg";           
-            DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2016.pb",
+            DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2016.cfg";
             DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2016.cfg";
-            DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2016.pb",
+            DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2016.cfg";
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb",
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
             puFileName            = "PileupHistograms_0121_69p2mb_pm4p6.root";
             leptonFileName        = "allInOne_leptonSF_2016.root";
             bjetFileName          = "allInOne_BTagEff.root";
@@ -151,11 +162,14 @@ public:
             DeepESMModel          = "keras_frozen_2017.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2017.cfg";
             //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2017.cfg";    
-            //DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2017.pb",
+            //DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2017.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2017.cfg";
             //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2017.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2017.pb",
+            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2017.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2017.cfg";
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2017.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2017.pb",
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2017.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2017.cfg";
             puFileName            = "pu_ratio.root";
             leptonFileName        = "allInOne_leptonSF_2017.root";
             bjetFileName          = "allInOne_BTagEff.root";
@@ -175,11 +189,14 @@ public:
             DeepESMModel          = "keras_frozen_2018pre.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018pre.cfg";
             //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2018pre.cfg";    
-            //DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2018pre.pb",
+            //DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2018pre.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2018pre.cfg";
             //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2018pre.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb",
+            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2018pre.cfg";
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018pre.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018pre.pb",
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018pre.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018pre.cfg";
             puFileName            = "PileupHistograms_2018_69mb_pm5.root";
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
@@ -199,11 +216,14 @@ public:
             DeepESMModel          = "keras_frozen_2018post.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018post.cfg";
             //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2018post.cfg";    
-            //DoubleDisCo_Model_0l  = "eras_frozen_DoubleDisCo_Reg_0l_2018pre.pb",
+            //DoubleDisCo_Model_0l  = "eras_frozen_DoubleDisCo_Reg_0l_2018post.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2018post.cfg";
             //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2018post.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb",
+            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2018post.cfg";
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018post.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018post.pb",
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018post.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018post.cfg";
             puFileName            = "PileupHistograms_2018_69mb_pm5.root";
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
@@ -224,10 +244,13 @@ public:
         tr.registerDerivedVar("DeepESMModel",          DeepESMModel         );        
         tr.registerDerivedVar("DoubleDisCo_Cfg_0l",    DoubleDisCo_Cfg_0l   );
         tr.registerDerivedVar("DoubleDisCo_Model_0l",  DoubleDisCo_Model_0l );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_0l",    DoubleDisCo_Cfg_NonIsoMuon_0l   );
         tr.registerDerivedVar("DoubleDisCo_Cfg_1l",    DoubleDisCo_Cfg_1l   );
         tr.registerDerivedVar("DoubleDisCo_Model_1l",  DoubleDisCo_Model_1l );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_1l",    DoubleDisCo_Cfg_NonIsoMuon_1l   );
         //tr.registerDerivedVar("DoubleDisCo_Cfg_2l",    DoubleDisCo_Cfg_2l   );
         //tr.registerDerivedVar("DoubleDisCo_Model_2l",  DoubleDisCo_Model_2l );
+        //tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l",    DoubleDisCo_Cfg_NonIsoMuon_2l   );
         tr.registerDerivedVar("puFileName",            puFileName           );
         tr.registerDerivedVar("leptonFileName",        leptonFileName       );        
         tr.registerDerivedVar("bjetFileName",          bjetFileName         );        
@@ -274,15 +297,20 @@ public:
                 "FatJetCombine",
                 "MakeMVAVariables_0l",
                 "MakeMVAVariables_1l",
+                "MakeMVAVariables_NonIsoMuon_0l",
+                "MakeMVAVariables_NonIsoMuon_1l",
                 //"MakeMVAVariables_2l",
-                "StopJets",
+                //"StopJets",
                 "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_TopSeed",
+                "MakeStopHemispheres_NonIsoMuon_OldSeed",
+                //"MakeStopHemispheres_TopSeed",
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
                 "DoubleDisCo_0l",
                 "DoubleDisCo_1l",
+                "DoubleDisCo_NonIsoMuon_0l",
+                "DoubleDisCo_NonIsoMuon_1l",
                 //"DoubleDisCo_2l",
             };
             registerModules(tr, std::move(modulesList));
