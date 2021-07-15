@@ -63,12 +63,12 @@ private:
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
-            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 1, "");
-            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 1, "");
-            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45", false, true, 12, 0, "_0l");
-            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt45", false, true, 12, 0, "_0l");
-            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 1, "_1l");
-            else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 1, "_1l");
+            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45", false, true, 12, 2, "_0l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt45", false, true, 12, 2, "_0l");
+            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "_1l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 2, "_1l");
             else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
@@ -300,10 +300,10 @@ public:
                 "MakeMVAVariables_NonIsoMuon_0l",
                 "MakeMVAVariables_NonIsoMuon_1l",
                 //"MakeMVAVariables_2l",
-                //"StopJets",
+                "StopJets",
                 "MakeStopHemispheres_OldSeed",
                 "MakeStopHemispheres_NonIsoMuon_OldSeed",
-                //"MakeStopHemispheres_TopSeed",
+                "MakeStopHemispheres_TopSeed",
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
