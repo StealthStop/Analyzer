@@ -43,7 +43,7 @@ void AnalyzeBTagSF::InitHistos()
     my_histos.emplace( "h_mistagSF_d",      std::make_shared<TH1D>( "h_mistagSF_d",     "h_mistagSF_d",     60, 0.0, 2.0 ) );
     
     my_histos.emplace( "h_puSF",            std::make_shared<TH1D>( "h_puSF",           "h_puSF",           60, 0.0, 2.0 ) );
-    my_histos.emplace( "h_puSF_JP",         std::make_shared<TH1D>( "h_puSF_JP",        "h_puSF_JP",        60, 0.0, 2.0 ) );
+    //my_histos.emplace( "h_puSF_JP",         std::make_shared<TH1D>( "h_puSF_JP",        "h_puSF_JP",        60, 0.0, 2.0 ) );
 
     my_histos.emplace( "h_pdfSF",           std::make_shared<TH1D>( "h_pdfSF",          "h_pdfSF",          60, 0.0, 2.0 ) );
     my_histos.emplace( "h_pdfSF_u",         std::make_shared<TH1D>( "h_pdfSF_u",        "h_pdfSF_u",        60, 0.0, 2.0 ) );
@@ -55,7 +55,7 @@ void AnalyzeBTagSF::InitHistos()
 
     my_histos.emplace( "h_nVtx_nPUSF",      std::make_shared<TH1D>( "h_nVtx_nPUSF",     "h_nVtx_nPUSF",     50, 0.0, 50.0) ); 
     my_histos.emplace( "h_nVtx_wPUSF",      std::make_shared<TH1D>( "h_nVtx_wPUSF",     "h_nVtx_wPUSF",     50, 0.0, 50.0) );
-    my_histos.emplace( "h_nVtx_wPUSF_JP",   std::make_shared<TH1D>( "h_nVtx_wPUSF_JP",  "h_nVtx_wPUSF_JP",  50, 0.0, 50.0) );
+    //my_histos.emplace( "h_nVtx_wPUSF_JP",   std::make_shared<TH1D>( "h_nVtx_wPUSF_JP",  "h_nVtx_wPUSF_JP",  50, 0.0, 50.0) );
 
     my_histos.emplace( "h_nj_scaleSF",      std::make_shared<TH1D>( "h_nj_scaleSF",     "h_nj_scaleSF",     20, 0.0, 20.0) );
     my_histos.emplace( "h_nj_scaleSF_u",    std::make_shared<TH1D>( "h_nj_scaleSF_u",   "h_nj_scaleSF_u",   20, 0.0, 20.0) );
@@ -85,15 +85,15 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
         
-        const auto& bTagSF              = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
-        const auto& bTagSF_u            = tr.getVar<float>("bTagSF_EventWeightSimple_Up");
-        const auto& bTagSF_d            = tr.getVar<float>("bTagSF_EventWeightSimple_Down");
+        const auto& bTagSF              = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+        const auto& bTagSF_u            = tr.getVar<double>("bTagSF_EventWeightSimple_Up");
+        const auto& bTagSF_d            = tr.getVar<double>("bTagSF_EventWeightSimple_Down");
         
-        const auto& bMisTagSF_u         = tr.getVar<float>("mistagSF_EventWeightSimple_Up");
-        const auto& bMisTagSF_d         = tr.getVar<float>("mistagSF_EventWeightSimple_Down");
+        const auto& bMisTagSF_u         = tr.getVar<double>("mistagSF_EventWeightSimple_Up");
+        const auto& bMisTagSF_d         = tr.getVar<double>("mistagSF_EventWeightSimple_Down");
         
         const auto& puSF                = tr.getVar<double>("puWeight");
-        const auto& puSF_JP             = tr.getVar<float>("_PUweightFactor");
+        //const auto& puSF_JP             = tr.getVar<float>("_PUweightFactor");
         const auto& ntru_PV             = tr.getVar<double>("TrueNumInteractions");
 
         const auto& scaleSF             = tr.getVar<double>("scaleWeightNom");
@@ -120,7 +120,7 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
         //------------------------------------
 
         double eventweight          = 1.0; //For data
-        double PUaddweight          = 1.0, PU_JPaddweight           = 1.0;
+        double PUaddweight          = 1.0;//, PU_JPaddweight           = 1.0;
         double scaleSFaddweight     = 1.0, scaleSFaddweight_u       = 1.0, scaleSFaddweight_d       = 1.0;
         double pdfSFaddweight       = 1.0, pdfSFaddweight_u         = 1.0, pdfSFaddweight_d         = 1.0;
         double bTagSFaddweight      = 1.0, bTagSFaddweight_u        = 1.0, bTagSFaddweight_d        = 1.0;
@@ -132,7 +132,7 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
             
             eventweight         = Lumi*Weight;
             PUaddweight         = Lumi*Weight*puSF;
-            PU_JPaddweight      = Lumi*Weight*puSF_JP;
+            //PU_JPaddweight      = Lumi*Weight*puSF_JP;
 
             scaleSFaddweight    = Lumi*Weight*scaleSF;
             scaleSFaddweight_u  = Lumi*Weight*scaleSF_u;
@@ -172,11 +172,11 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
             my_histos["h_CSV_btagSF_d"]->Fill(Jets_CSV.at(0), bTagSFaddweight_d);
         }
         my_histos["h_puSF"]->Fill(puSF);
-        my_histos["h_puSF_JP"]->Fill(puSF_JP);
+        //my_histos["h_puSF_JP"]->Fill(puSF_JP);
 
         my_histos["h_nVtx_nPUSF"]->Fill(ntru_PV,eventweight);
         my_histos["h_nVtx_wPUSF"]->Fill(ntru_PV,PUaddweight);
-        my_histos["h_nVtx_wPUSF_JP"]->Fill(ntru_PV,PU_JPaddweight);
+        //my_histos["h_nVtx_wPUSF_JP"]->Fill(ntru_PV,PU_JPaddweight);
 
         my_histos["h_scaleSF"]->Fill(scaleSF);
         my_histos["h_scaleSF_u"]->Fill(scaleSF_u);
