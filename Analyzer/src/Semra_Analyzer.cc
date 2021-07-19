@@ -114,7 +114,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& bestTopPt      = tr.getVar<double>("bestTopPt");
        
         const auto& passMadHT      = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline0l = tr.getVar<bool>("passBaseline0l"); // for data-MC
+        const auto& passBaseline0l_testTopCuts = tr.getVar<bool>("passBaseline0l_testTopCuts"); // for data-MC
         const auto& passMETFilters = tr.getVar<bool>("passMETFilters");
         const bool pass_general    = JetID && passMETFilters && passMadHT;
         const bool pass_0l         = NGoodLeptons==0;  
@@ -181,31 +181,31 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             //{"0l_HT500_ge2b_ge6j", pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge6j },
  
             // >= 2 tops
-            //{"0l_HT500_ge2b_ge6j_ge2t",   passBaseline0l && pass_ge2t },
-            //{"0l_HT500_ge2b_ge6j_ge2tM",  passBaseline0l && pass_ge2tM },
-            //{"0l_HT500_ge2b_ge6j_ge2tR",  passBaseline0l && pass_ge2tR },
-            //{"0l_HT500_ge2b_ge6j_ge2tMR", passBaseline0l && pass_ge2tMR }, 
+            //{"0l_HT500_ge2b_ge6j_ge2t",   passBaseline0l_testTopCuts && pass_ge2t },
+            //{"0l_HT500_ge2b_ge6j_ge2tM",  passBaseline0l_testTopCuts && pass_ge2tM },
+            //{"0l_HT500_ge2b_ge6j_ge2tR",  passBaseline0l_testTopCuts && pass_ge2tR },
+            //{"0l_HT500_ge2b_ge6j_ge2tMR", passBaseline0l_testTopCuts && pass_ge2tMR }, 
             
             // dR_bjets >= 1
-            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge2tMR && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets },
 
-            //{"0l_HT500_ge2b_ge7j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge7j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge7j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge7j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge7j && pass_ge2tMR && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge7j && pass_ge2t   && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tM  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tR  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tMR && pass_ge1dRbjets },
 
-            //{"0l_HT500_ge2b_ge8j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge8j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge8j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge8j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge8j && pass_ge2tMR && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge8j && pass_ge2t   && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tM  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tR  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tMR && pass_ge1dRbjets },
 
-            //{"0l_HT500_ge2b_ge9j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge9j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge9j && pass_ge2t   && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
         };
 
         if (!inithisto) 
