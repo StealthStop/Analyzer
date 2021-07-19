@@ -101,34 +101,34 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ------------------------------
         // -- Define Top Tag variables
         // ------------------------------
-        const auto& ntops               = tr.getVar<int>("ntops");
-        const auto& ntops_1jet          = tr.getVar<int>("ntops_1jet"); // merged
-        const auto& ntops_2jet          = tr.getVar<int>("ntops_2jet");
-        const auto& ntops_3jet          = tr.getVar<int>("ntops_3jet"); // resolved 
-        const auto& topsMass            = tr.getVec<double>("topsMass");
-        const auto& topsEta             = tr.getVec<double>("topsEta");
-        const auto& topsPhi             = tr.getVec<double>("topsPhi");  
-        const auto& topsPt              = tr.getVec<double>("topsPt");
-        const auto& bestTopMass         = tr.getVar<double>("bestTopMass");
-        const auto& bestTopEta          = tr.getVar<double>("bestTopEta");
-        const auto& bestTopPt           = tr.getVar<double>("bestTopPt");
+        const auto& ntops          = tr.getVar<int>("ntops");
+        const auto& ntops_1jet     = tr.getVar<int>("ntops_1jet"); // merged
+        const auto& ntops_2jet     = tr.getVar<int>("ntops_2jet");
+        const auto& ntops_3jet     = tr.getVar<int>("ntops_3jet"); // resolved 
+        const auto& topsMass       = tr.getVec<double>("topsMass");
+        const auto& topsEta        = tr.getVec<double>("topsEta");
+        const auto& topsPhi        = tr.getVec<double>("topsPhi");  
+        const auto& topsPt         = tr.getVec<double>("topsPt");
+        const auto& bestTopMass    = tr.getVar<double>("bestTopMass");
+        const auto& bestTopEta     = tr.getVar<double>("bestTopEta");
+        const auto& bestTopPt      = tr.getVar<double>("bestTopPt");
        
-        const auto& passMadHT           = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline0l_Good = tr.getVar<bool>("passBaseline0l_Good"); // for data-MC
-        const auto& passMETFilters      = tr.getVar<bool>("passMETFilters");
-        const bool pass_general         = JetID && passMETFilters && passMadHT;
-        const bool pass_0l              = NGoodLeptons==0;  
-        const bool pass_HT500           = HT_trigger_pt45 > 500;
-        const bool pass_ge2b            = NGoodBJets_pt45 >= 2;
-        const bool pass_ge6j            = NGoodJets_pt45 >= 6;
-        const bool pass_ge7j            = NGoodJets_pt45 >= 7;
-        const bool pass_ge8j            = NGoodJets_pt45 >= 8;
-        const bool pass_ge9j            = NGoodJets_pt45 >= 9;
-        const bool pass_ge2t            = ntops >= 2;
-        const bool pass_ge2tM           = ntops >= 2 && ntops_3jet == 0 && ntops_2jet == 0;
-        const bool pass_ge2tR           = ntops >= 2 && ntops_1jet == 0 && ntops_2jet == 0;
-        const bool pass_ge2tMR          = ntops >= 2 && ntops_1jet >= 1 && ntops_3jet >= 1 && ntops_2jet == 0;
-        const bool pass_ge1dRbjets      = dR_bjets >= 1.0;       
+        const auto& passMadHT      = tr.getVar<bool>("passMadHT");
+        const auto& passBaseline0l = tr.getVar<bool>("passBaseline0l"); // for data-MC
+        const auto& passMETFilters = tr.getVar<bool>("passMETFilters");
+        const bool pass_general    = JetID && passMETFilters && passMadHT;
+        const bool pass_0l         = NGoodLeptons==0;  
+        const bool pass_HT500      = HT_trigger_pt45 > 500;
+        const bool pass_ge2b       = NGoodBJets_pt45 >= 2;
+        const bool pass_ge6j       = NGoodJets_pt45 >= 6;
+        const bool pass_ge7j       = NGoodJets_pt45 >= 7;
+        const bool pass_ge8j       = NGoodJets_pt45 >= 8;
+        const bool pass_ge9j       = NGoodJets_pt45 >= 9;
+        const bool pass_ge2t       = ntops >= 2;
+        const bool pass_ge2tM      = ntops >= 2 && ntops_3jet == 0 && ntops_2jet == 0;
+        const bool pass_ge2tR      = ntops >= 2 && ntops_1jet == 0 && ntops_2jet == 0;
+        const bool pass_ge2tMR     = ntops >= 2 && ntops_1jet >= 1 && ntops_3jet >= 1 && ntops_2jet == 0;
+        const bool pass_ge1dRbjets = dR_bjets >= 1.0;       
 
         // -------------------
         // -- Define weight
@@ -181,31 +181,31 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             //{"0l_HT500_ge2b_ge6j", pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge6j },
  
             // >= 2 tops
-            //{"0l_HT500_ge2b_ge6j_ge2t",   passBaseline0l_Good && pass_ge2t },
-            //{"0l_HT500_ge2b_ge6j_ge2tM",  passBaseline0l_Good && pass_ge2tM },
-            //{"0l_HT500_ge2b_ge6j_ge2tR",  passBaseline0l_Good && pass_ge2tR },
-            //{"0l_HT500_ge2b_ge6j_ge2tMR", passBaseline0l_Good && pass_ge2tMR }, 
+            //{"0l_HT500_ge2b_ge6j_ge2t",   passBaseline0l && pass_ge2t },
+            //{"0l_HT500_ge2b_ge6j_ge2tM",  passBaseline0l && pass_ge2tM },
+            //{"0l_HT500_ge2b_ge6j_ge2tR",  passBaseline0l && pass_ge2tR },
+            //{"0l_HT500_ge2b_ge6j_ge2tMR", passBaseline0l && pass_ge2tMR }, 
             
             // dR_bjets >= 1
-            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",   passBaseline0l_Good && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tM_ge1dRbjets",  passBaseline0l_Good && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tR_ge1dRbjets",  passBaseline0l_Good && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tMR_ge1dRbjets", passBaseline0l_Good && pass_ge2tMR && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge2t   && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge2tM  && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge2tR  && pass_ge1dRbjets },
+            {"0l_HT500_ge2b_ge6j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge2tMR && pass_ge1dRbjets },
 
-            //{"0l_HT500_ge2b_ge7j_ge2t_ge1dRbjets",   passBaseline0l_Good && pass_ge7j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tM_ge1dRbjets",  passBaseline0l_Good && pass_ge7j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tR_ge1dRbjets",  passBaseline0l_Good && pass_ge7j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tMR_ge1dRbjets", passBaseline0l_Good && pass_ge7j && pass_ge2tMR && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge7j && pass_ge2t   && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge7j && pass_ge2tM  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge7j && pass_ge2tR  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge7j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge7j && pass_ge2tMR && pass_ge1dRbjets },
 
-            //{"0l_HT500_ge2b_ge8j_ge2t_ge1dRbjets",   passBaseline0l_Good && pass_ge8j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tM_ge1dRbjets",  passBaseline0l_Good && pass_ge8j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tR_ge1dRbjets",  passBaseline0l_Good && pass_ge8j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tMR_ge1dRbjets", passBaseline0l_Good && pass_ge8j && pass_ge2tMR && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge8j && pass_ge2t   && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge8j && pass_ge2tM  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge8j && pass_ge2tR  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge8j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge8j && pass_ge2tMR && pass_ge1dRbjets },
 
-            //{"0l_HT500_ge2b_ge9j_ge2t_ge1dRbjets",   passBaseline0l_Good && pass_ge9j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l_Good && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l_Good && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l_Good && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2t_ge1dRbjets",   passBaseline0l && pass_ge9j && pass_ge2t   && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
+            //{"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
         };
 
         if (!inithisto) 
