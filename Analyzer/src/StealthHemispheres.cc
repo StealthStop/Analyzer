@@ -274,7 +274,7 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
             {"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
             {"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
-       
+            
             // NJets cuts for stop hemispheres
             {"baseline_0l_Njet6",    pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 6},
             {"baseline_0l_Njet6_M",  pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 6},
