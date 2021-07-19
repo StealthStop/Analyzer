@@ -114,7 +114,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& bestTopPt   = tr.getVar<double>("bestTopPt");
        
         const auto& passMadHT                  = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline0l_testTopCuts = tr.getVar<bool>("passBaseline0l_testTopCuts"); // for data-MC
+        const auto& passBaseline0l_testTopCuts = tr.getVar<bool>("passBaseline0l_testTopCuts"); 
         const auto& passMETFilters             = tr.getVar<bool>("passMETFilters");
         const bool pass_general                = JetID && passMETFilters && passMadHT;
         const bool pass_0l                     = NGoodLeptons==0;  
@@ -129,7 +129,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const bool pass_ge2tR                  = ntops >= 2 && ntops_1jet == 0 && ntops_2jet == 0;
         const bool pass_ge2tMR                 = ntops >= 2 && ntops_1jet >= 1 && ntops_3jet >= 1 && ntops_2jet == 0;
         const bool pass_ge1dRbjets             = dR_bjets >= 1.0;       
-
+        
         // -------------------
         // -- Define weight
         // -------------------
