@@ -25,7 +25,7 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    my_labels     = {"_0l", "_1l"}; // No "_2l" yet
+    my_labels     = {"_0l", "_1l", "_2l"};
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
 }
@@ -60,6 +60,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         CommonVariables     commonVariables(myVarSuffix);
         MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
+        MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
         MakeStopHemispheres stopHemispheres("Jets"+myVarSuffix, "GoodJets_pt20"+myVarSuffix, "NGoodJets_pt20"+myVarSuffix, "_OldSeed"+myVarSuffix, Hemisphere::InvMassSeed);
 
         bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
@@ -77,6 +78,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(fatJetCombine);
         tr.registerFunction(makeMVAVariables0L);
         tr.registerFunction(makeMVAVariables1L);
+        tr.registerFunction(makeMVAVariables2L);
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres);
         tr.registerFunction(bTagCorrector);
@@ -98,7 +100,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::map<std::string, bool> baselines;
             baselines["_0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
-            //baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20");
+            baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20");
 
             // Add a branch containing the mass for the stop
             // In the case of signal, use the top mass
