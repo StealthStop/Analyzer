@@ -28,23 +28,6 @@ MakeNNVariables::MakeNNVariables()
     my_labels     = {"_0l", "_1l"}; // No "_2l" yet
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
-    InitHistos();
-}
-
-void MakeNNVariables::InitHistos()
-{
-    for (const auto& suffix : my_var_suffix)
-    {
-        for (const auto& label : my_labels)
-        {
-            for (const auto& split : my_splits)
-            {
-                if (split == "count") continue;
-                std::string name = "EventCounter"+split+label+suffix;
-                my_histos.emplace( name, std::make_shared<TH1D>( name.c_str(), name.c_str(), 2, -1.1, 1.1 ) ); 
-            }
-        }
-    }
 }
 
 void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
@@ -111,7 +94,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             const auto& isSignal     = tr.getVar<bool>("isSignal");
             const auto& filetag      = tr.getVar<std::string>("filetag");
-            const auto& eventCounter = tr.getVar<int>("eventCounter");
 
             std::map<std::string, bool> baselines;
             baselines["_0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
@@ -328,7 +310,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                     for (const auto& split : myTree)
                     {
-                        my_histos["EventCounter"+split.first+label+myVarSuffix]->Fill( eventCounter );
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varGeneral);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varEventShape); 
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varJets);
@@ -401,12 +382,6 @@ void MakeNNVariables::WriteHistos( TFile* outfile )
                 delete suffix.second;
                 delete myMiniTuple[split.first][channel.first][suffix.first];
             }
-        }
-
-        for (const auto& histo : my_histos)
-        {
-            if (histo.first.find(split.first) != std::string::npos)
-                histo.second->Write();
         }
 
         outfileTrain->Close();
