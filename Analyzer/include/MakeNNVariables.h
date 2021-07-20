@@ -2,8 +2,6 @@
 #define MakeNNVariables_h
 
 #include <TH1D.h>
-#include <TH2D.h>
-#include <TEfficiency.h>
 #include <TTree.h>
 
 #include <map>
@@ -16,8 +14,8 @@ class MakeNNVariables{
 
 public :
    std::map<std::string, std::shared_ptr<TH1D>>  my_histos;
-   std::map<std::string, std::shared_ptr<TH2D>>  my_2d_histos;
-   std::map<std::string, std::shared_ptr<TEfficiency>>  my_efficiencies;
+
+   std::vector<std::string> my_var_suffix;
 
    MakeNNVariables();
    ~MakeNNVariables(){};
@@ -26,25 +24,9 @@ public :
    void     InitHistos();
    void     WriteHistos(TFile* outfile); 
 
-   MiniTupleMaker *myMiniTupleTrain_0l;
-   MiniTupleMaker *myMiniTupleTrain_1l; 
-   MiniTupleMaker *myMiniTupleTrain_2l;
-   MiniTupleMaker *myMiniTupleTest_0l;
-   MiniTupleMaker *myMiniTupleTest_1l;
-   MiniTupleMaker *myMiniTupleTest_2l;
-   MiniTupleMaker *myMiniTupleVal_0l;
-   MiniTupleMaker *myMiniTupleVal_1l;
-   MiniTupleMaker *myMiniTupleVal_2l;
+   std::map<std::string, std::map<std::string, std::map<std::string, MiniTupleMaker*> > > myMiniTuple;
+   std::map<std::string, std::map<std::string, std::map<std::string, TTree*> > > myTree;
 
-   TTree          *myTreeTrain_0l;
-   TTree          *myTreeTrain_1l;
-   TTree          *myTreeTrain_2l;
-   TTree          *myTreeTest_0l;
-   TTree          *myTreeTest_1l;
-   TTree          *myTreeTest_2l;
-   TTree          *myTreeVal_0l;
-   TTree          *myTreeVal_1l;
-   TTree          *myTreeVal_2l;
 };
 
 #endif
