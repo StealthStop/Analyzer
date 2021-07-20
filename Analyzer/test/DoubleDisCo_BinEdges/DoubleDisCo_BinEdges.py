@@ -45,6 +45,14 @@ def cal_NN_OptMetricOfBinEdges(significance, closureError):
     optimizationMetric  = (closureError)**2 + (1.0 / significance)**2
     return optimizationMetric
 
+# ------------------------------------------
+# Calculate optimization metric of bin edges
+# ------------------------------------------
+def cal_OptMetricOfBinEdges(significance, closureError):
+    #inverseSignificance = (1.0 / significance)
+    optimizationMetric  = (5 * closureError)**2 + (1.0 / significance)**2
+    return optimizationMetric
+
 # --------------------------------------
 # Calculate metric of validation regions
 # --------------------------------------
@@ -245,7 +253,7 @@ def calc_Sig_SigBkg_Fractions(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac =
                 sigTotFracsD.append(float(tempSigTotFracsD)); bkgTotFracsD.append(float(tempBkgTotFracsD))
 
             if (tempBkgTotFracsA > minBkgFrac) and (tempBkgTotFracsB > minBkgFrac) and (tempBkgTotFracsC > minBkgFrac) and (tempBkgTotFracsD > minBkgFrac):                
-                tempOptMetric = cal_NN_OptMetricOfBinEdges(tempSignificance, tempClosureErr)
+                tempOptMetric = cal_OptMetricOfBinEdges(tempSignificance, tempClosureErr)
 
             if tempOptMetric < optMetric:
                 finalDisc1Key = disc1Key 
