@@ -16,13 +16,17 @@ public :
    std::map<std::string, std::shared_ptr<TH1D>>  my_histos;
 
    std::vector<std::string> my_var_suffix;
+   std::vector<std::string> my_labels;
+   std::vector<std::string> my_splits;
+
+   std::map<std::string, std::map<std::string, std::map<std::string, int> > > my_counts;
 
    MakeNNVariables();
    ~MakeNNVariables(){};
 
-   void     Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
-   void     InitHistos();
-   void     WriteHistos(TFile* outfile); 
+   void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
+   void InitHistos();
+   void WriteHistos(TFile* outfile); 
 
    std::map<std::string, std::map<std::string, std::map<std::string, MiniTupleMaker*> > > myMiniTuple;
    std::map<std::string, std::map<std::string, std::map<std::string, TTree*> > > myTree;

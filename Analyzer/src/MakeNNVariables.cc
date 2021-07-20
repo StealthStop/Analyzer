@@ -25,60 +25,64 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    InitHistos();
+    my_labels     = {"_0l", "_1l"}; // No "_2l" yet
+    my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
+    InitHistos();
 }
 
 void MakeNNVariables::InitHistos()
 {
-    my_histos.emplace( "EventCounterTrain_0l", std::make_shared<TH1D>( "EventCounterTrain_0l", "EventCounterTrain_0l", 2, -1.1, 1.1 ) ); 
-    my_histos.emplace( "EventCounterTest_0l",  std::make_shared<TH1D>( "EventCounterTest_0l",  "EventCounterTest_0l",  2, -1.1, 1.1 ) );
-    my_histos.emplace( "EventCounterVal_0l",   std::make_shared<TH1D>( "EventCounterVal_0l",   "EventCounterVal_0l",   2, -1.1, 1.1 ) );
-    
-    my_histos.emplace( "EventCounterTrain_1l", std::make_shared<TH1D>( "EventCounterTrain_1l", "EventCounterTrain_1l", 2, -1.1, 1.1 ) );
-    my_histos.emplace( "EventCounterTest_1l",  std::make_shared<TH1D>( "EventCounterTest_1l",  "EventCounterTest_1l",  2, -1.1, 1.1 ) );
-    my_histos.emplace( "EventCounterVal_1l",   std::make_shared<TH1D>( "EventCounterVal_1l",   "EventCounterVal_1l",   2, -1.1, 1.1 ) ); 
-    
-    //my_histos.emplace( "EventCounterTrain_2l", std::make_shared<TH1D>( "EventCounterTrain_2l", "EventCounterTrain_2l", 2, -1.1, 1.1 ) ); 
-    //my_histos.emplace( "EventCounterTest_2l",  std::make_shared<TH1D>( "EventCounterTest_2l",  "EventCounterTest_2l",  2, -1.1, 1.1 ) );
-    //my_histos.emplace( "EventCounterVal_2l",   std::make_shared<TH1D>( "EventCounterVal_2l",   "EventCounterVal_2l",   2, -1.1, 1.1 ) ); 
-
-}//END of init histos
+    for (const auto& suffix : my_var_suffix)
+    {
+        for (const auto& label : my_labels)
+        {
+            for (const auto& split : my_splits)
+            {
+                if (split == "count") continue;
+                std::string name = "EventCounter"+split+label+suffix;
+                my_histos.emplace( name, std::make_shared<TH1D>( name.c_str(), name.c_str(), 2, -1.1, 1.1 ) ); 
+            }
+        }
+    }
+}
 
 void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
-    std::map<std::string, std::map<std::string, std::map<std::string, int> > > counts;
 
-    const auto& filetag = tr.getVar<std::string>("filetag");
-    const auto& runYear = tr.getVar<std::string>("runYear");
-    const auto& bjetFileName = tr.getVar<std::string>("bjetFileName");
+    const auto& filetag         = tr.getVar<std::string>("filetag");
+    const auto& runYear         = tr.getVar<std::string>("runYear");
+    const auto& bjetFileName    = tr.getVar<std::string>("bjetFileName");
     const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
-    const auto& leptonFileName = tr.getVar<std::string>("leptonFileName");
-    const auto& puFileName = tr.getVar<std::string>("puFileName");
-    const auto& meanFileName = tr.getVar<std::string>("meanFileName");
-    const auto& TopTaggerCfg = tr.getVar<std::string>("TopTaggerCfg");
+    const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
+    const auto& puFileName      = tr.getVar<std::string>("puFileName");
+    const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
+    const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
 
     for(const auto& myVarSuffix : my_var_suffix)
     {
-        if(myVarSuffix == "") continue;
-        Muon muon(myVarSuffix);
-        Electron electron(myVarSuffix);
-        Photon photon(myVarSuffix);
-        Jet jet(myVarSuffix);
-        BJet bjet(myVarSuffix);
-        RunTopTagger topTagger(TopTaggerCfg, myVarSuffix);
-        CommonVariables commonVariables(myVarSuffix);
-        FatJetCombine fatJetCombine(myVarSuffix);
-        MakeMVAVariables makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
-        MakeMVAVariables makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
-        Baseline baseline(myVarSuffix);
-        BTagCorrector bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
-        bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
-        ScaleFactors scaleFactors( runYear, leptonFileName, puFileName, meanFileName, myVarSuffix);
-        StopJets stopJets(myVarSuffix);
-        StopGenMatch stopGenMatch(myVarSuffix);
+        if (myVarSuffix == "") continue;
+        Jet                 jet(myVarSuffix);
+        BJet                bjet(myVarSuffix);
+        Muon                muon(myVarSuffix);
+        Photon              photon(myVarSuffix);
+        Baseline            baseline(myVarSuffix);
+        Electron            electron(myVarSuffix);
+        StopJets            stopJets(myVarSuffix);
+        RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
+        ScaleFactors        scaleFactors( runYear, leptonFileName, puFileName, meanFileName, myVarSuffix);
+        StopGenMatch        stopGenMatch(myVarSuffix);
+        FatJetCombine       fatJetCombine(myVarSuffix);
+        BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
+        CommonVariables     commonVariables(myVarSuffix);
+        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
+        MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
         MakeStopHemispheres stopHemispheres("Jets"+myVarSuffix, "GoodJets_pt20"+myVarSuffix, "NGoodJets_pt20"+myVarSuffix, "_OldSeed"+myVarSuffix, Hemisphere::InvMassSeed);
+
+        bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
   
+        // Remember, order matters here !
+        // Follow what is done in Config.h
         tr.registerFunction(muon);
         tr.registerFunction(electron);
         tr.registerFunction(photon);
@@ -99,21 +103,23 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
 
     while( tr.getNextEvent() )
     {
-        if( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
-        if( tr.getEvtNum() % 1000 == 0 ) printf( " Event %i\n", tr.getEvtNum() );        
+        if ( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
+        if ( tr.getEvtNum() % 1000 == 0 ) printf( " Event %i\n", tr.getEvtNum() );        
 
 
         for(const auto& myVarSuffix : my_var_suffix)
         {
-            const auto& isSignal        = tr.getVar<bool>("isSignal");
-            const auto& filetag         = tr.getVar<std::string>("filetag");
-            const auto& eventCounter    = tr.getVar<int>("eventCounter");
+            const auto& isSignal     = tr.getVar<bool>("isSignal");
+            const auto& filetag      = tr.getVar<std::string>("filetag");
+            const auto& eventCounter = tr.getVar<int>("eventCounter");
 
             std::map<std::string, bool> baselines;
             baselines["_0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
             //baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20");
 
+            // Add a branch containing the mass for the stop
+            // In the case of signal, use the top mass
             auto& mass = tr.createDerivedVar<double>("mass", 0.0);
             if(!isSignal)
             {
@@ -127,35 +133,69 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 }
             }
 
+            // Set a model field for uniquely identifying signal models and background
+            // For background, use the field to denote which variation e.g. erdOn, JECup etc.
+            // Signal will live in the 100 block
+            // Background will live in the 0+ block
+            // For JECup, add 10
+            // For JECdown, add 20
+            // For JERup, add 30
+            // For JERdown, add 40
             auto& model = tr.createDerivedVar<int>("model", 0);
-            if(filetag.find("RPV") != std::string::npos)
-            {
-                model = 100;
-            } else if (filetag.find("SYY") != std::string::npos) 
-            {
-                model = 101;
-            } else if (filetag.find("SHH") != std::string::npos)
-            {
-                model = 102;
+            if (isSignal) {
+                if(filetag.find("RPV") != std::string::npos)
+                {
+                    model = 100;
+                } else if (filetag.find("SYY") != std::string::npos) 
+                {
+                    model = 101;
+                } else if (filetag.find("SHH") != std::string::npos)
+                {
+                    model = 102;
+                }
+            } else {
+                if (filetag.find("erdOn") != std::string::npos)
+                {   
+                    model = 1;
+                } else if (filetag.find("hdampUp") != std::string::npos)
+                {
+                    model = 2;
+                } else if (filetag.find("hdampDown") != std::string::npos)
+                {
+                    model = 3;
+                } else if (filetag.find("underlyingEvtUp") != std::string::npos)
+                {
+                    model = 4;
+                } else if (filetag.find("underlyingEvtDown") != std::string::npos)
+                {
+                    model = 5;
+                }
             }
-       
-            //------------------------------------
-            //-- Print Event Number
-            //------------------------------------
-           
-            std::vector<std::string> labels = {"_0l", "_1l"}; // for now no 2l variables
-            std::vector<std::string> splits = {"count", "Train", "Test", "Val"};
+
+            // Put JEC/JER variation in a different number block by adding
+            if (myVarSuffix == "JECup")
+            {
+                model += 10;
+            } else if (myVarSuffix == "JECdown")
+            {
+                model += 20;
+            } else if (myVarSuffix == "JERup")
+            {
+                model += 30;
+            } else if (myVarSuffix == "JERdown")
+            {
+                model += 40;
+            }
 
             if( tr.isFirstEvent() ) 
             {
-
-                for (const auto& label : labels)
+                for (const auto& label : my_labels)
                 {
                     std::string myTreeName = "myMiniTree"+label+myVarSuffix;
 
-                    for (const auto& split : splits)
+                    for (const auto& split : my_splits)
                     {
-                        counts[split][label][myVarSuffix] = 0;
+                        my_counts[split][label][myVarSuffix] = 0;
 
                         if (split != "count")
                         {
@@ -218,7 +258,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 // get the jet variables separately for 0l, 1l, 2l
                 // -----------------------------------------------
 
-                for (std::string label : labels)
+                for (std::string label : my_labels)
                 {
                     std::set<std::string> varEventShape = 
                     {
@@ -288,7 +328,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                     for (const auto& split : myTree)
                     {
-                        my_histos["EventCounter"+split.first+label]->Fill( eventCounter );
+                        my_histos["EventCounter"+split.first+label+myVarSuffix]->Fill( eventCounter );
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varGeneral);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varEventShape); 
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varJets);
@@ -306,29 +346,29 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             {
                 if (selection.second)
                 {
-                    int mod = counts["count"][selection.first][myVarSuffix] % 10;
+                    int mod = my_counts["count"][selection.first][myVarSuffix] % 10;
                     if(mod < 8)
                     {
                         myMiniTuple["Train"][selection.first][myVarSuffix]->fill();
-                        counts["Train"][selection.first][myVarSuffix]++;
+                        my_counts["Train"][selection.first][myVarSuffix]++;
                     }
                     else if(mod == 8)
                     {
                         myMiniTuple["Test"][selection.first][myVarSuffix]->fill();
-                        counts["Test"][selection.first][myVarSuffix]++;
+                        my_counts["Test"][selection.first][myVarSuffix]++;
                     }
                     else
                     {
                         myMiniTuple["Val"][selection.first][myVarSuffix]->fill();
-                        counts["Val"][selection.first][myVarSuffix]++;
+                        my_counts["Val"][selection.first][myVarSuffix]++;
                     }
-                    counts["count"][selection.first][myVarSuffix]++;
+                    my_counts["count"][selection.first][myVarSuffix]++;
                 }
             }
         }
     }
 
-    for (const auto& train : counts)
+    for (const auto& train : my_counts)
     {
         for (const auto& channel : train.second)
         {
@@ -339,7 +379,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         }
     }
 
-}//END of function
+}
       
 void MakeNNVariables::WriteHistos( TFile* outfile ) 
 {
@@ -365,7 +405,7 @@ void MakeNNVariables::WriteHistos( TFile* outfile )
 
         for (const auto& histo : my_histos)
         {
-            if (histo.first == split.first)
+            if (histo.first.find(split.first) != std::string::npos)
                 histo.second->Write();
         }
 
