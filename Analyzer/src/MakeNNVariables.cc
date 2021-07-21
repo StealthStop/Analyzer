@@ -100,7 +100,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::map<std::string, bool> baselines;
             baselines["_0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
-            baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20");
+            baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
 
             // Add a branch containing the mass for the stop
             // In the case of signal, use the top mass
@@ -388,8 +388,8 @@ void MakeNNVariables::WriteHistos( TFile* outfile )
     for (const auto& split : myTree)
     {
 
-        TFile* outfileTrain = TFile::Open((name+"_"+split.first+".root").c_str(), "RECREATE");
-        outfileTrain->cd();
+        TFile* theOutfile = TFile::Open((name+"_"+split.first+".root").c_str(), "RECREATE");
+        theOutfile->cd();
 
         for (auto& channel : split.second)
         { 
@@ -402,7 +402,8 @@ void MakeNNVariables::WriteHistos( TFile* outfile )
             }
         }
 
-        outfileTrain->Close();
+        theOutfile->Close();
+        delete theOutfile;
     }
 
     remove(outFileName.c_str());
