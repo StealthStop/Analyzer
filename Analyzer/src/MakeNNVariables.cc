@@ -138,34 +138,37 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     model = 102;
                 }
             } else {
-                if (filetag.find("erdOn") != std::string::npos)
-                {   
+                if (filetag.find("TTJets") != std::string::npos)
+                {
                     model = 1;
+                } else if (filetag.find("erdOn") != std::string::npos)
+                {   
+                    model = 2;
                 } else if (filetag.find("hdampUp") != std::string::npos)
                 {
-                    model = 2;
+                    model = 3;
                 } else if (filetag.find("hdampDown") != std::string::npos)
                 {
-                    model = 3;
+                    model = 4;
                 } else if (filetag.find("underlyingEvtUp") != std::string::npos)
                 {
-                    model = 4;
+                    model = 5;
                 } else if (filetag.find("underlyingEvtDown") != std::string::npos)
                 {
-                    model = 5;
+                    model = 6;
                 } else if (filetag.find("fsrUp") != std::string::npos)
                 {
-                    model = 6;
+                    model = 7;
                 } else if (filetag.find("fsrDown") != std::string::npos)
                 {
-                    model = 7;
+                    model = 8;
                 } else if (filetag.find("isrUp") != std::string::npos)
                 {
-                    model = 8;
+                    model = 9;
                 } else if (filetag.find("isrDown") != std::string::npos)
                 {
-                    model = 9;
-                }
+                    model = 10;
+                } 
             }
 
             // Put JEC/JER variation in a different number block by adding
@@ -208,6 +211,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 {
                     "Lumi",   
                     "mass",   
+                    "model",
                     "isSignal",
                     "Weight",  
                     "totalEventWeight",
