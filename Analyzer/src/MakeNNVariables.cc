@@ -61,7 +61,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
         MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
-        MakeStopHemispheres stopHemispheres("Jets"+myVarSuffix, "GoodJets_pt20"+myVarSuffix, "NGoodJets_pt20"+myVarSuffix, "_OldSeed"+myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres("Jets", "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
 
         bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
   
