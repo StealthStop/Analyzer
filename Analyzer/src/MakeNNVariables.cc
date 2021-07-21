@@ -153,6 +153,18 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 } else if (filetag.find("underlyingEvtDown") != std::string::npos)
                 {
                     model = 5;
+                } else if (filetag.find("fsrUp") != std::string::npos)
+                {
+                    model = 6;
+                } else if (filetag.find("fsrDown") != std::string::npos)
+                {
+                    model = 7;
+                } else if (filetag.find("isrUp") != std::string::npos)
+                {
+                    model = 8;
+                } else if (filetag.find("isrDown") != std::string::npos)
+                {
+                    model = 9;
                 }
             }
 
