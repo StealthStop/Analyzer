@@ -69,6 +69,8 @@ def main():
                        environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2018post.cfg" % repo,
                        environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_DoubleDisCo_Reg_0l_2016.cfg" % repo,
                        environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_DoubleDisCo_Reg_1l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2016.cfg" % repo,
                        environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_Regression.pb" % repo,
                        environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2016.pb" % repo,
                        environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2017.pb" % repo,

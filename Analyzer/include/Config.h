@@ -63,24 +63,24 @@ private:
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
-            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "");
-            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 2, "");
-            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45", false, true, 12, 2, "_0l");
-            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt45", false, true, 12, 2, "_0l");
-            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30", false, true, 12, 2, "_1l");
-            else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30", false, true, 12, 2, "_1l");
+            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45",                  false, true, 12, 2, "_0l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt45",            false, true, 12, 2, "_0l");
+            else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 12, 2, "_1l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 12, 2, "_1l");
             else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
             else if(module=="FatJetCombine")                         tr.emplaceModule<FatJetCombine>();
             else if(module=="TrainingNTupleVars")                    tr.emplaceModule<TrainingNTupleVars>();
-            else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets", "AllJets",                 "NJets",                    "_All",               Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets", "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",           Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_NonIsoMuon_OldSeed")tr.emplaceModule<MakeStopHemispheres>("Jets", "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_NonIsoMuon_OldSeed",Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets", "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR", Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_TopSeed")           tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",            "NGoodStopJets",            "_TopSeed",           Hemisphere::TopSeed);
-            else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR", Hemisphere::TopSeed);
+            else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",                 "NJets",                    "_All",                "", Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",            "", Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_NonIsoMuon_OldSeed")tr.emplaceModule<MakeStopHemispheres>("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_NonIsoMuon_OldSeed", "", Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR",  "", Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_TopSeed")           tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",            "NGoodStopJets",            "_TopSeed",            "", Hemisphere::TopSeed);
+            else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR",  "", Hemisphere::TopSeed);
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
             else if(module=="ISRJets")                               tr.emplaceModule<ISRJets>();
             else if(module=="DeepEventShape")                        tr.emplaceModule<DeepEventShape>(DeepESMCfg, DeepESMModel);
@@ -297,9 +297,9 @@ public:
                 "FatJetCombine",
                 "MakeMVAVariables_0l",
                 "MakeMVAVariables_1l",
+                "MakeMVAVariables_2l",
                 "MakeMVAVariables_NonIsoMuon_0l",
                 "MakeMVAVariables_NonIsoMuon_1l",
-                //"MakeMVAVariables_2l",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
                 "MakeStopHemispheres_NonIsoMuon_OldSeed",
