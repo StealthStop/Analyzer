@@ -281,7 +281,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeDoubleDisCo" || analyzer=="MakeNNVariables")
+        else if(analyzer=="AnalyzeDoubleDisCo" || analyzer=="MakeNNVariables" || analyzer=="AnalyzeQCDCR")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
