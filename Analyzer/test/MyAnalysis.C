@@ -28,8 +28,14 @@
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 #include "Analyzer/Analyzer/include/AnalyzeXsec.h"
+||||||| merged common ancestors
+#include "Analyzer/Analyzer/include/MakeNNVariables.h"
+=======
+#include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
+>>>>>>> Fixed typos
 #include "Analyzer/Analyzer/include/Analyze2W.h"
 =======
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
