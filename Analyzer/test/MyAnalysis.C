@@ -27,8 +27,13 @@
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
+<<<<<<< HEAD
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 #include "Analyzer/Analyzer/include/AnalyzeXsec.h"
+#include "Analyzer/Analyzer/include/Analyze2W.h"
+=======
+#include "Analyzer/Analyzer/include/MakeNNVariables.h"
+>>>>>>> Init Charlie
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -191,8 +196,12 @@ int main(int argc, char *argv[])
         {"AnalyzeTemplate",         run<AnalyzeTemplate>},
         {"MakeNNVariables",         run<MakeNNVariables>},
         {"AnalyzeGenStop",          run<AnalyzeGenStop>},
+<<<<<<< HEAD
         {"AnalyzeXsec",             run<AnalyzeXsec>}
+        {"Analyze2W",               run<Analyze2W>},
 
+=======
+>>>>>>> Init Charlie
     }; 
 
     try
