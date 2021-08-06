@@ -982,20 +982,28 @@ class Config {
         } else if (analyzer == "Analyze2W"){
 >>>>>>> Init Charlie
             const std::vector<std::string> modulesList = {
+<<<<<<< HEAD
                 "PrepNTupleVars",
+||||||| merged common ancestors
+                "PartialUnBlinding",
+                "PrepNTupleVars",
+=======
+                "PartialUnBlinding",
+                 "PrepNTupleVars",
+>>>>>>> Updates
                 "Muon",
                 "Electron",
                 "Photon",
                 "Jet",
                 "BJet",
                 "CommonVariables",
-                "FatJetCombine",
-                "Baseline",
+                 "FatJetCombine",
+                // "Baseline",
                 "MakeMVAVariables_2l",
                 "StopGenMatch",
-                // "BTagCorrector",
-                "ScaleFactors",
-                "TrainingNTupleVars",
+//   "BTagCorrector",
+             //   "ScaleFactors",
+            //    "TrainingNTupleVars",
             };
             registerModules(tr, std::move(modulesList));
         } else {

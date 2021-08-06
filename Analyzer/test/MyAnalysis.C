@@ -51,6 +51,8 @@
 #include <string>
 #include <functional>
 #include <unistd.h>
+// #define CATCH_EXCEPTIONS 
+
 
 const std::string getFullPath(const std::string& file)
 {
@@ -210,8 +212,10 @@ int main(int argc, char *argv[])
 >>>>>>> Init Charlie
     }; 
 
+#ifdef CATCH_EXCEPTIONS
     try
     {
+#endif
         bool foundAnalyzer = false;
         for(auto& pair : AnalyzerPairVec)
         {
@@ -228,6 +232,7 @@ int main(int argc, char *argv[])
             std::cout << utility::color("ERROR: The analyzer \"" + analyzer + "\" is not an analyzer option! Please add it to the MyAnalysis.C list.", "red") << std::endl;        
         }
         outfile->Close();
+#ifdef CATCH_EXCEPTIONS
     }
     catch(const std::string e)
     {
@@ -244,6 +249,7 @@ int main(int argc, char *argv[])
         std::cout << e << std::endl;
         return 0;
     }
+#endif
 
     return 0;
 }

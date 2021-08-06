@@ -9,9 +9,12 @@
 #include <map>
 #include <string>
 
+
+
 class NTupleReader;
 
 class Analyze2W {
+private:
    public:
     std::map<std::string, std::shared_ptr<TH1D>> my_histos;
     std::map<std::string, std::shared_ptr<TH2D>> my_2d_histos;
@@ -25,5 +28,6 @@ class Analyze2W {
     void InitHistos();
     void WriteHistos(TFile* outfile);
 };
+
 
 #endif
