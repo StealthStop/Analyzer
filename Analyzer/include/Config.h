@@ -394,6 +394,7 @@ public:
                 "FatJetCombine",
                 "MakeMVAVariables",
                 "MakeMVAVariables_NonIsoMuon",
+                "RunTopTagger",
                 "Baseline",
                 "DeepEventShape",
                 "DeepEventShape_NonIsoMuon",
