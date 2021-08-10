@@ -21,12 +21,13 @@ from matplotlib.colors import LogNorm
 
 class Common_Calculations_Plotters():
 
-    def __init__(self, year, model, mass, channel, Njets=-1):
+    def __init__(self, year, model, mass, channel, metric, Njets=-1):
         self.Njets   = Njets
         self.year    = year
         self.model   = model
         self.mass    = mass
         self.channel = channel
+        self.metric  = metric
 
     def __del__(self):
         del self.Njets
@@ -34,6 +35,7 @@ class Common_Calculations_Plotters():
         del self.model
         del self.mass
         del self.channel
+        del self.metric 
 
     # ----------------------
     # calculate all closures
@@ -113,6 +115,7 @@ class Common_Calculations_Plotters():
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax1.text(0.05, 0.1, '$\\chi^2$ / ndof = %3.2f' % (totalChi2 / float(ndof)), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=10)
+        ax1.text(0.05, 0.25, '%s Metric' % (self.metric), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=14, fontweight='bold')
         ax1.text(0.12, 1.05, 'CMS', transform=ax.transAxes, fontsize=14, fontweight='bold', va='top', ha='right')
         ax1.text(0.33, 1.04, 'Preliminary', transform=ax.transAxes, fontsize=10, fontstyle='italic', va='top', ha='right')
         ax1.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
@@ -133,7 +136,7 @@ class Common_Calculations_Plotters():
 
         ax1.legend(loc='best', frameon=False)
 
-        fig.savefig('plots/%s_%s/%s/%s_Njets_Region_A_PredVsActual%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel))
+        fig.savefig('plots/%s_%s/%s/%s_Njets_Region_A_PredVsActual%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric))
 
         plt.close(fig)
 
@@ -524,15 +527,89 @@ class Common_Calculations_Plotters():
             fig.savefig('plots/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2_Njets%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
 
+    # ------------------------------------------------
+    # plot variable vs disc as 1D
+    #   -- Closure vs disc1, disc2 slices
+    #   -- Closure vs disc2, disc1 slices
+    #   -- Significance vs disc1, disc2 slices
+    #   -- Significance vs disc2, disc1 slices
+    #   -- weightedEventCounts vs disc1, disc2 slices
+    #   -- weightedEventCounts vs disc2, disc1 slices
+    # -----------------------------------------------
+    def plot_VarVsDisc(self, var, varUncs, d1edges, d2edges, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1):
+
+        x25 = []; x50 = []; x75 = []; xDiag = []
+        y25 = []; y50 = []; y75 = []; yDiag = []
+
+        y25unc = []; y50unc = []; y75unc = []; yDiagUnc = []
+
+        edges = (d1edges, d2edges)
+
+        for i in range(0, len(var)):
+
+            if  edges[disc-1][i] == 0.24: 
+               x25.append(edges[2-disc][i])
+               y25.append(var[i])
+               y25unc.append(varUncs[i])
+           
+            elif edges[disc-1][i] == 0.50: 
+               x50.append(edges[2-disc][i])
+               y50.append(var[i])
+               y50unc.append(varUncs[i])
+           
+            elif edges[disc-1][i] == 0.76: 
+               x75.append(edges[2-disc][i])
+               y75.append(var[i])
+               y75unc.append(varUncs[i])
+
+            if edges[0][i] == edges[1][i]: 
+               xDiag.append(edges[2-disc][i])
+               yDiag.append(var[i])
+               yDiagUnc.append(varUncs[i])
+
+        fig = plt.figure(figsize=(5, 5))
+        ax = plt.gca()
+        
+        xWidths25   = [edgeWidth for i in range(0, len(x25))]
+        xWidths50   = [edgeWidth for i in range(0, len(x50))]
+        xWidths75   = [edgeWidth for i in range(0, len(x75))]
+        xWidthsDiag = [edgeWidth for i in range(0, len(xDiag))]
+
+        ax.errorbar(x25,   y25,   yerr=y25unc,   label="Disc. %d = 0.25"    %(disc),        xerr=xWidths25,   fmt='', color="red",    lw=0, elinewidth=2, marker="o", markerfacecolor="red"   )
+        ax.errorbar(x50,   y50,   yerr=y50unc,   label="Disc. %d = 0.50"    %(disc),        xerr=xWidths50,   fmt='', color="blue",   lw=0, elinewidth=2, marker="o", markerfacecolor="blue"  )
+        ax.errorbar(x75,   y75,   yerr=y75unc,   label="Disc. %d = 0.75"    %(disc),        xerr=xWidths75,   fmt='', color="green",  lw=0, elinewidth=2, marker="o", markerfacecolor="green" )
+        ax.errorbar(xDiag, yDiag, yerr=yDiagUnc, label="Disc. %d = Disc. %d"%(disc,3-disc), xerr=xWidthsDiag, fmt='', color="purple", lw=0, elinewidth=2, marker="o", markerfacecolor="purple")
+
+        if ylim != -1.0:
+             ax.set_ylim((0.0, ylim))
+
+        ax.set_ylabel(ylabel); ax.set_xlabel("Disc. %d Value"%(3-disc))
+        plt.legend(loc='best')
+
+        ax.text(0.12, 1.05, 'CMS', transform=ax.transAxes, fontsize=14, fontweight='bold', va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary', transform=ax.transAxes, fontsize=10, fontstyle='italic', va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+
+        fig.tight_layout()
+
+        if Njets == -1: 
+            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_%s_%s.pdf' % (self.model, self.mass, self.year, tag, disc, self.channel, self.metric), dpi=fig.dpi)
+        else:        
+            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, self.Njets, self.channel, self.metric), dpi=fig.dpi)   
+
+        plt.close(fig)
+
+
 
 class FinalBinEdges:
 
-    def __init__(self, year, model, mass, channel, Njets = -1):
+    def __init__(self, year, model, mass, channel, metric, Njets = -1):
         self.Njets   = Njets
         self.year    = year
         self.model   = model
         self.mass    = mass
         self.channel = channel
+        self.metric  = metric
 
     def __del__(self):
         del self.Njets
@@ -540,6 +617,7 @@ class FinalBinEdges:
         del self.model
         del self.mass
         del self.channel
+        del self.metric
 
     # ------------------------
     # Significance calculation
@@ -554,24 +632,35 @@ class FinalBinEdges:
     # -------------------------
     # Closure error calculation
     # -------------------------
-    def cal_ClosureError(self, nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D):
+    def cal_ClosureError(self, nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D):
+        
         closureError = abs(1.0 - ( (nBkgEvents_B * nBkgEvents_C) / (nBkgEvents_A * nBkgEvents_D) ) )
-        return closureError
-    
-    # ---------------------------------------------
-    # Calculate optimization metric of NN bin edges
-    # ---------------------------------------------
-    def cal_NN_OptMetricOfBinEdges(self, significance, closureError):
-        #inverseSignificance = (1.0 / significance)
-        optimizationMetric  = (closureError)**2 + (1.0 / significance)**2
-        return optimizationMetric
-    
-    # ------------------------------------------
+        
+        closureErrUnc = ( ( ( nBkgEvents_C * nBkgEventsErr_B ) / ( nBkgEvents_A * nBkgEvents_D) )**2.0 
+                        + ( ( nBkgEvents_B * nBkgEventsErr_C ) / ( nBkgEvents_A * nBkgEvents_D) )**2.0 
+                        + ( ( nBkgEvents_B * nBkgEvents_C * nBkgEventsErr_A ) / ( nBkgEvents_A**2.0 * nBkgEvents_D ) )**2.0 
+                        + ( ( nBkgEvents_B * nBkgEvents_C * nBkgEventsErr_D ) / ( nBkgEvents_A * nBkgEvents_D**2.0 ) )**2.0 )**0.5
+
+        return closureError, closureErrUnc
+   
+    # -------------------------------------------
     # Calculate optimization metric of bin edges
-    # ------------------------------------------
-    def cal_OptMetricOfBinEdges(self, significance, closureError):
-        #inverseSignificance = (1.0 / significance)
-        optimizationMetric  = (5 * closureError)**2 + (1.0 / significance)**2
+    #   This function use the command line option
+    #   -- NN optimization metric
+    #   -- New optimization metric
+    # ------------------------------------------- 
+    def cal_OptMetric_ofBinEdges(self, significance, closureError):
+
+        optimizationMetric = None        
+
+        # NN optimization metric
+        if self.metric == "NN":
+            optimizationMetric  = (closureError)**2 + (1.0 / significance)**2
+        
+        # New optimization metric
+        else: 
+            optimizationMetric  = (5 * closureError)**2 + (1.0 / significance)**2
+
         return optimizationMetric
 
     # -------------------------------------------------------
@@ -675,11 +764,13 @@ class FinalBinEdges:
         significance  = 0.0; finalDisc1Key = -1.0; finalDisc2Key = -1.0; closureErr    = 0.0; optMetric  = 999.0
         finalSigFracA = 0.0; finalSigFracB = 0.0;  finalSigFracC = 0.0;  finalSigFracD = 0.0; nEvents_AB = 0.0; nEvents_AC = 0.0
         
-        inverseSignificance = []; closureErrsList = []; disc1KeyOut  = []; disc2KeyOut  = []
+        inverseSignificance = []; closureErrsList = []; closureErrUncList = []; disc1KeyOut  = []; disc2KeyOut  = []
         sigFracsA           = []; sigFracsB       = []; sigFracsC    = []; sigFracsD    = []
         sigTotFracsA        = []; sigTotFracsB    = []; sigTotFracsC = []; sigTotFracsD = []
         bkgTotFracsA        = []; bkgTotFracsB    = []; bkgTotFracsC = []; bkgTotFracsD = []
-    
+   
+        weighted_Sig_A   = []; weighted_Bkg_A   = []; weighted_SigUnc_A   = []; weighted_BkgUnc_A   = []
+
         # loop over the disc1 and disc2 to get any possible combination of them
         for disc1Key, disc2s in nTotBkgCount_ABCD["nBkgEvents_A"].items():
             
@@ -690,7 +781,12 @@ class FinalBinEdges:
                 nSigEvents_B = nTotSigCount_ABCD["nSigEvents_B"][disc1Key][disc2Key]; nBkgEvents_B = nTotBkgCount_ABCD["nBkgEvents_B"][disc1Key][disc2Key]
                 nSigEvents_C = nTotSigCount_ABCD["nSigEvents_C"][disc1Key][disc2Key]; nBkgEvents_C = nTotBkgCount_ABCD["nBkgEvents_C"][disc1Key][disc2Key]
                 nSigEvents_D = nTotSigCount_ABCD["nSigEvents_D"][disc1Key][disc2Key]; nBkgEvents_D = nTotBkgCount_ABCD["nBkgEvents_D"][disc1Key][disc2Key]
-    
+            
+                nSigEventsErr_A = nTotSigCount_ABCD["nSigEventsErr_A"][disc1Key][disc2Key]; nBkgEventsErr_A = nTotBkgCount_ABCD["nBkgEventsErr_A"][disc1Key][disc2Key]
+                nSigEventsErr_B = nTotSigCount_ABCD["nSigEventsErr_B"][disc1Key][disc2Key]; nBkgEventsErr_B = nTotBkgCount_ABCD["nBkgEventsErr_B"][disc1Key][disc2Key]
+                nSigEventsErr_C = nTotSigCount_ABCD["nSigEventsErr_C"][disc1Key][disc2Key]; nBkgEventsErr_C = nTotBkgCount_ABCD["nBkgEventsErr_C"][disc1Key][disc2Key]
+                nSigEventsErr_D = nTotSigCount_ABCD["nSigEventsErr_D"][disc1Key][disc2Key]; nBkgEventsErr_D = nTotBkgCount_ABCD["nBkgEventsErr_D"][disc1Key][disc2Key]   
+ 
                 # Region by region signal fraction calculation
                 # get some plots based on region by region signal fraction
                 nTot_SigBkg_A = nSigEvents_A + nBkgEvents_A
@@ -723,7 +819,7 @@ class FinalBinEdges:
                 tempSigTotFracsD = nSigEvents_D / nTot_Sig_ABCD; tempBkgTotFracsD = nBkgEvents_D / nTot_Bkg_ABCD
     
                 # significance and closure error for optimization of bin edges
-                tempSignificance = 0.0; tempClosureErr = -999.0; tempOptMetric = 999.0
+                tempSignificance = 0.0; tempClosureErr = -999.0; tempClosureErrUnc = -999.0; tempOptMetric = 999.0
     
                 if nBkgEvents_A > 0.0:
                     tempSignificance += ( nSigEvents_A / ( nBkgEvents_A + (0.3 * nBkgEvents_A)**2.0 )**0.5 )**2.0 
@@ -735,16 +831,23 @@ class FinalBinEdges:
                     tempSignificance += ( nSigEvents_D / ( nBkgEvents_D + (0.3 * nBkgEvents_D)**2.0 )**0.5 )**2.0
                 
                 if nBkgEvents_A > 0.0 and nBkgEvents_D > 0.0: 
-                    tempClosureErr = self.cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D)
+                    tempClosureErr, tempClosureErrUnc = self.cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
     
                 tempSignificance = tempSignificance**0.5
     
                 if tempSignificance > 0.0 and tempClosureErr > 0.0:
                     inverseSignificance.append(1.0 / tempSignificance) 
                     closureErrsList.append(abs(tempClosureErr))
+                    closureErrUncList.append(tempClosureErrUnc)
                     disc1KeyOut.append(float(disc1Key))
                     disc2KeyOut.append(float(disc2Key)) 
-            
+
+                    # get the weighted and unWeighted events for 1D plots
+                    weighted_Sig_A.append(nSigEvents_A)
+                    weighted_Bkg_A.append(nBkgEvents_A)   
+                    weighted_SigUnc_A.append(nBkgEventsErr_A)    
+                    weighted_BkgUnc_A.append(nBkgEventsErr_A)  
+
                     # Region by region fraction
                     sigFracsA.append(float(tempSigFracsA))
                     sigFracsB.append(float(tempSigFracsB))
@@ -758,7 +861,7 @@ class FinalBinEdges:
                     sigTotFracsD.append(float(tempSigTotFracsD)); bkgTotFracsD.append(float(tempBkgTotFracsD))
     
                 if (tempBkgTotFracsA > minBkgFrac) and (tempBkgTotFracsB > minBkgFrac) and (tempBkgTotFracsC > minBkgFrac) and (tempBkgTotFracsD > minBkgFrac):                
-                    tempOptMetric = self.cal_OptMetricOfBinEdges(tempSignificance, tempClosureErr)
+                    tempOptMetric = self.cal_OptMetric_ofBinEdges(tempSignificance, tempClosureErr)
     
                 if tempOptMetric < optMetric:
                     finalDisc1Key = disc1Key 
@@ -773,47 +876,28 @@ class FinalBinEdges:
                     nEvents_AB    = nBkgEvents_A + nBkgEvents_B
                     nEvents_AC    = nBkgEvents_A + nBkgEvents_C
 
-        # get the nEvents for each validation region
-        nEvents_ABCD = open("nEvents_ABCD_%s_%s_%s.tex" %(self.model, self.mass, self.channel), "w")
-        nEvents_ABCD.write("\\resizebox{\linewidth}{!}{%")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\hline")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\\textcolor{ttjetscol}{NJets} & \scriptsize sigFracA & \scriptsize sigFracB & \scriptsize sigFracC & \scriptsize sigFracD & \scriptsize nEvents for A+C & \scriptsize nEvents for A+B \\\\")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\hline")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("& \scriptsize finalSigFracA  & \scriptsize finalSigFracB   & \scriptsize finalSigFracC & \scriptsize finalSigFracD  & \scriptsize nEvents_AC & \scriptsize nEvents_AB")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\hline")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\end{tabular}")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("}")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.write("\n")
-        nEvents_ABCD.close()
-    
         # print out the disc1 and disc2 edges
         #print "disc1 (x bin) low bin edges: ", finalDisc1Key
         #print "disc2 (y bin) low bin edges: ", finalDisc2Key
     
-        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD 
+        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC 
 
 
 
 class ValidationRegions:
 
-    def __init__(self, year, channel, Njets = -1):
+    def __init__(self, year, model, mass, channel, Njets = -1):
         self.Njets   = Njets
         self.year    = year
+        self.model   = model
+        self.mass    = mass
         self.channel = channel
 
     def __del__(self):
         del self.Njets
         del self.year
+        del self.model
+        del self.mass
         del self.channel
 
     # --------------------------------------
@@ -1029,34 +1113,11 @@ class ValidationRegions:
                     nEvents_bd            = nBkgEvents_b + nBkgEvents_d
                     nEvents_EF            = nBkgEvents_E + nBkgEvents_F
 
-        # get the nEvents for each validation region
-        nEvents_bdEF = open("nEvents_Val_bdEF_%s_%s_%s.tex" %(self.model, self.mass, self.channel), "w") 
-        nEvents_bdEF.write("\\resizebox{\linewidth}{!}{%")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("\hline")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("\\textcolor{ttjetscol}{NJets} & \scriptsize sigFracB' & \scriptsize sigFracD' & \scriptsize sigFracE & \scriptsize sigFracF & \scriptsize nEvents for B'+D' & \scriptsize nEvents for E+F \\\\")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("\hline")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("& \scriptsize finalSigFracb  & \scriptsize finalSigFracd   & \scriptsize finalSigFracE & \scriptsize finalSigFracF  & \scriptsize nEvents_bd & \scriptsize nEvents_EF")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("\hline")
-        nEvents_bdEF.write("\n")                    
-        nEvents_bdEF.write("\end{tabular}")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("}")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.write("\n")
-        nEvents_bdEF.close()
- 
         # print out the disc1Cut and disc2 edges
         #print "disc1 (x bin) low bin edges: ", finalDisc1Key_bdEF
         #print "disc2 (y bin) low bin edges: ", finalDisc2Key_bdEF
 
-        return finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, sigFracsb, sigFracsd, sigFracsE, sigFracsF
+        return finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF
 
     # ---------------------------------------------------------------------------
     # make the validation region in CD : cdiGH
@@ -1130,32 +1191,9 @@ class ValidationRegions:
                     nEvents_cdi            = nBkgEvents_c + nBkgEvents_di
                     nEvents_GH             = nBkgEvents_G + nBkgEvents_H
 
-        # get the nEvents for each validation region
-        nEvents_cdiGH = open("nEvents_Val_cdiGH_%s_%s_%s.tex" %(self.model, self.mass, self.channel), "w") 
-        nEvents_cdiGH.write("\\resizebox{\linewidth}{!}{%")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\hline")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\\textcolor{ttjetscol}{NJets} & \scriptsize sigFracC' & \scriptsize sigFracD' & \scriptsize sigFracG & \scriptsize sigFracH & \scriptsize nEvents for C'+D' & \scriptsize nEvents for G+H \\\\")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\hline")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("& \scriptsize finalSigFracc  & \scriptsize finalSigFracdi   & \scriptsize finalSigFracG & \scriptsize finalSigFracH  & \scriptsize nEvents_cdi & \scriptsize nEvents_GH")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\hline")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\end{tabular}")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("}")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.write("\n")
-        nEvents_cdiGH.close()
-
         # print out the disc1Cut and disc2 edges
         #print "disc1 (x bin) low bin edges: ", finalDisc1Key_cdiGH
         #print "disc2 (y bin) low bin edges: ", finalDisc2Key_cdiGH
 
-        return finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, sigFracsc, sigFracsdi, sigFracsG, sigFracsH
+        return finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH
 
