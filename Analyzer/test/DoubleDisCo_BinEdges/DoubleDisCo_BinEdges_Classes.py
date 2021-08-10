@@ -759,7 +759,7 @@ class FinalBinEdges:
     #   -- SigTotFragC = NC / Ntotal
     #   -- SigTotFragD = ND / Ntotal 
     # ----------------------------------------------------------------------------
-    def get_FinalBinEdges(self, nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1):
+    def get_FinalBinEdges(self, nTotSigCount_ABCD, nTotBkgCount_ABCD, bkgNormUnc = 0.3, minBkgFrac = 0.01, minSigFrac = 0.1):
       
         significance  = 0.0; finalDisc1Key = -1.0; finalDisc2Key = -1.0; closureErr    = 0.0; optMetric  = 999.0
         finalSigFracA = 0.0; finalSigFracB = 0.0;  finalSigFracC = 0.0;  finalSigFracD = 0.0; nEvents_AB = 0.0; nEvents_AC = 0.0
@@ -768,7 +768,8 @@ class FinalBinEdges:
         sigFracsA           = []; sigFracsB       = []; sigFracsC    = []; sigFracsD    = []
         sigTotFracsA        = []; sigTotFracsB    = []; sigTotFracsC = []; sigTotFracsD = []
         bkgTotFracsA        = []; bkgTotFracsB    = []; bkgTotFracsC = []; bkgTotFracsD = []
-   
+  
+        sigUncs = [] 
         weighted_Sig_A   = []; weighted_Bkg_A   = []; weighted_SigUnc_A   = []; weighted_BkgUnc_A   = []
 
         # loop over the disc1 and disc2 to get any possible combination of them
@@ -819,7 +820,7 @@ class FinalBinEdges:
                 tempSigTotFracsD = nSigEvents_D / nTot_Sig_ABCD; tempBkgTotFracsD = nBkgEvents_D / nTot_Bkg_ABCD
     
                 # significance and closure error for optimization of bin edges
-                tempSignificance = 0.0; tempClosureErr = -999.0; tempClosureErrUnc = -999.0; tempOptMetric = 999.0
+                tempSignificance = 0.0; tempClosureErr = -999.0; tempClosureErrUnc = -999.0; tempOptMetric = 999.0; tempSigUnc = 0.0
     
                 if nBkgEvents_A > 0.0:
                     tempSignificance += ( nSigEvents_A / ( nBkgEvents_A + (0.3 * nBkgEvents_A)**2.0 )**0.5 )**2.0 
@@ -834,11 +835,18 @@ class FinalBinEdges:
                     tempClosureErr, tempClosureErrUnc = self.cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
     
                 tempSignificance = tempSignificance**0.5
-    
+   
+                # get the sigUncs
+                if nBkgEvents_A > 0.0:
+                    tempSigUnc += (   ( nSigEventsErr_A / (nBkgEvents_A + (bkgNormUnc * nBkgEvents_A)**2.0 + (tempClosureErr * nBkgEvents_A)**2.0) **0.5 )**2.0
+                                  + ( ( nSigEvents_A * nBkgEventsErr_A * (2.0 * nBkgEvents_A * tempClosureErr**2.0 + 2.0 * bkgNormUnc**2.0 * nBkgEvents_A + 1) ) / ( nBkgEvents_A + (bkgNormUnc * nBkgEvents_A)**2.0 + (tempClosureErr * nBkgEvents_A)**2.0 )**1.5 )**2.0
+                                  + ( ( nBkgEvents_A**2.0 * tempClosureErr * nSigEvents_A * tempClosureErrUnc) / ( nBkgEvents_A * ( nBkgEvents_A * (tempClosureErr**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
+ 
                 if tempSignificance > 0.0 and tempClosureErr > 0.0:
                     inverseSignificance.append(1.0 / tempSignificance) 
                     closureErrsList.append(abs(tempClosureErr))
                     closureErrUncList.append(tempClosureErrUnc)
+                    sigUncs.append(tempSigUnc)
                     disc1KeyOut.append(float(disc1Key))
                     disc2KeyOut.append(float(disc2Key)) 
 
@@ -880,7 +888,7 @@ class FinalBinEdges:
         #print "disc1 (x bin) low bin edges: ", finalDisc1Key
         #print "disc2 (y bin) low bin edges: ", finalDisc2Key
     
-        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC 
+        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC 
 
 
 
