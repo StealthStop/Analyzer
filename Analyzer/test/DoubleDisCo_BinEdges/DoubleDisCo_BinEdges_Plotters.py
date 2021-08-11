@@ -36,7 +36,7 @@ def main():
     parser.add_argument("--model",   dest="model",   help="signal model",          default="RPV")
     parser.add_argument("--mass",    dest="mass",    help="signal mass",           default="550")
     parser.add_argument("--channel", dest="channel", help="0l, 1l",                required=True)
-    parser.add_argument("--metric",  dest="metric", help="NN, New",                required=True)
+    parser.add_argument("--metric",  dest="metric",  help="NN, New",               required=True)
     args = parser.parse_args()
 
     modelDecay = "2t6j"
@@ -161,25 +161,22 @@ def main():
         finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
        
         # plot variable vs disc as 1D 
-        plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet)
-        plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet)
-
-        plotter.plot_VarVsDisc(np.reciprocal(inverseSignificance), sigUncs, disc1KeyOut, disc2KeyOut, binWidth/2.0, 5.0, "Significance", "Significance", 1, njet)
-        plotter.plot_VarVsDisc(np.reciprocal(inverseSignificance), sigUncs, disc1KeyOut, disc2KeyOut, binWidth/2.0, 5.0, "Significance", "Significance", 2, njet)
-
-        plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet)
-        plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet)
-
-        plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet)
-        plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet) 
+        plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(np.reciprocal(inverseSignificance), sigUncs, disc1KeyOut, disc2KeyOut, binWidth/2.0, 5.0, "Significance", "Significance", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(np.reciprocal(inverseSignificance), sigUncs, disc1KeyOut, disc2KeyOut, binWidth/2.0, 5.0, "Significance", "Significance", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "ABCD") 
 
         # ------------------
         # Validation Regions
         # ------------------
         validationRegions = ValidationRegions(args.year, args.model, args.mass, args.channel, njet)
         nTotSigCount_bdEF, nTotBkgCount_bdEF, nTotSigCount_cdiGH, nTotBkgCount_cdiGH = validationRegions.count_Events_inValidationRegions(histBkg, histSig, finalDisc1Key, finalDisc2Key)
-        finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF = validationRegions.make_ValidationRegionEdges_bdEF(nTotSigCount_bdEF, nTotBkgCount_bdEF, minBkgFrac = 0.01)
-        finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH = validationRegions.make_ValidationRegionEdges_cdiGH(nTotSigCount_cdiGH, nTotBkgCount_cdiGH, minBkgFrac = 0.01)
+        finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF = validationRegions.make_ValidationRegionEdges_bdEF(nTotSigCount_bdEF, nTotBkgCount_bdEF, minBkgFrac = 0.01)
+        finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH = validationRegions.make_ValidationRegionEdges_cdiGH(nTotSigCount_cdiGH, nTotBkgCount_cdiGH, minBkgFrac = 0.01)
 
         # plot the signal fractions
         plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsb, sigFracsd, sigFracsE, sigFracsF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, name = "_Val_bdEF")
@@ -189,10 +186,24 @@ def main():
         finalBinEdges.append((finalDisc1Key, finalDisc2Key))
         bdEF_FinalEdges.append((finalDisc1Key_bdEF, finalDisc2Key_bdEF))
         cdiGH_FinalEdges.append((finalDisc1Key_cdiGH, finalDisc2Key_cdiGH))
-
         final_nTotBkgCount_ABCD.append(nTotBkgCount_ABCD)
         final_nTotBkgCount_bdEF.append(nTotBkgCount_bdEF)
         final_nTotBkgCount_cdiGH.append(nTotBkgCount_cdiGH)
+
+        # plot variable vs disc as 1D
+        plotter.plot_VarVsDisc(closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "Val_bdEF")
+        plotter.plot_VarVsDisc(closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "Val_bdEF")
+        plotter.plot_VarVsDisc(weighted_Sig_b, weighted_SigUnc_b, disc1KeyOut_bdEF, disc2KeyOut_bdEF, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet, name = "Val_bdEF")
+        plotter.plot_VarVsDisc(weighted_Sig_b, weighted_SigUnc_b, disc1KeyOut_bdEF, disc2KeyOut_bdEF, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "Val_bdEF")
+        plotter.plot_VarVsDisc(weighted_Bkg_b, weighted_BkgUnc_b, disc1KeyOut_bdEF, disc2KeyOut_bdEF, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "Val_bdEF")
+        plotter.plot_VarVsDisc(weighted_Bkg_b, weighted_BkgUnc_b, disc1KeyOut_bdEF, disc2KeyOut_bdEF, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "Val_bdEF")
+
+        plotter.plot_VarVsDisc(closureErrsList_cdiGH, closureErrUncList_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "Val_cdiGH")
+        plotter.plot_VarVsDisc(closureErrsList_cdiGH, closureErrUncList_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "Val_cdiGH")
+        plotter.plot_VarVsDisc(weighted_Sig_c, weighted_SigUnc_c, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet, name = "Val_cdiGH")
+        plotter.plot_VarVsDisc(weighted_Sig_c, weighted_SigUnc_c, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "Val_cdiGH")
+        plotter.plot_VarVsDisc(weighted_Bkg_c, weighted_BkgUnc_c, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "Val_cdiGH")
+        plotter.plot_VarVsDisc(weighted_Bkg_c, weighted_BkgUnc_c, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "Val_cdiGH")
 
         # ------------------
         # make all tex files
@@ -224,9 +235,9 @@ def main():
     # ----------------------
     # make all closure plots
     # ----------------------
-    plotter.make_allClosures(finalBinEdges, final_nTotBkgCount_ABCD, name = "")
-    plotter.make_allClosures(bdEF_FinalEdges, final_nTotBkgCount_bdEF, name = "_Val_bdEF")    
-    plotter.make_allClosures(cdiGH_FinalEdges, final_nTotBkgCount_cdiGH, name = "_Val_cdiGH")
+    plotter.make_allClosures(finalBinEdges, final_nTotBkgCount_ABCD, name = "ABCD")
+    plotter.make_allClosures(bdEF_FinalEdges, final_nTotBkgCount_bdEF, name = "Val_bdEF")    
+    plotter.make_allClosures(cdiGH_FinalEdges, final_nTotBkgCount_cdiGH, name = "Val_cdiGH")
 
     # ------------------
     # make all tex files
