@@ -517,7 +517,7 @@ class Common_Calculations_Plotters():
         plt.close(fig)
 
     # ------------------------------------------------
-    # plot variable vs disc as 1D
+    # plot variable vs disc as 1D for ABCD regions
     #   -- Closure vs disc1, disc2 slices
     #   -- Closure vs disc2, disc1 slices
     #   -- Significance vs disc1, disc2 slices
@@ -525,7 +525,7 @@ class Common_Calculations_Plotters():
     #   -- weightedEventCounts vs disc1, disc2 slices
     #   -- weightedEventCounts vs disc2, disc1 slices
     # -----------------------------------------------
-    def plot_VarVsDisc(self, var, varUncs, d1edges, d2edges, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1, name=''):
+    def plot_VarVsDisc(self, var, varUncs, d1edges, d2edges, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1, name=""):
 
         x25 = []; x50 = []; x75 = []; xDiag = []
         y25 = []; y50 = []; y75 = []; yDiag = []
@@ -536,17 +536,17 @@ class Common_Calculations_Plotters():
 
         for i in range(0, len(var)):
 
-            if  edges[disc-1][i] == 0.24: 
+            if abs(edges[disc-1][i] - 0.25) < 0.01:
                x25.append(edges[2-disc][i])
                y25.append(var[i])
                y25unc.append(varUncs[i])
            
-            elif edges[disc-1][i] == 0.50: 
+            elif abs(edges[disc-1][i] - 0.50) < 0.01:
                x50.append(edges[2-disc][i])
                y50.append(var[i])
                y50unc.append(varUncs[i])
            
-            elif edges[disc-1][i] == 0.76: 
+            elif abs(edges[disc-1][i] - 0.75) < 0.01: 
                x75.append(edges[2-disc][i])
                y75.append(var[i])
                y75unc.append(varUncs[i])
@@ -585,6 +585,41 @@ class Common_Calculations_Plotters():
             fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_%s_%s.pdf' % (self.model, self.mass, self.year, tag, disc, self.channel, self.metric), dpi=fig.dpi)
         else:        
             fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)   
+
+        plt.close(fig)
+
+    # --------------------------------------------------
+    # plot variable vs disc as 1D for Validation regions
+    #   -- Closure vs disc1, disc2 slices
+    #   -- Closure vs disc2, disc1 slices
+    #   -- weightedEventCounts vs disc1, disc2 slices
+    #   -- weightedEventCounts vs disc2, disc1 slices
+    # -------------------------------------------------
+    def plot_VarVsDisc_Val(self, var, varUncs, valDiscEdges, finalBinEdge, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1, name="", col=""):
+
+        fig = plt.figure(figsize=(5, 5))
+        ax = plt.gca()
+
+        xWidths = [edgeWidth for i in range(0, len(valDiscEdges))]
+
+        ax.errorbar(valDiscEdges, var,  yerr=varUncs, label="ABCD Disc. %d = %.2f"%(disc, finalBinEdge), xerr=xWidths, fmt='', color=col, lw=0, elinewidth=2, marker="o", markerfacecolor=col)
+
+        if ylim != -1.0:
+             ax.set_ylim((0.0, ylim))
+
+        ax.set_ylabel(ylabel); ax.set_xlabel("Disc. %d Value "%(3-disc))
+        plt.legend(loc='best')
+
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+
+        fig.tight_layout()
+
+        if Njets == -1:
+            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_%s_%s.pdf' % (self.model, self.mass, self.year, tag, disc, self.channel, self.metric), dpi=fig.dpi)
+        else:
+            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -677,7 +712,7 @@ class FinalBinEdges:
         for xBin in nXBins:
     
             xLowBinEdge = histBkg.GetXaxis().GetBinCenter(xBin)
-            xBinKey     = "%.2f"%xLowBinEdge
+            xBinKey     = "%.3f"%xLowBinEdge
     
             if xBinKey not in nTotSigCount_ABCD["nSigEventsErr_A"]:
                 nTotSigCount_ABCD["nSigEvents_A"][xBinKey] = {}; nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey] = {} 
@@ -695,7 +730,7 @@ class FinalBinEdges:
             for yBin in nYBins:
     
                 yLowBinEdge = histBkg.GetYaxis().GetBinCenter(yBin)
-                yBinKey     = "%.2f"%yLowBinEdge
+                yBinKey     = "%.3f"%yLowBinEdge
     
                 if yBinKey not in nTotSigCount_ABCD["nSigEventsErr_A"]:
                     nTotSigCount_ABCD["nSigEvents_A"][xBinKey][yBinKey] = 0.0; nTotSigCount_ABCD["nSigEventsErr_A"][xBinKey][yBinKey] = 0.0  
@@ -975,7 +1010,7 @@ class ValidationRegions(FinalBinEdges):
     
             if (xLowBinEdge > float(finalDisc1Edge)): break
     
-            xBinKey = "%.2f"%xLowBinEdge
+            xBinKey = "%.3f"%xLowBinEdge
     
             if xBinKey not in nTotSigCount_bdEF["nSigEventsErr_A"]:
                 nTotSigCount_bdEF["nSigEvents_A"][xBinKey] = {}; nTotSigCount_bdEF["nSigEventsErr_A"][xBinKey] = {}
@@ -1031,15 +1066,15 @@ class ValidationRegions(FinalBinEdges):
 
             if (yLowBinEdge > float(finalDisc2Edge)): break
 
-            yBinKey = "%.2f"%yLowBinEdge
+            yBinKey = "%.3f"%yLowBinEdge
 
-            if yBinKey not in nTotSigCount_cdiGH["nSigEventsErr_A"]:
+            if finalDisc1Edge not in nTotSigCount_cdiGH["nSigEventsErr_A"]:
                 nTotSigCount_cdiGH["nSigEvents_A"][finalDisc1Edge] = {}; nTotSigCount_cdiGH["nSigEventsErr_A"][finalDisc1Edge] = {}
                 nTotSigCount_cdiGH["nSigEvents_B"][finalDisc1Edge] = {}; nTotSigCount_cdiGH["nSigEventsErr_B"][finalDisc1Edge] = {}
                 nTotSigCount_cdiGH["nSigEvents_C"][finalDisc1Edge] = {}; nTotSigCount_cdiGH["nSigEventsErr_C"][finalDisc1Edge] = {}
                 nTotSigCount_cdiGH["nSigEvents_D"][finalDisc1Edge] = {}; nTotSigCount_cdiGH["nSigEventsErr_D"][finalDisc1Edge] = {}
 
-            if yBinKey not in nTotBkgCount_cdiGH["nBkgEventsErr_A"]:
+            if finalDisc1Edge not in nTotBkgCount_cdiGH["nBkgEventsErr_A"]:
                 nTotBkgCount_cdiGH["nBkgEvents_A"][finalDisc1Edge] = {}; nTotBkgCount_cdiGH["nBkgEventsErr_A"][finalDisc1Edge] = {}
                 nTotBkgCount_cdiGH["nBkgEvents_B"][finalDisc1Edge] = {}; nTotBkgCount_cdiGH["nBkgEventsErr_B"][finalDisc1Edge] = {}
                 nTotBkgCount_cdiGH["nBkgEvents_C"][finalDisc1Edge] = {}; nTotBkgCount_cdiGH["nBkgEventsErr_C"][finalDisc1Edge] = {}
