@@ -263,9 +263,9 @@ class Common_Calculations_Plotters():
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
         ax.set_ylabel('Disc. 2 Bin Edge')
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
@@ -283,9 +283,9 @@ class Common_Calculations_Plotters():
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
         ax.set_ylabel('Disc. 2 Bin Edge')
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
@@ -304,9 +304,9 @@ class Common_Calculations_Plotters():
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
         ax.set_ylabel('Disc. 2 Bin Edge')
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
@@ -325,9 +325,9 @@ class Common_Calculations_Plotters():
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
         ax.set_ylabel('Disc. 2 Bin Edge')
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
@@ -751,7 +751,9 @@ class FinalBinEdges:
     def get_FinalBinEdges(self, nTotSigCount_ABCD, nTotBkgCount_ABCD, bkgNormUnc = 0.3, minBkgFrac = 0.01, minSigFrac = 0.1):
       
         significance  = 0.0; finalDisc1Key = -1.0; finalDisc2Key = -1.0; closureErr    = 0.0; optMetric  = 999.0
-        finalSigFracA = 0.0; finalSigFracB = 0.0;  finalSigFracC = 0.0;  finalSigFracD = 0.0; nEvents_AB = 0.0; nEvents_AC = 0.0
+        finalSigFracA = 0.0; finalSigFracB = 0.0;  finalSigFracC = 0.0;  finalSigFracD = 0.0
+        nEvents_AB    = 0.0; nEvents_AC    = 0.0 
+        final_nBkgEvents_A = 0.0; final_nBkgEvents_B = 0.0; final_nBkgEvents_C = 0.0; final_nBkgEvents_D = 0.0;
         
         inverseSignificance = []; closureErrsList = []; closureErrUncList = []; disc1KeyOut  = []; disc2KeyOut  = []
         sigFracsA           = []; sigFracsB       = []; sigFracsC    = []; sigFracsD    = []
@@ -861,19 +863,23 @@ class FinalBinEdges:
                     tempOptMetric = self.cal_OptMetric_ofBinEdges(tempSignificance, tempClosureErr)
     
                 if tempOptMetric < optMetric:
-                    finalDisc1Key = disc1Key 
-                    finalDisc2Key = disc2Key
-                    significance  = tempSignificance
-                    closureErr    = tempClosureErr
-                    optMetric     = tempOptMetric
-                    finalSigFracA = tempSigFracsA
-                    finalSigFracB = tempSigFracsB
-                    finalSigFracC = tempSigFracsC
-                    finalSigFracD = tempSigFracsD
-                    nEvents_AB    = nBkgEvents_A + nBkgEvents_B
-                    nEvents_AC    = nBkgEvents_A + nBkgEvents_C
+                    finalDisc1Key      = disc1Key 
+                    finalDisc2Key      = disc2Key
+                    significance       = tempSignificance
+                    closureErr         = tempClosureErr
+                    optMetric          = tempOptMetric
+                    finalSigFracA      = tempSigFracsA
+                    finalSigFracB      = tempSigFracsB
+                    finalSigFracC      = tempSigFracsC
+                    finalSigFracD      = tempSigFracsD
+                    nEvents_AB         = nBkgEvents_A + nBkgEvents_B
+                    nEvents_AC         = nBkgEvents_A + nBkgEvents_C
+                    final_nBkgEvents_A = nBkgEvents_A
+                    final_nBkgEvents_B = nBkgEvents_B
+                    final_nBkgEvents_C = nBkgEvents_C
+                    final_nBkgEvents_D = nBkgEvents_D 
 
-        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC 
+        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D 
 
 
 
@@ -893,28 +899,46 @@ class ValidationRegions(FinalBinEdges):
         del self.mass
         del self.channel
 
-    # ------------------------------------------------------------------------------------
-    # Calculate metric of validation regionsi
-    # 1. Validation Regions in BD:
-    #   -- abs(1.0 - ( (nBkgEvents_A + nBkgEvents_C) / (nBkgEvents_B' + nBkgEvents_D') ) ) 
-    #   -- abs(1.0 - ( (nBkgEvents_A + nBkgEvents_C) / (nBkgEvents_E + nBkgEvents_F) ) ) 
-    # 2. Validation Regions in CD:
-    #   -- abs(1.0 - ( (nBkgEvents_A + nBkgEvents_B) / (nBkgEvents_C' + nBkgEvents_D') ) ) 
-    #   -- abs(1.0 - ( (nBkgEvents_A + nBkgEvents_B) / (nBkgEvents_G + nBkgEvents_H) ) ) 
-    # ------------------------------------------------------------------------------------
-    def cal_MetricOfValidationRegion(self, nBkgEvents_A2, nBkgEvents_B2, nBkgEvents_C2, nBkgEvents_D2):
+    # --------------------------------------
+    # Calculate metric of validation regions
+    # 1. Validation Regions in BD: bdEF
+    # 2. Validation Regions in CD: cdiGH
+    # --------------------------------------
+    def cal_MetricOfValidationRegion_bdEF(self, nBkgEvents_A, nBkgEvents_C, nBkgEvents_b, nBkgEvents_d):
 
-        #   Validation Regions in BD:             #   Validation Regions in CD: 
-        #          *                              #
-        #      E   *    B'  |    A                #          B  |    A   
-        #   _______*________|________             #       ______|________
-        #          *        |                     #             |
-        #      F   *    D'  |    C                #          D' |    C' 
-        #          *                              #       ***************
-                                                  #             |
-                                                  #          H  |    G
+        #   Validation Regions in BD:             
+        #          *                              
+        #      E   *    B'  |    A                
+        #   _______*________|________             
+        #          *        |                     
+        #      F   *    D'  |    C                
+        #          *                              
+        
         validationMetric = 999.0
-        validationMetric = abs(1.0 - ( (nBkgEvents_A2 + nBkgEvents_C2) / (nBkgEvents_B2 + nBkgEvents_D2) ) )
+
+        if (nBkgEvents_b + nBkgEvents_d) > 0.0:
+            validationMetric = abs(1.0 - ( (nBkgEvents_A + nBkgEvents_C) / (nBkgEvents_b + nBkgEvents_d) ) )
+
+        return validationMetric
+
+    def cal_MetricOfValidationRegion_cdiGH(self, nBkgEvents_A, nBkgEvents_B, nBkgEvents_c, nBkgEvents_di):
+
+        #   Validation Regions in CD: 
+        #
+        #          B  |    A   
+        #       ______|________
+        #             |
+        #          D' |    C' 
+        #       ***************
+        #             |
+        #          H  |    G
+
+        validationMetric = 999.0
+    
+        if (nBkgEvents_c + nBkgEvents_di) > 0.0:
+            validationMetric = abs(1.0 - ( (nBkgEvents_A + nBkgEvents_B) / (nBkgEvents_c + nBkgEvents_di) ) )
+
+        return validationMetric
 
     # --------------------------------------------------
     # get the number of events in each Validation Region
@@ -1051,7 +1075,7 @@ class ValidationRegions(FinalBinEdges):
     #   -- define validation disc1 edge between 0 and the final bin edge of disc1
     #   -- final disc2 edge is constant
     # ---------------------------------------------------------------------------
-    def make_ValidationRegionEdges_bdEF(self, nTotSigCount_bdEF, nTotBkgCount_bdEF, minBkgFrac = 0.01):
+    def make_ValidationRegionEdges_bdEF(self, nTotSigCount_bdEF, nTotBkgCount_bdEF, final_nBkgEvents_A, final_nBkgEvents_C):
     
         disc1KeyOut_bdEF = [];  disc2KeyOut_bdEF = [];  finalDisc1Key_bdEF = -1.0; finalDisc2Key_bdEF = -1.0; validationMetric_bdEF  = 999.0
         finalSigFracb    = 0.0; finalSigFracd    = 0.0; finalSigFracE      = 0.0;  finalSigFracF      = 0.0;  nEvents_bd             = 0.0; nEvents_EF = 0.0
@@ -1116,7 +1140,7 @@ class ValidationRegions(FinalBinEdges):
     
                 # calculate the validation metric
                 temp_ValidationMetric = 999.0
-                temp_ValidationMetric = self.cal_MetricOfValidationRegion(nBkgEvents_b, nBkgEvents_d, nBkgEvents_E, nBkgEvents_F)
+                temp_ValidationMetric = self.cal_MetricOfValidationRegion_bdEF(final_nBkgEvents_A, final_nBkgEvents_C, nBkgEvents_b, nBkgEvents_d)
     
                 if temp_ValidationMetric < validationMetric_bdEF:
                     finalDisc1Key_bdEF    = disc1CutKey
@@ -1136,7 +1160,7 @@ class ValidationRegions(FinalBinEdges):
     #   -- define validation disc2 edge between 0 and the final bin edge of disc2
     #   -- final disc1 edge is constant
     # --------------------------------------------------------------------------- 
-    def make_ValidationRegionEdges_cdiGH(self, nTotSigCount_cdiGH, nTotBkgCount_cdiGH, minBkgFrac = 0.01):    
+    def make_ValidationRegionEdges_cdiGH(self, nTotSigCount_cdiGH, nTotBkgCount_cdiGH, final_nBkgEvents_A, final_nBkgEvents_B):    
 
         disc1KeyOut_cdiGH = [];  disc2KeyOut_cdiGH = [];  finalDisc1Key_cdiGH = -1.0; finalDisc2Key_cdiGH = -1.0; validationMetric_cdiGH  = 999.0
         finalSigFracc     = 0.0; finalSigFracdi    = 0.0; finalSigFracG       = 0.0;  finalSigFracH       = 0.0;  nEvents_cdi             = 0.0; nEvents_GH = 0.0
@@ -1201,7 +1225,7 @@ class ValidationRegions(FinalBinEdges):
 
                 # calculate the validation metric
                 temp_ValidationMetric = 999.0
-                temp_ValidationMetric = self.cal_MetricOfValidationRegion(nBkgEvents_c, nBkgEvents_G, nBkgEvents_di, nBkgEvents_H)
+                temp_ValidationMetric = self.cal_MetricOfValidationRegion_cdiGH(final_nBkgEvents_A, final_nBkgEvents_B, nBkgEvents_c, nBkgEvents_di)
 
                 if temp_ValidationMetric < validationMetric_cdiGH:
                     finalDisc1Key_cdiGH    = disc1Key

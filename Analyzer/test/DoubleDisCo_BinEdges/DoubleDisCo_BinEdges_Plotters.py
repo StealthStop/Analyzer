@@ -32,7 +32,8 @@ def main():
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",    dest="year",    help="which year",            required=True)
-    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/Bryan/2016_DisCo_0l_1l_Inputs/")
+    #parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/Bryan/2016_DisCo_0l_1l_Inputs/")
+    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_1l_RPV_2016_v4.0_Output")
     parser.add_argument("--model",   dest="model",   help="signal model",          default="RPV")
     parser.add_argument("--mass",    dest="mass",    help="signal mass",           default="550")
     parser.add_argument("--channel", dest="channel", help="0l, 1l",                required=True)
@@ -158,7 +159,7 @@ def main():
         # ---------------
         binEdges = FinalBinEdges(args.year, args.model, args.mass, args.channel, args.metric, njet)
         nTotSigCount_ABCD, nTotBkgCount_ABCD = binEdges.count_Events_inBinEdges(histBkg, histSig)
-        finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
+        finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
        
         # plot variable vs disc as 1D 
         plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "ABCD")
@@ -175,8 +176,8 @@ def main():
         # ------------------
         validationRegions = ValidationRegions(args.year, args.model, args.mass, args.channel, njet)
         nTotSigCount_bdEF, nTotBkgCount_bdEF, nTotSigCount_cdiGH, nTotBkgCount_cdiGH = validationRegions.count_Events_inValidationRegions(histBkg, histSig, finalDisc1Key, finalDisc2Key)
-        finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF = validationRegions.make_ValidationRegionEdges_bdEF(nTotSigCount_bdEF, nTotBkgCount_bdEF, minBkgFrac = 0.01)
-        finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH = validationRegions.make_ValidationRegionEdges_cdiGH(nTotSigCount_cdiGH, nTotBkgCount_cdiGH, minBkgFrac = 0.01)
+        finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF = validationRegions.make_ValidationRegionEdges_bdEF(nTotSigCount_bdEF, nTotBkgCount_bdEF, final_nBkgEvents_A, final_nBkgEvents_C)
+        finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH = validationRegions.make_ValidationRegionEdges_cdiGH(nTotSigCount_cdiGH, nTotBkgCount_cdiGH, final_nBkgEvents_A, final_nBkgEvents_B)
 
         # plot the signal fractions
         plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsb, sigFracsd, sigFracsE, sigFracsF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, name = "_Val_bdEF")
