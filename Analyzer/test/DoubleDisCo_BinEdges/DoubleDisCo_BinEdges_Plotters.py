@@ -32,8 +32,7 @@ def main():
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",    dest="year",    help="which year",            required=True)
-    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/Bryan/2016_DisCo_0l_1l_Inputs/")
-    #parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_1l_RPV_2016_v4.0_Output")
+    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_0L_1L_RPV_2016_20210813_Output/")
     parser.add_argument("--model",   dest="model",   help="signal model",          default="RPV")
     parser.add_argument("--mass",    dest="mass",    help="signal mass",           default="550")
     parser.add_argument("--channel", dest="channel", help="0l, 1l",                required=True)
@@ -54,6 +53,7 @@ def main():
     if args.channel == "0l":
         histNames = "h_DoubleDisCo_disc1_disc2_0l"
         njets = [
+            "_Njets6",
             "_Njets7",
             "_Njets8",
             "_Njets9",
@@ -226,6 +226,13 @@ def main():
         nEvents_cdiGH.write("\n")
         nEvents_cdiGH.write("\hline")
         nEvents_cdiGH.write("\n")
+
+        # ---------------------
+        # plot Disc1s vs Disc2s
+        # ---------------------
+        if args.metric == "New":
+            plotter.plot_Disc1VsDisc2(histSig, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "RPV550")
+            plotter.plot_Disc1VsDisc2(histBkg, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "TT")
 
     # ----------------------
     # make all closure plots

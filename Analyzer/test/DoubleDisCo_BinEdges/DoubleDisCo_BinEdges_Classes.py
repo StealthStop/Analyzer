@@ -251,6 +251,46 @@ class Common_Calculations_Plotters():
 
         plt.close(fig)
 
+    # ----------------------------------
+    # plot Disc1 vs Disc2 in each Region
+    # ----------------------------------
+    def plot_Disc1VsDisc2(self, hist, disc1Edge_ABCD, disc2Edge_ABCD, disc1Edge_bdEF, disc2Edge_cdiGH, tag = ""):
+
+        nBins   = hist.GetXaxis().GetNbins()
+        nEvents = []; disc1Edges = []; disc2Edges = []
+
+        for x in range(0, hist.GetXaxis().GetNbins()+1):
+        
+            for y in range(0, hist.GetYaxis().GetNbins()+1):
+        
+                nEvents.append(hist.GetBinContent(x,y))
+                disc1Edges.append(hist.GetXaxis().GetBinCenter(x))
+                disc2Edges.append(hist.GetYaxis().GetBinCenter(y))
+
+        fig = plt.figure()
+        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=nEvents, cmin=10e-10)
+        plt.colorbar()
+        ax = plt.gca()
+        ax.set_xlabel('Disc. 1')
+        ax.set_ylabel('Disc. 2')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        l1 = ml.Line2D([disc1Edge_ABCD, disc1Edge_ABCD], [0.0, 1.0],   color="darkviolet", linewidth=4, linestyle='solid')
+        l2 = ml.Line2D([0.0, 1.0], [disc2Edge_ABCD, disc2Edge_ABCD],   color="darkviolet", linewidth=4, linestyle='solid')
+        l3 = ml.Line2D([disc1Edge_bdEF, disc1Edge_bdEF], [0.0, 1.0],   color="yellow", linewidth=4, linestyle='solid')
+        l4 = ml.Line2D([0.0, 1.0], [disc2Edge_cdiGH, disc2Edge_cdiGH], color="lime",   linewidth=4, linestyle='solid')
+        ax.add_line(l1)
+        ax.add_line(l2)
+        ax.add_line(l3)
+        ax.add_line(l4)
+
+        if self.Njets == -1:
+            fig.savefig('plots/%s_%s/%s/%s_Disc1VsDisc2_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, self.channel), dpi=fig.dpi)
+        else:
+            fig.savefig('plots/%s_%s/%s/%s_Disc1VsDisc2_%s%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, self.Njets, self.channel), dpi=fig.dpi)
+        plt.close(fig)
+
     # ---------------------------------------------
     # plot SigFrac vs Disc1Disc2 in each A, B, C, D
     # ---------------------------------------------
