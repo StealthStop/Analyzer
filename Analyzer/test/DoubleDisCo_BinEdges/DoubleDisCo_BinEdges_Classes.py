@@ -172,9 +172,9 @@ class Common_Calculations_Plotters():
 
         self.plot_ClosureNjets(bkgNjets['A'], bkgNjetsErr['A'], bkgNjetsPred_A['value'], bkgNjetsPred_A['error'], Njets, name)       
 
-    # --------------------------------------------------------------
-    # plot significance and closure error as a function of bin edges 
-    # --------------------------------------------------------------
+    # --------------------------------------------
+    # plot significance as a function of bin edges 
+    # --------------------------------------------
     def plot_Significance_vsDisc1Disc2(self, nBins, inverseSignificance, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, Njets = -1, name=""):
 
         # significance as a function of bin edges
@@ -199,9 +199,9 @@ class Common_Calculations_Plotters():
 
         plt.close(fig)
 
-    # -------------------------------------------
-    # plot significanceas a function of bin edges 
-    # -------------------------------------------
+    # -----------------------------------------------------------------
+    # plot closure error and closure error unc. a function of bin edges 
+    # -----------------------------------------------------------------
     def plot_ClosureError_vsDisc1Disc2(self, nBins, closureErrsList, closureErrUncList, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, Njets = -1, name=""):
 
         # closure error as a function of bin edges
