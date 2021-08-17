@@ -175,7 +175,7 @@ class Common_Calculations_Plotters():
     # --------------------------------------------------------------
     # plot significance and closure error as a function of bin edges 
     # --------------------------------------------------------------
-    def plot_SignificanceClosure_BinEdges(self, nBins, inverseSignificance, closureErrsList, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth):
+    def plot_Significance_vsDisc1Disc2(self, nBins, inverseSignificance, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, Njets = -1, name=""):
 
         # significance as a function of bin edges
         fig = plt.figure()
@@ -184,20 +184,25 @@ class Common_Calculations_Plotters():
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
         ax.set_ylabel('Disc. 2 Bin Edge')
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
         ax.add_line(l2)
 
         if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
+
+    # -------------------------------------------
+    # plot significanceas a function of bin edges 
+    # -------------------------------------------
+    def plot_ClosureError_vsDisc1Disc2(self, nBins, closureErrsList, closureErrUncList, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, Njets = -1, name=""):
 
         # closure error as a function of bin edges
         fig = plt.figure()
@@ -206,31 +211,53 @@ class Common_Calculations_Plotters():
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
         ax.set_ylabel('Disc. 2 Bin Edge')
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
         ax.add_line(l2)
 
         if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
+
+        plt.close(fig)
+
+        # closure error uncertainty as a function of bin edges
+        fig = plt.figure()
+        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=closureErrUncList, cmin=1e-09, cmax=2.5)
+        plt.colorbar()
+        ax = plt.gca()
+        ax.set_xlabel('Disc. 1 Bin Edge')
+        ax.set_ylabel('Disc. 2 Bin Edge')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        l1 = ml.Line2D([c1, c1], [0.0, 1.0], color='black', linewidth=2, linestyle='dashed')
+        l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
+        ax.add_line(l1)
+        ax.add_line(l2)
+
+        if Njets == -1:
+            fig.savefig('plots/%s_%s/%s/%s_CloseErrUnc_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+        else:
+            fig.savefig('plots/%s_%s/%s/%s_CloseErrUnc_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
     # --------------------------------------
     # plot inverseSignificance vs ClosureErr
     # -------------------------------------- 
-    def plot_inverseSignificance_vsClosureErr(self, significance, closureErr, inverseSignificance, closureErrsList, edges, disc1Edge, disc2Edge):
+    def plot_inverseSignificance_vsClosureErr(self, significance, closureErr, inverseSignificance, closureErrsList, edges, disc1Edge, disc2Edge, Njets = -1, name=""):
 
         fig = plt.figure(figsize=(5, 5))
         ax = plt.gca()
-        ax.text(0.12, 1.05, 'CMS',                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',        transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         plt.scatter(inverseSignificance, closureErrsList, color='xkcd:black', marker='o', label='1 - Pred./Obs. vs 1 / Significance')
 
         if significance != 0.0:
@@ -245,9 +272,9 @@ class Common_Calculations_Plotters():
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0], disc2Edge, edges[(-1)]), transform=ax.transAxes, fontsize=8)
 
         if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_CloseErr_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_CloseErr_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_CloseErr%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_CloseErr%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -624,7 +651,7 @@ class Common_Calculations_Plotters():
         if Njets == -1: 
             fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_%s_%s.pdf' % (self.model, self.mass, self.year, tag, disc, self.channel, self.metric), dpi=fig.dpi)
         else:        
-            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)   
+            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)   
 
         plt.close(fig)
 

@@ -148,6 +148,7 @@ def main():
         maxEdge  = histSig.GetXaxis().GetBinUpEdge(histBkg.GetNbinsX())
         binWidth = histSig.GetXaxis().GetBinWidth(1)
         nBins    = histSig.GetNbinsX()
+        edges    = np.arange(minEdge, maxEdge, binWidth)
 
         # --------------------------------
         # Common calculations and plotters
@@ -160,7 +161,7 @@ def main():
         binEdges = FinalBinEdges(args.year, args.model, args.mass, args.channel, args.metric, njet)
         nTotSigCount_ABCD, nTotBkgCount_ABCD = binEdges.count_Events_inBinEdges(histBkg, histSig)
         finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
-       
+      
         # plot variable vs disc as 1D 
         plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "ABCD")
         plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "ABCD")
@@ -170,6 +171,11 @@ def main():
         plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "ABCD")
         plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "ABCD")
         plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "ABCD") 
+
+        # plot 2Ds
+        plotter.plot_Significance_vsDisc1Disc2(nBins, inverseSignificance, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, njet, name="ABCD")
+        plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, njet, name="ABCD")
+        plotter.plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, float(finalDisc1Key), float(finalDisc2Key), njet, name="ABCD")
 
         # ------------------
         # Validation Regions
@@ -195,10 +201,13 @@ def main():
         plotter.plot_VarVsDisc_Val(closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "Val_bdEF", col = "#DDBB87")
         plotter.plot_VarVsDisc_Val(weighted_Sig_b, weighted_SigUnc_b, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "Val_bdEF", col = "#DDBB87")
         plotter.plot_VarVsDisc_Val(weighted_Bkg_b, weighted_BkgUnc_b, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "Val_bdEF", col = "#DDBB87")
-
         plotter.plot_VarVsDisc_Val(closureErrsList_cdiGH, closureErrUncList_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "Val_cdiGH", col = "#429c93")
         plotter.plot_VarVsDisc_Val(weighted_Sig_c, weighted_SigUnc_c, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet, name = "Val_cdiGH", col = "#429c93")
         plotter.plot_VarVsDisc_Val(weighted_Bkg_c, weighted_BkgUnc_c, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "Val_cdiGH", col = "#429c93")
+
+        # plot 2Ds
+        plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, njet, name="Val_bdEF")
+        plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList_cdiGH, closureErrUncList_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key_cdiGH), float(finalDisc2Key_cdiGH), minEdge, maxEdge, binWidth, njet, name="Val_cdiGH")
 
         # ------------------
         # make all tex files
