@@ -32,7 +32,7 @@ def main():
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",    dest="year",    help="which year",            required=True)
-    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_0L_1L_RPV_2016_20210813_Output/")
+    parser.add_argument("--path",    dest="path",    help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_0L_loose_1L_RPV_2016_20210814_Output/")
     parser.add_argument("--model",   dest="model",   help="signal model",          default="RPV")
     parser.add_argument("--mass",    dest="mass",    help="signal mass",           default="550")
     parser.add_argument("--channel", dest="channel", help="0l, 1l",                required=True)

@@ -220,9 +220,9 @@ class Common_Calculations_Plotters():
         ax.add_line(l2)
 
         if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_ClosureErr_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_CloseErr_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_ClosureErr_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -242,9 +242,9 @@ class Common_Calculations_Plotters():
         ax.add_line(l2)
 
         if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_CloseErrUnc_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_ClosureErrUnc_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_CloseErrUnc_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_ClosureErrUnc_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -258,7 +258,7 @@ class Common_Calculations_Plotters():
         ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
         ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
-        plt.scatter(inverseSignificance, closureErrsList, color='xkcd:black', marker='o', label='1 - Pred./Obs. vs 1 / Significance')
+        plt.scatter(inverseSignificance, closureErrsList, color='xkcd:grey', marker='o', label='1 - Pred./Obs. vs 1 / Significance')
 
         if significance != 0.0:
             plt.scatter([1.0 / significance], [closureErr], color='xkcd:red', marker='o', label='Chosen Solution')
@@ -272,9 +272,9 @@ class Common_Calculations_Plotters():
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0], disc2Edge, edges[(-1)]), transform=ax.transAxes, fontsize=8)
 
         if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_CloseErr_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_ClosureErr_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_CloseErr%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_ClosureErr%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -1297,11 +1297,11 @@ class ValidationRegions(FinalBinEdges):
                 if nTot_SigBkg_c > 0.0:
                     tempSigFracsc = nSigEvents_c  / nTot_SigBkg_c
                 if nTot_SigBkg_di > 0.0:
-                    tempSigFracsd = nSigEvents_di / nTot_SigBkg_di
+                    tempSigFracsdi = nSigEvents_di / nTot_SigBkg_di
                 if nTot_SigBkg_G > 0.0:
-                    tempSigFracsE = nSigEvents_G  / nTot_SigBkg_G
+                    tempSigFracsG = nSigEvents_G  / nTot_SigBkg_G
                 if nTot_SigBkg_H > 0.0:
-                    tempSigFracsF = nSigEvents_H  / nTot_SigBkg_H
+                    tempSigFracsH = nSigEvents_H  / nTot_SigBkg_H
 
                 # get the closure error and closure error unc. to plot variable vs disc as 1D 
                 tempClosureErr = -999.0; tempClosureErrUnc = -999.0;
