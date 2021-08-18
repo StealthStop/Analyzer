@@ -51,7 +51,7 @@
 #include <string>
 #include <functional>
 #include <unistd.h>
-// #define CATCH_EXCEPTIONS 
+  #define CATCH_EXCEPTIONS 
 
 
 const std::string getFullPath(const std::string& file)
