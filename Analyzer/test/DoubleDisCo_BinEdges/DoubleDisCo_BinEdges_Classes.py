@@ -179,7 +179,7 @@ class Common_Calculations_Plotters():
 
         # significance as a function of bin edges
         fig = plt.figure()
-        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=np.reciprocal(inverseSignificance), cmin=1e-09, cmax=10.0)
+        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=np.reciprocal(inverseSignificance), cmin=10e-10, cmax=5.0, vmin = 0.0, vmax = 3.0)
         plt.colorbar()
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
@@ -206,7 +206,7 @@ class Common_Calculations_Plotters():
 
         # closure error as a function of bin edges
         fig = plt.figure()
-        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=closureErrsList, cmin=1e-09, cmax=2.5)
+        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=closureErrsList, cmin=10e-10, cmax=2.5, vmin = 0.0, vmax = 0.3)
         plt.colorbar()
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
@@ -228,7 +228,7 @@ class Common_Calculations_Plotters():
 
         # closure error uncertainty as a function of bin edges
         fig = plt.figure()
-        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=closureErrUncList, cmin=1e-09, cmax=2.5)
+        plt.hist2d(disc1Edges, disc2Edges, bins=[nBins, nBins], range=[[0.0, 1.0], [0.0, 1.0]], cmap=plt.cm.jet, weights=closureErrUncList, cmin=10e-10, cmax=2.5, vmin = 0.0, vmax = 0.5)
         plt.colorbar()
         ax = plt.gca()
         ax.set_xlabel('Disc. 1 Bin Edge')
