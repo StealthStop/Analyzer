@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 # mpl version is 2.2.5
 
 from matplotlib.colors import LogNorm
-from DoubleDisCo_BinEdges_Classes import Common_Calculations_Plotters,FinalBinEdges,ValidationRegions 
+from DoubleDisCo_BinEdges_Classes import Common_Calculations_Plotters, FinalBinEdges, ValidationRegions, ValidationRegions_SubDivisionsOfABCD 
 
 
 def main():
@@ -56,37 +56,40 @@ def main():
 
     # for 0-lepton 
     if args.channel == "0l":
-        histNames = "h_DoubleDisCo_disc1_disc2_0l"
+        histNames = "h_DoubleDisCo_disc1_disc2_0l_Njets"
         njets = [
-            "_Njets6",
-            "_Njets7",
-            "_Njets8",
-            "_Njets9",
-            "_Njets10",
-            "_Njets11",
-            "_Njets12",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
         ]
 
     # for 1-lepton
     else:
-        histNames = "h_DoubleDisCo_disc1_disc2_1l"
+        histNames = "h_DoubleDisCo_disc1_disc2_1l_Njets"
         njets = [
-            "_Njets7",
-            "_Njets8",
-            "_Njets9",
-            "_Njets10",
-            "_Njets11",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
         ]
 
     # initialize the things
-    finalBinEdges           = []; bdEF_FinalEdges         = []; cdiGH_FinalEdges         = []
-    final_nTotBkgCount_ABCD = []; final_nTotBkgCount_bdEF = []; final_nTotBkgCount_cdiGH = []
+    finalBinEdges       = []; final_nTotBkgCount_ABCD  = [] 
+    bdEF_FinalEdges     = []; final_nTotBkgCount_bdEF  = []
+    cdiGH_FinalEdges    = []; final_nTotBkgCount_cdiGH = []
+    final_subDivD_Edges = []; final_nTotBkgCount       = []
+
 
     # ------------------
     # make all tex files
     # -----------------
     # put all latest bin edges to tex file
-    h = open("All_%sBinEdges_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
+    h = open("tables/%s/%s_All_%sBinEdges_%s_%s_%s.tex" %(args.channel, args.year, args.edges, args.model, args.mass, args.channel), "w")
     h.write("\\resizebox{\linewidth}{!}{%")
     h.write("\n")
     h.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -103,7 +106,7 @@ def main():
     h.write("\n")
 
     # get the nEvents for each ABCD region
-    nEvents_ABCD = open("nEvents_%sABCD_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
+    nEvents_ABCD = open("tables/%s/%s_nEvents_%s_ABCD_%s_%s_%s.tex" %(args.channel, args.year, args.edges, args.model, args.mass, args.channel), "w")
     nEvents_ABCD.write("\\resizebox{\linewidth}{!}{%")
     nEvents_ABCD.write("\n")
     nEvents_ABCD.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -116,7 +119,7 @@ def main():
     nEvents_ABCD.write("\n")
 
     # get the nEvents for each B'D'EF region 
-    nEvents_bdEF = open("nEvents_%s_Val_bdEF_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
+    nEvents_bdEF = open("tables/%s/%s_nEvents_%s_Val_bdEF_%s_%s_%s.tex" %(args.channel, args.year, args.edges, args.model, args.mass, args.channel), "w")
     nEvents_bdEF.write("\\resizebox{\linewidth}{!}{%")
     nEvents_bdEF.write("\n")
     nEvents_bdEF.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -129,7 +132,7 @@ def main():
     nEvents_bdEF.write("\n")
 
     # get the nEvents for each C'D'GH region
-    nEvents_cdiGH = open("nEvents_%s_Val_cdiGH_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
+    nEvents_cdiGH = open("tables/%s/%s_nEvents_%s_Val_cdiGH_%s_%s_%s.tex" %(args.channel, args.year, args.edges, args.model, args.mass, args.channel), "w")
     nEvents_cdiGH.write("\\resizebox{\linewidth}{!}{%")
     nEvents_cdiGH.write("\n")
     nEvents_cdiGH.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -140,6 +143,25 @@ def main():
     nEvents_cdiGH.write("\n")
     nEvents_cdiGH.write("\hline")
     nEvents_cdiGH.write("\n") 
+
+    # get the table for Validation region sub-division D
+    d = open("tables/%s/%s_%s_FinalBinEdges_%s_%s_Val_subDivD_%s_%s.tex" %(args.channel, args.year, args.edges, args.model, args.mass, args.channel, args.metric), "w")
+    d.write("\\resizebox{\linewidth}{!}{%")
+    d.write("\n")
+    d.write("\def\\arraystretch{0.6}")
+    d.write("\n")
+    d.write("\\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c |}")
+    d.write("\n")
+    d.write("\hline")
+    d.write("\n")
+    d.write("\\textcolor{ttjetscol}{NJets} &  \multicolumn{2}{c|} {\\textcolor{click}{Edges}} & \multicolumn{4}{c|} {\\textcolor{massReg}{SigFracs}} & \multicolumn{4}{c|} {\\textcolor{disc}{nEvents(Sig+Bkg)}} \\\\")
+    d.write("\n")
+    d.write("\hline")
+    d.write("\n")
+    d.write("& \scriptsize \\textcolor{click}{disc1} & \scriptsize \\textcolor{click}{disc2} & \scriptsize \\textcolor{massReg}{sigFrac\_dA} & \scriptsize \\textcolor{massReg}{sigFrac\_dB} & \scriptsize \\textcolor{massReg}{SigFrac\_dC} & \scriptsize \\textcolor{massReg}{SigFrac\_dD} & \scriptsize \\textcolor{disc}{in region dA} & \scriptsize \\textcolor{disc}{in region dB} & \scriptsize \\textcolor{disc}{in region dC} & \scriptsize \\textcolor{disc}{in region dD} \\\\")
+    d.write("\n")
+    d.write("\hline")
+    d.write("\n")
 
     # ---------------
     # loop over njets
@@ -166,7 +188,7 @@ def main():
         binEdges = FinalBinEdges(args.year, args.model, args.mass, args.channel, args.metric, args.edges, njet)
         nTotSigCount_ABCD, nTotBkgCount_ABCD = binEdges.count_Events_inBinEdges(histBkg, histSig)
         finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigFracsErrA, sigFracsErrB, sigFracsErrC, sigFracsErrD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
-      
+        
         # plot variable vs disc as 1D 
         plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "ABCD")
         plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "ABCD")
@@ -190,6 +212,8 @@ def main():
         plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, njet, name="ABCD")
         plotter.plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, float(finalDisc1Key), float(finalDisc2Key), njet, name="ABCD")
         plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, name = "ABCD")
+        plotter.plot_SigTotFrac_vsDisc1Disc2(nBins, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, name="ABCD")
+        plotter.plot_BkgTotFrac_vsDisc1Disc2(nBins, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, name="ABCD")
 
         # ------------------
         # Validation Regions
@@ -229,9 +253,6 @@ def main():
         #plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsb, sigFracsd, sigFracsE, sigFracsF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, name = "_Val_bdEF")
         #plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key_cdiGH), float(finalDisc2Key_cdiGH), minEdge, maxEdge, binWidth, name = "_Val_cdiGH")
 
-        # ------------------
-        # make all tex files
-        # ------------------
         # put all latest bin edges to txt file
         h.write("    \\tiny \\textcolor{ttjetscol}{%s}  & \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{rpvcol}{%s} & \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{disc}{%s} \\\\" %(njet, finalDisc1Key, finalDisc2Key, finalDisc1Key_bdEF, finalDisc2Key_bdEF, finalDisc1Key_cdiGH, finalDisc2Key_cdiGH))
         h.write("\n")
@@ -256,19 +277,38 @@ def main():
         nEvents_cdiGH.write("\hline")
         nEvents_cdiGH.write("\n")
 
-        # ---------------------
-        # plot Disc1s vs Disc2s
-        # ---------------------
+        # -----------------------------------------------------
+        # Validation Regions as SubDivisions of each A, B, C, D
+        # -----------------------------------------------------
+        val_SubDivisionsOfABCD = ValidationRegions_SubDivisionsOfABCD(args.year, args.model, args.mass, args.channel, args.metric, args.edges, njet)
+        nTotSigCount, nTotBkgCount = val_SubDivisionsOfABCD.count_Events_inSubDivisionsOfABCD(histBkg, histSig, float(finalDisc1Key), float(finalDisc2Key))
+        finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD = val_SubDivisionsOfABCD.get_ValidationEdges_SubDivisionsOfABCD(nTotSigCount, nTotBkgCount, float(finalDisc1Key), float(finalDisc2Key)) 
+
+        # get the lists to make all closure plots 
+        final_subDivD_Edges.append((finalDisc1Key_subDivD, finalDisc2Key_subDivD))
+        final_nTotBkgCount.append(nTotBkgCount)
+
+        # get the table for Validation region sub-division D
+        d.write("\\tiny \\textcolor{ttjetscol}{%s} &  \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{disc}{%.2f} & \\tiny \\textcolor{disc}{%.2f} & \\tiny \\textcolor{disc}{%.2f} & \\tiny \\textcolor{disc}{%.2f} \\\\" %(njet, finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD) )
+        d.write("\n")
+        d.write("\hline")
+        d.write("\n")
+
+
+        # plot Disc1s vs Disc2s with all edges
         if args.metric == "New":
-            plotter.plot_Disc1VsDisc2(histSig, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "RPV550")
-            plotter.plot_Disc1VsDisc2(histBkg, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "TT")
+            plotter.plot_Disc1VsDisc2(histSig, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "RPV550", name = "Val_BD_CD", col1="yellow", col2="lime")
+            plotter.plot_Disc1VsDisc2(histBkg, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "TT",     name = "Val_BD_CD", col1="yellow", col2="lime")
+            plotter.plot_Disc1VsDisc2(histSig, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_subDivD), float(finalDisc2Key_subDivD), tag = "RPV550", name = "Val_SubDivD", col1="white", col2="white")
+            plotter.plot_Disc1VsDisc2(histBkg, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_subDivD), float(finalDisc2Key_subDivD), tag = "TT",     name = "Val_SubDivD", col1="white", col2="white")
 
     # ----------------------
     # make all closure plots
     # ----------------------
-    plotter.make_allClosures(finalBinEdges, final_nTotBkgCount_ABCD, name = "ABCD")
-    plotter.make_allClosures(bdEF_FinalEdges, final_nTotBkgCount_bdEF, name = "Val_bdEF")    
-    plotter.make_allClosures(cdiGH_FinalEdges, final_nTotBkgCount_cdiGH, name = "Val_cdiGH")
+    plotter.make_allClosures(finalBinEdges,       final_nTotBkgCount_ABCD,  name = "ABCD"       )
+    plotter.make_allClosures(bdEF_FinalEdges,     final_nTotBkgCount_bdEF,  name = "Val_bdEF"   )    
+    plotter.make_allClosures(cdiGH_FinalEdges,    final_nTotBkgCount_cdiGH, name = "Val_cdiGH"  )
+    plotter.make_allClosures(final_subDivD_Edges, final_nTotBkgCount,       name = "Val_subDivD")
 
     # ------------------
     # make all tex files
@@ -304,6 +344,15 @@ def main():
     nEvents_cdiGH.write("\n")
     nEvents_cdiGH.write("\n")
     nEvents_cdiGH.close()
+
+    # get the table for Validation region sub-division D
+    d.write("\end{tabular}")
+    d.write("\n")
+    d.write("}")
+    d.write("\n")
+    d.write("\n")
+    d.close()
+
 
 if __name__ == '__main__':
     main()
