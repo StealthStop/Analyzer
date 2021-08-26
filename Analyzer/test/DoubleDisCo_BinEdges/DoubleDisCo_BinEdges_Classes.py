@@ -21,13 +21,14 @@ from matplotlib.colors import LogNorm
 
 class Common_Calculations_Plotters():
 
-    def __init__(self, year, model, mass, channel, metric, Njets=-1):
+    def __init__(self, year, model, mass, channel, metric, fixed_FinalBinEdges, Njets=-1):
         self.Njets   = Njets
         self.year    = year
         self.model   = model
         self.mass    = mass
         self.channel = channel
         self.metric  = metric
+        self.fixed_FinalBinEdges = fixed_FinalBinEdges
 
     def __del__(self):
         del self.Njets
@@ -36,6 +37,7 @@ class Common_Calculations_Plotters():
         del self.mass
         del self.channel
         del self.metric 
+        del self.fixed_FinalBinEdges
 
     # ----------------------
     # calculate all closures
@@ -125,7 +127,10 @@ class Common_Calculations_Plotters():
 
         ax1.legend(loc='best', frameon=False)
 
-        fig.savefig('plots/%s_%s/%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric))
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric))
+        else:
+            fig.savefig('plots/%s_%s/%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric))
 
         plt.close(fig)
 
@@ -192,8 +197,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+             fig.savefig('plots_fixedEdges/%s_%s/%s/%s_Sign_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_Sign_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
@@ -219,8 +224,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_ClosureErr_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_ClosureErr_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_ClosureErr_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
@@ -241,8 +246,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_ClosureErrUnc_vs_Disc1Disc2_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_ClosureErrUnc_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_ClosureErrUnc_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
@@ -271,8 +276,8 @@ class Common_Calculations_Plotters():
         plt.text(0.4, 0.85, '$%.2f < \\bf{Disc.\\;1\\;Edge}$ = %s < %.2f' % (edges[0], disc1Edge, edges[(-1)]), transform=ax.transAxes, fontsize=8)
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0], disc2Edge, edges[(-1)]), transform=ax.transAxes, fontsize=8)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_ClosureErr_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, name, self.channel, self.metric), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":       
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_InvSign_vs_ClosureErr%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_InvSign_vs_ClosureErr%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
@@ -312,8 +317,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l3)
         ax.add_line(l4)
 
-        if self.Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_Disc1VsDisc2_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_Disc1VsDisc2_%s%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_Disc1VsDisc2_%s%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -321,7 +326,7 @@ class Common_Calculations_Plotters():
     # ---------------------------------------------
     # plot SigFrac vs Disc1Disc2 in each A, B, C, D
     # ---------------------------------------------
-    def plot_SigFrac_vsDisc1Disc2(self, nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, name=''):
+    def plot_SigFrac_vsDisc1Disc2(self, nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, disc1Edges, disc2Edges, c1, c2, minEdge, maxEdge, binWidth, name=""):
 
         # SigFracA vs Disc1Disc2
         fig = plt.figure()
@@ -337,10 +342,11 @@ class Common_Calculations_Plotters():
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
         ax.add_line(l2)
-        if self.Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracA_vs_Disc1Disc2_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel, name), dpi=fig.dpi)
+
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigFracA_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracA_vs_Disc1Disc2%s_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel, name), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_SigFracA_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         plt.close(fig)
 
         # SigFracB vs Disc1Disc2
@@ -358,10 +364,10 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if self.Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracB_vs_Disc1Disc2_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel, name), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigFracB_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracB_vs_Disc1Disc2%s_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel, name), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_SigFracB_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         plt.close(fig)
  
         # SigFracC vs Disc1Disc2
@@ -379,10 +385,10 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if self.Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracC_vs_Disc1Disc2_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel, name), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigFracC_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracC_vs_Disc1Disc2%s_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel, name), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_SigFracC_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         plt.close(fig)
 
         # SigFracD vs Disc1Disc2
@@ -400,10 +406,10 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if self.Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracD_vs_Disc1Disc2_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel, name), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigFracD_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
-            fig.savefig('plots/%s_%s/%s/%s_SigFracD_vs_Disc1Disc2%s_%s%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel, name), dpi=fig.dpi)
+            fig.savefig('plots/%s_%s/%s/%s_SigFracD_vs_Disc1Disc2%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         plt.close(fig)
 
     # -------------------------------------------------
@@ -425,9 +431,9 @@ class Common_Calculations_Plotters():
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
         ax.add_line(l2)
-        
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigTotFracA_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+       
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigTotFracA_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi) 
         else:
             fig.savefig('plots/%s_%s/%s/%s_SigTotFracA_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -447,8 +453,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigTotFracB_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+             fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigTotFracB_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_SigTotFracB_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -468,8 +474,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigTotFracC_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigTotFracC_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_SigTotFracC_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -489,8 +495,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_SigTotFracD_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_SigTotFracD_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_SigTotFracD_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -515,8 +521,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_BkgTotFracA_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_BkgTotFracA_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_BkgTotFracA_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -536,8 +542,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_BkgTotFracB_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_BkgTotFracB_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_BkgTotFracB_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -557,8 +563,8 @@ class Common_Calculations_Plotters():
         ax.add_line(l1)
         ax.add_line(l2)
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_BkgTotFracC_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.year, self.channel), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_BkgTotFracC_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_BkgTotFracC_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -577,8 +583,9 @@ class Common_Calculations_Plotters():
         l2 = ml.Line2D([0.0, 1.0], [c2, c2], color='black', linewidth=2, linestyle='dashed')
         ax.add_line(l1)
         ax.add_line(l2)
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2_%s.pdf' % (self.model, self.mass, self.year, self.channel), dpi=fig.dpi)
+
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_BkgTotFracD_vs_Disc1Disc2%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, self.Njets, self.channel), dpi=fig.dpi)
         plt.close(fig)
@@ -648,8 +655,8 @@ class Common_Calculations_Plotters():
 
         fig.tight_layout()
 
-        if Njets == -1: 
-            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_%s_%s.pdf' % (self.model, self.mass, self.year, tag, disc, self.channel, self.metric), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:        
             fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)   
 
@@ -683,8 +690,8 @@ class Common_Calculations_Plotters():
 
         fig.tight_layout()
 
-        if Njets == -1:
-            fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d_%s_%s.pdf' % (self.model, self.mass, self.year, tag, disc, self.channel, self.metric), dpi=fig.dpi)
+        if self.fixed_FinalBinEdges == "fixed":
+            fig.savefig('plots_fixedEdges/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
         else:
             fig.savefig('plots/%s_%s/%s/%s_%s_Slices_Disc%d%s_%s_%s_%s.pdf' % (self.model, self.mass, self.channel, self.year, tag, disc, self.Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
@@ -694,13 +701,14 @@ class Common_Calculations_Plotters():
 
 class FinalBinEdges:
 
-    def __init__(self, year, model, mass, channel, metric, Njets = -1):
+    def __init__(self, year, model, mass, channel, metric, fixed_FinalBinEdges, Njets = -1):
         self.Njets   = Njets
         self.year    = year
         self.model   = model
         self.mass    = mass
         self.channel = channel
         self.metric  = metric
+        self.fixed_FinalBinEdges = fixed_FinalBinEdges
 
     def __del__(self):
         del self.Njets
@@ -709,6 +717,7 @@ class FinalBinEdges:
         del self.mass
         del self.channel
         del self.metric
+        del self.fixed_FinalBinEdges
 
     # ------------------------
     # Significance calculation
@@ -832,7 +841,7 @@ class FinalBinEdges:
                 nTotBkgCount_ABCD["nBkgEvents_B"][xBinKey][yBinKey] = nBkgEvents_B; nTotBkgCount_ABCD["nBkgEventsErr_B"][xBinKey][yBinKey] = nBkgEventsErr_B
                 nTotBkgCount_ABCD["nBkgEvents_C"][xBinKey][yBinKey] = nBkgEvents_C; nTotBkgCount_ABCD["nBkgEventsErr_C"][xBinKey][yBinKey] = nBkgEventsErr_C
                 nTotBkgCount_ABCD["nBkgEvents_D"][xBinKey][yBinKey] = nBkgEvents_D; nTotBkgCount_ABCD["nBkgEventsErr_D"][xBinKey][yBinKey] = nBkgEventsErr_D
-    
+   
         return nTotSigCount_ABCD, nTotBkgCount_ABCD
 
     # ----------------------------------------------------------------------------
@@ -859,6 +868,7 @@ class FinalBinEdges:
         
         inverseSignificance = []; closureErrsList = []; closureErrUncList = []; disc1KeyOut  = []; disc2KeyOut  = []
         sigFracsA           = []; sigFracsB       = []; sigFracsC    = []; sigFracsD    = []
+        sigFracsErrA        = []; sigFracsErrB    = []; sigFracsErrC = []; sigFracsErrD = []
         sigTotFracsA        = []; sigTotFracsB    = []; sigTotFracsC = []; sigTotFracsD = []
         bkgTotFracsA        = []; bkgTotFracsB    = []; bkgTotFracsC = []; bkgTotFracsD = []
   
@@ -887,17 +897,30 @@ class FinalBinEdges:
                 nTot_SigBkg_B = nSigEvents_B + nBkgEvents_B
                 nTot_SigBkg_C = nSigEvents_C + nBkgEvents_C
                 nTot_SigBkg_D = nSigEvents_D + nBkgEvents_D
+
+                nTot_SigBkgErr_A = nSigEventsErr_A + nBkgEventsErr_A
+                nTot_SigBkgErr_B = nSigEventsErr_B + nBkgEventsErr_B
+                nTot_SigBkgErr_C = nSigEventsErr_C + nBkgEventsErr_C
+                nTot_SigBkgErr_D = nSigEventsErr_D + nBkgEventsErr_D
                 
-                tempSigFracsA = -1.0; tempSigFracsB = -1.0; tempSigFracsC = -1.0; tempSigFracsD = -1.0
+                tempSigFracsA    = -1.0; tempSigFracsB    = -1.0; tempSigFracsC    = -1.0; tempSigFracsD    = -1.0
+                tempSigFracsErrA = -1.0; tempSigFracsErrB = -1.0; tempSigFracsErrC = -1.0; tempSigFracsErrD = -1.0
     
-                if nTot_SigBkg_A > 0.0: 
-                    tempSigFracsA = nSigEvents_A / nTot_SigBkg_A
-                if nTot_SigBkg_B > 0.0: 
-                    tempSigFracsB = nSigEvents_B / nTot_SigBkg_B
-                if nTot_SigBkg_C > 0.0: 
-                    tempSigFracsC = nSigEvents_C / nTot_SigBkg_C
-                if nTot_SigBkg_D > 0.0: 
-                    tempSigFracsD = nSigEvents_D / nTot_SigBkg_D
+                if nTot_SigBkg_A > 0.0 and nTot_SigBkgErr_A > 0.0: 
+                    tempSigFracsA    = nSigEvents_A / nTot_SigBkg_A
+                    tempSigFracsErrA = nSigEventsErr_A / nTot_SigBkgErr_A
+                
+                if nTot_SigBkg_B > 0.0 and nTot_SigBkgErr_B > 0.0: 
+                    tempSigFracsB    = nSigEvents_B / nTot_SigBkg_B
+                    tempSigFracsErrB = nSigEventsErr_B / nTot_SigBkgErr_B
+                
+                if nTot_SigBkg_C > 0.0 and nTot_SigBkgErr_C > 0.0: 
+                    tempSigFracsC    = nSigEvents_C / nTot_SigBkg_C
+                    tempSigFracsErrC = nSigEventsErr_C / nTot_SigBkgErr_C                
+    
+                if nTot_SigBkg_D > 0.0 and nTot_SigBkgErr_D > 0.0: 
+                    tempSigFracsD    = nSigEvents_D / nTot_SigBkg_D
+                    tempSigFracsErrD = nSigEventsErr_D / nTot_SigBkgErr_D
     
                 # Total signal (and background) fractions in aech A, B, C, D region
                 # get the latest bin edges based on total signal fraction
@@ -949,12 +972,18 @@ class FinalBinEdges:
                     weighted_SigUnc_A.append(nSigEventsErr_A)    
                     weighted_BkgUnc_A.append(nBkgEventsErr_A)  
 
-                    # Region by region fraction
+                    # Region by region fraction and fraction error
                     sigFracsA.append(float(tempSigFracsA))
                     sigFracsB.append(float(tempSigFracsB))
                     sigFracsC.append(float(tempSigFracsC))
                     sigFracsD.append(float(tempSigFracsD))
-    
+   
+                    sigFracsErrA.append(float(tempSigFracsErrA))
+                    sigFracsErrB.append(float(tempSigFracsErrB))
+                    sigFracsErrC.append(float(tempSigFracsErrC))
+                    sigFracsErrD.append(float(tempSigFracsErrD))
+                
+ 
                     # Total fraction
                     sigTotFracsA.append(float(tempSigTotFracsA)); bkgTotFracsA.append(float(tempBkgTotFracsA)) 
                     sigTotFracsB.append(float(tempSigTotFracsB)); bkgTotFracsB.append(float(tempBkgTotFracsB))
@@ -964,7 +993,7 @@ class FinalBinEdges:
                 if (tempBkgTotFracsA > minBkgFrac) and (tempBkgTotFracsB > minBkgFrac) and (tempBkgTotFracsC > minBkgFrac) and (tempBkgTotFracsD > minBkgFrac):                
                     tempOptMetric = self.cal_OptMetric_ofBinEdges(tempSignificance, tempClosureErr)
     
-                if tempOptMetric < optMetric:
+                if tempOptMetric < optMetric and self.fixed_FinalBinEdges != "fixed":
                     finalDisc1Key      = disc1Key 
                     finalDisc2Key      = disc2Key
                     significance       = tempSignificance
@@ -980,19 +1009,38 @@ class FinalBinEdges:
                     final_nBkgEvents_B = nBkgEvents_B
                     final_nBkgEvents_C = nBkgEvents_C
                     final_nBkgEvents_D = nBkgEvents_D 
+            
+                elif abs(float(disc1Key) - 0.6) < 0.01 and abs(float(disc2Key) - 0.6) < 0.01:
+                    finalDisc1Key      = disc1Key
+                    finalDisc2Key      = disc2Key
+                    significance       = tempSignificance
+                    closureErr         = tempClosureErr
+                    optMetric          = tempOptMetric
+                    finalSigFracA      = tempSigFracsA
+                    finalSigFracB      = tempSigFracsB
+                    finalSigFracC      = tempSigFracsC
+                    finalSigFracD      = tempSigFracsD
+                    nEvents_AB         = nBkgEvents_A + nBkgEvents_B
+                    nEvents_AC         = nBkgEvents_A + nBkgEvents_C
+                    final_nBkgEvents_A = nBkgEvents_A
+                    final_nBkgEvents_B = nBkgEvents_B
+                    final_nBkgEvents_C = nBkgEvents_C
+                    final_nBkgEvents_D = nBkgEvents_D
 
-        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D 
+        return finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigFracsErrA, sigFracsErrB, sigFracsErrC, sigFracsErrD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D 
 
 
 
 class ValidationRegions(FinalBinEdges):
 
-    def __init__(self, year, model, mass, channel, Njets = -1):
+    def __init__(self, year, model, mass, channel, metric, fixed_FinalBinEdges, Njets = -1):
         self.Njets   = Njets
         self.year    = year
         self.model   = model
         self.mass    = mass
         self.channel = channel
+        self.metric  = metric
+        self.fixed_FinalBinEdges = fixed_FinalBinEdges
 
     def __del__(self):
         del self.Njets
@@ -1000,6 +1048,8 @@ class ValidationRegions(FinalBinEdges):
         del self.model
         del self.mass
         del self.channel
+        del self.metric
+        del self.fixed_FinalBinEdges
 
     # --------------------------------------
     # Calculate metric of validation regions
@@ -1182,6 +1232,7 @@ class ValidationRegions(FinalBinEdges):
         disc1KeyOut_bdEF = [];  disc2KeyOut_bdEF = [];  finalDisc1Key_bdEF = -1.0; finalDisc2Key_bdEF = -1.0; validationMetric_bdEF  = 999.0
         finalSigFracb    = 0.0; finalSigFracd    = 0.0; finalSigFracE      = 0.0;  finalSigFracF      = 0.0;  nEvents_bd             = 0.0; nEvents_EF = 0.0
         sigFracsb        = [];  sigFracsd        = [];  sigFracsE          = [];   sigFracsF          = []
+        sigFracsErrb     = [];  sigFracsErrd     = [];  sigFracsErrE       = [];   sigFracsErrF       = []
         
         closureErrsList_bdEF = []; closureErrUncList_bdEF = []
         weighted_Sig_b = []; weighted_Bkg_b = []; weighted_SigUnc_b = []; weighted_BkgUnc_b = []
@@ -1201,22 +1252,35 @@ class ValidationRegions(FinalBinEdges):
                 nSigEventsErr_E = nTotSigCount_bdEF["nSigEventsErr_C"][disc1CutKey][disc2Key]; nBkgEventsErr_E = nTotBkgCount_bdEF["nBkgEventsErr_C"][disc1CutKey][disc2Key]
                 nSigEventsErr_F = nTotSigCount_bdEF["nSigEventsErr_D"][disc1CutKey][disc2Key]; nBkgEventsErr_F = nTotBkgCount_bdEF["nBkgEventsErr_D"][disc1CutKey][disc2Key]
  
-                # Signal fractions in each b, d, E, F region
+                # Signal fractions and fraction errors in each b, d, E, F region
                 nTot_SigBkg_b = nSigEvents_b + nBkgEvents_b 
                 nTot_SigBkg_d = nSigEvents_d + nBkgEvents_d
                 nTot_SigBkg_E = nSigEvents_E + nBkgEvents_E
                 nTot_SigBkg_F = nSigEvents_F + nBkgEvents_F
+
+                nTot_SigBkgErr_b = nSigEventsErr_b + nBkgEventsErr_b
+                nTot_SigBkgErr_d = nSigEventsErr_d + nBkgEventsErr_d
+                nTot_SigBkgErr_E = nSigEventsErr_E + nBkgEventsErr_E
+                nTot_SigBkgErr_F = nSigEventsErr_F + nBkgEventsErr_F
     
-                tempSigFracsb = -1.0; tempSigFracsd = -1.0; tempSigFracsE = -1.0; tempSigFracsF = -1.0
-    
-                if nTot_SigBkg_b > 0.0: 
-                    tempSigFracsb = nSigEvents_b / nTot_SigBkg_b 
-                if nTot_SigBkg_d > 0.0: 
-                    tempSigFracsd = nSigEvents_d / nTot_SigBkg_d
-                if nTot_SigBkg_E > 0.0: 
-                    tempSigFracsE = nSigEvents_E / nTot_SigBkg_E
-                if nTot_SigBkg_F > 0.0: 
-                    tempSigFracsF = nSigEvents_F / nTot_SigBkg_F
+                tempSigFracsb    = -1.0; tempSigFracsd    = -1.0; tempSigFracsE    = -1.0; tempSigFracsF    = -1.0
+                tempSigFracsErrb = -1.0; tempSigFracsErrd = -1.0; tempSigFracsErrE = -1.0; tempSigFracsErrF = -1.0   
+ 
+                if nTot_SigBkg_b > 0.0 and nTot_SigBkgErr_b > 0.0: 
+                    tempSigFracsb    = nSigEvents_b / nTot_SigBkg_b
+                    tempSigFracsErrb = nSigEventsErr_b / nTot_SigBkgErr_b
+ 
+                if nTot_SigBkg_d > 0.0 and nTot_SigBkgErr_d > 0.0: 
+                    tempSigFracsd    = nSigEvents_d / nTot_SigBkg_d
+                    tempSigFracsErrd = nSigEventsErr_d / nTot_SigBkgErr_d
+
+                if nTot_SigBkg_E > 0.0 and nTot_SigBkgErr_E > 0.0: 
+                    tempSigFracsE    = nSigEvents_E / nTot_SigBkg_E
+                    tempSigFracsErrE = nSigEventsErr_E / nTot_SigBkgErr_E
+
+                if nTot_SigBkg_F > 0.0 and nTot_SigBkgErr_F > 0.0: 
+                    tempSigFracsF    = nSigEvents_F / nTot_SigBkg_F
+                    tempSigFracsErrF = nSigEventsErr_F / nTot_SigBkgErr_F
 
                 # get the closure error and closure error unc. to plot variable vs disc as 1D 
                 tempClosureErr = -999.0; tempClosureErrUnc = -999.0;
@@ -1239,7 +1303,12 @@ class ValidationRegions(FinalBinEdges):
                     sigFracsd.append(float(tempSigFracsd))
                     sigFracsE.append(float(tempSigFracsE))
                     sigFracsF.append(float(tempSigFracsF))
-    
+   
+                    sigFracsErrb.append(float(tempSigFracsErrb))
+                    sigFracsErrd.append(float(tempSigFracsErrd))
+                    sigFracsErrE.append(float(tempSigFracsErrE))
+                    sigFracsErrF.append(float(tempSigFracsErrF))
+ 
                 # calculate the validation metric
                 temp_ValidationMetric = 999.0
                 temp_ValidationMetric = self.cal_MetricOfValidationRegion_bdEF(final_nBkgEvents_A, final_nBkgEvents_C, nBkgEvents_b, nBkgEvents_d)
@@ -1255,7 +1324,7 @@ class ValidationRegions(FinalBinEdges):
                     nEvents_bd            = nBkgEvents_b + nBkgEvents_d
                     nEvents_EF            = nBkgEvents_E + nBkgEvents_F
 
-        return finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF
+        return finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, sigFracsErrb, sigFracsErrd, sigFracsErrE, sigFracsErrF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF
 
     # ---------------------------------------------------------------------------
     # make the validation region in CD : cdiGH
@@ -1267,6 +1336,7 @@ class ValidationRegions(FinalBinEdges):
         disc1KeyOut_cdiGH = [];  disc2KeyOut_cdiGH = [];  finalDisc1Key_cdiGH = -1.0; finalDisc2Key_cdiGH = -1.0; validationMetric_cdiGH  = 999.0
         finalSigFracc     = 0.0; finalSigFracdi    = 0.0; finalSigFracG       = 0.0;  finalSigFracH       = 0.0;  nEvents_cdi             = 0.0; nEvents_GH = 0.0
         sigFracsc         = [];  sigFracsdi        = [];  sigFracsG           = [];   sigFracsH           = []
+        sigFracsErrc      = [];  sigFracsErrdi     = [];  sigFracsErrG        = [];   sigFracsErrH        = []
 
         closureErrsList_cdiGH = []; closureErrUncList_cdiGH = []
         weighted_Sig_c = []; weighted_Bkg_c = []; weighted_SigUnc_c = []; weighted_BkgUnc_c = []
@@ -1286,22 +1356,35 @@ class ValidationRegions(FinalBinEdges):
                 nSigEventsErr_G  = nTotSigCount_cdiGH["nSigEventsErr_C"][disc1Key][disc2CutKey]; nBkgEventsErr_G  = nTotBkgCount_cdiGH["nBkgEventsErr_C"][disc1Key][disc2CutKey]
                 nSigEventsErr_H  = nTotSigCount_cdiGH["nSigEventsErr_D"][disc1Key][disc2CutKey]; nBkgEventsErr_H  = nTotBkgCount_cdiGH["nBkgEventsErr_D"][disc1Key][disc2CutKey]
 
-                # Signal fractions in each c, di, G, H region
+                # Signal fractions and fraction errors in each c, di, G, H region
                 nTot_SigBkg_c  = nSigEvents_c  + nBkgEvents_c
                 nTot_SigBkg_di = nSigEvents_di + nBkgEvents_di
                 nTot_SigBkg_G  = nSigEvents_G  + nBkgEvents_G
                 nTot_SigBkg_H  = nSigEvents_H  + nBkgEvents_H
 
-                tempSigFracsc = -1.0; tempSigFracsdi = -1.0; tempSigFracsG = -1.0; tempSigFracsH = -1.0
+                nTot_SigBkgErr_c  = nSigEventsErr_c  + nBkgEventsErr_c
+                nTot_SigBkgErr_di = nSigEventsErr_di + nBkgEventsErr_di
+                nTot_SigBkgErr_G  = nSigEventsErr_G  + nBkgEventsErr_G
+                nTot_SigBkgErr_H  = nSigEventsErr_H  + nBkgEventsErr_H
 
-                if nTot_SigBkg_c > 0.0:
-                    tempSigFracsc = nSigEvents_c  / nTot_SigBkg_c
-                if nTot_SigBkg_di > 0.0:
-                    tempSigFracsdi = nSigEvents_di / nTot_SigBkg_di
-                if nTot_SigBkg_G > 0.0:
-                    tempSigFracsG = nSigEvents_G  / nTot_SigBkg_G
-                if nTot_SigBkg_H > 0.0:
-                    tempSigFracsH = nSigEvents_H  / nTot_SigBkg_H
+                tempSigFracsc    = -1.0; tempSigFracsdi    = -1.0; tempSigFracsG    = -1.0; tempSigFracsH    = -1.0
+                tempSigFracsErrc = -1.0; tempSigFracsErrdi = -1.0; tempSigFracsErrG = -1.0; tempSigFracsErrH = -1.0
+
+                if nTot_SigBkg_c > 0.0 and nTot_SigBkgErr_c > 0.0:
+                    tempSigFracsc    = nSigEvents_c  / nTot_SigBkg_c
+                    tempSigFracsErrc = nSigEventsErr_c  / nTot_SigBkgErr_c
+    
+                if nTot_SigBkg_di > 0.0 and nTot_SigBkgErr_di > 0.0:
+                    tempSigFracsdi    = nSigEvents_di / nTot_SigBkg_di
+                    tempSigFracsErrdi = nSigEventsErr_di  / nTot_SigBkgErr_di
+
+                if nTot_SigBkg_G > 0.0 and nTot_SigBkgErr_G > 0.0:
+                    tempSigFracsG    = nSigEvents_G  / nTot_SigBkg_G
+                    tempSigFracsErrG = nSigEventsErr_G  / nTot_SigBkgErr_G
+
+                if nTot_SigBkg_H > 0.0 and nTot_SigBkgErr_H > 0.0:
+                    tempSigFracsH    = nSigEvents_H  / nTot_SigBkg_H
+                    tempSigFracsErrH = nSigEventsErr_H  / nTot_SigBkgErr_H
 
                 # get the closure error and closure error unc. to plot variable vs disc as 1D 
                 tempClosureErr = -999.0; tempClosureErrUnc = -999.0;
@@ -1325,6 +1408,11 @@ class ValidationRegions(FinalBinEdges):
                     sigFracsG.append(float(tempSigFracsG))
                     sigFracsH.append(float(tempSigFracsH))
 
+                    sigFracsErrc.append(float(tempSigFracsErrc))
+                    sigFracsErrdi.append(float(tempSigFracsErrdi))
+                    sigFracsErrG.append(float(tempSigFracsErrG))
+                    sigFracsErrH.append(float(tempSigFracsErrH))
+
                 # calculate the validation metric
                 temp_ValidationMetric = 999.0
                 temp_ValidationMetric = self.cal_MetricOfValidationRegion_cdiGH(final_nBkgEvents_A, final_nBkgEvents_B, nBkgEvents_c, nBkgEvents_di)
@@ -1340,5 +1428,5 @@ class ValidationRegions(FinalBinEdges):
                     nEvents_cdi            = nBkgEvents_c + nBkgEvents_di
                     nEvents_GH             = nBkgEvents_G + nBkgEvents_H
 
-        return finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH
+        return finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, sigFracsErrc, sigFracsErrdi, sigFracsErrG, sigFracsErrH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH
 
