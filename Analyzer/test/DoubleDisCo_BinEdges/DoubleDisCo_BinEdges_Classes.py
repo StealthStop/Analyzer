@@ -1578,10 +1578,11 @@ class ValidationRegions_SubDivisionsOfABCD(FinalBinEdges):
     # ------------------------------------------------------
     def get_ValidationEdges_SubDivisionsOfABCD(self, nTotSigCount, nTotBkgCount, finalDisc1Edge, finalDisc2Edge):
 
-        disc1KeyOut_subDivD = [];  disc2KeyOut_subDivD = [];  finalDisc1Key_subDivD = -1.0; finalDisc2Key_subDivD = -1.0; 
+        disc1KeyOut_subDivD = [];  disc2KeyOut_subDivD = [];  finalDisc1Key_subDivD = -1.0; finalDisc2Key_subDivD = -1.0;
         finalSigFrac_dA     = 0.0; finalSigFrac_dB     = 0.0; finalSigFrac_dC       = 0.0;  finalSigFrac_dC       = 0.0;  
         nEvents_dAC         = 0.0; nEvents_dBD         = 0.0
-        
+        closureErrsList_subDivD = []; closureErrUncList_subDivD = []       
+ 
         # loop over the disc1 and disc2 to get any possible combination of them
         for disc1Key, disc2s in nTotBkgCount["nBkgEvents_A"].items():
             
@@ -1633,6 +1634,10 @@ class ValidationRegions_SubDivisionsOfABCD(FinalBinEdges):
                 if nBkgEvents_dA > 0.0 and nBkgEvents_dD > 0.0: 
                     tempClosureErr, tempClosureErrUnc = self.cal_ClosureError(nBkgEvents_dA, nBkgEvents_dB, nBkgEvents_dC, nBkgEvents_dD, nBkgEventsErr_dA, nBkgEventsErr_dB, nBkgEventsErr_dC, nBkgEventsErr_dD)
 
+                if tempClosureErr > 0.0:
+                    closureErrsList_subDivD.append(abs(tempClosureErr))
+                    closureErrUncList_subDivD.append(tempClosureErrUnc)
+
                 # get the final edges
                 if abs( ( float(disc1Key) - (float(finalDisc1Edge) / 2.0) ) ) < 0.01 and abs( ( float(disc2Key) - (float(finalDisc2Edge) / 2.0) ) ) < 0.01:
                     finalDisc1Key_subDivD = disc1Key
@@ -1646,4 +1651,4 @@ class ValidationRegions_SubDivisionsOfABCD(FinalBinEdges):
                     final_nTot_SigBkg_dC  = nTot_SigBkg_dB
                     final_nTot_SigBkg_dD  = nTot_SigBkg_dD
        
-        return finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD
+        return finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD, closureErrsList_subDivD, closureErrUncList_subDivD

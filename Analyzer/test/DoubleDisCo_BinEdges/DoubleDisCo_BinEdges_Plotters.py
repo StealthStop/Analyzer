@@ -282,7 +282,7 @@ def main():
         # -----------------------------------------------------
         val_SubDivisionsOfABCD = ValidationRegions_SubDivisionsOfABCD(args.year, args.model, args.mass, args.channel, args.metric, args.edges, njet)
         nTotSigCount, nTotBkgCount = val_SubDivisionsOfABCD.count_Events_inSubDivisionsOfABCD(histBkg, histSig, float(finalDisc1Key), float(finalDisc2Key))
-        finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD = val_SubDivisionsOfABCD.get_ValidationEdges_SubDivisionsOfABCD(nTotSigCount, nTotBkgCount, float(finalDisc1Key), float(finalDisc2Key)) 
+        finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD, closureErrsList_subDivD, closureErrUncList_subDivD = val_SubDivisionsOfABCD.get_ValidationEdges_SubDivisionsOfABCD(nTotSigCount, nTotBkgCount, float(finalDisc1Key), float(finalDisc2Key)) 
 
         # get the lists to make all closure plots 
         final_subDivD_Edges.append((finalDisc1Key_subDivD, finalDisc2Key_subDivD))
@@ -294,8 +294,13 @@ def main():
         d.write("\hline")
         d.write("\n")
 
+        # plot variable vs disc as 1D 
+        plotter.plot_VarVsDisc(closureErrsList_subDivD, closureErrUncList_subDivD, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "Sub-Division D Closure", "Closure", 1, njet, name = "Val_SubDivD")
+        plotter.plot_VarVsDisc(closureErrsList_subDivD, closureErrUncList_subDivD, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "Sub-Division D Closure", "Closure", 2, njet, name = "Val_SubDivD")
 
+        # ------------------------------------
         # plot Disc1s vs Disc2s with all edges
+        # ------------------------------------
         if args.metric == "New":
             plotter.plot_Disc1VsDisc2(histSig, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "RPV550", name = "Val_BD_CD", col1="yellow", col2="lime")
             plotter.plot_Disc1VsDisc2(histBkg, float(finalDisc1Key), float(finalDisc2Key), float(finalDisc1Key_bdEF), float(finalDisc2Key_cdiGH), tag = "TT",     name = "Val_BD_CD", col1="yellow", col2="lime")
