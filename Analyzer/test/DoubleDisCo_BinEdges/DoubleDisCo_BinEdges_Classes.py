@@ -1635,6 +1635,8 @@ class ValidationRegions_SubDivisionsOfABCD(FinalBinEdges):
                 if tempClosureErr > 0.0:
                     closureErrsList_subDivD.append(abs(tempClosureErr))
                     closureErrUncList_subDivD.append(tempClosureErrUnc)
+                    disc1KeyOut_subDivD.append(float(disc1Key))
+                    disc2KeyOut_subDivD.append(float(disc2Key)) 
 
                 # get the final edges
                 if abs( ( float(disc1Key) - (float(finalDisc1Edge) / 2.0) ) ) < 0.01 and abs( ( float(disc2Key) - (float(finalDisc2Edge) / 2.0) ) ) < 0.01:
@@ -1649,4 +1651,4 @@ class ValidationRegions_SubDivisionsOfABCD(FinalBinEdges):
                     final_nTot_SigBkg_dC  = nTot_SigBkg_dB
                     final_nTot_SigBkg_dD  = nTot_SigBkg_dD
        
-        return finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD, closureErrsList_subDivD, closureErrUncList_subDivD
+        return finalDisc1Key_subDivD, finalDisc2Key_subDivD, finalSigFrac_dA, finalSigFrac_dB, finalSigFrac_dC, finalSigFrac_dD, final_nTot_SigBkg_dA, final_nTot_SigBkg_dB, final_nTot_SigBkg_dC, final_nTot_SigBkg_dD, closureErrsList_subDivD, closureErrUncList_subDivD, disc1KeyOut_subDivD, disc2KeyOut_subDivD
