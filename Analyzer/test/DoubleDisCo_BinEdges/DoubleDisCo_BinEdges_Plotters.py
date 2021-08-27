@@ -57,26 +57,12 @@ def main():
     # for 0-lepton 
     if args.channel == "0l":
         histNames = "h_DoubleDisCo_disc1_disc2_0l_Njets"
-        njets = [
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-        ]
+        njets = ["6", "7", "8", "9", "10", "11", "12"]
 
     # for 1-lepton
     else:
         histNames = "h_DoubleDisCo_disc1_disc2_1l_Njets"
-        njets = [
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-        ]
+        njets = ["7", "8", "9", "10", "11"]
 
     # initialize the things
     finalBinEdges       = []; final_nTotBkgCount_ABCD  = [] 

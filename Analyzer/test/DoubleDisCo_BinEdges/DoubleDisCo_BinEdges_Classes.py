@@ -169,11 +169,9 @@ class Common_Calculations_Plotters():
                 bkgNjetsPred_A['error'].append(predUnc_A)
 
         if self.channel == '0l':
-            Njets = [
-             7, 8, 9, 10, 11, 12]
+            Njets = [6, 7, 8, 9, 10, 11, 12]
         else:
-            Njets = [
-             7, 8, 9, 10, 11]
+            Njets = [7, 8, 9, 10, 11]
 
         self.plot_ClosureNjets(bkgNjets['A'], bkgNjetsErr['A'], bkgNjetsPred_A['value'], bkgNjetsPred_A['error'], Njets, name)       
     
