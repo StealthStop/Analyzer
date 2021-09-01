@@ -260,7 +260,7 @@ class StackPlotter:
         sigXmax = bkgXmin;              sigYmin = bkgYmax-nSigs*(textSize+space) 
 
         sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
-        #sigLegend.SetBorderSize(0)
+        sigLegend.SetBorderSize(0)
         sigLegend.SetMargin(0.15)
         sigLegend.SetTextSize(textSize)
 
@@ -383,7 +383,7 @@ class StackPlotter:
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, hinfo, sinfo)
 
-                        if "550" in sname:
+                        if "550" in sname or len(self.signals) == 1:
                             theSignificance = Hobj.Significance(ratio)
 
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend, "HIST", "L")
