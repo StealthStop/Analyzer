@@ -100,8 +100,9 @@ file and plot.
 
 ```
 usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
-                                      [--printNEvents] [--normMC] --inpath
-                                      INPATH --outpath OUTPATH --year YEAR
+                                      [--printNEvents] [--normMC]
+                                      [--printSign] --inpath INPATH --outpath
+                                      OUTPATH --year YEAR
 
 optional arguments:
   -h, --help         show this help message and exit
@@ -109,9 +110,14 @@ optional arguments:
   --approved         Plot is approved
   --printNEvents     Show number of events
   --normMC           Normalize MC to data
+  --printSign        Print simple significance
   --inpath INPATH    Path to root files
   --outpath OUTPATH  Where to put plots
   --year YEAR        which year
+usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
+                                      [--printNEvents] [--normMC] --inpath
+                                      INPATH --outpath OUTPATH --year YEAR
+
 ```
 
 An example call to the stack plotter could be:
