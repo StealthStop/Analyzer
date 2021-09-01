@@ -22,13 +22,17 @@ from DoubleDisCo_BinEdges_Classes import Common_Calculations_Plotters,FinalBinEd
 
 def main():
 
-    # ---------------------------------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------------------------------------------
     # command to run this script
-    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 0l --metric NN
-    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 0l --metric New
-    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 1l --metric NN
-    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 1l --metric New
-    # ---------------------------------------------------------------------------------------------------------  
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 0l --metric NN --edges final
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 0l --metric NN --edges fixed
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 0l --metric New --edges final
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 0l --metric New --edges fixed
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 1l --metric NN --edges final
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 1l --metric NN --edges fixed
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 1l --metric New --edges final
+    #   -- python DoubleDisCo_BinEdges_Plotters.py --year 2016 --model RPV --mass 550 --channel 1l --metric New --edges fixed
+    # -----------------------------------------------------------------------------------------------------------------------  
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",    dest="year",    help="which year",            required=True)
@@ -37,6 +41,7 @@ def main():
     parser.add_argument("--mass",    dest="mass",    help="signal mass",           default="550")
     parser.add_argument("--channel", dest="channel", help="0l, 1l",                required=True)
     parser.add_argument("--metric",  dest="metric",  help="NN, New",               required=True)
+    parser.add_argument("--edges",   dest="edges",   help="final, fixed",          required=True, type=str)
     args = parser.parse_args()
 
     modelDecay = "2t6j"
@@ -81,7 +86,7 @@ def main():
     # make all tex files
     # -----------------
     # put all latest bin edges to tex file
-    h = open("All_LatestBinEdges_%s_%s_%s.tex" %(args.model, args.mass, args.channel), "w")
+    h = open("All_%sBinEdges_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
     h.write("\\resizebox{\linewidth}{!}{%")
     h.write("\n")
     h.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -98,7 +103,7 @@ def main():
     h.write("\n")
 
     # get the nEvents for each ABCD region
-    nEvents_ABCD = open("nEvents_ABCD_%s_%s_%s.tex" %(args.model, args.mass, args.channel), "w")
+    nEvents_ABCD = open("nEvents_%sABCD_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
     nEvents_ABCD.write("\\resizebox{\linewidth}{!}{%")
     nEvents_ABCD.write("\n")
     nEvents_ABCD.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -111,7 +116,7 @@ def main():
     nEvents_ABCD.write("\n")
 
     # get the nEvents for each B'D'EF region 
-    nEvents_bdEF = open("nEvents_Val_bdEF_%s_%s_%s.tex" %(args.model, args.mass, args.channel), "w")
+    nEvents_bdEF = open("nEvents_%s_Val_bdEF_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
     nEvents_bdEF.write("\\resizebox{\linewidth}{!}{%")
     nEvents_bdEF.write("\n")
     nEvents_bdEF.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -123,8 +128,8 @@ def main():
     nEvents_bdEF.write("\hline")
     nEvents_bdEF.write("\n")
 
-    # get the nEvents for each C'D'GH region 
-    nEvents_cdiGH = open("nEvents_Val_cdiGH_%s_%s_%s.tex" %(args.model, args.mass, args.channel), "w")
+    # get the nEvents for each C'D'GH region
+    nEvents_cdiGH = open("nEvents_%s_Val_cdiGH_%s_%s_%s.tex" %(args.edges, args.model, args.mass, args.channel), "w")
     nEvents_cdiGH.write("\\resizebox{\linewidth}{!}{%")
     nEvents_cdiGH.write("\n")
     nEvents_cdiGH.write("\\begin{tabular}{| c | c | c | c | c | c | c |}")
@@ -153,14 +158,14 @@ def main():
         # --------------------------------
         # Common calculations and plotters
         # --------------------------------
-        plotter = Common_Calculations_Plotters(args.year, args.model, args.mass, args.channel, args.metric, njet)
+        plotter = Common_Calculations_Plotters(args.year, args.model, args.mass, args.channel, args.metric, args.edges, njet)
 
         # ---------------
         # Final Bin Edges
         # ---------------
-        binEdges = FinalBinEdges(args.year, args.model, args.mass, args.channel, args.metric, njet)
+        binEdges = FinalBinEdges(args.year, args.model, args.mass, args.channel, args.metric, args.edges, njet)
         nTotSigCount_ABCD, nTotBkgCount_ABCD = binEdges.count_Events_inBinEdges(histBkg, histSig)
-        finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
+        finalDisc1Key, finalDisc2Key, significance, closureErr, inverseSignificance, closureErrsList, closureErrUncList, sigUncs, disc1KeyOut, disc2KeyOut, weighted_Sig_A, weighted_Bkg_A, weighted_SigUnc_A, weighted_BkgUnc_A, sigFracsA, sigFracsB, sigFracsC, sigFracsD, sigFracsErrA, sigFracsErrB, sigFracsErrC, sigFracsErrD, sigTotFracsA, sigTotFracsB, sigTotFracsC, sigTotFracsD, bkgTotFracsA, bkgTotFracsB, bkgTotFracsC, bkgTotFracsD, finalSigFracA, finalSigFracB, finalSigFracC, finalSigFracD, nEvents_AB, nEvents_AC, final_nBkgEvents_A, final_nBkgEvents_B, final_nBkgEvents_C, final_nBkgEvents_D = binEdges.get_FinalBinEdges(nTotSigCount_ABCD, nTotBkgCount_ABCD, minBkgFrac = 0.01, minSigFrac = 0.1)   
       
         # plot variable vs disc as 1D 
         plotter.plot_VarVsDisc(closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "ABCD")
@@ -170,24 +175,29 @@ def main():
         plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet, name = "ABCD")
         plotter.plot_VarVsDisc(weighted_Sig_A, weighted_SigUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "ABCD")
         plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "ABCD")
-        plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "ABCD") 
+        plotter.plot_VarVsDisc(weighted_Bkg_A, weighted_BkgUnc_A, disc1KeyOut, disc2KeyOut, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsA, sigFracsErrA, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsA", "SigFracsA", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsB, sigFracsErrB, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsB", "SigFracsB", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsC, sigFracsErrC, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsC", "SigFracsC", 1, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsD, sigFracsErrD, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsD", "SigFracsD", 1, njet, name = "ABCD") 
+        plotter.plot_VarVsDisc(sigFracsA, sigFracsErrA, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsA", "SigFracsA", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsB, sigFracsErrB, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsB", "SigFracsB", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsC, sigFracsErrC, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsC", "SigFracsC", 2, njet, name = "ABCD")
+        plotter.plot_VarVsDisc(sigFracsD, sigFracsErrD, disc1KeyOut, disc2KeyOut, binWidth/2.0, 0.8, "SigFracsD", "SigFracsD", 2, njet, name = "ABCD")
 
         # plot 2Ds
         plotter.plot_Significance_vsDisc1Disc2(nBins, inverseSignificance, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, njet, name="ABCD")
         plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList, closureErrUncList, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, njet, name="ABCD")
         plotter.plot_inverseSignificance_vsClosureErr(significance, closureErr, inverseSignificance, closureErrsList, edges, float(finalDisc1Key), float(finalDisc2Key), njet, name="ABCD")
+        plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsA, sigFracsB, sigFracsC, sigFracsD, disc1KeyOut, disc2KeyOut, float(finalDisc1Key), float(finalDisc2Key), minEdge, maxEdge, binWidth, name = "ABCD")
 
         # ------------------
         # Validation Regions
         # ------------------
-        validationRegions = ValidationRegions(args.year, args.model, args.mass, args.channel, njet)
+        validationRegions = ValidationRegions(args.year, args.model, args.mass, args.channel, args.metric, args.edges, njet)
         nTotSigCount_bdEF, nTotBkgCount_bdEF, nTotSigCount_cdiGH, nTotBkgCount_cdiGH = validationRegions.count_Events_inValidationRegions(histBkg, histSig, finalDisc1Key, finalDisc2Key)
-        finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF = validationRegions.make_ValidationRegionEdges_bdEF(nTotSigCount_bdEF, nTotBkgCount_bdEF, final_nBkgEvents_A, final_nBkgEvents_C)
-        finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH = validationRegions.make_ValidationRegionEdges_cdiGH(nTotSigCount_cdiGH, nTotBkgCount_cdiGH, final_nBkgEvents_A, final_nBkgEvents_B)
-
-        # plot the signal fractions
-        plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsb, sigFracsd, sigFracsE, sigFracsF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, name = "_Val_bdEF")
-        plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key_cdiGH), float(finalDisc2Key_cdiGH), minEdge, maxEdge, binWidth, name = "_Val_cdiGH")    
+        finalDisc1Key_bdEF, finalDisc2Key_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, closureErrsList_bdEF, closureErrUncList_bdEF, weighted_Sig_b, weighted_Bkg_b, weighted_SigUnc_b, weighted_BkgUnc_b, sigFracsb, sigFracsd, sigFracsE, sigFracsF, sigFracsErrb, sigFracsErrd, sigFracsErrE, sigFracsErrF, finalSigFracb, finalSigFracd, finalSigFracE, finalSigFracF, nEvents_bd, nEvents_EF = validationRegions.make_ValidationRegionEdges_bdEF(nTotSigCount_bdEF, nTotBkgCount_bdEF, final_nBkgEvents_A, final_nBkgEvents_C)
+        finalDisc1Key_cdiGH, finalDisc2Key_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, closureErrsList_cdiGH, closureErrUncList_cdiGH, weighted_Sig_c, weighted_Bkg_c, weighted_SigUnc_c, weighted_BkgUnc_c, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, sigFracsErrc, sigFracsErrdi, sigFracsErrG, sigFracsErrH, finalSigFracc, finalSigFracdi, finalSigFracG, finalSigFracH, nEvents_cdi, nEvents_GH = validationRegions.make_ValidationRegionEdges_cdiGH(nTotSigCount_cdiGH, nTotBkgCount_cdiGH, final_nBkgEvents_A, final_nBkgEvents_B)
 
         # get the lists to make all closure plots 
         finalBinEdges.append((finalDisc1Key, finalDisc2Key))
@@ -198,16 +208,26 @@ def main():
         final_nTotBkgCount_cdiGH.append(nTotBkgCount_cdiGH)
 
         # plot variable vs disc as 1D
-        plotter.plot_VarVsDisc_Val(closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 1.0, "ABCD Closure", "Closure", 2, njet, name = "Val_bdEF", col = "#DDBB87")
-        plotter.plot_VarVsDisc_Val(weighted_Sig_b, weighted_SigUnc_b, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 2, njet, name = "Val_bdEF", col = "#DDBB87")
+        plotter.plot_VarVsDisc_Val(closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 1.0, "ABCD Closure",     "Closure",  2, njet, name = "Val_bdEF", col = "#DDBB87")
+        plotter.plot_VarVsDisc_Val(weighted_Sig_b, weighted_SigUnc_b, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, -1.0, "Weighted Signal Events",     "wSigEvts", 2, njet, name = "Val_bdEF", col = "#DDBB87")
         plotter.plot_VarVsDisc_Val(weighted_Bkg_b, weighted_BkgUnc_b, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 2, njet, name = "Val_bdEF", col = "#DDBB87")
-        plotter.plot_VarVsDisc_Val(closureErrsList_cdiGH, closureErrUncList_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 1.0, "ABCD Closure", "Closure", 1, njet, name = "Val_cdiGH", col = "#429c93")
-        plotter.plot_VarVsDisc_Val(weighted_Sig_c, weighted_SigUnc_c, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", 1, njet, name = "Val_cdiGH", col = "#429c93")
+        plotter.plot_VarVsDisc_Val(sigFracsb, sigFracsErrb, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 0.8, "SigFracsb", "SigFracsb", 2, njet, name = "Val_bdEF", col = "#DDBB87")
+        plotter.plot_VarVsDisc_Val(sigFracsd, sigFracsErrd, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 0.8, "SigFracsd", "SigFracsd", 2, njet, name = "Val_bdEF", col = "#DDBB87")
+        plotter.plot_VarVsDisc_Val(sigFracsE, sigFracsErrE, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 0.8, "SigFracsE", "SigFracsE", 2, njet, name = "Val_bdEF", col = "#DDBB87")
+        plotter.plot_VarVsDisc_Val(sigFracsF, sigFracsErrF, disc1KeyOut_bdEF, float(finalDisc2Key), binWidth/2.0, 0.8, "SigFracsF", "SigFracsF", 2, njet, name = "Val_bdEF", col = "#DDBB87")
+        plotter.plot_VarVsDisc_Val(closureErrsList_cdiGH, closureErrUncList_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 1.0, "ABCD Closure",   "Closure",  1, njet, name = "Val_cdiGH", col = "#429c93")
+        plotter.plot_VarVsDisc_Val(weighted_Sig_c, weighted_SigUnc_c, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, -1.0, "Weighted Signal Events",     "wSigEvts", 1, njet, name = "Val_cdiGH", col = "#429c93")
         plotter.plot_VarVsDisc_Val(weighted_Bkg_c, weighted_BkgUnc_c, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", 1, njet, name = "Val_cdiGH", col = "#429c93")
+        plotter.plot_VarVsDisc_Val(sigFracsc,  sigFracsErrc,  disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 0.8, "SigFracsc",  "SigFracsc",  1, njet, name = "Val_cdiGH", col = "#429c93")
+        plotter.plot_VarVsDisc_Val(sigFracsdi, sigFracsErrdi, disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 0.8, "SigFracsdi", "SigFracsdi", 1, njet, name = "Val_cdiGH", col = "#429c93")
+        plotter.plot_VarVsDisc_Val(sigFracsG,  sigFracsErrG,  disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 0.8, "SigFracsG",  "SigFracsG",  1, njet, name = "Val_cdiGH", col = "#429c93")
+        plotter.plot_VarVsDisc_Val(sigFracsH,  sigFracsErrH,  disc2KeyOut_cdiGH, float(finalDisc1Key), binWidth/2.0, 0.8, "SigFracsH",  "SigFracsH",  1, njet, name = "Val_cdiGH", col = "#429c93")
 
         # plot 2Ds
         plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList_bdEF, closureErrUncList_bdEF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, njet, name="Val_bdEF")
         plotter.plot_ClosureError_vsDisc1Disc2(nBins, closureErrsList_cdiGH, closureErrUncList_cdiGH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key_cdiGH), float(finalDisc2Key_cdiGH), minEdge, maxEdge, binWidth, njet, name="Val_cdiGH")
+        #plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsb, sigFracsd, sigFracsE, sigFracsF, disc1KeyOut_bdEF, disc2KeyOut_bdEF, float(finalDisc1Key_bdEF), float(finalDisc2Key_bdEF), minEdge, maxEdge, binWidth, name = "_Val_bdEF")
+        #plotter.plot_SigFrac_vsDisc1Disc2(nBins, sigFracsc, sigFracsdi, sigFracsG, sigFracsH, disc1KeyOut_cdiGH, disc2KeyOut_cdiGH, float(finalDisc1Key_cdiGH), float(finalDisc2Key_cdiGH), minEdge, maxEdge, binWidth, name = "_Val_cdiGH")
 
         # ------------------
         # make all tex files
