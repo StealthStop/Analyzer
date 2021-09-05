@@ -65,6 +65,9 @@ class Histogram:
     def Clone(self, name):
         return self.histogram.Clone(name)
 
+    def Scale(self, fraction):
+        return self.histogram.Scale(fraction)
+
     def IsGood(self):
         return self.histogram != -1
 
@@ -244,7 +247,7 @@ class StackPlotter:
 
     # Some customized sizes and distances but scaled
     # when going between ratio plot and pure stack with no ratio
-    def makeLegends(self, nBkgs, nSigs, doLogY):
+    def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
         textSize = 0.025 / self.upperSplit
         space    = 0.015
@@ -264,19 +267,19 @@ class StackPlotter:
         sigLegend.SetMargin(0.15)
         sigLegend.SetTextSize(textSize)
 
-        yScale = 1.0
-        if not doLogY:
-            yScale = 1.4
-            if self.printSignificance:
-                yScale = 1.5
-        else:
-            yScale = 30.0
-            if self.printSignificance:
-                yScale = 60.0
+        yMax = 1.0; factor = 1.0; power = 1.0
+        if doLogY:
+            power = math.log10(theMax / theMin)
+            factor = 10.0
 
-        yScale *= float(nBkgs if nBkgs > nSigs else nSigs)/4.0
+        if self.printSignificance:
+            yMax = (theMax-theMin) * 1.6**power * factor
+        else:                              
+            yMax = (theMax-theMin) * 1.5**power * factor
 
-        return bkgLegend, sigLegend, yScale
+        yMax *= float(nBkgs if nBkgs > nSigs else nSigs)/4.0
+
+        return bkgLegend, sigLegend, yMax
 
     def addCMSlogo(self, canvas):
 
@@ -324,11 +327,10 @@ class StackPlotter:
                 for channel in channels:
             
                     newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(channel))
-                    hinfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
+                    newInfo = copy.deepcopy(hinfo)
+                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
 
-                    canvas               = self.makeCanvas(hinfo["logY"])
-                    bkgLegend, sigLegend, yScale = self.makeLegends(len(self.backgrounds), len(self.signals), hinfo["logY"])
-
+                    canvas               = self.makeCanvas(newInfo["logY"])
                     if self.noRatio:
                         canvas.cd()
                     else:
@@ -342,26 +344,50 @@ class StackPlotter:
     
                     nBkgLegend = 0; nSigLegend = 0; theSignificance = 0.0
 
+                    dataScale = 0.0; mcScale = 0.0
+                    # Preemptively get data counts
+                    for dname, dinfo in self.data.items():
+
+                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
+                        if Hobj.IsGood(): dataScale = Hobj.Integral()
+
+                    # Preemptively get MC counts
+                    for bname, binfo in self.backgrounds.items(): 
+
+                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+    
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
+                        
+                        if Hobj.IsGood(): mcScale += Hobj.Integral()
+
                     # Loop over each background and get their respective histo 
                     for bname, binfo in self.backgrounds.items(): 
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
     
-                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, hinfo, binfo)
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
                         if Hobj.IsGood(): 
+                            if self.normMC:
+                                Hobj.Scale(dataScale / mcScale)
                             if not firstDraw:
                                 ratio = Hobj.Clone("ratio%s"%(newName))
                                 firstDraw = True
                             else:
                                 ratio.Add(Hobj.histogram)
 
-                        bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram)
-                        dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
+                            bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram)
+                            dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
                        
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=False): 
                         bstack.Add(h[1], "HIST")
                         nBkgLegend += 1
+
+                    theMax = bstack.GetMaximum()
+
+                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], newInfo["Y"]["min"], theMax)
 
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=True):
                         lname = h[0]
@@ -370,9 +396,7 @@ class StackPlotter:
 
                         bkgLegend.AddEntry(h[1], lname, "F")
 
-                    theMax = bstack.GetMaximum()
-
-                    dummy.SetMaximum(theMax*yScale); dummy.SetMinimum(0.2)
+                    dummy.SetMaximum(yMax); dummy.SetMinimum(hinfo["Y"]["min"]) if "min" in hinfo["Y"] else dummy.SetMinimum(0.2)
                     dummy.Draw()
                     bstack.Draw("SAME")
 
@@ -381,7 +405,7 @@ class StackPlotter:
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
 
-                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, hinfo, sinfo)
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
                         if "550" in sname or len(self.signals) == 1:
                             theSignificance = Hobj.Significance(ratio)
@@ -393,12 +417,10 @@ class StackPlotter:
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
 
-                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, hinfo, dinfo)
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
                         nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend, "E0P", "ELP")
 
                         if Hobj.IsGood():
-                            if self.normMC:
-                                ratio.Scale(Hobj.Integral() / ratio.Integral())
 
                             ratio.Add(Hobj.histogram, -1.0)
                             ratio.Divide(Hobj.histogram)
@@ -414,13 +436,13 @@ class StackPlotter:
                     if not self.noRatio:
 
                         rinfo = {"name" : "ratio", "color" : ROOT.kBlack,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1 / self.upperSplit}
-                        rhinfo = copy.deepcopy(hinfo)
-                        rhinfo["Y"]["title"] = "1 - #frac{Pred.}{Obs.}"
-                        rhinfo["X"]["rebin"] = 1
+                        rnewInfo = copy.deepcopy(newInfo)
+                        rnewInfo["Y"]["title"] = "1 - #frac{Pred.}{Obs.}"
+                        rnewInfo["X"]["rebin"] = 1
 
                         canvas.cd(2)
                         ROOT.gPad.SetGridy()
-                        ratio = Histogram(ratio, None, self.upperSplit/self.scale, self.lowerSplit/self.scale, None, rhinfo, rinfo, 0.8).histogram
+                        ratio = Histogram(ratio, None, self.upperSplit/self.scale, self.lowerSplit/self.scale, None, rnewInfo, rinfo, 0.8).histogram
 
                         ratio.SetMinimum(-1.3); ratio.SetMaximum(1.3)
                         ratio.GetYaxis().SetNdivisions(5, 5, 0)
