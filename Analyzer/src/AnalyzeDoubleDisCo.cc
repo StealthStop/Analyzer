@@ -12,6 +12,7 @@
 
 AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 {
+
     histInfos = {
         {"h_DoubleDisCo_disc1",   80,  0, 1},
         {"h_DoubleDisCo_disc2",   80,  0, 1},
@@ -31,21 +32,19 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop2_eta_cm_OldSeed",     80, -6, 6},
         {"Stop2_phi_cm_OldSeed",     64,  -4, 4},
         {"Stop2_mass_cm_OldSeed",       72,  0, 1500},
+        {"h_MET_phi", 80, -4, 4},
+        {"h_MET_pt" , 150, 0, 150},
         {    "h_njets",           20,   0.0,   20.0},
-        {"blind_njets",           20,   0.0,   20.0},
         {    "h_ntops",           10,   0.0,   10.0},
-        {"blind_ntops",           10,   0.0,   10.0},
         {    "h_ht",              500,   0.0, 5000.0},
-        {"blind_ht",              500,   0.0, 5000.0},
     };
 
     hist2DInfos = {
-        {"h_DoubleDisCo_disc1_disc2",  80,    0,    1, 80,     0,     1}, 
-        {"h_DoubleDisCo_disc1_disc2",  80,    0,    1, 80,     0,     1}, 
+        {"h_DoubleDisCo_disc1_disc2",  100,    0,    1, 100,     0,     1}, 
     };
 
     abcds = {"", "A", "B", "C", "D"};
-    njets = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12", "12incl", "13", "14"};
+    njets = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12", "12incl"};
 
 }
 
@@ -57,14 +56,11 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets)
         histInfos.push_back({"Jet_cm_eta_"          + std::to_string(i), 100, -6, 6});
         histInfos.push_back({"Jet_cm_phi_"          + std::to_string(i), 80, -4, 4});
         histInfos.push_back({"Jet_cm_m_"            + std::to_string(i), 20, 0, 200});
-        histInfos.push_back({"Jet_cm_ptD_"          + std::to_string(i), 80, 0, 1});
-        histInfos.push_back({"Jet_cm_axismajor_"    + std::to_string(i), 80, 0, 0.4});
-        histInfos.push_back({"Jet_cm_axisminor_"    + std::to_string(i), 80, 0, 0.4});
-        histInfos.push_back({"Jet_cm_multiplicity_" + std::to_string(i), 121, -0.5, 120.5});
         histInfos.push_back({"Jet_cm_flavb_"        + std::to_string(i), 80, 0, 1});
         histInfos.push_back({"Jet_cm_flavc_"        + std::to_string(i), 80, 0, 1});
         histInfos.push_back({"Jet_cm_flavg_"        + std::to_string(i), 80, 0, 1});
-        histInfos.push_back({"Jet_cm_flavuds_"        + std::to_string(i), 80, 0, 1});
+        histInfos.push_back({"Jet_cm_flavq_"        + std::to_string(i), 80, 0, 1});
+        histInfos.push_back({"Jet_cm_flavuds_"      + std::to_string(i), 80, 0, 1});
 
     }
 }
@@ -148,7 +144,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passHEMVeto            = tr.getVar<bool>("passHEMVeto");
 
         const auto& passBlind              = tr.getVar<bool>("passBlindLep_Good");            
-        const auto& passBaseline0l_Good    = tr.getVar<bool>("passBaseline0l_Good");
+        const auto& passBaseline0l_Good    = tr.getVar<bool>("passBaseline0l_Good_Loose");
         const auto& passBaseline1l_Good    = tr.getVar<bool>("passBaseline1l_Good");
 
         const auto& DoubleDisCo_binA_0l    = tr.getVar<bool>("DoubleDisCo_binA_0l");
@@ -165,6 +161,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& DoubleDisCo_disc2_0l   = tr.getVar<double>("DoubleDisCo_disc2_0l");
         const auto& DoubleDisCo_disc1_1l   = tr.getVar<double>("DoubleDisCo_disc1_1l");
         const auto& DoubleDisCo_disc2_1l   = tr.getVar<double>("DoubleDisCo_disc2_1l");
+        const auto& DoubleDisCo_disc1_NonIsoMuon_0l   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_0l");
+        const auto& DoubleDisCo_disc2_NonIsoMuon_0l   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_0l");
+        const auto& DoubleDisCo_disc1_NonIsoMuon_1l   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_1l");
+        const auto& DoubleDisCo_disc2_NonIsoMuon_1l   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_1l");
 
         const std::vector<bool>   DoubleDisCo_binA{DoubleDisCo_binA_0l,    DoubleDisCo_binA_1l};
         const std::vector<bool>   DoubleDisCo_binB{DoubleDisCo_binB_0l,    DoubleDisCo_binB_1l};
@@ -203,7 +203,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         std::vector<std::vector<TLorentzVector>> Jets_cm_top6{Jets_cm_top6_0l, Jets_cm_top6_1l};
 
         const auto& eventCounter           = tr.getVar<int>("eventCounter");
-        const auto& nMVAJets               = tr.getVar<unsigned int>("nMVAJets");
+        const auto& nMVAJets_0l            = tr.getVar<unsigned int>("nMVAJets_0l");
+        const auto& nMVAJets_1l            = tr.getVar<unsigned int>("nMVAJets_1l");
+
+        std::vector<unsigned int> nMVAJets{nMVAJets_0l, nMVAJets_1l};
 
         const auto& Stop1_pt_cm_OldSeed    = tr.getVar<double>("Stop1_pt_cm_OldSeed");
         const auto& Stop1_eta_cm_OldSeed   = tr.getVar<double>("Stop1_eta_cm_OldSeed");
@@ -213,6 +216,38 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& Stop2_eta_cm_OldSeed   = tr.getVar<double>("Stop2_eta_cm_OldSeed");
         const auto& Stop2_phi_cm_OldSeed   = tr.getVar<double>("Stop2_phi_cm_OldSeed");
         const auto& Stop2_mass_cm_OldSeed  = tr.getVar<double>("Stop2_mass_cm_OldSeed");
+
+        const auto& met                    = tr.getVar<double>("MET");
+        const auto& metPhi                 = tr.getVar<double>("METPhi");
+
+        const auto& blindABCDdata          = tr.getVar<bool>("blind") && tr.getVar<std::string>("runtype")!="MC";
+
+        std::vector<double> Jets_flavb_0l;   std::vector<double> Jets_flavb_1l;
+        std::vector<double> Jets_flavc_0l;   std::vector<double> Jets_flavc_1l;
+        std::vector<double> Jets_flavg_0l;   std::vector<double> Jets_flavg_1l;
+        std::vector<double> Jets_flavuds_0l; std::vector<double> Jets_flavuds_1l;
+        std::vector<double> Jets_flavq_0l;   std::vector<double> Jets_flavq_1l;
+        for (unsigned int iJet = 1; iJet < nMVAJets_0l+1; iJet++) {
+            Jets_flavb_0l.push_back(tr.getVar<double>("Jet_flavb_"+std::to_string(iJet)+"_0l"));
+            Jets_flavc_0l.push_back(tr.getVar<double>("Jet_flavc_"+std::to_string(iJet)+"_0l"));
+            Jets_flavg_0l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_0l"));
+            Jets_flavuds_0l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
+            Jets_flavq_0l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
+        }
+
+        for (unsigned int iJet = 1; iJet < nMVAJets_1l+1; iJet++) {
+            Jets_flavb_1l.push_back(tr.getVar<double>("Jet_flavb_"+std::to_string(iJet)+"_1l"));
+            Jets_flavc_1l.push_back(tr.getVar<double>("Jet_flavc_"+std::to_string(iJet)+"_1l"));
+            Jets_flavg_1l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_1l"));
+            Jets_flavuds_1l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_1l"));
+            Jets_flavq_1l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_1l"));
+        }
+
+        std::vector<std::vector<double>> Jets_flavb{Jets_flavb_0l, Jets_flavb_1l};
+        std::vector<std::vector<double>> Jets_flavc{Jets_flavc_0l, Jets_flavc_1l};
+        std::vector<std::vector<double>> Jets_flavg{Jets_flavg_0l, Jets_flavg_1l};
+        std::vector<std::vector<double>> Jets_flavuds{Jets_flavuds_0l, Jets_flavuds_1l};
+        std::vector<std::vector<double>> Jets_flavq{Jets_flavq_0l, Jets_flavq_1l};
 
         // ------------------------
         // -- Print event number
@@ -254,7 +289,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         // Initialize Histograms
         if(!initHistos)
         {
-            Preinit(nMVAJets);
+            Preinit(nMVAJets_0l > nMVAJets_1l ? nMVAJets_0l : nMVAJets_1l);
             InitHistos(cut_map);
             initHistos = true;
         }
@@ -277,9 +312,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                           {"11",     NGoodJets[channel]==11},
                           {"11incl", NGoodJets[channel]>=11},
                           {"12",     NGoodJets[channel]==12},
-                          {"12incl", NGoodJets[channel]>=12},
-                          {"13",     NGoodJets[channel]==13},
-                          {"14",     NGoodJets[channel]==14}};
+                          {"12incl", NGoodJets[channel]>=12}
+            };
 
             ABCDmap = {{"",  true},
                        {"A", DoubleDisCo_binA[channel]},
@@ -295,6 +329,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 for(auto& jpass : ABCDmap)
                 {
 
+                    if (blindABCDdata && jpass.first!="")
+                        continue;
                     std::string regionStr = "";
                     if (jpass.first != "") regionStr = "_" + jpass.first;
 
@@ -322,48 +358,37 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                         my_histos["Stop2_mass_cm_OldSeed"   + name]->Fill(Stop2_mass_cm_OldSeed, w);
 
                         unsigned int nJets = Jets_cm_top6[channel].size();
-                        unsigned int iVec  = 0;
-
-                        for(unsigned int i = 1; i <= nMVAJets; i++)
+                        for(unsigned int i = 1; i <= nMVAJets[channel]; i++)
                         {
-
-                            double pt           = (iVec < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(iVec).Pt())  : 0.0;
-                            double eta          = (iVec < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(iVec).Eta()) : 0.0;
-                            double phi          = (iVec < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(iVec).Phi()) : 0.0;
-                            double m            = (iVec < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(iVec).M())   : 0.0;
+                            double pt           = (i-1 < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(i-1).Pt())  : 0.0;
+                            double eta          = (i-1 < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(i-1).Eta()) : 0.0;
+                            double phi          = (i-1 < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(i-1).Phi()) : 0.0;
+                            double m            = (i-1 < nJets) ? static_cast<double>(Jets_cm_top6[channel].at(i-1).M())   : 0.0;
    
-                            double axismajor    = (iVec < nJets) ? tr.getVar<double>("Jet_axismajor_"    + std::to_string(i) + "_" + std::to_string(channel) + "l") : 0.0;
-                            double axisminor    = (iVec < nJets) ? tr.getVar<double>("Jet_axisminor_"    + std::to_string(i) + "_" + std::to_string(channel) + "l") : 0.0;
-                            double ptD          = (iVec < nJets) ? tr.getVar<double>("Jet_ptD_"          + std::to_string(i) + "_" + std::to_string(channel) + "l") : 0.0;
-                            double multiplicity = (iVec < nJets) ? tr.getVar<double>("Jet_multiplicity_" + std::to_string(i) + "_" + std::to_string(channel) + "l") : 0.0;
-
                             my_histos["Jet_cm_pt_"           + std::to_string(i) + name]->Fill(pt, w);
                             my_histos["Jet_cm_eta_"          + std::to_string(i) + name]->Fill(eta, w);
                             my_histos["Jet_cm_phi_"          + std::to_string(i) + name]->Fill(phi, w);
                             my_histos["Jet_cm_m_"            + std::to_string(i) + name]->Fill(m, w);
-                            my_histos["Jet_cm_axismajor_"    + std::to_string(i) + name]->Fill(axismajor, w);
-                            my_histos["Jet_cm_axisminor_"    + std::to_string(i) + name]->Fill(axisminor, w);
-                            my_histos["Jet_cm_ptD_"          + std::to_string(i) + name]->Fill(ptD, w);
-                            my_histos["Jet_cm_multiplicity_" + std::to_string(i) + name]->Fill(multiplicity, w);
 
-                            iVec++;
+                            my_histos["Jet_cm_flavb_"   + std::to_string(i) + name]->Fill(Jets_flavb[channel].at(i-1), w);
+                            my_histos["Jet_cm_flavc_"   + std::to_string(i) + name]->Fill(Jets_flavc[channel].at(i-1), w);
+                            my_histos["Jet_cm_flavg_"   + std::to_string(i) + name]->Fill(Jets_flavg[channel].at(i-1), w);
+                            my_histos["Jet_cm_flavq_"   + std::to_string(i) + name]->Fill(Jets_flavq[channel].at(i-1), w);
+                            my_histos["Jet_cm_flavuds_" + std::to_string(i) + name]->Fill(Jets_flavuds[channel].at(i-1), w);
                         }
 
-                        my_histos["h_DoubleDisCo_disc1"       + name]->Fill(DoubleDisCo_disc1[channel], w);
-                        my_histos["h_DoubleDisCo_disc2"       + name]->Fill(DoubleDisCo_disc2[channel], w);
-                        my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
+                        if (! blindABCDdata) {
+                            my_histos["h_DoubleDisCo_disc1"       + name]->Fill(DoubleDisCo_disc1[channel], w);
+                            my_histos["h_DoubleDisCo_disc2"       + name]->Fill(DoubleDisCo_disc2[channel], w);
+                            my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
+                            my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
+                        }
                         my_histos["h_njets"                   + name]->Fill(NGoodJets[channel], w);
                         my_histos["h_ntops"                   + name]->Fill(ntops, w);
                         my_histos["h_ht"                      + name]->Fill(HT_trigger[channel], w);
-                        my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
+                        my_histos["h_MET_phi"                 + name]->Fill(metPhi, w);
+                        my_histos["h_MET_pt"                  + name]->Fill(met, w);
 
-                        if( NGoodJets[channel] <= 8 )
-                        {
-                            my_histos["blind_njets" + name]->Fill(NGoodJets[channel], w);
-                            my_histos["blind_ntops" + name]->Fill(ntops, w);
-                            my_histos["blind_ht"    + name]->Fill(HT_trigger[channel], w);
-
-                        }
                     }
                 }
             }

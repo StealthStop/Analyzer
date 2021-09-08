@@ -48,9 +48,8 @@ getDeepESMCfg.sh -t Keras_Tensorflow_2016_v1.2 -o -s 2016
 getDeepESMCfg.sh -t Keras_Tensorflow_2017_v1.2 -o -s 2017
 getDeepESMCfg.sh -t Keras_Tensorflow_2018pre_v1.2 -o -s 2018pre
 getDeepESMCfg.sh -t Keras_Tensorflow_2018post_v1.2 -o -s 2018post
-getDeepESMCfg.sh -t Reg_V1 -o -f Mass -F Mass_NonIsoMuon -s Regression
-getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_2016_v1.0 -o -m DoubleDisCo_Reg.cfg -f Keras_Tensorflow -s DoubleDisCo_Reg_0l_2016 -Q
-getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_2016_v3.0 -o -m DoubleDisCo_Reg.cfg -f Keras_Tensorflow -s DoubleDisCo_Reg_1l_2016 -Q
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_RPV_2016_v2.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_2016
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_2016
 ```
 
 Example of running MyAnalysis interactively
@@ -91,6 +90,41 @@ The MyAnalysis program has been updated to have these same switches.
 MyAnalysis now also uses the samples code to keep track of datasets, their cross sections, 6nd their names. 
 To see a list of available datasets, you can call the submission script with the `-l` or `-L` options. Pass the list of datasets you want to run over to the script with the option `-d`. 
 Before submitting jobs, make sure to have called `voms-proxy-init`. 
+
+## Making stack plots
+
+A generic plotter is available for making stack plots with or without a data/MC ratio panel.
+Information on which backgrounds and signals to plot in addition to visualization should be specified
+in the `stackPlotter_aux.py` file. There too, one specifies which histograms to extract from the ROOT
+file and plot.
+
+```
+usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
+                                      [--printNEvents] [--normMC]
+                                      [--printSign] --inpath INPATH --outpath
+                                      OUTPATH --year YEAR
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --noRatio          No ratio plot
+  --approved         Plot is approved
+  --printNEvents     Show number of events
+  --normMC           Normalize MC to data
+  --printSign        Print simple significance
+  --inpath INPATH    Path to root files
+  --outpath OUTPATH  Where to put plots
+  --year YEAR        which year
+usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
+                                      [--printNEvents] [--normMC] --inpath
+                                      INPATH --outpath OUTPATH --year YEAR
+
+```
+
+An example call to the stack plotter could be:
+
+```
+python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --outpath plot_histos --normMC
+```
 
 ## Making inputs for the fit
 

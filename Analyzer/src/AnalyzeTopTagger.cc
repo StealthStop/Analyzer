@@ -1,5 +1,6 @@
 #define AnalyzeTopTagger_cxx
 #include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
+#include "Framework/Framework/include/SetUpTopTagger.h"
 #include "Framework/Framework/include/Utility.h"
 #include "SusyAnaTools/Tools/NTupleReader.h"
 
@@ -10,13 +11,6 @@
 #include <TEfficiency.h>
 #include <TRandom3.h>
 #include <iostream>
-
-// Mandatory includes to use top tagger
-#include "TopTagger/TopTagger/interface/TopTagger.h"
-#include "TopTagger/TopTagger/interface/TopTaggerResults.h"
-#include "TopTagger/TopTagger/interface/TopTaggerUtilities.h"
-#include "TopTagger/CfgParser/interface/TTException.h"
-#include "Framework/Framework/include/SetUpTopTagger.h"
 
 AnalyzeTopTagger::AnalyzeTopTagger() : hists("histos"), histNjet6("Njet6"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), histNjet10("Njet10"), histNjet11("Njet11"), 
                                                         histNjet12("Njet12"), histNjet13("Njet13"), histNjet14("Njet14"), histNjet15("Njet15")
