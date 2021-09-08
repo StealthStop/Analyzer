@@ -28,7 +28,7 @@ class Common_Calculations_Plotters:
     # -----------------
     # plot all closures
     # -----------------
-    def plot_ClosureNjets(self, bkg, bkgPred, Njets, name = '', tag = ''):
+    def plot_ClosureNjets(self, bkg, bkgPred, Njets, name = '', closureTag = ''):
         
         x         = []; xUnc         = []
         obs       = []; obsUnc       = [] 
@@ -92,17 +92,17 @@ class Common_Calculations_Plotters:
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
-        if tag == "":
+        if closureTag == "":
             fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric))
         else:
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, tag))
+            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag))
    
         plt.close(fig)
     
     # ----------------------
     # make all closure plots
     # ----------------------    
-    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, Njets=None, name = "", tag=""):
+    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, Njets=None, name = "", closureTag=""):
     
         evtsNjets     = []
         evtsNjetsPred = []
@@ -132,7 +132,7 @@ class Common_Calculations_Plotters:
                 evtsNjets.append((evtsA, evtsAunc**0.5))
                 evtsNjetsPred.append((pred_A, predUnc_A))
     
-        self.plot_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), Njets, name, tag)
+        self.plot_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), Njets, name, closureTag)
 
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges
@@ -221,7 +221,7 @@ class Common_Calculations_Plotters:
         ax.add_line(l4)
 
         fig.tight_layout()
-        fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name), dpi=fig.dpi)
+        fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
