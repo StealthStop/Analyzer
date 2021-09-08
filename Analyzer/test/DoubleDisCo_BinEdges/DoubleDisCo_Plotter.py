@@ -134,7 +134,7 @@ class Common_Calculations_Plotters:
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges
     # ----------------------------------------------------------------
-    def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, edgeWidth, cmax, vmax, Njets = -1, name = "", region = ""):
+    def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, edgeWidth, cmax, vmax, Njets = -1, name = "", region = "", tag = ""):
 
         nBins = math.ceil((1.0 + edgeWidth)/edgeWidth)
 
@@ -152,8 +152,7 @@ class Common_Calculations_Plotters:
         ax.add_line(l1); ax.add_line(l2)
         fig.tight_layout()
 
-        if Njets == -1: fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_%s.pdf"%(self.year, name, region), dpi=fig.dpi)
-        else:           fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s.pdf"%(self.year,name,Njets, region), dpi=fig.dpi)
+        fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s.pdf"%(self.year, name, Njets, region, tag), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -227,7 +226,7 @@ class Common_Calculations_Plotters:
     # plot variable vs disc as 1D
     #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
     # ----------------------------------------------------------------------
-    def plot_VarVsDisc(self, var, edges, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1, region=""):
+    def plot_VarVsDisc(self, var, edges, edgeWidth, ylim = -1.0, ylabel = "", name = "", disc = -1, Njets = -1, channel="", region="", tag=""):
 
         x25 = []; x50 = []; x75 = []; xDiag = []
         y25 = []; y50 = []; y75 = []; yDiag = []
@@ -280,6 +279,6 @@ class Common_Calculations_Plotters:
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
 
         fig.tight_layout()
-        fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, region), dpi=fig.dpi)
+        fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, disc, Njets, region, channel, tag), dpi=fig.dpi)
 
         plt.close(fig)
