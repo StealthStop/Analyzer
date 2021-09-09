@@ -252,7 +252,7 @@ def main():
 
             # plot variable vs disc as 1D 
             for disc in [1, 2]:
-                plotter.plot_VarVsDisc(closureErrs,   edges, binWidth/2.0, 1.0, "ABCD Closure", "Closure",      disc, njet, name = region)
+                plotter.plot_VarVsDisc(closureErrs,   edges, binWidth/2.0, 1.0, "%s Closure"%(region), "Closure",      disc, njet, name = region)
                 plotter.plot_VarVsDisc(significances, edges, binWidth/2.0, 5.0, "Significance", "Significance", disc, njet, name = region)
                 plotter.plot_VarVsDisc(allRegionsSigEvents[region]["A"], edges, binWidth/2.0, -1.0, "Weighted Signal Events",     "wSigEvts", disc, njet, name = region)
                 plotter.plot_VarVsDisc(allRegionsBkgEvents[region]["A"], edges, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", disc, njet, name = region)
