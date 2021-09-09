@@ -34,6 +34,8 @@ class BinEdgesTable(TableWriter):
     def writeHeader(self):
         self.f.write("\\resizebox{\linewidth}{!}{%")
         self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
         self.f.write("    \\begin{tabular}{| c | c | c | c | c | c | c |}")
         self.f.write("\n")
         self.f.write("        \hline")
@@ -63,6 +65,8 @@ class ABCDeventsTable(TableWriter):
     def writeHeader(self):
         self.f.write("\\resizebox{\linewidth}{!}{%")
         self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
         self.f.write("    \\begin{tabular}{| c | c | c | c | c | c | c |}")
         self.f.write("\n")
         self.f.write("        \hline")
@@ -88,6 +92,8 @@ class BDEFeventsTable(TableWriter):
     def writeHeader(self):
         self.f.write("\\resizebox{\linewidth}{!}{%")
         self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
         self.f.write("    \\begin{tabular}{| c | c | c | c | c | c | c |}")
         self.f.write("\n")
         self.f.write("        \hline")
@@ -112,6 +118,8 @@ class CDGHeventsTable(TableWriter):
 
     def writeHeader(self):
         self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
         self.f.write("\n")
         self.f.write("    \\begin{tabular}{| c | c | c | c | c | c | c |}")
         self.f.write("\n")
