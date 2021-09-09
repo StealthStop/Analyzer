@@ -219,8 +219,15 @@ class Common_Calculations_Plotters:
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         l1 = ml.Line2D([float(allRegionsEdges["ABCD"][0]), float(allRegionsEdges["ABCD"][0])], [0.0, 1.0],   color="darkviolet", linewidth=4, linestyle='solid')
         l2 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["ABCD"][1]), float(allRegionsEdges["ABCD"][1])],   color="darkviolet", linewidth=4, linestyle='solid')
-        l3 = ml.Line2D([float(allRegionsEdges["Val_bdEF"][0]), float(allRegionsEdges["Val_bdEF"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
-        l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_cdiGH"][1]), float(allRegionsEdges["Val_cdiGH"][1])], color=col2, linewidth=4, linestyle='solid')
+        
+        l3 = None; l4 = None
+        if name == "Val_SubDivD":
+            l3 = ml.Line2D([float(allRegionsEdges["Val_subDivD"][0]), float(allRegionsEdges["Val_subDivD"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
+            l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_subDivD"][1]), float(allRegionsEdges["Val_subDivD"][1])], color=col2, linewidth=4, linestyle='solid')
+        else:
+            l3 = ml.Line2D([float(allRegionsEdges["Val_bdEF"][0]), float(allRegionsEdges["Val_bdEF"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
+            l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_cdiGH"][1]), float(allRegionsEdges["Val_cdiGH"][1])], color=col2, linewidth=4, linestyle='solid')
+           
         ax.add_line(l1)
         ax.add_line(l2)
         ax.add_line(l3)
