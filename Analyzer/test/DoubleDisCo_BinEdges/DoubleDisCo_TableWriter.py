@@ -8,6 +8,7 @@ class TableWriter:
     def __init__(self, tablesPath, channel, year, tag, model, mass):
 
         self.f = open("%s/%s_%s_%s_%s_%s.tex" %(tablesPath, year, tag, model, mass, channel), "w")
+        self.writeHeader()
 
     def writeHeader(self):
         print(self.f)
@@ -134,22 +135,22 @@ class CDGHeventsTable(TableWriter):
 class SubDivDeventsTable(TableWriter):
 
     def writeHeader(self):
-        d.write("\\resizebox{\linewidth}{!}{%")
-        d.write("\n")
-        d.write("\def\\arraystretch{0.6}")
-        d.write("\n")
-        d.write("\\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c |}")
-        d.write("\n")
-        d.write("\hline")
-        d.write("\n")
-        d.write("\\textcolor{ttjetscol}{NJets} &  \multicolumn{2}{c|} {\\textcolor{click}{Edges}} & \multicolumn{4}{c|} {\\textcolor{massReg}{SigFracs}} & \multicolumn{4}{c|} {\\textcolor{disc}{nEvents(Sig+Bkg)}} \\\\")
-        d.write("\n")
-        d.write("\hline")
-        d.write("\n")
-        d.write("& \scriptsize \\textcolor{click}{disc1} & \scriptsize \\textcolor{click}{disc2} & \scriptsize \\textcolor{massReg}{sigFrac\_dA} & \scriptsize \\textcolor{massReg}{sigFrac\_dB} & \scriptsize \\textcolor{massReg}{SigFrac\_dC} & \scriptsize \\textcolor{massReg}{SigFrac\_dD} & \scriptsize \\textcolor{disc}{in region dA} & \scriptsize \\textcolor{disc}{in region dB} & \scriptsize \\textcolor{disc}{in region dC} & \scriptsize \\textcolor{disc}{in region dD} \\\\")
-        d.write("\n")
-        d.write("\hline")
-        d.write("\n")
+        self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\n")
+        self.f.write("\def\\arraystretch{0.6}")
+        self.f.write("\n")
+        self.f.write("\\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c |}")
+        self.f.write("\n")
+        self.f.write("\hline")
+        self.f.write("\n")
+        self.f.write("\\textcolor{ttjetscol}{NJets} &  \multicolumn{2}{c|} {\\textcolor{click}{Edges}} & \multicolumn{4}{c|} {\\textcolor{massReg}{SigFracs}} & \multicolumn{4}{c|} {\\textcolor{disc}{nEvents(Sig+Bkg)}} \\\\")
+        self.f.write("\n")
+        self.f.write("\hline")
+        self.f.write("\n")
+        self.f.write("& \scriptsize \\textcolor{click}{disc1} & \scriptsize \\textcolor{click}{disc2} & \scriptsize \\textcolor{massReg}{sigFrac\_dA} & \scriptsize \\textcolor{massReg}{sigFrac\_dB} & \scriptsize \\textcolor{massReg}{SigFrac\_dC} & \scriptsize \\textcolor{massReg}{SigFrac\_dD} & \scriptsize \\textcolor{disc}{in region dA} & \scriptsize \\textcolor{disc}{in region dB} & \scriptsize \\textcolor{disc}{in region dC} & \scriptsize \\textcolor{disc}{in region dD} \\\\")
+        self.f.write("\n")
+        self.f.write("\hline")
+        self.f.write("\n")
 
     def writeLine(self, **kwargs):
         self.f.write("\\tiny \\textcolor{ttjetscol}{%s} &  \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{click}{%s} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{massReg}{%.3f} & \\tiny \\textcolor{disc}{%.2f} & \\tiny \\textcolor{disc}{%.2f} & \\tiny \\textcolor{disc}{%.2f} & \\tiny \\textcolor{disc}{%.2f} \\\\" %(kwargs["njet"], kwargs["finalDiscs"][0], kwargs["finalDiscs"][1], kwargs["finalSigFracs"]["A"][0], kwargs["finalSigFracs"]["B"][0], kwargs["finalSigFracs"]["C"][0], kwargs["finalSigFracs"]["D"][0], kwargs["final_nTot_Sig"]["A"][0]+kwargs["final_nTot_Bkg"]["A"][0], kwargs["final_nTot_Sig"]["B"][0]+kwargs["final_nTot_Bkg"]["B"][0], kwargs["final_nTot_Sig"]["C"][0]+kwargs["final_nTot_Bkg"]["C"][0], kwargs["final_nTot_Sig"]["D"][0]+kwargs["final_nTot_Bkg"]["D"][0]) )
