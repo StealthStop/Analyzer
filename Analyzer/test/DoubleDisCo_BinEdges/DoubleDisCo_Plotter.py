@@ -9,11 +9,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib.colors import LogNorm
 
-from DoubleDisCo_Helpers import *
 
-# Class that makes all the fancy plots
-# Information needed to make the plots
-# is not owned by this class, just passed in on the call
 class Common_Calculations_Plotters:
 
     def __init__(self, outputDir, metric, year, model, mass, channel):
@@ -24,6 +20,19 @@ class Common_Calculations_Plotters:
         self.channel = channel
 
         self.outputDir = outputDir
+
+    # ----------------------
+    # calculate all closures
+    # ----------------------
+    def cal_simpleClosure_ABCD(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
+
+        if nEvents_D == 0.0:
+            return -999.0, -999.0
+
+        nPred_A    = (nEvents_B * nEvents_C) / nEvents_D
+        nPred_Aunc = ((nEvents_C * nEventsErr_B / nEvents_D)**2.0 + (nEventsErr_C * nEvents_B / nEvents_D)**2.0 + (nEvents_C * nEvents_B * nEventsErr_D / nEvents_D**2.0)**2.0)**0.5
+
+        return nPred_A, nPred_Aunc
 
     # -----------------
     # plot all closures
@@ -92,10 +101,7 @@ class Common_Calculations_Plotters:
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
-        if closureTag == "":
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric))
-        else:
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag))
+        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag))
    
         plt.close(fig)
     
@@ -127,7 +133,7 @@ class Common_Calculations_Plotters:
                     evtsC += sigEventsPerNjets[Njet][name]["C"][0]; evtsCunc += sigEventsPerNjets[Njet][name]["C"][1]**2.0
                     evtsD += sigEventsPerNjets[Njet][name]["D"][0]; evtsDunc += sigEventsPerNjets[Njet][name]["D"][1]**2.0
     
-                pred_A, predUnc_A = cal_SimpleABCD(evtsA, evtsB, evtsC, evtsD, evtsAunc**0.5, evtsBunc**0.5, evtsCunc**0.5, evtsDunc**0.5)
+                pred_A, predUnc_A = self.cal_simpleClosure_ABCD(evtsA, evtsB, evtsC, evtsD, evtsAunc**0.5, evtsBunc**0.5, evtsCunc**0.5, evtsDunc**0.5)
     
                 evtsNjets.append((evtsA, evtsAunc**0.5))
                 evtsNjetsPred.append((pred_A, predUnc_A))
@@ -137,7 +143,7 @@ class Common_Calculations_Plotters:
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges
     # ----------------------------------------------------------------
-    def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, binWidth, cmax, vmax, Njets = -1, name = "", variable = "", metric = ""):
+    def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, binWidth, cmax, vmax, Njets = -1, name = "", variable = ""):
 
         nBins = math.ceil((1.0 + binWidth)/binWidth)
 
@@ -155,7 +161,7 @@ class Common_Calculations_Plotters:
         ax.add_line(l1); ax.add_line(l2)
         fig.tight_layout()
 
-        fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s.pdf"%(self.year, variable, Njets, name, metric), dpi=fig.dpi)
+        fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s_%s.pdf"%(self.year, variable, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -182,7 +188,7 @@ class Common_Calculations_Plotters:
         plt.text(0.4, 0.85, '$%.2f < \\bf{Disc.\\;1\\;Edge}$ = %s < %.2f' % (edges[0][0], finalDiscEdges[0], edges[-1][0]), transform=ax.transAxes, fontsize=8)
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0][1],  finalDiscEdges[1], edges[-1][1]), transform=ax.transAxes, fontsize=8)
 
-        fig.savefig('%s/%s_InvSign_vs_ClosureErr_Njets%s_%s.pdf' % (self.outputDir, self.year, Njets, name), dpi=fig.dpi)
+        fig.savefig('%s/%s_InvSign_vs_ClosureErr_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -221,7 +227,7 @@ class Common_Calculations_Plotters:
         ax.add_line(l4)
 
         fig.tight_layout()
-        fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name, self.channel), dpi=fig.dpi)
+        fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -229,7 +235,7 @@ class Common_Calculations_Plotters:
     # plot variable vs disc as 1D
     #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
     # ----------------------------------------------------------------------
-    def plot_VarVsDisc(self, var, edges, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1, name="", channel="", metric=""):
+    def plot_VarVsDisc(self, var, edges, edgeWidth, ylim = -1.0, ylabel = "", tag = "", disc = -1, Njets = -1, name=""):
 
         x25 = []; x50 = []; x75 = []; xDiag = []
         y25 = []; y50 = []; y75 = []; yDiag = []
@@ -282,6 +288,6 @@ class Common_Calculations_Plotters:
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
 
         fig.tight_layout()
-        fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, channel, metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)

@@ -3,39 +3,33 @@ import math
 import ctypes
 import numpy as np
 
-from DoubleDisCo_Helpers    import *
-from DoubleDisCo_Quantities import *
 
-# -------------------------------------------------------------------------
-# Base class for performing integrals and determining bin edges
-# of all possible choices in an arbitrary region of the full "ABCD" plane
-# The arbitrary region is defined by the boundary variables and fixed edges
-# Derived classes for a particular region are provided below
-# -------------------------------------------------------------------------
-
+# ----------------------------------------------------------------------------------
 # histBkg        : ROOT TH2 corresponding to background process
 # histSig        : ROOT TH2 corresponding to signal process
-# fixedDisc1Edge : fix the disc 1 edge with provided value while let disc 2 float
-# fixedDisc2Edge : fix the disc 2 edge with provided value while let disc 1 float
-# leftBoundary   : value corresponding to left edge defining the "ABCD" region
-# rightBoundary  : value corresponding to right edge defining the "ABCD" region
+# fixedDisc1Edge : fix the disc 1 edge with provided value 
+# fixedDisc2Edge : fix the disc 2 edge with provided value 
+# leftBoundary   : value corresponding to the left edge defining the "ABCD" region
+# rightBoundary  : value corresponding to the right edge defining the "ABCD" region
 # topBoundary    : value corresponding to the top edge defining the "ABCD" region
 # bottomBoundary : value corresponding to the bottom edge defining the "ABCD" region
-class Regions:
+# ----------------------------------------------------------------------------------
+class All_Regions:
 
-    def __init__(self, histBkg=None, histSig=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, **kwargs):
+    def __init__(self, histBkg=None, histSig=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
 
-        self.histBkg = histBkg
-        self.histSig = histSig
+        self.quantities = {}
+        self.finalEdges = ()
 
+        self.histBkg        = histBkg
+        self.histSig        = histSig
         self.fixedDisc1Edge = fixedDisc1Edge
         self.fixedDisc2Edge = fixedDisc2Edge
         self.leftBoundary   = leftBoundary
         self.rightBoundary  = rightBoundary
         self.topBoundary    = topBoundary
         self.bottomBoundary = bottomBoundary
-
-        self.info = Quantities()
+        self.metric         = metric
 
         self.extraArgs = kwargs
 
@@ -44,25 +38,52 @@ class Regions:
 
         # Then determine the "final" choice of bin edges for the region
         # based on the optimization_metric function
-        # Likewise, store useful quantities per choice of bin edges
         self.get_BinEdges()
 
-    # -----------------------------------------------------
+    # ------------------------
+    # Significance calculation
+    # ------------------------
+    def cal_Significance(self, nSigEvents, nBkgEvents, sys=0.3):
+        if (nBkgEvents == 0.0):
+            return 0.0
+    
+        significance = nSigEvents / ( nBkgEvents + (sys * nBkgEvents)**2.0 )**0.5
+        return significance
+    
+    # -------------------------
+    # Closure error calculation
+    # -------------------------
+    def cal_ClosureError(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
+    
+        if nEvents_A == 0.0 or nEvents_D == 0.0:
+            return -999.0, -999.0
+        
+        closureError = abs(1.0 - ( (nEvents_B * nEvents_C) / (nEvents_A * nEvents_D) ) )
+        
+        closureErrUnc = ( ( ( nEvents_C * nEventsErr_B ) / ( nEvents_A * nEvents_D) )**2.0 
+                        + ( ( nEvents_B * nEventsErr_C ) / ( nEvents_A * nEvents_D) )**2.0 
+                        + ( ( nEvents_B * nEvents_C * nEventsErr_A ) / ( nEvents_A**2.0 * nEvents_D ) )**2.0 
+                        + ( ( nEvents_B * nEvents_C * nEventsErr_D ) / ( nEvents_A * nEvents_D**2.0 ) )**2.0 )**0.5
+    
+        return closureError, closureErrUnc
+
+    # --------------------------------------------------------------
     # Optimization metric function to be overridden by derived class
-    # -----------------------------------------------------
+    # --------------------------------------------------------------
     def optimization_metric(self, **kwargs):
         return 0.0
 
-    # -------------------------------------------------------
+    # -----------------------------------------------------
     # get signal and background histograms' counts
-    #   -- count both signal and background events separately 
+    #   count both signal and background events separately:
     #   -- in each A, B, C, D regions
-    #   -- put them to the dictionaries
-    # -------------------------------------------------------
+    #   -- B'D'EF, C'D'GH validation regions
+    #   -- Sub-division D validation regions
+    # -----------------------------------------------------
     def count_Events_inBinEdges(self):
     
         # Define the absolute bounds that our integral takes place in
-        # if boundaries are not defined, then assume the edge of the histogram
+        # If boundaries are not defined, then assume the edge of the histogram
         firstXBin = 1 if self.leftBoundary   == None else self.histBkg.GetXaxis().FindBin(float(self.leftBoundary))
         firstYBin = 1 if self.bottomBoundary == None else self.histBkg.GetYaxis().FindBin(float(self.bottomBoundary))
  
@@ -77,7 +98,7 @@ class Regions:
 
             # Store disc 1 edge as string with three digits of accuracy for now
             xLowBinEdge = self.histBkg.GetXaxis().GetBinLowEdge(xBin)
-            xBinKey = "%.3f"%(xLowBinEdge)
+            xBinKey     = "%.3f"%(xLowBinEdge)
     
             # loop over the y bins
             for yBin in nYBins:
@@ -108,15 +129,15 @@ class Regions:
                 nBkgEvents_C = math.ceil(self.histBkg.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nBkgEventsErr_C))
                 nBkgEvents_D = math.ceil(self.histBkg.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nBkgEventsErr_D))
 
-                self.info.add("nSigEventsA", xBinKey, yBinKey, (nSigEvents_A, nSigEvents_A**0.5))
-                self.info.add("nSigEventsB", xBinKey, yBinKey, (nSigEvents_B, nSigEvents_B**0.5))
-                self.info.add("nSigEventsC", xBinKey, yBinKey, (nSigEvents_C, nSigEvents_C**0.5))
-                self.info.add("nSigEventsD", xBinKey, yBinKey, (nSigEvents_D, nSigEvents_D**0.5))
+                self.add("nSigEventsA", xBinKey, yBinKey, (nSigEvents_A, nSigEvents_A**0.5))
+                self.add("nSigEventsB", xBinKey, yBinKey, (nSigEvents_B, nSigEvents_B**0.5))
+                self.add("nSigEventsC", xBinKey, yBinKey, (nSigEvents_C, nSigEvents_C**0.5))
+                self.add("nSigEventsD", xBinKey, yBinKey, (nSigEvents_D, nSigEvents_D**0.5))
 
-                self.info.add("nBkgEventsA", xBinKey, yBinKey, (nBkgEvents_A, nBkgEvents_A**0.5))
-                self.info.add("nBkgEventsB", xBinKey, yBinKey, (nBkgEvents_B, nBkgEvents_B**0.5))
-                self.info.add("nBkgEventsC", xBinKey, yBinKey, (nBkgEvents_C, nBkgEvents_C**0.5))
-                self.info.add("nBkgEventsD", xBinKey, yBinKey, (nBkgEvents_D, nBkgEvents_D**0.5))
+                self.add("nBkgEventsA", xBinKey, yBinKey, (nBkgEvents_A, nBkgEvents_A**0.5))
+                self.add("nBkgEventsB", xBinKey, yBinKey, (nBkgEvents_B, nBkgEvents_B**0.5))
+                self.add("nBkgEventsC", xBinKey, yBinKey, (nBkgEvents_C, nBkgEvents_C**0.5))
+                self.add("nBkgEventsD", xBinKey, yBinKey, (nBkgEvents_D, nBkgEvents_D**0.5))
 
     # -------------------------------------------------------------------------------
     # Region by region calculation of signal fraction, closure Err, significance, etc
@@ -124,25 +145,32 @@ class Regions:
     #   -- SigFragA = Nsig / (Nbkg + Nsig) 
     #   -- SigFragB = Nsig / (Nbkg + Nsig) 
     #   -- SigFragC = Nsig / (Nbkg + Nsig) 
-    #   -- SigFragD = Nsig / (Nbkg + Nsig) 
+    #   -- SigFragD = Nsig / (Nbkg + Nsig)
+    # Total (A+B+C+D) signal fraction calculation
+    # look at (SIG) events in each region, how many events are signal
+    #   NtotalSig = NA + NB + NC + ND
+    #   -- SigTotFragA = NA / Ntotal
+    #   -- SigTotFragB = NB / Ntotal
+    #   -- SigTotFragC = NC / Ntotal
+    #   -- SigTotFragD = ND / Ntotal  
     # ----------------------------------------------------------------------------
-    def get_BinEdges(self, bkgNormUnc = 0.3, minBkgEvents = 5, minSigEvents = 5):
+    def get_BinEdges(self, bkgNormUnc = 0.3, minBkgEvents = 1, minSigEvents = 5):
       
         optMetric = 999.0
 
         # loop over the disc1 and disc2 to get any possible combination of them
-        for disc1Key, disc2Key in self.info.get("edges"):
+        for disc1Key, disc2Key in self.get("edges"):
 
             # number of signal and background events in aech A, B, C, D region
-            nSigEvents_A, nSigEventsErr_A = self.info.get("nSigEventsA", disc1Key, disc2Key) 
-            nSigEvents_B, nSigEventsErr_B = self.info.get("nSigEventsB", disc1Key, disc2Key) 
-            nSigEvents_C, nSigEventsErr_C = self.info.get("nSigEventsC", disc1Key, disc2Key) 
-            nSigEvents_D, nSigEventsErr_D = self.info.get("nSigEventsD", disc1Key, disc2Key) 
+            nSigEvents_A, nSigEventsErr_A = self.get("nSigEventsA", disc1Key, disc2Key) 
+            nSigEvents_B, nSigEventsErr_B = self.get("nSigEventsB", disc1Key, disc2Key) 
+            nSigEvents_C, nSigEventsErr_C = self.get("nSigEventsC", disc1Key, disc2Key) 
+            nSigEvents_D, nSigEventsErr_D = self.get("nSigEventsD", disc1Key, disc2Key) 
 
-            nBkgEvents_A, nBkgEventsErr_A = self.info.get("nBkgEventsA", disc1Key, disc2Key)
-            nBkgEvents_B, nBkgEventsErr_B = self.info.get("nBkgEventsB", disc1Key, disc2Key)
-            nBkgEvents_C, nBkgEventsErr_C = self.info.get("nBkgEventsC", disc1Key, disc2Key)
-            nBkgEvents_D, nBkgEventsErr_D = self.info.get("nBkgEventsD", disc1Key, disc2Key)
+            nBkgEvents_A, nBkgEventsErr_A = self.get("nBkgEventsA", disc1Key, disc2Key)
+            nBkgEvents_B, nBkgEventsErr_B = self.get("nBkgEventsB", disc1Key, disc2Key)
+            nBkgEvents_C, nBkgEventsErr_C = self.get("nBkgEventsC", disc1Key, disc2Key)
+            nBkgEvents_D, nBkgEventsErr_D = self.get("nBkgEventsD", disc1Key, disc2Key)
 
             # Region by region signal fraction calculation
             # get some plots based on region by region signal fraction
@@ -177,9 +205,9 @@ class Regions:
             # significance and closure error for optimization of bin edges
             significance = 0.0; significanceUnc = 0.0; closureErr = -999.0; closureErrUnc = -999.0; tempOptMetric = 999.0
     
-            closureErr, closureErrUnc = cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
+            closureErr, closureErrUnc = self.cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
 
-            significance += cal_Significance(nSigEvents_A, nBkgEvents_A)**2.0
+            significance += self.cal_Significance(nSigEvents_A, nBkgEvents_A)**2.0
             significance = significance**0.5
    
             # get the significanceUncs to plot variable vs disc as 1D 
@@ -188,92 +216,171 @@ class Regions:
                                   + ( ( nSigEvents_A * nBkgEventsErr_A * (2.0 * nBkgEvents_A * closureErr**2.0 + 2.0 * bkgNormUnc**2.0 * nBkgEvents_A + 1) ) / ( nBkgEvents_A + (bkgNormUnc * nBkgEvents_A)**2.0 + (closureErr * nBkgEvents_A)**2.0 )**1.5 )**2.0
                                   + ( ( nBkgEvents_A**2.0 * closureErr * nSigEvents_A * closureErrUnc) / ( nBkgEvents_A * ( nBkgEvents_A * (closureErr**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
  
-            # Store significance and closure error for current choice of bin edges
-            self.info.add("significance", disc1Key, disc2Key, (significance, significanceUnc))
-            self.info.add("closureError", disc1Key, disc2Key, (closureErr,   closureErrUnc))
+            # Store significance and closure error 
+            self.add("significance", disc1Key, disc2Key, (significance, significanceUnc))
+            self.add("closureError", disc1Key, disc2Key, (closureErr,   closureErrUnc))
 
             # Region by region fraction and fraction error
-            self.info.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA))
-            self.info.add("sigFractionB", disc1Key, disc2Key, (sigFracsB, sigFracsErrB))
-            self.info.add("sigFractionC", disc1Key, disc2Key, (sigFracsC, sigFracsErrC))
-            self.info.add("sigFractionD", disc1Key, disc2Key, (sigFracsD, sigFracsErrD))
+            self.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA))
+            self.add("sigFractionB", disc1Key, disc2Key, (sigFracsB, sigFracsErrB))
+            self.add("sigFractionC", disc1Key, disc2Key, (sigFracsC, sigFracsErrC))
+            self.add("sigFractionD", disc1Key, disc2Key, (sigFracsD, sigFracsErrD))
    
             # If in region with minimum number of bkg events, compute the metric value
-            if (nBkgEvents_A > minBkgEvents):
-                tempOptMetric = self.optimization_metric(significance=significance, closureError=closureErr, 
-                                                         nBkgA=nBkgEvents_A, nBkgB=nBkgEvents_B, nBkgC=nBkgEvents_C, nBkgD=nBkgEvents_D,
-                                                         disc1=float(disc1Key), disc2=float(disc2Key))
-
-            # After calculating interesting quantities above for current choice of bin edges,
-            # we check here if this choice is the new best choice
-            # If we care about fixed edges check if at fixed edge before checking optimization
-            # If our region contains a fixed vertical edge (disc 1), then skip all other choices of x
-            # that do not correspond to that edge
+            tempOptMetric = self.optimization_metric(significance=significance, closureError=closureErr, minBkgEvents=minBkgEvents,  
+                                                     nBkgA=nBkgEvents_A, nBkgB=nBkgEvents_B, nBkgC=nBkgEvents_C, nBkgD=nBkgEvents_D,
+                                                     disc1=float(disc1Key), disc2=float(disc2Key))
+            
+            # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
             if self.fixedDisc1Edge != None and abs(float(self.fixedDisc1Edge) - float(disc1Key)) > 0.01: continue
 
-            # If our region contains a fixed horizontal edge (disc 2), then skip all other choices of y
-            # that do not correspond to that edge
+            # use this statement for bdEF regions if fixed disc2 edge (horizontal edge)
             if self.fixedDisc2Edge != None and abs(float(self.fixedDisc2Edge) - float(disc2Key)) > 0.01: continue
 
             # Determine based on the metric value if the current
             # choice of bin edges is better and if so, save them
             if tempOptMetric < optMetric:
-                self.info.finalEdges = (disc1Key, disc2Key)
+                self.finalEdges = (disc1Key, disc2Key)
                 optMetric = tempOptMetric
 
-    # A couple of simple helper functions to retrive a quantity
-    # i.e. closureErr, significance, etc.
-    def get(self, name):
-        return self.info.get(name)
+    # ----------------------------------
+    # store quantities to make any plots
+    # with any combination of bin edges
+    # i.e. significance, closure, etc.
+    # ----------------------------------
+    def add(self, name, disc1, disc2, val):
 
+        if disc1 not in self.quantities:
+            self.quantities[disc1] = {}
+
+        if disc2 not in self.quantities[disc1]:
+            self.quantities[disc1][disc2] = {}
+
+        self.quantities[disc1][disc2][name] = val
+
+    # -------------------------------------------------
+    # get specific variables to make any plots
+    # with any combination of bin edges
+    # i.e. nSigEventsA, nBkgEventsA, sigFractionA, etc.
+    # -------------------------------------------------
+    def get(self, name, disc1=None, disc2=None):
+
+        if name == "edges":
+            if disc1 != None and disc2 != None:
+                return self.finalEdges
+            else:
+                payload = []
+                for disc1, disc2s in self.quantities.items():
+                    for disc2, _ in disc2s.items():
+                        payload.append((disc1,disc2))
+                return payload
+
+        if disc1 == None and disc2 == None:
+            payload = []
+            for disc1, disc2s in self.quantities.items():
+                for disc2, q in disc2s.items():
+                    payload.append(q[name])
+                    
+            return np.array(payload)
+
+        if disc1 != None and disc1 not in self.quantities:
+            raise LookupError("Cannot find the key \"%s\" in the dictionary !"%(disc1))
+
+        if disc2 != None and disc2 not in self.quantities[disc1]:
+            raise LookupError("Cannot find the key \"%s\" in the dictionary !"%(disc2))
+
+        return self.quantities[disc1][disc2][name]
+        
+    # -------------------------------------------------------------
+    # store quatities and get spesific variables to make the tables 
+    # with the final choice of bin edges
+    # -------------------------------------------------------------
     def getFinal(self, name):
-        return self.info.getFinal(name)
-    
-# Derived from the Regions class, this class is for 
-# doing things for the full ABCD region.
-# The optimization function takes into account closure err
-# and significance.
-class ABCDedges(Regions):
+        return self.get(name, self.finalEdges[0], self.finalEdges[1])
+
+
+# -------------------------------------------
+# Calculate optimization metric of bin edges
+#   This function use the command line option
+#   -- NN optimization metric
+#   -- New optimization metric
+# ------------------------------------------- 
+class ABCDedges(All_Regions):
 
     def optimization_metric(self, **kwargs):
 
-        optimizationMetric  = (5 * kwargs["closureError"])**2 + (1.0 / kwargs["significance"])**2
-        return optimizationMetric
+        if (kwargs["nBkgA"] > kwargs["minBkgEvents"] and kwargs["significance"] != 0.0):
+        
+            # NN optimization metric
+            if self.metric == "NN":
+                optimizationMetric  = (kwargs["closureError"])**2 + (1.0 / kwargs["significance"])**2
+                   
+            # New optimization metric
+            else: 
+                optimizationMetric  = (5 * kwargs["closureError"])**2 + (1.0 / kwargs["significance"])**2
+        
+            return optimizationMetric
 
-# Derived from the Regions class, this class is for            *               
-# doing things for the bdEF validation region.             E   *   B'  |   A   
-# The optimization function tries to match bkg A+C to   _______*_______|_______
-# to bkg B'+D'.                                                *       |       
-#                                                          F   *   D'  |   C   
-#                                                              *                
-# The extraArgs contains info from ABCD region
-class bdEFedges(Regions):
+        else:
+
+            return 999.0
+
+# ---------------------------------------------------------------------------
+# make the validation regions in BD : bdEF
+#   -- define validation disc1 edge between 0 and the final bin edge of disc1
+#   -- final disc2 edge is constant
+#          *                              
+#      E   *    B'  |    A                
+#   _______*________|________             
+#          *        |                     
+#      F   *    D'  |    C                
+#          *                     
+# Calculate the metric of Validation Regions in BD: bdEF
+# ---------------------------------------------------------------------------
+class bdEFedges(All_Regions):
 
     def optimization_metric(self, **kwargs):
 
         optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgC"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgC"]))
         return optimizationMetric
 
-# Derived from the Regions class, this class is for      B  |  A 
-# doing things for the cdiEF validation region.        _____|_____
-# The optimization function tries to match bkg A+B to       |    
-# to bkg C'+D'.                                          D' |  C'
-#                                                      ***********
-#                                                        H  |  G 
-#                                                           |   
-# The extraArgs contains info from ABCD region
-class cdGHedges(Regions):
+
+# ---------------------------------------------------------------------------
+# make the validation regions in CD : cdiGH
+#   -- define validation disc2 edge between 0 and the final bin edge of disc2
+#   -- final disc1 edge is constant
+#
+#          B  |  A   
+#       ______|______
+#             |
+#          D' |  C' 
+#       *************
+#             |
+#          H  |  G
+# Calculate the metric of Validation Regions in CD: cdiGH
+# --------------------------------------------------------------------------- 
+class cdGHedges(All_Regions):
 
     def optimization_metric(self, **kwargs):
 
         optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgB"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgB"]))
         return optimizationMetric
 
-# Derived from the Regions class, this class is for  
-# doing things for the SubDiv D validation region.      
-# The optimization function simply checks if
-# current edges are at half the value of ABCD edges
-class subDivDedges(Regions):
+
+# ------------------------------------------------
+# make the validation regions as sub-division of D 
+#               |
+#        B      |   A
+#               |
+#     __________|_______
+#         *     |
+#      dB * dA  | 
+#     ********* |   C
+#      dD * dC  |
+#         *     |
+# Calculate the metric of sub-division of D 
+# ------------------------------------------------
+class subDivDedges(All_Regions):
 
     def optimization_metric(self, **kwargs):
 

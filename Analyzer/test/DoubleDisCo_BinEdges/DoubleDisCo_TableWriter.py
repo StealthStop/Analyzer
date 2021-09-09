@@ -1,11 +1,13 @@
+# -------------------------------------
 # Base class for writing latex tables
 # The writeHeader and writeLine methods
 # get overridden by the derived classes
+# -------------------------------------
 class TableWriter:
 
-    def __init__(self, channel, year, tag, model, mass):
+    def __init__(self, tablesPath, channel, year, tag, model, mass):
 
-        self.f = open("tables/%s/%s_%s_%s_%s_%s.tex" %(channel, year, tag, model, mass, channel), "w")
+        self.f = open("%s/%s_%s_%s_%s_%s.tex" %(tablesPath, year, tag, model, mass, channel), "w")
 
     def writeHeader(self):
         print(self.f)
@@ -21,8 +23,11 @@ class TableWriter:
         self.f.write("\n")
         self.f.close()
 
+
+# --------------------------------------------------
 # Derived table writer class for the bin edges table
 # Over ride the writeHeader and writeLine method
+# --------------------------------------------------
 class BinEdgesTable(TableWriter):
 
     def writeHeader(self):
@@ -47,8 +52,11 @@ class BinEdgesTable(TableWriter):
         self.f.write("\hline")
         self.f.write("\n")
 
+
+# ----------------------------------------------------
 # Derived table writer class for the ABCD events table
 # Over ride the writeHeader and writeLine method
+# ----------------------------------------------------
 class ABCDeventsTable(TableWriter):
 
     def writeHeader(self):
@@ -69,8 +77,11 @@ class ABCDeventsTable(TableWriter):
         self.f.write("\hline")
         self.f.write("\n")
 
+
+# ----------------------------------------------------
 # Derived table writer class for the bdEF events table
 # Over ride the writeHeader and writeLine method
+# ----------------------------------------------------
 class BDEFeventsTable(TableWriter):
 
     def writeHeader(self):
@@ -91,8 +102,11 @@ class BDEFeventsTable(TableWriter):
         self.f.write("\hline")
         self.f.write("\n")
 
+
+# -----------------------------------------------
 # Derived table writer class for the cdiGH events
 # Over ride the writeHeader and writeLine method
+# -----------------------------------------------
 class CDGHeventsTable(TableWriter):
 
     def writeHeader(self):
@@ -113,8 +127,10 @@ class CDGHeventsTable(TableWriter):
         self.f.write("\hline")
         self.f.write("\n")
 
+# -----------------------------------------------
 # Derived table writer class for the cdiGH events
 # Over ride the writeHeader and writeLine method
+# -----------------------------------------------
 class SubDivDeventsTable(TableWriter):
 
     def writeHeader(self):
