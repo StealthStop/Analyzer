@@ -43,6 +43,7 @@ class Common_Calculations_Plotters:
         obs       = []; obsUnc       = [] 
         pred      = []; predUnc      = []
         abcdError = []; abcdErrorUnc = []
+        abcdPull  = []; abcdPullUnc  = []
         
         totalChi2 = 0.0; ndof = 0
     
@@ -50,17 +51,24 @@ class Common_Calculations_Plotters:
     
             if bkg[i][1] != 0.0:
     
-                x.append(float(Njets[i]));  xUnc.append(0.5)
-                pred.append(bkgPred[i][0]); predUnc.append(bkgPred[i][1])
-                obs.append(bkg[i][0]);      obsUnc.append(bkg[i][1])
+                x.append(float(Njets[i]))
+                xUnc.append(0.5)
+                pred.append(bkgPred[i][0]) 
+                predUnc.append(bkgPred[i][1])
+                obs.append(bkg[i][0])      
+                obsUnc.append(bkg[i][1])
 
-                pull         = (bkgPred[i][0] - bkg[i][0]) / bkg[i][1]
+                pull            = (bkgPred[i][0] - bkg[i][0]) / bkg[i][1]
+                pullUnc         = 1.0
                 closureError    = 1.0 - bkgPred[i][0] / bkg[i][0]
                 closureErrorUnc = ((bkgPred[i][1] / bkg[i][0])**2.0 + (bkg[i][1] * bkgPred[i][0] / bkg[i][0]**2.0)**2.0)**0.5
 
-                abcdError.append(closureError); abcdErrorUnc.append(closureErrorUnc)
-                totalChi2    += pull ** 2.0
-                ndof         += 1
+                abcdPull.append(pull)
+                abcdPullUnc.append(pullUnc)
+                abcdError.append(closureError)
+                abcdErrorUnc.append(closureErrorUnc)
+                totalChi2 += pull ** 2.0
+                ndof      += 1
     
         fig = plt.figure(figsize=(5, 5))
         ax  = fig.add_subplot(111)
@@ -90,12 +98,15 @@ class Common_Calculations_Plotters:
     
         ax2 = fig.add_subplot(3, 1, 3)
         ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-        ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
+        ax2.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
+        #ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
         ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
         ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax2.set_xlabel('Number of jets')
-        ax2.set_ylabel('1 - Pred./Obs.')
-        ax2.set_ylim([-1.4, 1.4])
+        ax2.set_ylabel('(Pred - Obs) / ObsUnc') # Pull
+        #ax2.set_ylabel('1 - Pred./Obs.')
+        ax2.set_ylim([-5.0, 5.0])
+        #ax2.set_ylim([-1.4, 1.4])
     
         plt.xticks([int(Njet) for Njet in Njets])
     
@@ -175,6 +186,8 @@ class Common_Calculations_Plotters:
         ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
         ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.set_xlim(0.0, 20.0)
+        ax.set_ylim(0.0, 0.5)
         plt.scatter(np.reciprocal(significances), closureErrs, color='grey', marker='o', label='1 - Pred./Obs. vs 1 / Significance')
 
         if finalSignificance != 0.0:

@@ -341,7 +341,14 @@ class bdEFedges(All_Regions):
 
     def optimization_metric(self, **kwargs):
 
-        optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgC"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgC"]))
+        optimizationMetric = None              
+
+        if "nBkgA" in self.extraArgs:
+            optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgC"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgC"]))
+        
+        else:
+            optimizationMetric = 1.0
+
         return optimizationMetric
 
 
@@ -363,7 +370,14 @@ class cdGHedges(All_Regions):
 
     def optimization_metric(self, **kwargs):
 
-        optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgB"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgB"]))
+        optimizationMetric = None
+
+        if "nBkgA" in self.extraArgs:
+            optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgB"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgB"]))
+        
+        else:
+            optimizationMetric = 1.0
+
         return optimizationMetric
 
 
