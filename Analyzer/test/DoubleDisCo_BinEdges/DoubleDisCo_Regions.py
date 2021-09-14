@@ -1,4 +1,5 @@
 import ROOT
+import os
 import math
 import ctypes
 import numpy as np
@@ -404,3 +405,68 @@ class subDivDedges(All_Regions):
             optimizationMetric = 1.0
 
         return optimizationMetric
+
+# -----------------------------------------
+# add the all edges to DoubleDisCo Cfg file
+# -----------------------------------------
+class addEdges_toDoubleDisco():
+
+    def __init__(self, year, model, mass, channel, regions):
+        self.year      = year
+        self.model     = model
+        self.mass      = mass
+        self.channel   = channel
+        self.regions   = regions
+
+    def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
+
+        cfgVer = ""
+        
+        if self.channel == "0l":
+            cfgVer = "v2.0"
+        else:
+            cfgVer = "v4.0"
+
+        outputDir = "DeepESMCfg_DoubleDisCo_Reg_%s_%s_2016_%s/"%(self.channel, self.model, str(cfgVer))
+  
+        if not os.path.exists(outputDir):
+            os.makedirs(outputDir)
+ 
+        f = open("../DeepESMCfg_DoubleDisCo_Reg_%s_%s_2016_%s/DoubleDisCo_Reg.cfg"%(self.channel, self.model, str(cfgVer)), "r")
+      
+        g = open("%s/DoubleDisCo_Reg.cfg"%(outputDir), "w") 
+        
+        # get the all information from DoubleDisCo cfg file
+        lines = f.readlines()
+        f.close()
+        
+        for line in lines:
+
+            if "}" in line:
+                continue
+
+            g.write(line)
+
+        # add the all ABCD and Validation edges to DoubleDisCo cfg file
+        for key, region in self.regions.items():
+
+            g.write("\n")
+            g.write(" # %s Bin Edges\n"%(region))                        
+
+            i = 0
+            for njet in Njets:
+
+                if (njet < 10):
+                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][0]))
+                    i += 1
+                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][1]))
+                else:
+                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][0]))
+                    i += 1
+                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][1]))
+                i += 1
+
+        g.write("} \n")
+        g.close()
+
+                    
