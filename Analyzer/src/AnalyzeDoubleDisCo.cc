@@ -14,29 +14,31 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 {
 
     histInfos = {
-        {"h_DoubleDisCo_disc1",   80,  0, 1},
-        {"h_DoubleDisCo_disc2",   80,  0, 1},
-        {"h_DoubleDisCo_massReg", 150, 0, 1500},
-        {"fwm2_top6",             50,  0, 1},
-        {"fwm3_top6",             50,  0, 1},
-        {"fwm4_top6",             50,  0, 1},
-        {"fwm5_top6",             50,  0, 1},
-        {"jmt_ev0_top6",          50,  0, 1},
-        {"jmt_ev1_top6",          50,  0, 1},
-        {"jmt_ev2_top6",          50,  0, 1},
-        {"Stop1_pt_cm_OldSeed",      72, 0, 1500},
-        {"Stop1_eta_cm_OldSeed",     80, -6, 6},
-        {"Stop1_phi_cm_OldSeed",     64,  -4, 4},
-        {"Stop1_mass_cm_OldSeed",       72,  0, 1500},
-        {"Stop2_pt_cm_OldSeed",      72, 0, 1500},
-        {"Stop2_eta_cm_OldSeed",     80, -6, 6},
-        {"Stop2_phi_cm_OldSeed",     64,  -4, 4},
-        {"Stop2_mass_cm_OldSeed",       72,  0, 1500},
-        {"h_MET_phi", 80, -4, 4},
-        {"h_MET_pt" , 150, 0, 150},
-        {    "h_njets",           20,   0.0,   20.0},
-        {    "h_ntops",           10,   0.0,   10.0},
-        {    "h_ht",              500,   0.0, 5000.0},
+        {"h_DoubleDisCo_disc1",    80,    0,    1},
+        {"h_DoubleDisCo_disc2",    80,    0,    1},
+        {"h_DoubleDisCo_massReg", 150,    0, 1500},
+        {"fwm2_top6",              50,    0,    1},
+        {"fwm3_top6",              50,    0,    1},
+        {"fwm4_top6",              50,    0,    1},
+        {"fwm5_top6",              50,    0,    1},
+        {"jmt_ev0_top6",           50,    0,    1},
+        {"jmt_ev1_top6",           50,    0,    1},
+        {"jmt_ev2_top6",           50,    0,    1},
+        {"Stop1_pt_cm_OldSeed",    72,    0, 1500},
+        {"Stop1_eta_cm_OldSeed",   80,   -6,    6},
+        {"Stop1_phi_cm_OldSeed",   64,   -4,    4},
+        {"Stop1_mass_cm_OldSeed",  72,    0, 1500},
+        {"Stop2_pt_cm_OldSeed",    72,    0, 1500},
+        {"Stop2_eta_cm_OldSeed",   80,   -6,    6},
+        {"Stop2_phi_cm_OldSeed",   64,   -4,    4},
+        {"Stop2_mass_cm_OldSeed",  72,    0, 1500},
+        {"h_MET_phi",              80,   -4,    4},
+        {"h_MET_pt" ,             150,    0,  150},
+        {"h_njets",                21, -0.5, 20.5},
+        {"h_njets_11incl",          6,  5.5, 11.5},
+        {"h_njets_12incl",          7,  5.5, 12.5},
+        {"h_ntops",                 6, -0.5,  5.5},
+        {"h_ht",                  500,    0, 5000},
     };
 
     hist2DInfos = {
@@ -52,16 +54,15 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets)
 {
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
-        histInfos.push_back({"Jet_cm_pt_"           + std::to_string(i), 150, 0, 1500});
-        histInfos.push_back({"Jet_cm_eta_"          + std::to_string(i), 100, -6, 6});
-        histInfos.push_back({"Jet_cm_phi_"          + std::to_string(i), 80, -4, 4});
-        histInfos.push_back({"Jet_cm_m_"            + std::to_string(i), 20, 0, 200});
-        histInfos.push_back({"Jet_cm_flavb_"        + std::to_string(i), 80, 0, 1});
-        histInfos.push_back({"Jet_cm_flavc_"        + std::to_string(i), 80, 0, 1});
-        histInfos.push_back({"Jet_cm_flavg_"        + std::to_string(i), 80, 0, 1});
-        histInfos.push_back({"Jet_cm_flavq_"        + std::to_string(i), 80, 0, 1});
-        histInfos.push_back({"Jet_cm_flavuds_"      + std::to_string(i), 80, 0, 1});
-
+        histInfos.push_back({"Jet_cm_pt_"           + std::to_string(i), 150,  0, 1500});
+        histInfos.push_back({"Jet_cm_eta_"          + std::to_string(i), 100, -6,    6});
+        histInfos.push_back({"Jet_cm_phi_"          + std::to_string(i),  80, -4,    4});
+        histInfos.push_back({"Jet_cm_m_"            + std::to_string(i), 150,  0,  300});
+        histInfos.push_back({"Jet_cm_flavb_"        + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavc_"        + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavg_"        + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavq_"        + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavuds_"      + std::to_string(i),  80,  0,    1});
     }
 }
 
@@ -136,14 +137,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const std::vector<double> HT_trigger{HT_trigger_pt45, HT_trigger_pt30};
 
-        const auto& correct2018Split       = tr.getVar<bool>("correct2018Split");
-        const auto& passTrigger            = tr.getVar<bool>("passTrigger");
-        const auto& passTriggerMC          = tr.getVar<bool>("passTriggerMC");
-        const auto& passMETFilters         = tr.getVar<bool>("passMETFilters");
-        const auto& passMadHT              = tr.getVar<bool>("passMadHT");
-        const auto& passHEMVeto            = tr.getVar<bool>("passHEMVeto");
-
-        const auto& passBlind              = tr.getVar<bool>("passBlindLep_Good");            
         const auto& passBaseline0l_Good    = tr.getVar<bool>("passBaseline0l_Good_Loose");
         const auto& passBaseline1l_Good    = tr.getVar<bool>("passBaseline1l_Good");
 
@@ -220,8 +213,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& met                    = tr.getVar<double>("MET");
         const auto& metPhi                 = tr.getVar<double>("METPhi");
 
-        const auto& blindABCDdata          = tr.getVar<bool>("blind") && tr.getVar<std::string>("runtype")!="MC";
-
         std::vector<double> Jets_flavb_0l;   std::vector<double> Jets_flavb_1l;
         std::vector<double> Jets_flavc_0l;   std::vector<double> Jets_flavc_1l;
         std::vector<double> Jets_flavg_0l;   std::vector<double> Jets_flavg_1l;
@@ -258,7 +249,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ------------------------
         // -- Define weight
         // ------------------------
-        double weight=1.0, eventweight=1.0, leptonweight=1.0, bTagWeight=1.0, prefiringScaleFactor=1.0, pileupWeight=1.0, htDerivedweight=1.0;
+        double weight1L=1.0, eventweight=1.0, leptonweight=1.0, bTagWeight=1.0, prefiringScaleFactor=1.0, pileupWeight=1.0, htDerivedweight=1.0;
+        double weight0L=1.0;
         if(runtype == "MC")
         {
             // Define Lumi weight
@@ -275,15 +267,17 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             htDerivedweight = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             
-            weight *= eventweight*leptonweight*bTagWeight*prefiringScaleFactor*pileupWeight*htDerivedweight;
+            weight1L *= eventweight*leptonweight*bTagWeight*prefiringScaleFactor*pileupWeight*htDerivedweight;
+            weight0L *= eventweight*bTagWeight*prefiringScaleFactor*pileupWeight;
+
         }
 
-        bool pass_general    = passTriggerMC && passTrigger && passMadHT && passBlind && passMETFilters && passHEMVeto && correct2018Split;
+        std::vector<double> weight{weight0L, weight1L};
 
         const std::map<std::string, bool> cut_map 
         {
-            {"_1l"                                   , pass_general && passBaseline1l_Good},                         
-            {"_0l"                                   , pass_general && passBaseline0l_Good},                         
+            {"_1l"                                   , passBaseline1l_Good},                         
+            {"_0l"                                   , passBaseline0l_Good},                         
         };
     
         // Initialize Histograms
@@ -329,8 +323,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 for(auto& jpass : ABCDmap)
                 {
 
-                    if (blindABCDdata && jpass.first!="")
-                        continue;
                     std::string regionStr = "";
                     if (jpass.first != "") regionStr = "_" + jpass.first;
 
@@ -338,7 +330,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                     {
 
                         std::string name = kv.first+njetStr+regionStr;
-                        double w = weight;
+                        double w = weight[channel];
 
                         my_histos["fwm2_top6"               + name]->Fill(fwm2_top6[channel], w);
                         my_histos["fwm3_top6"               + name]->Fill(fwm3_top6[channel], w);
@@ -348,14 +340,27 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                         my_histos["jmt_ev1_top6"            + name]->Fill(jmt_ev1_top6[channel], w);
                         my_histos["jmt_ev2_top6"            + name]->Fill(jmt_ev2_top6[channel], w);
 
-                        my_histos["Stop1_pt_cm_OldSeed"     + name]->Fill(Stop1_pt_cm_OldSeed, w);
-                        my_histos["Stop1_eta_cm_OldSeed"    + name]->Fill(Stop1_eta_cm_OldSeed, w);
-                        my_histos["Stop1_phi_cm_OldSeed"    + name]->Fill(Stop1_phi_cm_OldSeed, w);
-                        my_histos["Stop1_mass_cm_OldSeed"   + name]->Fill(Stop1_mass_cm_OldSeed, w);
-                        my_histos["Stop2_pt_cm_OldSeed"     + name]->Fill(Stop2_pt_cm_OldSeed, w);
-                        my_histos["Stop2_eta_cm_OldSeed"    + name]->Fill(Stop2_eta_cm_OldSeed, w);
-                        my_histos["Stop2_phi_cm_OldSeed"    + name]->Fill(Stop2_phi_cm_OldSeed, w);
-                        my_histos["Stop2_mass_cm_OldSeed"   + name]->Fill(Stop2_mass_cm_OldSeed, w);
+                        if (Stop1_pt_cm_OldSeed  > Stop2_pt_cm_OldSeed) {
+                            my_histos["Stop1_pt_cm_OldSeed"     + name]->Fill(Stop1_pt_cm_OldSeed,   w);
+                            my_histos["Stop1_eta_cm_OldSeed"    + name]->Fill(Stop1_eta_cm_OldSeed,  w);
+                            my_histos["Stop1_phi_cm_OldSeed"    + name]->Fill(Stop1_phi_cm_OldSeed,  w);
+                            my_histos["Stop1_mass_cm_OldSeed"   + name]->Fill(Stop1_mass_cm_OldSeed, w);
+                    
+                            my_histos["Stop2_pt_cm_OldSeed"     + name]->Fill(Stop2_pt_cm_OldSeed,   w);
+                            my_histos["Stop2_eta_cm_OldSeed"    + name]->Fill(Stop2_eta_cm_OldSeed,  w);
+                            my_histos["Stop2_phi_cm_OldSeed"    + name]->Fill(Stop2_phi_cm_OldSeed,  w);
+                            my_histos["Stop2_mass_cm_OldSeed"   + name]->Fill(Stop2_mass_cm_OldSeed, w);
+                        } else {
+                            my_histos["Stop1_pt_cm_OldSeed"     + name]->Fill(Stop2_pt_cm_OldSeed,   w);
+                            my_histos["Stop1_eta_cm_OldSeed"    + name]->Fill(Stop2_eta_cm_OldSeed,  w);
+                            my_histos["Stop1_phi_cm_OldSeed"    + name]->Fill(Stop2_phi_cm_OldSeed,  w);
+                            my_histos["Stop1_mass_cm_OldSeed"   + name]->Fill(Stop2_mass_cm_OldSeed, w);
+                    
+                            my_histos["Stop2_pt_cm_OldSeed"     + name]->Fill(Stop1_pt_cm_OldSeed,   w);
+                            my_histos["Stop2_eta_cm_OldSeed"    + name]->Fill(Stop1_eta_cm_OldSeed,  w);
+                            my_histos["Stop2_phi_cm_OldSeed"    + name]->Fill(Stop1_phi_cm_OldSeed,  w);
+                            my_histos["Stop2_mass_cm_OldSeed"   + name]->Fill(Stop1_mass_cm_OldSeed, w);
+                        }
 
                         unsigned int nJets = Jets_cm_top6[channel].size();
                         for(unsigned int i = 1; i <= nMVAJets[channel]; i++)
@@ -377,13 +382,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             my_histos["Jet_cm_flavuds_" + std::to_string(i) + name]->Fill(Jets_flavuds[channel].at(i-1), w);
                         }
 
-                        if (! blindABCDdata) {
-                            my_histos["h_DoubleDisCo_disc1"       + name]->Fill(DoubleDisCo_disc1[channel], w);
-                            my_histos["h_DoubleDisCo_disc2"       + name]->Fill(DoubleDisCo_disc2[channel], w);
-                            my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
-                            my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
-                        }
+                        my_histos["h_DoubleDisCo_disc1"       + name]->Fill(DoubleDisCo_disc1[channel], w);
+                        my_histos["h_DoubleDisCo_disc2"       + name]->Fill(DoubleDisCo_disc2[channel], w);
+                        my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
+                        my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
                         my_histos["h_njets"                   + name]->Fill(NGoodJets[channel], w);
+                        my_histos["h_njets_11incl"            + name]->Fill(NGoodJets[channel]>=11 ? 11 : NGoodJets[channel], w);
+                        my_histos["h_njets_12incl"            + name]->Fill(NGoodJets[channel]>=12 ? 12 : NGoodJets[channel], w);
+
+
                         my_histos["h_ntops"                   + name]->Fill(ntops, w);
                         my_histos["h_ht"                      + name]->Fill(HT_trigger[channel], w);
                         my_histos["h_MET_phi"                 + name]->Fill(metPhi, w);
