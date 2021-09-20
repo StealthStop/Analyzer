@@ -37,7 +37,7 @@ class Common_Calculations_Plotters:
     # -----------------
     # plot all closures
     # -----------------
-    def plot_ClosureNjets(self, bkg, bkgPred, Njets, name = '', closureTag = ''):
+    def plot_ClosureNjets(self, bkg, bkgPred, closureErrs, pull, Njets, name = '', closureTag = ''):
         
         x         = []; xUnc         = []
         obs       = []; obsUnc       = [] 
@@ -48,7 +48,11 @@ class Common_Calculations_Plotters:
         totalChi2 = 0.0; ndof = 0
     
         for i in range(0, len(Njets)):
-    
+   
+            sign = 1.0 
+            if bkgPred[i][0] > bkg[i][0]:
+                sign = -1.0
+
             if bkg[i][1] != 0.0:
     
                 x.append(float(Njets[i]))
@@ -58,19 +62,14 @@ class Common_Calculations_Plotters:
                 obs.append(bkg[i][0])      
                 obsUnc.append(bkg[i][1])
 
-                pull            = (bkgPred[i][0] - bkg[i][0]) / bkg[i][1]
-                pullUnc         = 1.0
-                closureError    = 1.0 - bkgPred[i][0] / bkg[i][0]
-                closureErrorUnc = ((bkgPred[i][1] / bkg[i][0])**2.0 + (bkg[i][1] * bkgPred[i][0] / bkg[i][0]**2.0)**2.0)**0.5
-
-                abcdPull.append(pull)
-                abcdPullUnc.append(pullUnc)
-                abcdError.append(closureError)
-                abcdErrorUnc.append(closureErrorUnc)
-                totalChi2 += pull ** 2.0
+                abcdPull.append(pull[i][0])
+                abcdPullUnc.append(pull[i][1])
+                abcdError.append(sign * closureErrs[i][0])
+                abcdErrorUnc.append(closureErrs[i][1])
+                totalChi2 += pull[i][0] ** 2.0
                 ndof      += 1
     
-        fig = plt.figure(figsize=(5, 5))
+        fig = plt.figure(figsize=(6, 6))
         ax  = fig.add_subplot(111)
         fig.subplots_adjust(hspace=0, left=0.15, right=0.95, top=0.94)
     
@@ -83,7 +82,8 @@ class Common_Calculations_Plotters:
         ax.spines['right'].set_color('none')
         ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
     
-        ax1 = fig.add_subplot(3, 1, (1, 2))
+        # closure plot
+        ax1 = fig.add_subplot(4, 1, (1, 2))
         fig.subplots_adjust(left=0.15, right=0.95)
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
@@ -95,19 +95,27 @@ class Common_Calculations_Plotters:
         ax1.set_ylabel('Unweighted Event Counts')
         ax1.errorbar(x, pred, yerr=predUnc, label='Predicted', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label='Observed',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
-    
-        ax2 = fig.add_subplot(3, 1, 3)
+
+        # simple ratio plot    
+        ax2 = fig.add_subplot(4, 1, 3)
         ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-        ax2.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
-        #ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
+        ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
         ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
         ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
-        ax2.set_xlabel('Number of jets')
-        ax2.set_ylabel('(Pred - Obs) / ObsUnc') # Pull
-        #ax2.set_ylabel('1 - Pred./Obs.')
-        ax2.set_ylim([-5.0, 5.0])
-        #ax2.set_ylim([-1.4, 1.4])
-    
+        #ax2.set_xlabel('Number of jets')
+        ax2.set_ylabel('1 - Pred./Obs.')
+        ax2.set_ylim([-1.4, 1.4])
+   
+        # pull plot
+        ax3 = fig.add_subplot(4, 1, 4)
+        ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+        ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
+        ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
+        ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
+        ax3.set_xlabel('Number of jets')
+        ax3.set_ylabel('Pull') # (Pred - Obs) / ObsUnc') 
+        ax3.set_ylim([-5.4, 5.4])
+ 
         plt.xticks([int(Njet) for Njet in Njets])
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
@@ -115,11 +123,11 @@ class Common_Calculations_Plotters:
         fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag))
    
         plt.close(fig)
-    
+
     # ----------------------
     # make all closure plots
-    # ----------------------    
-    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, Njets=None, name = "", closureTag=""):
+    # ----------------------      
+    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, closureErrs=None, pull=None, Njets=None, name = "", closureTag=""):
     
         evtsNjets     = []
         evtsNjetsPred = []
@@ -149,7 +157,7 @@ class Common_Calculations_Plotters:
                 evtsNjets.append((evtsA, evtsAunc**0.5))
                 evtsNjetsPred.append((pred_A, predUnc_A))
     
-        self.plot_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), Njets, name, closureTag)
+        self.plot_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), np.array(closureErrs), np.array(pull), Njets, name, closureTag)
 
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges

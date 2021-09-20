@@ -68,6 +68,19 @@ class All_Regions:
     
         return closureError, closureErrUnc
 
+    # ----------------
+    # Pull calculation
+    # ----------------
+    def cal_Pull(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
+
+        if nEvents_D == 0.0 or nEventsErr_A == 0.0:
+            return -999.0, -999.0
+
+        pull    = ( ( ((nEvents_B * nEvents_C) / nEvents_D) - nEvents_A ) / nEventsErr_A )
+        pullUnc = 1.0
+
+        return pull, pullUnc
+
     # --------------------------------------------------------------
     # Optimization metric function to be overridden by derived class
     # --------------------------------------------------------------
@@ -203,10 +216,11 @@ class All_Regions:
                 sigFracsErrD = ((nBkgEvents_D * nSigEventsErr_D**0.5 / (nTot_SigBkg_D)**2.0)**2.0 + \
                                 (nSigEvents_D * nBkgEventsErr_D**0.5 / (nTot_SigBkg_D)**2.0)**2.0)**0.5
     
-            # significance and closure error for optimization of bin edges
-            significance = 0.0; significanceUnc = 0.0; closureErr = -999.0; closureErrUnc = -999.0; tempOptMetric = 999.0
+            # significance, closure error and pull for optimization of bin edges
+            significance = 0.0; significanceUnc = 0.0; closureErr = -999.0; closureErrUnc = -999.0; pull = -999.0; pullUnc = -999.0; tempOptMetric = 999.0
     
             closureErr, closureErrUnc = self.cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
+            pull, pullUnc             = self.cal_Pull(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
 
             significance += self.cal_Significance(nSigEvents_A, nBkgEvents_A)**2.0
             significance = significance**0.5
@@ -217,9 +231,10 @@ class All_Regions:
                                   + ( ( nSigEvents_A * nBkgEventsErr_A * (2.0 * nBkgEvents_A * closureErr**2.0 + 2.0 * bkgNormUnc**2.0 * nBkgEvents_A + 1) ) / ( nBkgEvents_A + (bkgNormUnc * nBkgEvents_A)**2.0 + (closureErr * nBkgEvents_A)**2.0 )**1.5 )**2.0
                                   + ( ( nBkgEvents_A**2.0 * closureErr * nSigEvents_A * closureErrUnc) / ( nBkgEvents_A * ( nBkgEvents_A * (closureErr**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
  
-            # Store significance and closure error 
+            # Store significance, closure error and pull
             self.add("significance", disc1Key, disc2Key, (significance, significanceUnc))
-            self.add("closureError", disc1Key, disc2Key, (closureErr,   closureErrUnc))
+            self.add("closureError", disc1Key, disc2Key, (closureErr,   closureErrUnc  ))
+            self.add("pull",         disc1Key, disc2Key, (pull,         pullUnc        ))
 
             # Region by region fraction and fraction error
             self.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA))
