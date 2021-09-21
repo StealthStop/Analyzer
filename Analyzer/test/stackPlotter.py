@@ -151,16 +151,19 @@ class Histogram:
 #     year              : corresponding year for the plots/inputs
 #     outpath           : where to put the plots, path is created if missing
 #     inpath            : where the input ROOT files are located
-#     normMC            : normalize MC to the data
+#     normMC2Data       : normalize MC to the data
+#     normalize         : normalize all processes to unity area
 #     histograms        : dictionary containing config info for desired histos
+#     selections        : list of cut strings appearing in the names of plots
 #     backgrounds       : dictionary containing config info for desired backgrounds
 #     signals           : dictionary containing config info for desired signals
 #     data              : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, noRatio, printNEvents, printSignificance, year, outpath, inpath, normMC, histograms, backgrounds, signals, data):
+    def __init__(self, approved, noRatio, printNEvents, printSignificance, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
 
         self.histograms  = histograms
+        self.selections  = selections
         self.backgrounds = backgrounds
         self.signals     = signals
         self.data        = data
@@ -174,7 +177,8 @@ class StackPlotter:
 
         self.approved          = approved
         self.noRatio           = noRatio
-        self.normMC            = normMC
+        self.normMC2Data       = normMC2Data
+        self.normalize         = normalize
         self.printNEvents      = printNEvents
         self.printSignificance = printSignificance
 
@@ -252,32 +256,39 @@ class StackPlotter:
         textSize = 0.025 / self.upperSplit
         space    = 0.015
 
-        bkgXmin = 0.60;                      bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
-        bkgXmax = 1.0-self.RightMargin-0.01; bkgYmin = bkgYmax-nBkgs*(textSize+space)
+        bkgXmin = 0.60 if self.printNEvents else 0.75
+        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
+        bkgXmax = 1.0-self.RightMargin-0.01
+        bkgYmin = bkgYmax-nBkgs*(textSize+space)
+
+        bkgYFrac = (1.0-self.TopMargin-bkgYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
         bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
 
-        sigXmin = self.LeftMargin+0.01; sigYmax = bkgYmax
-        sigXmax = bkgXmin;              sigYmin = bkgYmax-nSigs*(textSize+space) 
+        sigXmin = self.LeftMargin+0.03
+        sigYmax = bkgYmax
+        sigXmax = bkgXmin
+        sigYmin = bkgYmax-nSigs*(textSize+space) 
+
+        sigYFrac = (1.0-self.TopMargin-sigYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
         sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
         sigLegend.SetBorderSize(0)
-        sigLegend.SetMargin(0.15)
+        sigLegend.SetMargin(0.10)
         sigLegend.SetTextSize(textSize)
 
-        yMax = 1.0; factor = 1.0; power = 1.0
-        if doLogY:
-            power = math.log10(theMax / theMin)
-            factor = 10.0
+        yMax = 1.0; factor = 1.05; power = 1.0
+        if doLogY and theMax != 0.0 and theMin != 0.0:
+            power = math.log10(theMax / theMin) * 3.0
+
+        theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
 
         if self.printSignificance:
-            yMax = (theMax-theMin) * 1.6**power * factor
-        else:                              
-            yMax = (theMax-theMin) * 1.5**power * factor
-
-        yMax *= float(nBkgs if nBkgs > nSigs else nSigs)/4.0
+            yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
+        else:                             
+            yMax = (theMax-theMin) * (1.0 - theFrac)**(-power) * factor
 
         return bkgLegend, sigLegend, yMax
 
@@ -289,10 +300,12 @@ class StackPlotter:
         mark.SetNDC(True)
 
         mark.SetTextAlign(11)
-        mark.SetTextSize(0.055); mark.SetTextFont(61)
+        mark.SetTextSize(0.055)
+        mark.SetTextFont(61)
         mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
 
-        mark.SetTextFont(52); mark.SetTextSize(0.040)
+        mark.SetTextFont(52)
+        mark.SetTextSize(0.040)
 
         simStr = ""
         if self.data == {}:
@@ -303,7 +316,8 @@ class StackPlotter:
         else:
             mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sPreliminary"%(simStr))
 
-        mark.SetTextFont(42); mark.SetTextAlign(31)
+        mark.SetTextFont(42)
+        mark.SetTextAlign(31)
         if "Run 2" in self.year:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
         else:
@@ -315,18 +329,18 @@ class StackPlotter:
         # Top loop begins going over each histo-to-be-plotted
         for hname, hinfo in self.histograms.items():
 
-            orders = [-1]; channels = ["None"]
+            orders = [-1]; selections = ["None"]
             if "orders" in hinfo:
                 orders = hinfo["orders"]
 
-            if "channels" in hinfo:
-                channels = hinfo["channels"]
+            if "selections" in hinfo:
+                selections = hinfo["selections"]
 
             newName = hname
             for order in orders:
-                for channel in channels:
+                for selection in self.selections:
             
-                    newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(channel))
+                    newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
                     newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
 
@@ -339,12 +353,15 @@ class StackPlotter:
                     firstDraw = False
                     bstack = ROOT.THStack("stack%s"%(newName), "stack%s"%(newName))
                     dummy = None
-                    ratio = None
+                    totalMC = None
                     bhistos = {}
     
-                    nBkgLegend = 0; nSigLegend = 0; theSignificance = 0.0
+                    nBkgLegend = 0
+                    nSigLegend = 0
+                    theSignificance = 0.0
 
-                    dataScale = 0.0; mcScale = 0.0
+                    dataScale = 0.0
+                    mcScale = 0.0
                     # Preemptively get data counts
                     for dname, dinfo in self.data.items():
 
@@ -370,13 +387,16 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
                         if Hobj.IsGood(): 
-                            if self.normMC:
-                                Hobj.Scale(dataScale / mcScale)
+                            if mcScale != 0.0:
+                                if self.normMC2Data:
+                                    Hobj.Scale(dataScale / mcScale)
+                                elif self.normalize:
+                                    Hobj.Scale(1.0 / mcScale)
                             if not firstDraw:
-                                ratio = Hobj.Clone("ratio%s"%(newName))
+                                totalMC = Hobj.Clone("totalMC%s"%(newName))
                                 firstDraw = True
                             else:
-                                ratio.Add(Hobj.histogram)
+                                totalMC.Add(Hobj.histogram)
 
                             bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram)
                             dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
@@ -408,7 +428,11 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
                         if "550" in sname or len(self.signals) == 1:
-                            theSignificance = Hobj.Significance(ratio)
+                            theSignificance = Hobj.Significance(totalMC)
+                        
+                        scale = Hobj.Integral()
+                        if self.normalize and scale != 0.0:
+                            Hobj.Scale(1.0 / scale)
 
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend, "HIST", "L")
 
@@ -418,12 +442,21 @@ class StackPlotter:
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
+
+                        scale = Hobj.Integral()
+                        if self.normalize and scale != 0.0:
+                            Hobj.Scale(1.0 / scale)
+
                         nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend, "E0P", "ELP")
 
                         if Hobj.IsGood():
 
-                            ratio.Add(Hobj.histogram, -1.0)
-                            ratio.Divide(Hobj.histogram)
+                            ratio = Hobj.Clone("ratio")
+                            ratio.Divide(totalMC)
+
+                            for xbin in range(1, ratio.GetNbinsX()+1):
+                                if totalMC.GetBinContent(xbin) == 0.0 or Hobj.histogram.GetBinContent(xbin) == 0.0:
+                                    ratio.SetBinContent(xbin, -999.0)
 
                     if nBkgLegend != 0: bkgLegend.Draw("SAME")
                     if nSigLegend != 0: sigLegend.Draw("SAME")
@@ -437,14 +470,14 @@ class StackPlotter:
 
                         rinfo = {"name" : "ratio", "color" : ROOT.kBlack,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1 / self.upperSplit}
                         rnewInfo = copy.deepcopy(newInfo)
-                        rnewInfo["Y"]["title"] = "1 - #frac{Pred.}{Obs.}"
+                        rnewInfo["Y"]["title"] = "#frac{Data}{Pred.}"
                         rnewInfo["X"]["rebin"] = 1
 
                         canvas.cd(2)
                         ROOT.gPad.SetGridy()
                         ratio = Histogram(ratio, None, self.upperSplit/self.scale, self.lowerSplit/self.scale, None, rnewInfo, rinfo, 0.8).histogram
 
-                        ratio.SetMinimum(-1.3); ratio.SetMaximum(1.3)
+                        ratio.SetMinimum(0.4); ratio.SetMaximum(1.6)
                         ratio.GetYaxis().SetNdivisions(5, 5, 0)
 
                         ratio.Draw("E0P")
@@ -459,26 +492,29 @@ if __name__ == "__main__":
     parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",             default=False,  action="store_true") 
     parser.add_argument("--approved",     dest="approved",     help="Plot is approved",          default=False,  action="store_true") 
     parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",     default=False,  action="store_true") 
-    parser.add_argument("--normMC",       dest="normMC",       help="Normalize MC to data",      default=False,  action="store_true") 
+    parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",      default=False,  action="store_true") 
+    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",    default=False,  action="store_true") 
     parser.add_argument("--printSign",    dest="printSign",    help="Print simple significance", default=False,  action="store_true") 
     parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",        default="NULL", required=True)
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",        default="NULL", required=True)
     parser.add_argument("--year",         dest="year",         help="which year",                                required=True)
+    parser.add_argument("--options",      dest="options",      help="options file",              default="stackPlotter_aux", type=str)
     args = parser.parse_args()
 
     # The auxiliary file contains many "hardcoded" items
     # describing which histograms to get and how to draw
     # them. These things are changed often by the user
     # and thus are kept in separate sidecar file.
-    importedGoods = __import__("stackPlotter_aux")
+    importedGoods = __import__(args.options)
 
     # Names of histograms, rebinning, titles, ranges, etc.
     histograms  = importedGoods.histograms
 
     # Background/signal/data categories to plot, and plotting options
+    selections  = importedGoods.selections
     backgrounds = importedGoods.backgrounds
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printSign, args.year, args.outpath, args.inpath, args.normMC, histograms, backgrounds, signals, data)
+    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printSign, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()

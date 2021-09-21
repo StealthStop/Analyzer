@@ -100,30 +100,33 @@ file and plot.
 
 ```
 usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
-                                      [--printNEvents] [--normMC]
-                                      [--printSign] --inpath INPATH --outpath
-                                      OUTPATH --year YEAR
+                                      [--printNEvents] [--normMC2Data]
+                                      [--normalize] [--printSign] --inpath
+                                      INPATH --outpath OUTPATH --year YEAR
+                                      [--options OPTIONS]
 
 optional arguments:
   -h, --help         show this help message and exit
   --noRatio          No ratio plot
   --approved         Plot is approved
   --printNEvents     Show number of events
-  --normMC           Normalize MC to data
+  --normMC2Data      Normalize MC to data
+  --normalize        Normalize all to unity
   --printSign        Print simple significance
   --inpath INPATH    Path to root files
   --outpath OUTPATH  Where to put plots
   --year YEAR        which year
+  --options OPTIONS  options file
 usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
-                                      [--printNEvents] [--normMC] --inpath
-                                      INPATH --outpath OUTPATH --year YEAR
-
+                                      [--printNEvents] [--normMC]
+                                      [--printSign] --inpath INPATH --outpath
+                                      OUTPATH --year YEAR
 ```
 
 An example call to the stack plotter could be:
 
 ```
-python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --outpath plot_histos --normMC
+python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --outpath plot_histos --normMC2Data
 ```
 
 ## Making inputs for the fit
