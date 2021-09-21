@@ -54,15 +54,15 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets)
 {
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
-        histInfos.push_back({"Jet_cm_pt_"           + std::to_string(i), 150,  0, 1500});
-        histInfos.push_back({"Jet_cm_eta_"          + std::to_string(i), 100, -6,    6});
-        histInfos.push_back({"Jet_cm_phi_"          + std::to_string(i),  80, -4,    4});
-        histInfos.push_back({"Jet_cm_m_"            + std::to_string(i), 150,  0,  300});
-        histInfos.push_back({"Jet_cm_flavb_"        + std::to_string(i),  80,  0,    1});
-        histInfos.push_back({"Jet_cm_flavc_"        + std::to_string(i),  80,  0,    1});
-        histInfos.push_back({"Jet_cm_flavg_"        + std::to_string(i),  80,  0,    1});
-        histInfos.push_back({"Jet_cm_flavq_"        + std::to_string(i),  80,  0,    1});
-        histInfos.push_back({"Jet_cm_flavuds_"      + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_pt_"      + std::to_string(i), 150,  0, 1500});
+        histInfos.push_back({"Jet_cm_eta_"     + std::to_string(i), 100, -6,    6});
+        histInfos.push_back({"Jet_cm_phi_"     + std::to_string(i),  80, -4,    4});
+        histInfos.push_back({"Jet_cm_m_"       + std::to_string(i), 150,  0,  300});
+        histInfos.push_back({"Jet_cm_flavb_"   + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavc_"   + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavg_"   + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavq_"   + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_flavuds_" + std::to_string(i),  80,  0,    1});
     }
 }
 
@@ -71,7 +71,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap)
     TH1::SetDefaultSumw2();
     TH2::SetDefaultSumw2();
 
-    my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
+    my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
 
     for(auto& mycut : cutMap)
     {
@@ -82,8 +82,17 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap)
                 std::string njetStr = "";
                 if (Njet != "Incl") njetStr = "_Njets" + Njet;
 
+                // For 1D njets histos, don't make any where we exclude all but one njets bin
+                if (hInfo.name.find("njets") != std::string::npos and Njet != "Incl")
+                    continue;
+
                 for(const auto& region : abcds)
                 {
+
+                    // For discriminant plots, don't make for trivially subselection of ABCD region
+                    if (hInfo.name.find("DisCo_disc") != std::string::npos and region != "")
+                        continue;
+
                     std::string regionStr = "";
                     if (region != "") regionStr = "_" + region;
 
@@ -102,6 +111,11 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap)
 
                 for(const auto& region : abcds)
                 {
+
+                    // For discriminant plots, don't make for trivially subselection of ABCD region
+                    if (h2dInfo.name.find("DisCo_disc") != std::string::npos and region != "")
+                        continue;
+
                     std::string regionStr = "";
                     if (region != "") regionStr = "_" + region;
 
@@ -276,10 +290,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const std::map<std::string, bool> cut_map 
         {
-            {"_1l"                                   , passBaseline1l_Good},                         
-            {"_0l"                                   , passBaseline0l_Good},                         
+            {"_1l"                             , passBaseline1l_Good},                         
+            {"_0l"                             , passBaseline0l_Good},                         
         };
-    
+
         // Initialize Histograms
         if(!initHistos)
         {
@@ -295,7 +309,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         for(auto& kv : cut_map)
         {
 
-            int channel = std::stoi(kv.first.substr(1,1));
+            int channel = 1;
+            if (kv.first.size() > 0 and kv.first.substr(2,1) == "l")
+                channel = std::stoi(kv.first.substr(1,1));
 
             njetsMap = {{"Incl",     true},
                           {"6",      NGoodJets[channel]==6},
@@ -331,6 +347,20 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                         std::string name = kv.first+njetStr+regionStr;
                         double w = weight[channel];
+
+                        // if plotting Njets, don't care about individual Njet cuts
+                        if (ipass.first == "Incl") {
+                            my_histos["h_njets"                   + name]->Fill(NGoodJets[channel], w);
+                            my_histos["h_njets_11incl"            + name]->Fill(NGoodJets[channel]>=11 ? 11 : NGoodJets[channel], w);
+                            my_histos["h_njets_12incl"            + name]->Fill(NGoodJets[channel]>=12 ? 12 : NGoodJets[channel], w);
+                        }
+
+                        // if plotting disco, no need to make plots when cutting on
+                        if (jpass.first == "") {
+                            my_histos["h_DoubleDisCo_disc1"       + name]->Fill(DoubleDisCo_disc1[channel], w);
+                            my_histos["h_DoubleDisCo_disc2"       + name]->Fill(DoubleDisCo_disc2[channel], w);
+                            my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
+                        }
 
                         my_histos["fwm2_top6"               + name]->Fill(fwm2_top6[channel], w);
                         my_histos["fwm3_top6"               + name]->Fill(fwm3_top6[channel], w);
@@ -382,19 +412,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             my_histos["Jet_cm_flavuds_" + std::to_string(i) + name]->Fill(Jets_flavuds[channel].at(i-1), w);
                         }
 
-                        my_histos["h_DoubleDisCo_disc1"       + name]->Fill(DoubleDisCo_disc1[channel], w);
-                        my_histos["h_DoubleDisCo_disc2"       + name]->Fill(DoubleDisCo_disc2[channel], w);
-                        my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
-                        my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
-                        my_histos["h_njets"                   + name]->Fill(NGoodJets[channel], w);
-                        my_histos["h_njets_11incl"            + name]->Fill(NGoodJets[channel]>=11 ? 11 : NGoodJets[channel], w);
-                        my_histos["h_njets_12incl"            + name]->Fill(NGoodJets[channel]>=12 ? 12 : NGoodJets[channel], w);
-
-
                         my_histos["h_ntops"                   + name]->Fill(ntops, w);
                         my_histos["h_ht"                      + name]->Fill(HT_trigger[channel], w);
                         my_histos["h_MET_phi"                 + name]->Fill(metPhi, w);
                         my_histos["h_MET_pt"                  + name]->Fill(met, w);
+                        my_histos["h_DoubleDisCo_massReg"     + name]->Fill(DoubleDisCo_massReg[channel], w);
 
                     }
                 }
