@@ -169,7 +169,7 @@ public:
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
             meanFileName          = "allInOne_SFMean.root";
-            blind                 = true;
+            blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
         }
         else if(filetag.find("2017") != std::string::npos)
