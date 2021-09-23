@@ -22,7 +22,7 @@ def main():
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",           dest="year",           help="which year",            required=True)
-    parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_0L_loose_1L_RPV_2016_20210818_Output/")
+    parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/DoubleDisCo_Reg_0L_loose_1L_RPV_2016_20210920_Output/")
     parser.add_argument("--bkg",            dest="bkg",            help="TT, QCD, TTX, Other",   required=True)
     parser.add_argument("--model",          dest="model",          help="signal model",          default="RPV")
     parser.add_argument("--mass",           dest="mass",           help="signal mass",           default="550")
@@ -58,7 +58,9 @@ def main():
         "QCD"                         : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD.root"), 
         "TTX"                         : ROOT.TFile.Open(args.path + "/" + args.year + "_TTX.root"), 
         "Other"                       : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"),
-        "Others"                      : ROOT.TFile.Open(args.path + "/" + args.year + "_bkg_exceptTT.root"),
+        "NonTT"                       : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"),
+        "AllBkg"                      : ROOT.TFile.Open(args.path + "/" + args.year + "_All_bkg.root"),
+        "Data"                        : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"),
         "%s%s"%(args.model,args.mass) : ROOT.TFile.Open(args.path + "/" + args.year + "_%s_%s_mStop-%s.root"%(args.model,modelDecay,args.mass)),
     }
 
@@ -67,11 +69,21 @@ def main():
     
     # for 0-lepton 
     if args.channel == "0l":
-        njets = ["6", "7", "8", "9", "10", "11", "12"]
+
+        if args.bkg == "Data":
+            njets = ["6", "7", "8"]
+
+        else: 
+            njets = ["6", "7", "8", "9", "10", "11", "12"]
 
     # for 1-lepton
     else:
-        njets = ["7", "8", "9", "10", "11"]
+
+        if args.bkg == "Data":
+            njets = ["7", "8"]
+
+        else:
+            njets = ["7", "8", "9", "10", "11"]
 
     # ------------------
     # make all tex files
@@ -110,28 +122,12 @@ def main():
     edgesPerNjets     = {njet : None for njet in njets}
 
     # make regionis list for adding all edges to DoubleDisCo cfg file
-    regions = {"ABCD"          : "ABCD", 
+    regions = {"ABCD"          : "ABCD",
                "Val_bdEF"      : "bdEF",
                "Val_fixedBDEF" : "fixedBDEF", 
                "Val_cdiGH"     : "cdGH", 
                "Val_fixedCDGH" : "fixedCDGH",
                "Val_subDivD"   : "subDivD", 
-    }
-
-    # get closure and pull for the closure plots
-    closurePerNjets   = {"ABCD"          : [],
-                         "Val_bdEF"      : [],
-                         "Val_fixedBDEF" : [],
-                         "Val_cdiGH"     : [],
-                         "Val_fixedCDGH" : [],
-                         "Val_subDivD"   : [],
-    }
-    pullPerNjets      = {"ABCD"          : [],
-                         "Val_bdEF"      : [],
-                         "Val_fixedBDEF" : [],
-                         "Val_cdiGH"     : [],
-                         "Val_fixedCDGH" : [],
-                         "Val_subDivD"   : [],
     }
 
     # ---------------
@@ -146,56 +142,20 @@ def main():
         maxEdge  = histSig.GetXaxis().GetBinLowEdge(histBkg.GetNbinsX()+1)
         binWidth = histSig.GetXaxis().GetBinWidth(1)
 
-        # initialize the dictionaries of quantities and variables with any combination of bin edges
-        allRegionsEdges = {}
-        allRegionsSigEvents = {"ABCD"          : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_bdEF"      : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_cdiGH"     : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_subDivD"   : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_fixedBDEF" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_fixedCDGH" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}}, 
-        }
-
-        allRegionsBkgEvents = {"ABCD"          : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_bdEF"      : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_cdiGH"     : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_subDivD"   : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_fixedBDEF" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                               "Val_fixedCDGH" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-        }
-        
-        allRegionsSigFracs = {"ABCD"          : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                              "Val_bdEF"      : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                              "Val_cdiGH"     : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                              "Val_subDivD"   : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                              "Val_fixedBDEF" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                              "Val_fixedCDGH" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-        }
-
+        # initialize the dictionaries of quantities and variables with any combination of bin edges 
         # initialize the dictionaries of quantities and variables with the final choice of bin edges
-        allRegionsFinalSigEvents = {"ABCD"          : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_bdEF"      : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_cdiGH"     : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_subDivD"   : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_fixedBDEF" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_fixedCDGH" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-        }
+        allRegionsEdges = {}
+        allRegionsSigEvents = {};      allRegionsBkgEvents = {};      allRegionsSigFracs = {}
+        allRegionsFinalSigEvents = {}; allRegionsFinalBkgEvents = {}; allRegionsFinalSigFracs = {}
 
-        allRegionsFinalBkgEvents = {"ABCD"          : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_bdEF"      : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_cdiGH"     : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_subDivD"   : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_fixedBDEF" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                    "Val_fixedCDGH" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-        }
+        for key, region in regions.items():
 
-        allRegionsFinalSigFracs = {"ABCD"          : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                   "Val_bdEF"      : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                   "Val_cdiGH"     : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                   "Val_subDivD"   : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                   "Val_fixedBDEF" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-                                   "Val_fixedCDGH" : {"A" : {}, "B" : {}, "C" : {}, "D" : {}},
-        }
+            allRegionsSigEvents[key]      = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
+            allRegionsBkgEvents[key]      = {"A" : {}, "B" : {}, "C" : {}, "D" : {}} 
+            allRegionsSigFracs[key]       = {"A" : {}, "B" : {}, "C" : {}, "D" : {}} 
+            allRegionsFinalSigEvents[key] = {"A" : {}, "B" : {}, "C" : {}, "D" : {}} 
+            allRegionsFinalBkgEvents[key] = {"A" : {}, "B" : {}, "C" : {}, "D" : {}} 
+            allRegionsFinalSigFracs[key]  = {"A" : {}, "B" : {}, "C" : {}, "D" : {}} 
 
         # initialize the dictionaries of any regions
         translator = {"ABCD"          : {"A" : "A",  "B" : "B",  "C" : "C",  "D" : "D" },
@@ -325,11 +285,7 @@ def main():
                                              "B" : theEdgesClass.getFinal("sigFractionB"),
                                              "C" : theEdgesClass.getFinal("sigFractionC"),
                                              "D" : theEdgesClass.getFinal("sigFractionD")}    
-
-            # get closure and pull for the closure plots
-            closurePerNjets[key].append(finalClosureErr)
-            pullPerNjets[key].append(finalPull)
-
+            
             # plot variable vs disc as 1D 
             for disc in [1, 2]:
                 plotter.plot_VarVsDisc(significances,                 edges, binWidth/2.0, 5.0, "%s Significance"%(key),       "Significance", disc, njet, name = key)
@@ -341,15 +297,15 @@ def main():
                     plotter.plot_VarVsDisc(allRegionsSigFracs[key][subregion], edges, binWidth/2.0, 0.8, "Signal Contamination %s"%(translator[key][subregion]), "SigFracs%s"%(translator[key][subregion]), disc, njet, name = key)
 
             # plot 2Ds
-            plotter.plot_Var_vsDisc1Disc2(significances[:,0],                edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 5.0, njet, name=key, variable="Sign"                            )
-            plotter.plot_Var_vsDisc1Disc2(closureErrs[:,0],                  edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.3, njet, name=key, variable="ClosureErr"                      )
-            plotter.plot_Var_vsDisc1Disc2(closureErrs[:,1],                  edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.3, njet, name=key, variable="ClosureErrUnc"                   )
-            plotter.plot_Var_vsDisc1Disc2(pull[:,0],                         edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.3, njet, name=key, variable="Pull"                            )
-            plotter.plot_Var_vsDisc1Disc2(pull[:,1],                         edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.3, njet, name=key, variable="PullUnc"                         )
-            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["A"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["A"]))
-            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["B"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["B"]))
-            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["C"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["C"]))
-            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["D"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 20.0, 0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["D"]))
+            plotter.plot_Var_vsDisc1Disc2(significances[:,0],                edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="Sign"                            )
+            plotter.plot_Var_vsDisc1Disc2(closureErrs[:,0],                  edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.3, njet, name=key, variable="ClosureErr"                      )
+            plotter.plot_Var_vsDisc1Disc2(closureErrs[:,1],                  edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.3, njet, name=key, variable="ClosureErrUnc"                   )
+            plotter.plot_Var_vsDisc1Disc2(pull[:,0],                         edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="Pull"                            )
+            plotter.plot_Var_vsDisc1Disc2(pull[:,1],                         edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="PullUnc"                         )
+            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["A"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["A"]))
+            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["B"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["B"]))
+            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["C"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["C"]))
+            plotter.plot_Var_vsDisc1Disc2(allRegionsSigFracs[key]["D"][:,0], edges, float(allRegionsEdges[key][0]), float(allRegionsEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["D"]))
             plotter.plot_inverseSignificance_vsClosureErr(finalSignificance, finalClosureErr, significances, closureErrs, edges, allRegionsEdges[key], njet, name=key)
 
         bkgEventsPerNjets[njet] = allRegionsFinalBkgEvents
@@ -386,8 +342,8 @@ def main():
     # ----------------------
     for key, region in regions.items():
 
-        plotter.make_allClosures(edgesPerNjets, bkgEventsPerNjets, None,              closurePerNjets[key], pullPerNjets[key], njets, name = key, closureTag = "b" )
-        plotter.make_allClosures(edgesPerNjets, bkgEventsPerNjets, sigEventsPerNjets, closurePerNjets[key], pullPerNjets[key], njets, name = key, closureTag = "sb") 
+        plotter.make_allClosures(edgesPerNjets, bkgEventsPerNjets, None,              njets, name = key, closureTag = "b" )
+        plotter.make_allClosures(edgesPerNjets, bkgEventsPerNjets, sigEventsPerNjets, njets, name = key, closureTag = "sb") 
 
     # -------------------------------------
     # add all edges to DoubleDisCo cfg file

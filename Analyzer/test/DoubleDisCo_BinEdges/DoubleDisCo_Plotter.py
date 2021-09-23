@@ -37,7 +37,7 @@ class Common_Calculations_Plotters:
     # -----------------
     # plot all closures
     # -----------------
-    def plot_ClosureNjets(self, bkg, bkgPred, closureErrs, pull, Njets, name = '', closureTag = ''):
+    def plot_ClosureNjets(self, bkg, bkgPred, Njets, name = '', closureTag = ''):
         
         x         = []; xUnc         = []
         obs       = []; obsUnc       = [] 
@@ -48,27 +48,28 @@ class Common_Calculations_Plotters:
         totalChi2 = 0.0; ndof = 0
     
         for i in range(0, len(Njets)):
-   
-            sign = 1.0 
-            if bkgPred[i][0] > bkg[i][0]:
-                sign = -1.0
-
+    
             if bkg[i][1] != 0.0:
     
-                x.append(float(Njets[i]))
+                x.append(float(Njets[i]))  
                 xUnc.append(0.5)
                 pred.append(bkgPred[i][0]) 
                 predUnc.append(bkgPred[i][1])
                 obs.append(bkg[i][0])      
                 obsUnc.append(bkg[i][1])
 
-                abcdPull.append(pull[i][0])
-                abcdPullUnc.append(pull[i][1])
-                abcdError.append(sign * closureErrs[i][0])
-                abcdErrorUnc.append(closureErrs[i][1])
-                totalChi2 += pull[i][0] ** 2.0
+                pull            = (bkgPred[i][0] - bkg[i][0]) / bkg[i][1]
+                pullUnc         = 1.0
+                closureError    = 1.0 - bkgPred[i][0] / bkg[i][0]
+                closureErrorUnc = ((bkgPred[i][1] / bkg[i][0])**2.0 + (bkg[i][1] * bkgPred[i][0] / bkg[i][0]**2.0)**2.0)**0.5
+
+                abcdPull.append(pull)
+                abcdPullUnc.append(pullUnc)
+                abcdError.append(closureError) 
+                abcdErrorUnc.append(closureErrorUnc)
+                totalChi2 += pull ** 2.0
                 ndof      += 1
-    
+ 
         fig = plt.figure(figsize=(6, 6))
         ax  = fig.add_subplot(111)
         fig.subplots_adjust(hspace=0, left=0.15, right=0.95, top=0.94)
@@ -102,7 +103,6 @@ class Common_Calculations_Plotters:
         ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
         ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
         ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
-        #ax2.set_xlabel('Number of jets')
         ax2.set_ylabel('1 - Pred./Obs.')
         ax2.set_ylim([-1.4, 1.4])
    
@@ -127,7 +127,7 @@ class Common_Calculations_Plotters:
     # ----------------------
     # make all closure plots
     # ----------------------      
-    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, closureErrs=None, pull=None, Njets=None, name = "", closureTag=""):
+    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, Njets=None, name = "", closureTag=""):
     
         evtsNjets     = []
         evtsNjetsPred = []
@@ -157,18 +157,18 @@ class Common_Calculations_Plotters:
                 evtsNjets.append((evtsA, evtsAunc**0.5))
                 evtsNjetsPred.append((pred_A, predUnc_A))
     
-        self.plot_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), np.array(closureErrs), np.array(pull), Njets, name, closureTag)
+        self.plot_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), Njets, name, closureTag)
 
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges
     # ----------------------------------------------------------------
-    def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, binWidth, cmax, vmax, Njets = -1, name = "", variable = ""):
+    def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, binWidth, cmin, cmax, vmin, vmax, Njets = -1, name = "", variable = ""):
 
         nBins = math.ceil((1.0 + binWidth)/binWidth)
 
         fig = plt.figure() 
         fig.subplots_adjust(top = 0.94)
-        plt.hist2d(edges[:,0], edges[:,1], bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=var, cmin=10e-10, cmax=cmax, vmin = 0.0, vmax = vmax)
+        plt.hist2d(edges[:,0], edges[:,1], bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=var, cmin=cmin, cmax=cmax, vmin=vmin, vmax=vmax)
         plt.colorbar()
         ax = plt.gca()
         ax.set_ylabel("Disc. 2 Bin Edge"); ax.set_xlabel("Disc. 1 Bin Edge")
