@@ -59,6 +59,7 @@ def main():
         "TTX"                         : ROOT.TFile.Open(args.path + "/" + args.year + "_TTX.root"), 
         "Other"                       : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"),
         "NonTT"                       : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"),
+        "NonTT_withoutQCD"            : ROOT.TFile.Open(args.path + "/" + args.year + "_NonTT_withoutQCD.root"),
         "AllBkg"                      : ROOT.TFile.Open(args.path + "/" + args.year + "_All_bkg.root"),
         "Data"                        : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"),
         "%s%s"%(args.model,args.mass) : ROOT.TFile.Open(args.path + "/" + args.year + "_%s_%s_mStop-%s.root"%(args.model,modelDecay,args.mass)),
