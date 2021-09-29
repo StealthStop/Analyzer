@@ -28,8 +28,8 @@ class Histogram:
         self.xDim = {}
         self.yDim = {}
 
-        self.info = hinfo
-        self.info.update(pinfo)
+        self.info = copy.deepcopy(pinfo)
+        self.info.update(hinfo)
 
         self.histoName = histoName
         self.filePath  = rootFile
@@ -71,7 +71,7 @@ class Histogram:
     def IsGood(self):
         return self.histogram != -1
 
-    def Draw(self, canvas, showNevents, firstDraw, nLegend, legend, histOpt, legOpt):
+    def Draw(self, canvas, showNevents, firstDraw, nLegend, legend):
 
         if self.histogram != -1:
             lname = self.info["name"]
@@ -79,12 +79,12 @@ class Histogram:
                 lname += " (%.1f)"%(self.histogram.Integral())
 
             if not firstDraw:
-                self.histogram.Draw(histOpt)
+                self.histogram.Draw(self.info["option"])
                 firstDraw = True
             else:
-                self.histogram.Draw("%s SAME"%(histOpt))
+                self.histogram.Draw("%s SAME"%(self.info["option"]))
     
-            legend.AddEntry(self.histogram, lname, legOpt)
+            legend.AddEntry(self.histogram, lname, self.info["loption"])
             nLegend += 1     
 
         return nLegend, firstDraw
@@ -129,12 +129,21 @@ class Histogram:
             self.histogram.GetXaxis().SetTitleOffset(self.xDim["offset"]);           self.histogram.GetYaxis().SetTitleOffset(self.yDim["offset"] * upperSplit * aux)
             self.histogram.GetXaxis().SetTitle(self.info["X"]["title"]);             self.histogram.GetYaxis().SetTitle(self.info["Y"]["title"])
 
-            self.histogram.SetMarkerColor(self.info["color"]); self.histogram.SetMarkerSize(self.info["msize"]); self.histogram.SetMarkerStyle(self.info["mstyle"])
-            self.histogram.SetLineColor(self.info["color"]);   self.histogram.SetLineWidth(self.info["lsize"]);  self.histogram.SetLineStyle(self.info["lstyle"])
+            if "lcolor" in self.info:
+                self.histogram.SetLineColor(self.info["lcolor"])
+                self.histogram.SetMarkerColor(self.info["lcolor"])
+            else:
+                self.histogram.SetLineColor(self.info["color"])
+                self.histogram.SetMarkerColor(self.info["color"])
+
+            self.histogram.SetMarkerSize(self.info["msize"]); self.histogram.SetMarkerStyle(self.info["mstyle"])
+            self.histogram.SetLineWidth(self.info["lsize"]);  self.histogram.SetLineStyle(self.info["lstyle"])
     
-            # Only fill self.histogram with color when no line is present
-            if self.info["lsize"] == 0:
+            if "loption" in self.info and "L" not in self.info["loption"]:
                 self.histogram.SetFillColor(self.info["color"])
+
+            if "fstyle" in self.info:
+                self.histogram.SetFillStyle(self.info["fstyle"])
 
             self.histogram.RebinX(self.info["X"]["rebin"])
             self.histogram.GetXaxis().SetRangeUser(self.info["X"]["min"], self.info["X"]["max"])
@@ -362,15 +371,40 @@ class StackPlotter:
 
                     dataScale = 0.0
                     mcScale = 0.0
-                    # Preemptively get data counts
+                    theMax = 0.0
+                    # Preemptively get data counts to be used for normalzing the histograms later
                     for dname, dinfo in self.data.items():
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
-                        if Hobj.IsGood(): dataScale = Hobj.Integral()
+                        if Hobj.IsGood():
+                            dataScale = Hobj.Integral()
 
-                    # Preemptively get MC counts
+                            if self.normalize:
+                                Hobj.Scale(1.0 / dataScale)
+
+                            tempMax = Hobj.histogram.GetMaximum()
+                            if tempMax > theMax:
+                                theMax = tempMax
+
+                    # Preemptively loop over signal to determine maximums
+                    for sname, sinfo in self.signals.items(): 
+
+                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
+                        if Hobj.IsGood():
+                            sigScale = Hobj.Integral()
+
+                            if self.normalize:
+                                Hobj.Scale(1.0 / sigScale)
+
+                            tempMax = Hobj.histogram.GetMaximum()
+                            if tempMax > theMax:
+                                theMax = tempMax
+
+                    # Preemptively get MC counts to be used for normalizing the histograms later
                     for bname, binfo in self.backgrounds.items(): 
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
@@ -379,11 +413,15 @@ class StackPlotter:
                         
                         if Hobj.IsGood(): mcScale += Hobj.Integral()
 
-                    # Loop over each background and get their respective histo 
+                    # Loop over each background and get their respective histo, scale if necessary
+                    option = "HIST"; loption = "F"
                     for bname, binfo in self.backgrounds.items(): 
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
     
+                        if "option"  not in binfo: binfo["option"]  = option
+                        if "loption" not in binfo: binfo["loption"] = loption
+
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
                         if Hobj.IsGood(): 
@@ -398,32 +436,46 @@ class StackPlotter:
                             else:
                                 totalMC.Add(Hobj.histogram)
 
-                            bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram)
+                            bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
                             dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
-                       
+
+                    # Add each background histo to the stack in order based on number of entries
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=False): 
-                        bstack.Add(h[1], "HIST")
+                        bstack.Add(h[1], h[2])
                         nBkgLegend += 1
 
-                    theMax = bstack.GetMaximum()
+                    tempMax = bstack.GetMaximum()
+                    if tempMax > theMax:
+                        theMax = tempMax
 
-                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], newInfo["Y"]["min"], theMax)
+                    theMin = newInfo["Y"]["min"] if "min" in newInfo["Y"] else 0.0
+
+                    if self.normalize:
+                        theMin /= mcScale
+
+                    # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
+                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], theMin, theMax)
 
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=True):
                         lname = h[0]
                         if self.printNEvents:
                             lname += " (%.1f)"%(h[1].Integral())
 
-                        bkgLegend.AddEntry(h[1], lname, "F")
+                        bkgLegend.AddEntry(h[1], lname, h[3])
 
-                    dummy.SetMaximum(yMax); dummy.SetMinimum(hinfo["Y"]["min"]) if "min" in hinfo["Y"] else dummy.SetMinimum(0.2)
+                    dummy.SetMaximum(yMax)
+                    dummy.SetMinimum(theMin)
                     dummy.Draw()
                     bstack.Draw("SAME")
 
                     # Loop over each signal and get their respective histo
+                    option = "HIST"; loption = "L"
                     for sname, sinfo in self.signals.items(): 
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+
+                        if "option"  not in sinfo: sinfo["option"]  = option 
+                        if "loption" not in sinfo: sinfo["loption"] = loption
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
@@ -434,12 +486,16 @@ class StackPlotter:
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
-                        nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend, "HIST", "L")
+                        nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend)
 
                     # Loop over the data and get their respective histo
+                    option = "E0P"; loption = "ELP"
                     for dname, dinfo in self.data.items():
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+
+                        if "option"  not in dinfo: dinfo["option"]  = option 
+                        if "loption" not in dinfo: dinfo["loption"] = loption
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
 
@@ -447,7 +503,7 @@ class StackPlotter:
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
-                        nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend, "E0P", "ELP")
+                        nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend)
 
                         if Hobj.IsGood():
 
@@ -483,7 +539,6 @@ class StackPlotter:
                         ratio.Draw("E0P")
 
                     canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
-                    canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, newName))
 
 if __name__ == "__main__":
 
