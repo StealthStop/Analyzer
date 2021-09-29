@@ -17,13 +17,10 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 class All_Regions:
 
-    def __init__(self, histBkg=None, histSig=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
+    def __init__(self, hist=None, Sig=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
 
-        self.quantities = {}
-        self.finalEdges = ()
-
-        self.histBkg        = histBkg
-        self.histSig        = histSig
+        self.hist           = hist
+        self.Sig            = Sig
         self.fixedDisc1Edge = fixedDisc1Edge
         self.fixedDisc2Edge = fixedDisc2Edge
         self.leftBoundary   = leftBoundary
@@ -34,6 +31,12 @@ class All_Regions:
 
         self.extraArgs = kwargs
 
+        self.finalEdges = ()
+        self.quantities = {}
+
+        for key in hist.keys():
+            self.quantities[key] = {}
+
         # First calculate events counts for all possible choices of bin edges
         self.count_Events_inBinEdges()
 
@@ -41,14 +44,14 @@ class All_Regions:
         # based on the optimization_metric function
         self.get_BinEdges()
 
-    # ------------------------
-    # Significance calculation
-    # ------------------------
-    def cal_Significance(self, nSigEvents, nBkgEvents, sys=0.3):
-        if (nBkgEvents == 0.0):
+    # -------------------------------------
+    # Significance calculation with only TT
+    # -------------------------------------
+    def cal_Significance(self, nSigEvents, nTTEvents, sys=0.3):
+        if (nTTEvents == 0.0):
             return 0.0
     
-        significance = nSigEvents / ( nBkgEvents + (sys * nBkgEvents)**2.0 )**0.5
+        significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 )**0.5
         return significance
     
     # -------------------------
@@ -98,11 +101,11 @@ class All_Regions:
     
         # Define the absolute bounds that our integral takes place in
         # If boundaries are not defined, then assume the edge of the histogram
-        firstXBin = 1 if self.leftBoundary   == None else self.histBkg.GetXaxis().FindBin(float(self.leftBoundary))
-        firstYBin = 1 if self.bottomBoundary == None else self.histBkg.GetYaxis().FindBin(float(self.bottomBoundary))
+        firstXBin = 1 if self.leftBoundary   == None else self.hist["TT"].GetXaxis().FindBin(float(self.leftBoundary))
+        firstYBin = 1 if self.bottomBoundary == None else self.hist["TT"].GetYaxis().FindBin(float(self.bottomBoundary))
  
-        lastXBin = self.histBkg.GetNbinsX()+1 if self.rightBoundary == None else self.histBkg.GetXaxis().FindBin(float(self.rightBoundary))
-        lastYBin = self.histBkg.GetNbinsY()+1 if self.topBoundary   == None else self.histBkg.GetYaxis().FindBin(float(self.topBoundary))
+        lastXBin = self.hist["TT"].GetNbinsX()+1 if self.rightBoundary == None else self.hist["TT"].GetXaxis().FindBin(float(self.rightBoundary))
+        lastYBin = self.hist["TT"].GetNbinsY()+1 if self.topBoundary   == None else self.hist["TT"].GetYaxis().FindBin(float(self.topBoundary))
 
         nXBins = range(firstXBin+1, lastXBin)
         nYBins = range(firstYBin+1, lastYBin)
@@ -111,47 +114,38 @@ class All_Regions:
         for xBin in nXBins:
 
             # Store disc 1 edge as string with three digits of accuracy for now
-            xLowBinEdge = self.histBkg.GetXaxis().GetBinLowEdge(xBin)
+            xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
             xBinKey     = "%.3f"%(xLowBinEdge)
     
             # loop over the y bins
             for yBin in nYBins:
     
                 # Store disc 2 edge as string with three digits of accuracy for now
-                yLowBinEdge = self.histBkg.GetYaxis().GetBinLowEdge(yBin)
+                yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
                 yBinKey     = "%.3f"%(yLowBinEdge)
 
                 # count signal and background events and errors in bin edges
-                nSigEventsErr_A = ROOT.Double(0.0); nSigEventsErr_B = ROOT.Double(0.0); nSigEventsErr_C = ROOT.Double(0.0); nSigEventsErr_D = ROOT.Double(0.0)
-                nBkgEventsErr_A = ROOT.Double(0.0); nBkgEventsErr_B = ROOT.Double(0.0); nBkgEventsErr_C = ROOT.Double(0.0); nBkgEventsErr_D = ROOT.Double(0.0)
+                for key, h1 in self.hist.items():
+                    
+                    nEventsErr_A = ROOT.Double(0.0); nEventsErr_B = ROOT.Double(0.0); nEventsErr_C = ROOT.Double(0.0); nEventsErr_D = ROOT.Double(0.0)
 
-                # last      | 
-                #        B  |  A
-                # yBin _____|_____
-                #           |
-                #        D  |  C
-                #           |
-                #    
-                # first   xBin   last
-                nSigEvents_A = math.ceil(self.histSig.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nSigEventsErr_A))
-                nSigEvents_B = math.ceil(self.histSig.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nSigEventsErr_B))
-                nSigEvents_C = math.ceil(self.histSig.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nSigEventsErr_C))
-                nSigEvents_D = math.ceil(self.histSig.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nSigEventsErr_D))
+                    # last      | 
+                    #        B  |  A
+                    # yBin _____|_____
+                    #           |
+                    #        D  |  C
+                    #           |
+                    #    
+                    # first   xBin   last
+                    nEvents_A = math.ceil(h1.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nEventsErr_A))
+                    nEvents_B = math.ceil(h1.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nEventsErr_B))
+                    nEvents_C = math.ceil(h1.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nEventsErr_C))
+                    nEvents_D = math.ceil(h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D))
 
-                nBkgEvents_A = math.ceil(self.histBkg.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nBkgEventsErr_A))
-                nBkgEvents_B = math.ceil(self.histBkg.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nBkgEventsErr_B))
-                nBkgEvents_C = math.ceil(self.histBkg.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nBkgEventsErr_C))
-                nBkgEvents_D = math.ceil(self.histBkg.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nBkgEventsErr_D))
-
-                self.add("nSigEventsA", xBinKey, yBinKey, (nSigEvents_A, nSigEvents_A**0.5))
-                self.add("nSigEventsB", xBinKey, yBinKey, (nSigEvents_B, nSigEvents_B**0.5))
-                self.add("nSigEventsC", xBinKey, yBinKey, (nSigEvents_C, nSigEvents_C**0.5))
-                self.add("nSigEventsD", xBinKey, yBinKey, (nSigEvents_D, nSigEvents_D**0.5))
-
-                self.add("nBkgEventsA", xBinKey, yBinKey, (nBkgEvents_A, nBkgEvents_A**0.5))
-                self.add("nBkgEventsB", xBinKey, yBinKey, (nBkgEvents_B, nBkgEvents_B**0.5))
-                self.add("nBkgEventsC", xBinKey, yBinKey, (nBkgEvents_C, nBkgEvents_C**0.5))
-                self.add("nBkgEventsD", xBinKey, yBinKey, (nBkgEvents_D, nBkgEvents_D**0.5))
+                    self.add("nEventsA", xBinKey, yBinKey, (nEvents_A, nEvents_A**0.5), key)
+                    self.add("nEventsB", xBinKey, yBinKey, (nEvents_B, nEvents_B**0.5), key)
+                    self.add("nEventsC", xBinKey, yBinKey, (nEvents_C, nEvents_C**0.5), key)
+                    self.add("nEventsD", xBinKey, yBinKey, (nEvents_D, nEvents_D**0.5), key)
 
     # -------------------------------------------------------------------------------
     # Region by region calculation of signal fraction, closure Err, significance, etc
@@ -173,78 +167,101 @@ class All_Regions:
         optMetric = 999.0
 
         # loop over the disc1 and disc2 to get any possible combination of them
-        for disc1Key, disc2Key in self.get("edges"):
+        for disc1Key, disc2Key in self.get("edges",None,None,"TT"):
 
             # number of signal and background events in aech A, B, C, D region
-            nSigEvents_A, nSigEventsErr_A = self.get("nSigEventsA", disc1Key, disc2Key) 
-            nSigEvents_B, nSigEventsErr_B = self.get("nSigEventsB", disc1Key, disc2Key) 
-            nSigEvents_C, nSigEventsErr_C = self.get("nSigEventsC", disc1Key, disc2Key) 
-            nSigEvents_D, nSigEventsErr_D = self.get("nSigEventsD", disc1Key, disc2Key) 
+            nTTEvents_A,    nTTEventsErr_A    = self.get("nEventsA", disc1Key, disc2Key, "TT")
+            nTTEvents_B,    nTTEventsErr_B    = self.get("nEventsB", disc1Key, disc2Key, "TT")
+            nTTEvents_C,    nTTEventsErr_C    = self.get("nEventsC", disc1Key, disc2Key, "TT")
+            nTTEvents_D,    nTTEventsErr_D    = self.get("nEventsD", disc1Key, disc2Key, "TT")
 
-            nBkgEvents_A, nBkgEventsErr_A = self.get("nBkgEventsA", disc1Key, disc2Key)
-            nBkgEvents_B, nBkgEventsErr_B = self.get("nBkgEventsB", disc1Key, disc2Key)
-            nBkgEvents_C, nBkgEventsErr_C = self.get("nBkgEventsC", disc1Key, disc2Key)
-            nBkgEvents_D, nBkgEventsErr_D = self.get("nBkgEventsD", disc1Key, disc2Key)
+            nNonTTEvents_A, nNonTTEventsErr_A = self.get("nEventsA", disc1Key, disc2Key, "NonTT")
+            nNonTTEvents_B, nNonTTEventsErr_B = self.get("nEventsB", disc1Key, disc2Key, "NonTT")
+            nNonTTEvents_C, nNonTTEventsErr_C = self.get("nEventsC", disc1Key, disc2Key, "NonTT")
+            nNonTTEvents_D, nNonTTEventsErr_D = self.get("nEventsD", disc1Key, disc2Key, "NonTT")
 
-            # Region by region signal fraction calculation
-            # get some plots based on region by region signal fraction
-            nTot_SigBkg_A = nSigEvents_A + nBkgEvents_A
-            nTot_SigBkg_B = nSigEvents_B + nBkgEvents_B
-            nTot_SigBkg_C = nSigEvents_C + nBkgEvents_C
-            nTot_SigBkg_D = nSigEvents_D + nBkgEvents_D
+            nSigEvents_A,   nSigEventsErr_A   = self.get("nEventsA", disc1Key, disc2Key, self.Sig) 
+            nSigEvents_B,   nSigEventsErr_B   = self.get("nEventsB", disc1Key, disc2Key, self.Sig) 
+            nSigEvents_C,   nSigEventsErr_C   = self.get("nEventsC", disc1Key, disc2Key, self.Sig) 
+            nSigEvents_D,   nSigEventsErr_D   = self.get("nEventsD", disc1Key, disc2Key, self.Sig) 
+
+            nDataEvents_A,  nDataEventsErr_A  = self.get("nEventsA", disc1Key, disc2Key, "Data")
+            nDataEvents_B,  nDataEventsErr_B  = self.get("nEventsB", disc1Key, disc2Key, "Data")
+            nDataEvents_C,  nDataEventsErr_C  = self.get("nEventsC", disc1Key, disc2Key, "Data")
+            nDataEvents_D,  nDataEventsErr_D  = self.get("nEventsD", disc1Key, disc2Key, "Data")
+
+            # Region by region signal fractions for 1D-2D plots / for only TT !!!
+            nTot_SigTT_A = nSigEvents_A + nTTEvents_A
+            nTot_SigTT_B = nSigEvents_B + nTTEvents_B
+            nTot_SigTT_C = nSigEvents_C + nTTEvents_C
+            nTot_SigTT_D = nSigEvents_D + nTTEvents_D
 
             sigFracsA    = -1.0; sigFracsB    = -1.0; sigFracsC    = -1.0; sigFracsD    = -1.0
             sigFracsErrA = -1.0; sigFracsErrB = -1.0; sigFracsErrC = -1.0; sigFracsErrD = -1.0
     
-            if nTot_SigBkg_A > 0.0: 
-                sigFracsA    = nSigEvents_A / nTot_SigBkg_A
-                sigFracsErrA = ((nBkgEvents_A * nSigEventsErr_A**0.5 / (nTot_SigBkg_A)**2.0)**2.0 + \
-                                (nSigEvents_A * nBkgEventsErr_A**0.5 / (nTot_SigBkg_A)**2.0)**2.0)**0.5
+            if nTot_SigTT_A > 0.0: 
+                sigFracsA    = nSigEvents_A / nTot_SigTT_A
+                sigFracsErrA = ((nTTEvents_A * nSigEventsErr_A**0.5 / (nTot_SigTT_A)**2.0)**2.0 + \
+                                (nSigEvents_A * nTTEventsErr_A**0.5 / (nTot_SigTT_A)**2.0)**2.0)**0.5
             
-            if nTot_SigBkg_B > 0.0: 
-                sigFracsB    = nSigEvents_B / nTot_SigBkg_B
-                sigFracsErrB = ((nBkgEvents_B * nSigEventsErr_B**0.5 / (nTot_SigBkg_B)**2.0)**2.0 + \
-                                (nSigEvents_B * nBkgEventsErr_B**0.5 / (nTot_SigBkg_B)**2.0)**2.0)**0.5
+            if nTot_SigTT_B > 0.0: 
+                sigFracsB    = nSigEvents_B / nTot_SigTT_B
+                sigFracsErrB = ((nTTEvents_B * nSigEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0 + \
+                                (nSigEvents_B * nTTEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0)**0.5
             
-            if nTot_SigBkg_C > 0.0: 
-                sigFracsC    = nSigEvents_C / nTot_SigBkg_C
-                sigFracsErrC = ((nBkgEvents_C * nSigEventsErr_C**0.5 / (nTot_SigBkg_C)**2.0)**2.0 + \
-                                (nSigEvents_C * nBkgEventsErr_C**0.5 / (nTot_SigBkg_C)**2.0)**2.0)**0.5
+            if nTot_SigTT_C > 0.0: 
+                sigFracsC    = nSigEvents_C / nTot_SigTT_C
+                sigFracsErrC = ((nTTEvents_C * nSigEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0 + \
+                                (nSigEvents_C * nTTEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0)**0.5
     
-            if nTot_SigBkg_D > 0.0: 
-                sigFracsD    = nSigEvents_D / nTot_SigBkg_D
-                sigFracsErrD = ((nBkgEvents_D * nSigEventsErr_D**0.5 / (nTot_SigBkg_D)**2.0)**2.0 + \
-                                (nSigEvents_D * nBkgEventsErr_D**0.5 / (nTot_SigBkg_D)**2.0)**2.0)**0.5
-    
-            # significance, closure error and pull for optimization of bin edges
-            significance = 0.0; significanceUnc = 0.0; closureErr = -999.0; closureErrUnc = -999.0; pull = -999.0; pullUnc = -999.0; tempOptMetric = 999.0
-    
-            closureErr, closureErrUnc = self.cal_ClosureError(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
-            pull, pullUnc             = self.cal_Pull(nBkgEvents_A, nBkgEvents_B, nBkgEvents_C, nBkgEvents_D, nBkgEventsErr_A, nBkgEventsErr_B, nBkgEventsErr_C, nBkgEventsErr_D)
+            if nTot_SigTT_D > 0.0: 
+                sigFracsD    = nSigEvents_D / nTot_SigTT_D
+                sigFracsErrD = ((nTTEvents_D * nSigEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0 + \
+                                (nSigEvents_D * nTTEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0)**0.5
+            
+            self.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA), self.Sig)
+            self.add("sigFractionB", disc1Key, disc2Key, (sigFracsB, sigFracsErrB), self.Sig)
+            self.add("sigFractionC", disc1Key, disc2Key, (sigFracsC, sigFracsErrC), self.Sig)
+            self.add("sigFractionD", disc1Key, disc2Key, (sigFracsD, sigFracsErrD), self.Sig)   
 
-            significance += self.cal_Significance(nSigEvents_A, nBkgEvents_A)**2.0
-            significance = significance**0.5
-   
-            # get the significanceUncs to plot variable vs disc as 1D 
-            if nBkgEvents_A > 0.0:
-                significanceUnc = (   ( nSigEventsErr_A / (nBkgEvents_A + (bkgNormUnc * nBkgEvents_A)**2.0 + (closureErr * nBkgEvents_A)**2.0)**0.5 )**2.0
-                                  + ( ( nSigEvents_A * nBkgEventsErr_A * (2.0 * nBkgEvents_A * closureErr**2.0 + 2.0 * bkgNormUnc**2.0 * nBkgEvents_A + 1) ) / ( nBkgEvents_A + (bkgNormUnc * nBkgEvents_A)**2.0 + (closureErr * nBkgEvents_A)**2.0 )**1.5 )**2.0
-                                  + ( ( nBkgEvents_A**2.0 * closureErr * nSigEvents_A * closureErrUnc) / ( nBkgEvents_A * ( nBkgEvents_A * (closureErr**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
- 
-            # Store significance, closure error and pull
-            self.add("significance", disc1Key, disc2Key, (significance, significanceUnc))
-            self.add("closureError", disc1Key, disc2Key, (closureErr,   closureErrUnc  ))
-            self.add("pull",         disc1Key, disc2Key, (pull,         pullUnc        ))
+            # closure for optimization metric for only TT
+            # closure error and pull for 2D plots / for TT, NonTT, Data
+            closureErr_TT    = -999.0; closureErrUnc_TT    = -999.0; pull_TT    = -999.0; pullUnc_TT    = -999.0 
+            closureErr_NonTT = -999.0; closureErrUnc_NonTT = -999.0; pull_NonTT = -999.0; pullUnc_NonTT = -999.0 
+            closureErr_Data  = -999.0; closureErrUnc_Data  = -999.0; pull_Data  = -999.0; pullUnc_Data  = -999.0
+    
+            closureErr_TT,    closureErrUnc_TT    = self.cal_ClosureError(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
+            closureErr_NonTT, closureErrUnc_NonTT = self.cal_ClosureError(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
+            closureErr_Data,  closureErrUnc_Data  = self.cal_ClosureError(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
 
-            # Region by region fraction and fraction error
-            self.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA))
-            self.add("sigFractionB", disc1Key, disc2Key, (sigFracsB, sigFracsErrB))
-            self.add("sigFractionC", disc1Key, disc2Key, (sigFracsC, sigFracsErrC))
-            self.add("sigFractionD", disc1Key, disc2Key, (sigFracsD, sigFracsErrD))
+            pull_TT,    pullUnc_TT    = self.cal_Pull(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
+            pull_NonTT, pullUnc_NonTT = self.cal_Pull(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
+            pull_Data,  pullUnc_Data  = self.cal_Pull(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
+
+            self.add("closureError", disc1Key, disc2Key, (closureErr_TT,    closureErrUnc_TT) ,   "TT"   )
+            self.add("closureError", disc1Key, disc2Key, (closureErr_NonTT, closureErrUnc_NonTT), "NonTT")
+            self.add("closureError", disc1Key, disc2Key, (closureErr_Data,  closureErrUnc_Data ), "Data" )
+            self.add("pull",         disc1Key, disc2Key, (pull_TT,    pullUnc_TT),    "TT"   )
+            self.add("pull",         disc1Key, disc2Key, (pull_NonTT, pullUnc_NonTT), "NonTT")
+            self.add("pull",         disc1Key, disc2Key, (pull_Data,  pullUnc_Data),  "Data" )
+       
+            # significance for optimization metric for only TT !!! 
+            # significance, significanceUnc for 2D plots
+            significance_TT = 0.0; significanceUnc_TT = 0.0; tempOptMetric = 999.0
+
+            significance_TT += self.cal_Significance(nSigEvents_A, nTTEvents_A)**2.0
+            significance_TT = significance_TT**0.5
+
+            if nTTEvents_A > 0.0:
+                significanceUnc_TT = (   ( nSigEventsErr_A / (nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (closureErr_TT * nTTEvents_A)**2.0)**0.5 )**2.0
+                                     + ( ( nSigEvents_A * nTTEventsErr_A * (2.0 * nTTEvents_A * closureErr_TT**2.0 + 2.0 * bkgNormUnc**2.0 * nTTEvents_A + 1) ) / ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (closureErr_TT * nTTEvents_A)**2.0 )**1.5 )**2.0
+                                     + ( ( nTTEvents_A**2.0 * closureErr_TT * nSigEvents_A * closureErrUnc_TT) / ( nTTEvents_A * ( nTTEvents_A * (closureErr_TT**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
+
+            self.add("significance", disc1Key, disc2Key, (significance_TT, significanceUnc_TT), "TT") 
    
             # If in region with minimum number of bkg events, compute the metric value
-            tempOptMetric = self.optimization_metric(significance=significance, closureError=closureErr, minBkgEvents=minBkgEvents,  
-                                                     nBkgA=nBkgEvents_A, nBkgB=nBkgEvents_B, nBkgC=nBkgEvents_C, nBkgD=nBkgEvents_D,
+            tempOptMetric = self.optimization_metric(significance=significance_TT, closureError=closureErr_TT, minBkgEvents=minBkgEvents,  
+                                                     nBkgA=nTTEvents_A, nBkgB=nTTEvents_B, nBkgC=nTTEvents_C, nBkgD=nTTEvents_D,
                                                      disc1=float(disc1Key), disc2=float(disc2Key))
             
             # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
@@ -264,55 +281,57 @@ class All_Regions:
     # with any combination of bin edges
     # i.e. significance, closure, etc.
     # ----------------------------------
-    def add(self, name, disc1, disc2, val):
+    def add(self, var, disc1, disc2, val, hist=""):
 
-        if disc1 not in self.quantities:
-            self.quantities[disc1] = {}
+        if hist not in self.quantities:
+            self.quantities[hist] = {}
 
-        if disc2 not in self.quantities[disc1]:
-            self.quantities[disc1][disc2] = {}
+        if disc1 not in self.quantities[hist]:
+            self.quantities[hist][disc1] = {}
 
-        self.quantities[disc1][disc2][name] = val
+        if disc2 not in self.quantities[hist][disc1]:
+            self.quantities[hist][disc1][disc2] = {}
+
+        self.quantities[hist][disc1][disc2][var] = val
 
     # -------------------------------------------------
     # get specific variables to make any plots
     # with any combination of bin edges
     # i.e. nSigEventsA, nBkgEventsA, sigFractionA, etc.
     # -------------------------------------------------
-    def get(self, name, disc1=None, disc2=None):
+    def get(self, var, disc1=None, disc2=None, hist="TT"):
 
-        if name == "edges":
+        if var == "edges":
             if disc1 != None and disc2 != None:
                 return self.finalEdges
             else:
-                payload = []
-                for disc1, disc2s in self.quantities.items():
+                payload = []                
+                for disc1, disc2s in self.quantities[hist].items():
                     for disc2, _ in disc2s.items():
                         payload.append((disc1,disc2))
                 return payload
 
         if disc1 == None and disc2 == None:
             payload = []
-            for disc1, disc2s in self.quantities.items():
+            for disc1, disc2s in self.quantities[hist].items():
                 for disc2, q in disc2s.items():
-                    payload.append(q[name])
-                    
+                    payload.append(q[var])
             return np.array(payload)
 
-        if disc1 != None and disc1 not in self.quantities:
+        if disc1 != None and disc1 not in self.quantities[hist]:
             raise LookupError("Cannot find the key \"%s\" in the dictionary !"%(disc1))
 
-        if disc2 != None and disc2 not in self.quantities[disc1]:
+        if disc2 != None and disc2 not in self.quantities[hist][disc1]:
             raise LookupError("Cannot find the key \"%s\" in the dictionary !"%(disc2))
 
-        return self.quantities[disc1][disc2][name]
+        return self.quantities[hist][disc1][disc2][var]
         
     # -------------------------------------------------------------
     # store quatities and get spesific variables to make the tables 
     # with the final choice of bin edges
     # -------------------------------------------------------------
-    def getFinal(self, name):
-        return self.get(name, self.finalEdges[0], self.finalEdges[1])
+    def getFinal(self, name, hist=""):
+        return self.get(name, self.finalEdges[0], self.finalEdges[1], hist)
 
 
 # -------------------------------------------
