@@ -79,7 +79,7 @@ def main():
     # for 1-lepton
     else:
         njets = ["7", "8", "9", "10", "11"]
-
+    
     # ------------------
     # make all tex files
     # ------------------
@@ -332,7 +332,7 @@ def main():
                     plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["D"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["D"]))
                     plotter[hist_key].plot_inverseSignificance_vsClosureErr(finalSignificance, finalClosureErr, significances, closureErrs, edges, allRegionsFinalEdges[key], njet, name=key)
 
-                elif hist_key != Sig:
+                if hist_key != Sig:
                     plotter[hist_key].plot_Var_vsDisc1Disc2(closureErrs[:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.3, njet, name=key, variable="ClosureErr"   )
                     plotter[hist_key].plot_Var_vsDisc1Disc2(closureErrs[:,1], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.3, njet, name=key, variable="ClosureErrUnc")
                     plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="Pull"         )
@@ -373,12 +373,13 @@ def main():
     # ----------------------
     for key, region in regions.items():
 
-        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"],    None,                njets, name = key, closureTag = "b" )
-        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"],    EventsPerNjets[Sig], njets, name = key, closureTag = "sb")
-        plotter["NonTT"].make_allClosures(edgesPerNjets, EventsPerNjets["NonTT"], None,                njets, name = key, closureTag = "b" )
-        plotter["NonTT"].make_allClosures(edgesPerNjets, EventsPerNjets["NonTT"], EventsPerNjets[Sig], njets, name = key, closureTag = "sb")
-        plotter["Data"].make_allClosures(edgesPerNjets,  EventsPerNjets["Data"],  None,                njets, name = key, closureTag = "b" )
-        plotter["Data"].make_allClosures(edgesPerNjets,  EventsPerNjets["Data"],  EventsPerNjets[Sig], njets, name = key, closureTag = "sb")
+        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"],    None,                None,                   njets, name = key, closureTag = "b" )
+        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"],    EventsPerNjets[Sig], None,                   njets, name = key, closureTag = "sb")
+        plotter["NonTT"].make_allClosures(edgesPerNjets, EventsPerNjets["NonTT"], None,                None,                   njets, name = key, closureTag = "b" )
+        plotter["NonTT"].make_allClosures(edgesPerNjets, EventsPerNjets["NonTT"], EventsPerNjets[Sig], None,                   njets, name = key, closureTag = "sb")
+
+        # data-MC comparison / fanch plot for CHRIS
+        plotter["Data"].make_allClosures(edgesPerNjets,  EventsPerNjets["TT"],    None,                EventsPerNjets["Data"], njets, name = key, closureTag = "b" )
 
     # -------------------------------------
     # add all edges to DoubleDisCo cfg file
