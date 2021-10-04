@@ -37,7 +37,7 @@ class Common_Calculations_Plotters:
     # -----------------
     # plot all closures
     # -----------------
-    def plot_ClosureNjets(self, bkg, bkgPred, Njets, name = '', closureTag = ''):
+    def plot_ClosureNjets(self, bkgObs, bkgPred, Njets, name = '', closureTag = '', bkgTag = '', isBlind=False):
         
         x         = []; xUnc         = []
         obs       = []; obsUnc       = [] 
@@ -49,26 +49,39 @@ class Common_Calculations_Plotters:
     
         for i in range(0, len(Njets)):
     
-            if bkg[i][1] != 0.0:
+            if bkgObs[i][1] != 0.0:
     
                 x.append(float(Njets[i]))  
                 xUnc.append(0.5)
-                pred.append(bkgPred[i][0]) 
-                predUnc.append(bkgPred[i][1])
-                obs.append(bkg[i][0])      
-                obsUnc.append(bkg[i][1])
 
-                pull            = (bkgPred[i][0] - bkg[i][0]) / bkg[i][1]
+                pull            = (bkgPred[i][0] - bkgObs[i][0]) / ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5
                 pullUnc         = 1.0
-                closureError    = 1.0 - bkgPred[i][0] / bkg[i][0]
-                closureErrorUnc = ((bkgPred[i][1] / bkg[i][0])**2.0 + (bkg[i][1] * bkgPred[i][0] / bkg[i][0]**2.0)**2.0)**0.5
+                closureError    = 1.0 - ( bkgPred[i][0] / bkgObs[i][0] )
+                closureErrorUnc = ((bkgPred[i][1] / bkgObs[i][0])**2.0 + (bkgObs[i][1] * bkgPred[i][0] / bkgObs[i][0]**2.0)**2.0)**0.5
 
-                abcdPull.append(pull)
-                abcdPullUnc.append(pullUnc)
-                abcdError.append(closureError) 
-                abcdErrorUnc.append(closureErrorUnc)
-                totalChi2 += pull ** 2.0
-                ndof      += 1
+                # for the data closure / blind the 9-10-11 njet bins
+                if isBlind and i >= 2:
+                    pred.append(0.0)
+                    predUnc.append(0.0)
+                    obs.append(0.0)
+                    obsUnc.append(0.0)
+                    abcdPull.append(999)
+                    abcdPullUnc.append(0)
+                    abcdError.append(999)
+                    abcdErrorUnc.append(0)
+
+                else:
+                    pred.append(bkgPred[i][0])
+                    predUnc.append(bkgPred[i][1])
+                    obs.append(bkgObs[i][0])
+                    obsUnc.append(bkgObs[i][1])
+                    abcdPull.append(pull)
+                    abcdPullUnc.append(pullUnc)
+                    abcdError.append(closureError)
+                    abcdErrorUnc.append(closureErrorUnc)
+                    totalChi2 += pull ** 2.0
+                    ndof      += 1                    
+
  
         fig = plt.figure(figsize=(6, 6))
         ax  = fig.add_subplot(111)
@@ -89,7 +102,7 @@ class Common_Calculations_Plotters:
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax1.text(0.05, 0.1, '$\\chi^2$ / ndof = %3.2f' % (totalChi2 / float(ndof)), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=10)
-        ax1.text(0.05, 0.25,  '%s Metric'%(self.metric),  horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=14, fontweight='bold')
+        #ax1.text(0.05, 0.25,  '%s Metric'%(self.metric),  horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=14, fontweight='bold')
         ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
         ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
         ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
@@ -101,7 +114,7 @@ class Common_Calculations_Plotters:
         ax2 = fig.add_subplot(4, 1, 3)
         ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
-        ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
+        ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax2.set_ylabel('1 - Pred./Obs.')
         ax2.set_ylim([-1.4, 1.4])
@@ -110,7 +123,7 @@ class Common_Calculations_Plotters:
         ax3 = fig.add_subplot(4, 1, 4)
         ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
-        ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
+        ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax3.set_xlabel('Number of jets')
         ax3.set_ylabel('Pull') # (Pred - Obs) / ObsUnc') 
@@ -120,34 +133,37 @@ class Common_Calculations_Plotters:
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
-        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag))
+        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag, bkgTag))
    
         plt.close(fig)
 
 
     # ----------------------------------------
     # plot all closures for data-MC comparison
+    #   -- MC is TT
+    #   -- MC is TT + NonTT
     # ----------------------------------------
-    def plot_dataMC_ClosureNjets(self, bkgPred, bkgObs, dataPred, dataObs, Njets, name = '', closureTag = ''):
+    def plot_dataVsMC_ClosureNjets(self, bkgPred, bkgObs, dataPred, dataObs, Njets, name = '', closureTag = '', bkgTag = ''):
 
-        def cal_ratioUnc(numerator, denominator):
-
-            pull     = ( numerator[0] - denominator[0] ) / denominator[1]
-            ratio    = ( numerator[0] / denominator[0] )
-            ratioUnc = ( (numerator[1] / denominator[0])**2.0 + ( denominator[1] * numerator[0] / denominator[0]**2.0 )**2.0 )**0.5
-            
-            return pull, ratio, ratioUnc
-
-        x         = []; xUnc              = []
-        bkg_obs   = []; bkg_obsUnc        = [] 
-        bkg_pred  = []; bkg_predUnc       = []
-        data_obs  = []; data_obsUnc       = [] 
-        data_pred = []; data_predUnc      = []
+        x         = []; xUnc         = []
+        bkg_obs   = []; bkg_obsUnc   = [] 
+        bkg_pred  = []; bkg_predUnc  = []
+        data_obs  = []; data_obsUnc  = [] 
+        data_pred = []; data_predUnc = []
         PullUnc   = [] 
         Pull1     = []; Pull2     = []; Pull3     = []; Pull4     = []; Pull5     = []; Pull6     = []
         Ratio1    = []; Ratio2    = []; Ratio3    = []; Ratio4    = []; Ratio5    = []; Ratio6    = []
         Ratio1Unc = []; Ratio2Unc = []; Ratio3Unc = []; Ratio4Unc = []; Ratio5Unc = []; Ratio6Unc = [] 
-        Ratio     = []; DataPred_corrected = []
+        Ratio     = []; RatioUnc  = []; DataPred_corrected = []
+
+        def cal_ratioUnc(numerator, denominator):
+
+            pull     = ( numerator[0] - denominator[0] ) / ( (numerator[1])**2 + (denominator[1])**2 )**0.5
+            ratio    = ( numerator[0] / denominator[0] )
+            ratioUnc = ( (numerator[1] / denominator[0])**2.0 + ( denominator[1] * numerator[0] / denominator[0]**2.0 )**2.0 )**0.5
+
+            return pull, ratio, ratioUnc
+
 
         for i in range(0, len(Njets)):
 
@@ -161,11 +177,6 @@ class Common_Calculations_Plotters:
                 bkg_predUnc.append(bkgPred[i][1])
                 bkg_obs.append(bkgObs[i][0])
                 bkg_obsUnc.append(bkgObs[i][1])
-                # data
-                data_pred.append(dataPred[i][0])
-                data_predUnc.append(dataPred[i][1])
-                data_obs.append(dataObs[i][0])
-                data_obsUnc.append(dataObs[i][1])
 
                 # ------------------------------ 
                 # pull  = (Obs - Pred) / PredUnc
@@ -175,54 +186,107 @@ class Common_Calculations_Plotters:
                 # bkgObs / bkgPred 
                 pullUnc   = 1.0
                 pull1, ratio1, ratio1Unc = cal_ratioUnc(bkgObs[i], bkgPred[i]) 
-                PullUnc.append(pullUnc)
-                Pull1.append(pull1)
-                Ratio1.append(ratio1)
-                Ratio1Unc.append(ratio1Unc)
-
-                #
-                MC_correction_val  = ratio1
-                dataPred_corrected = MC_correction_val * dataPred[i][0]
-                ratio              = dataObs[i][0] / dataPred_corrected
-                DataPred_corrected.append(dataPred_corrected)
-                Ratio.append(ratio)
 
                 # dataObs / dataPred 
                 pull2, ratio2, ratio2Unc = cal_ratioUnc(dataObs[i], dataPred[i]) 
-                Pull2.append(pull2)
-                Ratio2.append(ratio2)
-                Ratio2Unc.append(ratio2Unc)
 
                 # dataPred / bkgPred
                 pull3, ratio3, ratio3Unc = cal_ratioUnc(dataPred[i], bkgPred[i]) 
-                Pull3.append(pull3)
-                Ratio3.append(ratio3)
-                Ratio3Unc.append(ratio3Unc)
 
                 # dataObs / bkgObs
                 pull4, ratio4, ratio4Unc = cal_ratioUnc(dataObs[i], bkgObs[i])                
-                Pull4.append(pull4)
-                Ratio4.append(ratio4)
-                Ratio4Unc.append(ratio4Unc)
 
                 # dataPred / bkgObs
                 pull5, ratio5, ratio5Unc = cal_ratioUnc(dataPred[i], bkgObs[i]) 
-                Pull5.append(pull5)
-                Ratio5.append(ratio5)
-                Ratio5Unc.append(ratio5Unc)
 
                 # dataObs / bkgPred
                 pull6, ratio6, ratio6Unc = cal_ratioUnc(dataObs[i], bkgPred[i])
-                Pull6.append(pull6)
-                Ratio6.append(ratio6)
-                Ratio6Unc.append(ratio6Unc)
 
-            # ---------------------
-            # Chris's fancy closure
-            # ---------------------
-            fig = plt.figure(figsize=(10, 10))
+                # MC correction
+                MC_correction_val  = ratio1
+                dataPred_corrected = MC_correction_val * dataPred[i][0]
+                _, ratio, ratioUnc = cal_ratioUnc( dataObs[i], (dataPred_corrected, dataPred[i][1]) )
+           
+                # -------------------------------------------- 
+                # append the information of 7th, 8th Njet bins
+                # -------------------------------------------- 
+                if i <= 1:
+                    # data
+                    data_pred.append(dataPred[i][0])
+                    data_predUnc.append(dataPred[i][1])
+                    data_obs.append(dataObs[i][0])
+                    data_obsUnc.append(dataObs[i][1])
+    
+                    PullUnc.append(pullUnc)
+                    Pull1.append(pull1)
+                    Ratio1.append(ratio1)
+                    Ratio1Unc.append(ratio1Unc)                
+                
+                    Pull2.append(pull2)
+                    Ratio2.append(ratio2)
+                    Ratio2Unc.append(ratio2Unc)
+
+                    Pull3.append(pull3)
+                    Ratio3.append(ratio3)
+                    Ratio3Unc.append(ratio3Unc)
+            
+                    Pull4.append(pull4)
+                    Ratio4.append(ratio4)
+                    Ratio4Unc.append(ratio4Unc)
+
+                    Pull5.append(pull5)
+                    Ratio5.append(ratio5)
+                    Ratio5Unc.append(ratio5Unc)
+
+                    Pull6.append(pull6)
+                    Ratio6.append(ratio6)
+                    Ratio6Unc.append(ratio6Unc)
+
+                    DataPred_corrected.append(dataPred_corrected)
+                    Ratio.append(ratio)
+                    RatioUnc.append(ratioUnc)
+
+                else:
+                    data_pred.append(999999999999)
+                    data_predUnc.append(0)
+                    data_obs.append(999999999999)
+                    data_obsUnc.append(0)
+
+                    PullUnc.append(0)
+                    Pull1.append(-999)
+                    Ratio1.append(-999)
+                    Ratio1Unc.append(0)
+
+                    Pull2.append(-999)
+                    Ratio2.append(-999)
+                    Ratio2Unc.append(0)
+
+                    Pull3.append(-999)
+                    Ratio3.append(-999)
+                    Ratio3Unc.append(0)
+
+                    Pull4.append(-999)
+                    Ratio4.append(-999)
+                    Ratio4Unc.append(0)
+
+                    Pull5.append(-999)
+                    Ratio5.append(-999)
+                    Ratio5Unc.append(0)
+
+                    Pull6.append(-999)
+                    Ratio6.append(-999)
+                    Ratio6Unc.append(0)
+
+                    DataPred_corrected.append(-999)
+                    Ratio.append(-999)
+                    RatioUnc.append(0)
+
+            # --------------------------
+            # plot Chris's fancy closure
+            # --------------------------
+            fig = plt.figure(figsize=(15, 15))
             ax  = fig.add_subplot(111)
-            fig.subplots_adjust(hspace=0, left=0.15, right=0.95, top=0.94)
+            fig.subplots_adjust(hspace=0.4, left=0.15, right=0.95, top=0.94)
     
             lowerNjets  = float(Njets[0])
             higherNjets = float(Njets[(-1)])
@@ -234,120 +298,175 @@ class Common_Calculations_Plotters:
             ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
         
             # closure
-            ax1 = fig.add_subplot(10, 1, (1,4))
-            fig.subplots_adjust(left=0.15, right=0.95)
-            ax1.set_yscale('log')
-            ax1.set_ylim([1.0, 5e4])
+            ax1 = fig.add_subplot(14, 1, (1,6))
+            fig.subplots_adjust(hspace=0.8, left=0.15, right=0.95)
             ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-            ax1.text(0.05, 0.25,  '%s Metric'%(self.metric),  horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=14, fontweight='bold')
-            ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
-            ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
-            ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
-            ax1.set_ylabel('Unweighted Event Counts')
-            ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label='Predicted MC',   xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=2, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=5.0)
-            ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label='Observed MC',    xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=2, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=5.0)
-            ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data', xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=2, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=5.0)
-            ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',  xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=2, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=5.0)
-
-            # ratio
-            ax2 = fig.add_subplot(10, 1, (5,6))
-            ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-            ax2.errorbar(x, Ratio3, yerr=ratio3Unc, xerr=xUnc, label='dataPred vs bkgPred', fmt='', capsize=0, color='rosybrown',       lw=0, elinewidth=2, marker='o', markeredgecolor='rosybrown',       markerfacecolor='rosybrown',       markersize=5.0)
-            ax2.errorbar(x, Ratio4, yerr=ratio4Unc, xerr=xUnc, label='dataObs vs bkgObs',   fmt='', capsize=0, color='lightgreen',      lw=0, elinewidth=2, marker='o', markeredgecolor='lightgreen',      markerfacecolor='lightgreen',      markersize=5.0)
-            ax2.errorbar(x, Ratio5, yerr=ratio5Unc, xerr=xUnc, label='dataPred vs bkgObs',  fmt='', capsize=0, color='lightskyblue',    lw=0, elinewidth=2, marker='o', markeredgecolor='lightskyblue',    markerfacecolor='lightskyblue',    markersize=5.0)
-            ax2.errorbar(x, Ratio6, yerr=ratio6Unc, xerr=xUnc, label='dataObs vs bkgPred',  fmt='', capsize=0, color='mediumslateblue', lw=0, elinewidth=2, marker='o', markeredgecolor='mediumslateblue', markerfacecolor='mediumslateblue', markersize=5.0)
-            ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
-            ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
-            ax2.set_ylabel('Data-MC Ratio')
-            ax2.set_ylim([0.0, 2.0])
+            #ax1.text(0.05, 0.25,  '%s Metric'%(self.metric),  horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=14, fontweight='bold')
+            ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=40, fontweight='bold',   va='top', ha='right')
+            ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=36, fontstyle='italic',  va='top', ha='right')
+            ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=34, fontweight='normal', va='top', ha='right')
+            ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label='Predicted MC',   xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=3, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=6.0)
+            ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label='Observed MC',    xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=3, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=6.0)
+            ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data', xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=3, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=6.0)
+            ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',  xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=3, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=6.0)
+            ax1.set_xticklabels([])
+            ax1.set_ylabel('Unweighted Event Counts', fontsize=28)
+            ax1.set_yscale('log')
+            ax1.set_ylim([5.0, 2e4])
 
             # pull
-            ax3 = fig.add_subplot(10, 1, (7,8))
-            ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-            ax3.errorbar(x, Pull3, yerr=pullUnc, xerr=xUnc, label='dataPred vs bkgPred', fmt='', capsize=0, color='rosybrown',       lw=0, elinewidth=2, marker='o', markeredgecolor='rosybrown',       markerfacecolor='rosybrown',       markersize=5.0)
-            ax3.errorbar(x, Pull4, yerr=pullUnc, xerr=xUnc, label='dataObs vs bkgObs',   fmt='', capsize=0, color='lightgreen',      lw=0, elinewidth=2, marker='o', markeredgecolor='lightgreen',      markerfacecolor='lightgreen',      markersize=5.0)
-            ax3.errorbar(x, Pull5, yerr=pullUnc, xerr=xUnc, label='dataPred vs bkgObs',  fmt='', capsize=0, color='lightskyblue',    lw=0, elinewidth=2, marker='o', markeredgecolor='lightskyblue',    markerfacecolor='lightskyblue',    markersize=5.0)
-            ax3.errorbar(x, Pull6, yerr=pullUnc, xerr=xUnc, label='dataObs vs bkgPred',  fmt='', capsize=0, color='mediumslateblue', lw=0, elinewidth=2, marker='o', markeredgecolor='mediumslateblue', markerfacecolor='mediumslateblue', markersize=5.0)
-            ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
-            ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
-            ax3.set_xlabel('Number of jets')
-            ax3.set_ylabel('Pull')
-            ax3.set_ylim([-5.4, 5.4])
+            ax2 = fig.add_subplot(14, 1, (7,10))
+            fig.subplots_adjust(hspace=0.8, left=0.15, right=0.95)
+            ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+            ax2.errorbar(x, Pull3, yerr=pullUnc, xerr=xUnc, label='PredData vs PredMC', fmt='', capsize=0, color='rosybrown',       lw=0, elinewidth=3, marker='o', markeredgecolor='rosybrown',       markerfacecolor='rosybrown',       markersize=6.0)
+            ax2.errorbar(x, Pull4, yerr=pullUnc, xerr=xUnc, label='ObsData vs ObsMC',   fmt='', capsize=0, color='lightgreen',      lw=0, elinewidth=3, marker='o', markeredgecolor='lightgreen',      markerfacecolor='lightgreen',      markersize=6.0)
+            ax2.errorbar(x, Pull5, yerr=pullUnc, xerr=xUnc, label='PredData vs ObsMC',  fmt='', capsize=0, color='lightskyblue',    lw=0, elinewidth=3, marker='o', markeredgecolor='lightskyblue',    markerfacecolor='lightskyblue',    markersize=6.0)
+            ax2.errorbar(x, Pull6, yerr=pullUnc, xerr=xUnc, label='ObsData vs PredMC',  fmt='', capsize=0, color='mediumslateblue', lw=0, elinewidth=3, marker='o', markeredgecolor='mediumslateblue', markerfacecolor='mediumslateblue', markersize=6.0)
+            ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
+            ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
+            ax2.set_xticklabels([])
+            ax2.set_ylabel('Pull', fontsize=20)
+            ax2.set_ylim([-9.4, 9.4])
 
             # MC correction
-            ax4 = fig.add_subplot(10, 1, (9,10))
-            ax4.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-            ax4.errorbar(x, Ratio1, yerr=ratio1Unc,    xerr=xUnc, label='MC corr. = bkgObs. / bkgPred.',     fmt='', capsize=0, color='crimson',        lw=0, elinewidth=2, marker='o', markeredgecolor='crimson',        markerfacecolor='crimson',        markersize=5.0)
-            ax4.errorbar(x, Ratio,  yerr=data_predUnc, xerr=xUnc, label='dataObs. / (MC corr. * dataPred.)', fmt='', capsize=0, color='cornflowerblue', lw=0, elinewidth=2, marker='o', markeredgecolor='cornflowerblue', markerfacecolor='cornflowerblue', markersize=5.0)
-            ax4.errorbar(x, Ratio2, yerr=ratio2Unc,    xerr=xUnc, label='dataObs. / dataPred.',              fmt='', capsize=0, color='limegreen',      lw=0, elinewidth=2, marker='o', markeredgecolor='limegreen',      markerfacecolor='limegreen',      markersize=5.0)
-            ax4.axhline(y=0.0, color='black', linestyle='dashed', lw=1)
-            ax4.grid(axis='y', color='black', linestyle='dashed', which='both')
-            ax4.set_xlabel('Number of jets')
-            ax4.set_ylabel('MC Correction')
-            ax4.set_ylim([0.0, 2.0])
+            ax3 = fig.add_subplot(14, 1, (11,14))
+            fig.subplots_adjust(hspace=0.8, left=0.15, right=0.95)
+            ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+            ax3.errorbar(x, Ratio2, yerr=Ratio2Unc, xerr=xUnc, label='ObsData / PredData',                      fmt='', capsize=0, color='limegreen',      lw=0, elinewidth=3, marker='o', markeredgecolor='limegreen',      markerfacecolor='limegreen',      markersize=6.0)
+            ax3.errorbar(x, Ratio1, yerr=Ratio1Unc, xerr=xUnc, label='MC corr. = ObsMC / PredMC',               fmt='', capsize=0, color='crimson',        lw=0, elinewidth=3, marker='o', markeredgecolor='crimson',        markerfacecolor='crimson',        markersize=6.0)
+            ax3.errorbar(x, Ratio,  yerr=RatioUnc,  xerr=xUnc, label='Ratio = ObsData / (MC corr. * PredData)', fmt='', capsize=0, color='cornflowerblue', lw=0, elinewidth=3, marker='o', markeredgecolor='cornflowerblue', markerfacecolor='cornflowerblue', markersize=6.0)
+            ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
+            ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
+            #ax3.set_xlabel('Number of jets', fontsize=28)
+            ax3.set_ylabel('MC Correction', fontsize=20)
+            ax3.set_ylim([0.7, 1.3])
 
-            plt.xticks([int(Njet) for Njet in Njets])
+            plt.xticks([int(Njet) for Njet in Njets], fontsize=26)
+            plt.xlabel('Number of jets', fontsize=28)    
+
+            ax1.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
+            ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
+            ax3.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
     
-            ax1.legend(loc='best', numpoints=1, frameon=False)
-            ax2.legend(loc='best', numpoints=1, frameon=False)
-            ax3.legend(loc='best', numpoints=1, frameon=False)
-            ax4.legend(loc='best', numpoints=1, frameon=False)
-    
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag))
+            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag, bkgTag))
    
             plt.close(fig)
 
     # ----------------------
     # make all closure plots
     # ----------------------      
-    def make_allClosures(self, edgesPerNjets=None, bkgEventsPerNjets=None, sigEventsPerNjets=None, dataEventsPerNjets=None, Njets=None, name = "", closureTag=""):
+    def make_allClosures(self, edgesPerNjets=None, TT_EventsPerNjets=None, NonTT_EventsPerNjets=None, sig_EventsPerNjets=None, data_EventsPerNjets=None, Njets=None, name="", closureTag="", bkgTag=""):
     
-        bkgEventsNjets  = []; bkgEventsNjetsPred  = []
-        dataEventsNjets = []; dataEventsNjetsPred = []    
+        TT_EventsA     = 0.0; TT_EventsB         = 0.0; TT_EventsC    = 0.0; TT_EventsD    = 0.0;
+        TT_EventsUncA  = 0.0; TT_EventsUncB      = 0.0; TT_EventsUncC = 0.0; TT_EventsUncD = 0.0;
+        TT_Pred_A      = 0.0; TT_PredUnc_A       = 0.0
+        TT_EventsNjets = [];  TT_EventsNjetsPred = []
+        
+        NonTT_EventsA     = 0.0; NonTT_EventsB         = 0.0; NonTT_EventsC    = 0.0; NonTT_EventsD    = 0.0;
+        NonTT_EventsUncA  = 0.0; NonTT_EventsUncB      = 0.0; NonTT_EventsUncC = 0.0; NonTT_EventsUncD = 0.0;
+        NonTT_Pred_A      = 0.0; NonTT_PredUnc_A       = 0.0
+        NonTT_EventsNjets = [];  NonTT_EventsNjetsPred = []
+        
+        data_EventsA     = 0.0; data_EventsB         = 0.0; data_EventsC    = 0.0; data_EventsD    = 0.0;
+        data_EventsUncA  = 0.0; data_EventsUncB      = 0.0; data_EventsUncC = 0.0; data_EventsUncD = 0.0;
+        data_Pred_A      = 0.0; data_PredUnc_A       = 0.0
+        data_EventsNjets = [];  data_EventsNjetsPred = []
 
+        TT_inData_EventsB     = 0.0; TT_inData_EventsC        = 0.0; TT_inData_EventsD    = 0.0
+        TT_inData_EventsUncB  = 0.0; TT_inData_EventsUncC     = 0.0; TT_inData_EventsUncD = 0.0
+        TT_inData_Pred_A      = 0.0; TT_inData_PredUnc_A      = 0.0
+        TT_NonTT_EventsA_pred = 0.0; TT_NonTT_EventsUncA_pred = 0.0; TT_NonTT_EventsNjetsPred = [] 
+
+        # --------------------------------------
+        # get all TT, NonTT, Signal, Data events
+        # --------------------------------------
         for Njet in Njets:
     
             if edgesPerNjets[Njet][name][0] == -1.0 or edgesPerNjets[Njet][name][1] == -1.0:
-                bkgEventsNjets.append((0.0, 0.0))
-                bkgEventsNjetsPred.append((0.0, 0.0))
-                dataEventsNjets.append((0.0, 0.0))
-                dataEventsNjetsPred.append((0.0, 0.0))   
+                TT_EventsNjets.append((0.0, 0.0));    TT_EventsNjetsPred.append((0.0, 0.0))
+                NonTT_EventsNjets.append((0.0, 0.0)); NonTT_EventsNjetsPred.append((0.0, 0.0))
+                data_EventsNjets.append((0.0, 0.0));  data_EventsNjetsPred.append((0.0, 0.0))   
+                TT_NonTT_EventsNjetsPred((0.0, 0.0))
  
             else:
-                # get bkg and signal injected bkg events for usual closure
-                bkgEventsA = bkgEventsPerNjets[Njet][name]["A"][0]; bkgEventsUncA = bkgEventsPerNjets[Njet][name]["A"][1]**2.0
-                bkgEventsB = bkgEventsPerNjets[Njet][name]["B"][0]; bkgEventsUncB = bkgEventsPerNjets[Njet][name]["B"][1]**2.0
-                bkgEventsC = bkgEventsPerNjets[Njet][name]["C"][0]; bkgEventsUncC = bkgEventsPerNjets[Njet][name]["C"][1]**2.0
-                bkgEventsD = bkgEventsPerNjets[Njet][name]["D"][0]; bkgEventsUncD = bkgEventsPerNjets[Njet][name]["D"][1]**2.0
+                # ------------------------------------------------------
+                # get TT and signal injected TT events for usual closure
+                # ------------------------------------------------------
+                if TT_EventsPerNjets != None:
+                    TT_EventsA = TT_EventsPerNjets[Njet][name]["A"][0]; TT_EventsUncA = TT_EventsPerNjets[Njet][name]["A"][1]**2.0
+                    TT_EventsB = TT_EventsPerNjets[Njet][name]["B"][0]; TT_EventsUncB = TT_EventsPerNjets[Njet][name]["B"][1]**2.0
+                    TT_EventsC = TT_EventsPerNjets[Njet][name]["C"][0]; TT_EventsUncC = TT_EventsPerNjets[Njet][name]["C"][1]**2.0
+                    TT_EventsD = TT_EventsPerNjets[Njet][name]["D"][0]; TT_EventsUncD = TT_EventsPerNjets[Njet][name]["D"][1]**2.0
 
-                if sigEventsPerNjets != None:
-                    bkgEventsA += sigEventsPerNjets[Njet][name]["A"][0]; bkgEventsUncA += sigEventsPerNjets[Njet][name]["A"][1]**2.0
-                    bkgEventsB += sigEventsPerNjets[Njet][name]["B"][0]; bkgEventsUncB += sigEventsPerNjets[Njet][name]["B"][1]**2.0
-                    bkgEventsC += sigEventsPerNjets[Njet][name]["C"][0]; bkgEventsUncC += sigEventsPerNjets[Njet][name]["C"][1]**2.0
-                    bkgEventsD += sigEventsPerNjets[Njet][name]["D"][0]; bkgEventsUncD += sigEventsPerNjets[Njet][name]["D"][1]**2.0
-    
-                bkgPred_A, bkgPredUnc_A = self.cal_simpleClosure_ABCD(bkgEventsA, bkgEventsB, bkgEventsC, bkgEventsD, bkgEventsUncA**0.5, bkgEventsUncB**0.5, bkgEventsUncC**0.5, bkgEventsUncD**0.5)
-                bkgEventsNjets.append((bkgEventsA, bkgEventsUncA**0.5))
-                bkgEventsNjetsPred.append((bkgPred_A, bkgPredUnc_A))
-  
-                # get data events for data-MC closure 
-                if dataEventsPerNjets != None:             
+                    if sig_EventsPerNjets != None:
+                        TT_EventsA += sig_EventsPerNjets[Njet][name]["A"][0]; TT_EventsUncA += sig_EventsPerNjets[Njet][name]["A"][1]**2.0
+                        TT_EventsB += sig_EventsPerNjets[Njet][name]["B"][0]; TT_EventsUncB += sig_EventsPerNjets[Njet][name]["B"][1]**2.0
+                        TT_EventsC += sig_EventsPerNjets[Njet][name]["C"][0]; TT_EventsUncC += sig_EventsPerNjets[Njet][name]["C"][1]**2.0
+                        TT_EventsD += sig_EventsPerNjets[Njet][name]["D"][0]; TT_EventsUncD += sig_EventsPerNjets[Njet][name]["D"][1]**2.0
+
+                    TT_Pred_A, TT_PredUnc_A = self.cal_simpleClosure_ABCD(TT_EventsA, TT_EventsB, TT_EventsC, TT_EventsD, TT_EventsUncA**0.5, TT_EventsUncB**0.5, TT_EventsUncC**0.5, TT_EventsUncD**0.5)
+                    TT_EventsNjets.append((TT_EventsA, TT_EventsUncA**0.5))
+                    TT_EventsNjetsPred.append((TT_Pred_A, TT_PredUnc_A))
+
+                # --------------------------------------
+                # get the NonTT events for usual closure
+                # --------------------------------------
+                if  NonTT_EventsPerNjets != None:
+                    NonTT_EventsA = NonTT_EventsPerNjets[Njet][name]["A"][0]; NonTT_EventsUncA = NonTT_EventsPerNjets[Njet][name]["A"][1]**2.0
+                    NonTT_EventsB = NonTT_EventsPerNjets[Njet][name]["B"][0]; NonTT_EventsUncB = NonTT_EventsPerNjets[Njet][name]["B"][1]**2.0
+                    NonTT_EventsC = NonTT_EventsPerNjets[Njet][name]["C"][0]; NonTT_EventsUncC = NonTT_EventsPerNjets[Njet][name]["C"][1]**2.0
+                    NonTT_EventsD = NonTT_EventsPerNjets[Njet][name]["D"][0]; NonTT_EventsUncD = NonTT_EventsPerNjets[Njet][name]["D"][1]**2.0                
+
+                    NonTT_Pred_A, NonTT_PredUnc_A = self.cal_simpleClosure_ABCD(NonTT_EventsA, NonTT_EventsB, NonTT_EventsC, NonTT_EventsD, NonTT_EventsUncA**0.5, NonTT_EventsUncB**0.5, NonTT_EventsUncC**0.5, NonTT_EventsUncD**0.5)
+                    NonTT_EventsNjets.append((NonTT_EventsA, NonTT_EventsUncA**0.5))
+                    NonTT_EventsNjetsPred.append((NonTT_Pred_A, NonTT_PredUnc_A))
+
+                # ---------------------------------------------
+                # get data events for usual and data-MC closure
+                # ---------------------------------------------
+                if data_EventsPerNjets != None:
+                    data_EventsA = data_EventsPerNjets[Njet][name]["A"][0]; data_EventsUncA = data_EventsPerNjets[Njet][name]["A"][1]**2.0
+                    data_EventsB = data_EventsPerNjets[Njet][name]["B"][0]; data_EventsUncB = data_EventsPerNjets[Njet][name]["B"][1]**2.0
+                    data_EventsC = data_EventsPerNjets[Njet][name]["C"][0]; data_EventsUncC = data_EventsPerNjets[Njet][name]["C"][1]**2.0
+                    data_EventsD = data_EventsPerNjets[Njet][name]["D"][0]; data_EventsUncD = data_EventsPerNjets[Njet][name]["D"][1]**2.0
+
+                    data_Pred_A, data_PredUnc_A = self.cal_simpleClosure_ABCD(data_EventsA, data_EventsB, data_EventsC, data_EventsD, data_EventsUncA**0.5, data_EventsUncB**0.5, data_EventsUncC**0.5, data_EventsUncD**0.5)
+                    data_EventsNjets.append((data_EventsA, data_EventsUncA**0.5))
+                    data_EventsNjetsPred.append((data_Pred_A, data_PredUnc_A))                
+
+                # ---------------------------------------------------------
+                # get the TT events in data, by subtracting NonTT from data
+                #   and get (TT + NonTT) as all bkgPred
+                #   -- bkgObs  = data_EventsNjets
+                #   -- bkgPred = TT_NonTT_EventsNjetsPred  
+                # ---------------------------------------------------------
+                if TT_EventsPerNjets != None and NonTT_EventsPerNjets != None and data_EventsPerNjets != None:
+                    TT_inData_EventsB = data_EventsB - NonTT_EventsB; TT_inData_EventsUncB = data_EventsUncB + NonTT_EventsUncB
+                    TT_inData_EventsC = data_EventsC - NonTT_EventsC; TT_inData_EventsUncC = data_EventsUncC + NonTT_EventsUncC
+                    TT_inData_EventsD = data_EventsD - NonTT_EventsD; TT_inData_EventsUncD = data_EventsUncD + NonTT_EventsUncD
                     
-                    dataEventsA = dataEventsPerNjets[Njet][name]["A"][0]; dataEventsUncA = dataEventsPerNjets[Njet][name]["A"][1]**2.0
-                    dataEventsB = dataEventsPerNjets[Njet][name]["B"][0]; dataEventsUncB = dataEventsPerNjets[Njet][name]["B"][1]**2.0
-                    dataEventsC = dataEventsPerNjets[Njet][name]["C"][0]; dataEventsUncC = dataEventsPerNjets[Njet][name]["C"][1]**2.0
-                    dataEventsD = dataEventsPerNjets[Njet][name]["D"][0]; dataEventsUncD = dataEventsPerNjets[Njet][name]["D"][1]**2.0
+                    TT_inData_Pred_A, TT_inData_PredUnc_A = self.cal_simpleClosure_ABCD(TT_EventsA, TT_inData_EventsB, TT_inData_EventsC, TT_inData_EventsD, TT_EventsUncA**0.5, TT_inData_EventsUncB**0.5, TT_inData_EventsUncC**0.5, TT_inData_EventsUncD**0.5)
+                    TT_NonTT_EventsA_pred    = TT_inData_Pred_A    + NonTT_EventsA
+                    TT_NonTT_EventsUncA_pred = TT_inData_PredUnc_A + NonTT_EventsUncA
+                    TT_NonTT_EventsNjetsPred.append((TT_NonTT_EventsA_pred, TT_NonTT_EventsUncA_pred**0.5))
 
-                    dataPred_A, dataPredUnc_A = self.cal_simpleClosure_ABCD(dataEventsA, dataEventsB, dataEventsC, dataEventsD, dataEventsUncA**0.5, dataEventsUncB**0.5, dataEventsUncC**0.5, dataEventsUncD**0.5)
-                    dataEventsNjets.append((dataEventsA, dataEventsUncA**0.5))
-                    dataEventsNjetsPred.append((dataPred_A, dataPredUnc_A))
+        # ------------------
+        # make closure plots
+        # ------------------ 
+        # usual closure
+        if TT_EventsPerNjets != None and NonTT_EventsPerNjets == None and data_EventsPerNjets == None: 
+            self.plot_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
+        
+        if NonTT_EventsPerNjets != None and TT_EventsPerNjets == None and  data_EventsPerNjets == None:
+            self.plot_ClosureNjets(np.array(NonTT_EventsNjets), np.array(NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
 
-        # usual closure 
-        self.plot_ClosureNjets(np.array(bkgEventsNjets), np.array(bkgEventsNjetsPred), Njets, name, closureTag)
+        if TT_EventsPerNjets != None and NonTT_EventsPerNjets != None and data_EventsPerNjets != None:
+            self.plot_ClosureNjets(np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag, isBlind=True) 
 
         # data-MC closure
-        if dataEventsPerNjets != None:
-            self.plot_dataMC_ClosureNjets(np.array(bkgEventsNjets), np.array(bkgEventsNjetsPred), np.array(dataEventsNjets), np.array(dataEventsNjetsPred), Njets, name, closureTag)
+        if TT_EventsPerNjets != None and data_EventsPerNjets != None and NonTT_EventsPerNjets == None: 
+            self.plot_dataVsMC_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(data_EventsNjetsPred), Njets, name, closureTag, bkgTag) # for TT
+
 
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges

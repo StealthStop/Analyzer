@@ -373,13 +373,15 @@ def main():
     # ----------------------
     for key, region in regions.items():
 
-        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"],    None,                None,                   njets, name = key, closureTag = "b" )
-        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"],    EventsPerNjets[Sig], None,                   njets, name = key, closureTag = "sb")
-        plotter["NonTT"].make_allClosures(edgesPerNjets, EventsPerNjets["NonTT"], None,                None,                   njets, name = key, closureTag = "b" )
-        plotter["NonTT"].make_allClosures(edgesPerNjets, EventsPerNjets["NonTT"], EventsPerNjets[Sig], None,                   njets, name = key, closureTag = "sb")
+        # usual closure
+        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    None,                None,                   njets, name = key, closureTag = "b",  bkgTag = "TT")
+        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    EventsPerNjets[Sig], None,                   njets, name = key, closureTag = "sb", bkgTag = "TT")
+        plotter["NonTT"].make_allClosures(edgesPerNjets, None,                 EventsPerNjets["NonTT"], None,                None,                   njets, name = key, closureTag = "b",  bkgTag = "NonTT")
+        plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], EventsPerNjets["NonTT"], None,                EventsPerNjets["Data"], njets, name = key, closureTag = "b",  bkgTag = "AllBkg")
 
-        # data-MC comparison / fanch plot for CHRIS
-        plotter["Data"].make_allClosures(edgesPerNjets,  EventsPerNjets["TT"],    None,                EventsPerNjets["Data"], njets, name = key, closureTag = "b" )
+        # data-MC closure
+        if key != "ABCD":
+            plotter["Data"].make_allClosures(edgesPerNjets, EventsPerNjets["TT"], None, None, EventsPerNjets["Data"], njets, name = key, closureTag = "b", bkgTag = "forTT")
 
     # -------------------------------------
     # add all edges to DoubleDisCo cfg file
