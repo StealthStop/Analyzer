@@ -2,8 +2,8 @@
 
 import ROOT
 
-selections = [#"_0l",
-              #"_1l",
+selections = ["_0l",
+              "_1l",
               "_1l_QCDCR"
 ]
 
@@ -12,7 +12,7 @@ histograms = {
     "Jet_cm_eta_@?"                 : {"logY" : False, "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ #eta",            "rebin" : 1, "min" : -4, "max" :    4}},
     "Jet_cm_phi_@?"                 : {"logY" : False, "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ #phi",            "rebin" : 1, "min" : -6, "max" :    6}},
     "Jet_cm_m_@?"                   : {"logY" : False, "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ mass [GeV]",      "rebin" : 2, "min" :  0, "max" :  150}},
-    "Jet_cm_E_@?"                   : {"logY" : False, "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ energy [GeV]",    "rebin" : 2, "min" :  0, "max" :  150}},
+    "Jet_cm_E_@?"                   : {"logY" : False, "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ energy [GeV]",    "rebin" : 2, "min" :  0, "max" : 1500}},
     "Jet_cm_flavb_@?"               : {"logY" : True,  "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ DeepFlavor b",    "rebin" : 1, "min" :  0, "max" :    1}},
     "Jet_cm_flavc_@?"               : {"logY" : True,  "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ DeepFlavor c",    "rebin" : 1, "min" :  0, "max" :    1}},
     "Jet_cm_flavuds_@?"             : {"logY" : True,  "orders" : list(xrange(1,8)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Jet @ DeepFlavor uds",  "rebin" : 1, "min" :  0, "max" :    1}},

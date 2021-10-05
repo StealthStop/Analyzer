@@ -221,7 +221,6 @@ docker_stderror
 DeepESMCfg*
 TopTaggerCfg*
 PlottersSUS19004
-**stackPlotter_aux_**
 **tables**
 **plots**
 **condor_submit.txt
