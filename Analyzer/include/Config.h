@@ -299,10 +299,11 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
+                "RunTopTagger",
                 "CommonVariables",
                 "FatJetCombine",
-                "MakeMVAVariables",
                 "Baseline",
+                "MakeMVAVariables",
                 "DeepEventShape",
                 "BTagCorrector",
                 "ScaleFactors"

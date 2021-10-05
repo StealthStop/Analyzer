@@ -25,7 +25,7 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    my_labels     = {"_0l", "_1l", "_2l"};
+    my_labels     = {"_0l", "_1l"};//, "_2l"};
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
 }
@@ -60,7 +60,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         CommonVariables     commonVariables(myVarSuffix);
         MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
-        MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
+        //MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
         MakeStopHemispheres stopHemispheres("Jets", "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
 
         bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
@@ -78,7 +78,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(fatJetCombine);
         tr.registerFunction(makeMVAVariables0L);
         tr.registerFunction(makeMVAVariables1L);
-        tr.registerFunction(makeMVAVariables2L);
+        //tr.registerFunction(makeMVAVariables2L);
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres);
         tr.registerFunction(bTagCorrector);
@@ -100,7 +100,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::map<std::string, bool> baselines;
             baselines["_0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
-            baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
+            //baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
 
             // Add a branch containing the mass for the stop
             // In the case of signal, use the top mass
@@ -213,12 +213,8 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "mass",   
                     "model",
                     "Weight",  
-                    "totalEventWeight",
                     "stop1_ptrank_mass"+myVarSuffix,
                     "stop2_ptrank_mass"+myVarSuffix,
-                    "stop1_mrank_mass"+myVarSuffix,
-                    "stop2_mrank_mass"+myVarSuffix,
-                    "stop_avemass"+myVarSuffix,
                 };
 
                 std::set<std::string> varLeptonic =
@@ -264,7 +260,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     std::set<std::string> varEventShape = 
                     {
                         "fwm2_top6"+label+myVarSuffix,    "fwm3_top6"+label+myVarSuffix,    "fwm4_top6"+label+myVarSuffix,   "fwm5_top6"+label+myVarSuffix,
-                        "fwm6_top6"+label+myVarSuffix,    "fwm7_top6"+label+myVarSuffix,    "fwm8_top6"+label+myVarSuffix,   "fwm9_top6"+label+myVarSuffix, "fwm10_top6"+label+myVarSuffix,
                         "jmt_ev0_top6"+label+myVarSuffix, "jmt_ev1_top6"+label+myVarSuffix, "jmt_ev2_top6"+label+myVarSuffix,
 
                     };
@@ -281,9 +276,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                         "Jet_flavc_1"+label+myVarSuffix,     "Jet_flavc_2"+label+myVarSuffix,     "Jet_flavc_3"+label+myVarSuffix,     "Jet_flavc_4"+label+myVarSuffix,     "Jet_flavc_5"+label+myVarSuffix,     "Jet_flavc_6"+label+myVarSuffix,     "Jet_flavc_7"+label+myVarSuffix,
                         "Jet_flavuds_1"+label+myVarSuffix,   "Jet_flavuds_2"+label+myVarSuffix,   "Jet_flavuds_3"+label+myVarSuffix,   "Jet_flavuds_4"+label+myVarSuffix,   "Jet_flavuds_5"+label+myVarSuffix,   "Jet_flavuds_6"+label+myVarSuffix,   "Jet_flavuds_7"+label+myVarSuffix,
                         "Jet_flavq_1"+label+myVarSuffix,     "Jet_flavq_2"+label+myVarSuffix,     "Jet_flavq_3"+label+myVarSuffix,     "Jet_flavq_4"+label+myVarSuffix,     "Jet_flavq_5"+label+myVarSuffix,     "Jet_flavq_6"+label+myVarSuffix,     "Jet_flavq_7"+label+myVarSuffix,
-                        "Jet_ptD_1"+label+myVarSuffix,       "Jet_ptD_2"+label+myVarSuffix,       "Jet_ptD_3"+label+myVarSuffix,       "Jet_ptD_4"+label+myVarSuffix,       "Jet_ptD_5"+label+myVarSuffix,       "Jet_ptD_6"+label+myVarSuffix,       "Jet_ptD_7"+label+myVarSuffix,
-                        "Jet_axismajor_1"+label+myVarSuffix, "Jet_axismajor_2"+label+myVarSuffix, "Jet_axismajor_3"+label+myVarSuffix, "Jet_axismajor_4"+label+myVarSuffix, "Jet_axismajor_5"+label+myVarSuffix, "Jet_axismajor_6"+label+myVarSuffix, "Jet_axismajor_7"+label+myVarSuffix,
-                        "Jet_axisminor_1"+label+myVarSuffix, "Jet_axisminor_2"+label+myVarSuffix, "Jet_axisminor_3"+label+myVarSuffix, "Jet_axisminor_4"+label+myVarSuffix, "Jet_axisminor_5"+label+myVarSuffix, "Jet_axisminor_6"+label+myVarSuffix, "Jet_axisminor_7"+label+myVarSuffix,
                     };            
 
                     std::set<std::string> varJetsAK8 =
