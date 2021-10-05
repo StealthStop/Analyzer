@@ -38,21 +38,28 @@ def main():
     plotsPath = {}; tablesPath = {}
 
     for sample in samples:
-        
+
+        # make directories to save plots and tables        
         if sample == Sig: continue
 
         if args.fixedDisc1edge != None or args.fixedDisc2edge != None:
             plotsPath[sample]  = "plots_fixedEdges_%s_%s/%s_%s/%s/"%(args.fixedDisc1edge, sample, args.sig, args.mass, args.channel)
-            tablesPath[sample] = "tables_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
+            
+            if sample == "TT":
+                tablesPath[sample] = "tables_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
+
         else:
             plotsPath[sample]  = "plots_%s/%s_%s/%s/"%(sample, args.sig, args.mass, args.channel)
-            tablesPath[sample] = "tables_%s/%s"%(sample, args.channel)
 
+            if sample == "TT":
+                tablesPath[sample] = "tables_%s/%s"%(sample, args.channel)
+
+        # 
         if not os.path.exists(plotsPath[sample]):
             os.makedirs(plotsPath[sample])
 
-        if not os.path.exists(tablesPath[sample]):
-            os.makedirs(tablesPath[sample])
+        if not os.path.exists(tablesPath["TT"]):
+            os.makedirs(tablesPath["TT"])
 
     # get SYY histogram
     modelDecay = "2t6j"
@@ -90,21 +97,24 @@ def main():
         tag = "final"
 
     # put all latest bin edges to tex file
-    binEdgesTable = BinEdgesTable(tablesPath[sample], args.channel, args.year, "All_%sBinEdges"%(tag), args.sig, args.mass)
+    binEdgesTable = BinEdgesTable(tablesPath["TT"], args.channel, args.year, "All_%sBinEdges"%(tag), args.sig, args.mass)
 
     # get the nEvents for each ABCD region
-    abcdEventsTable = ABCDeventsTable(tablesPath[sample], args.channel, args.year, "nEvents_%s_ABCD"%(tag), args.sig, args.mass)
+    abcdEventsTable = ABCDeventsTable(tablesPath["TT"], args.channel, args.year, "nEvents_%s_ABCD"%(tag), args.sig, args.mass)
 
     # get the nEvents for each B'D'EF region 
-    bdefEventsTable       = BDEFeventsTable(tablesPath[sample], args.channel, args.year, "nEvents_%s_Val_bdEF"%(tag), args.sig, args.mass)
-    fixedBDEF_EventsTable = BDEFeventsTable(tablesPath[sample], args.channel, args.year, "nEvents_%s_Val_fixedBDEF"%(tag), args.sig, args.mass)
+    bdefEventsTable       = BDEFeventsTable(tablesPath["TT"], args.channel, args.year, "nEvents_%s_Val_bdEF"%(tag), args.sig, args.mass)
+    fixedBDEF_EventsTable = BDEFeventsTable(tablesPath["TT"], args.channel, args.year, "nEvents_%s_Val_fixedBDEF"%(tag), args.sig, args.mass)
 
     # get the nEvents for each C'D'GH region
-    cdghEventsTable       = CDGHeventsTable(tablesPath[sample], args.channel, args.year, "nEvents_%s_Val_cdiGH"%(tag), args.sig, args.mass)
-    fixedCDGH_EventsTable = CDGHeventsTable(tablesPath[sample], args.channel, args.year, "nEvents_%s_Val_fixedCDGH"%(tag), args.sig, args.mass)
+    cdghEventsTable       = CDGHeventsTable(tablesPath["TT"], args.channel, args.year, "nEvents_%s_Val_cdiGH"%(tag), args.sig, args.mass)
+    fixedCDGH_EventsTable = CDGHeventsTable(tablesPath["TT"], args.channel, args.year, "nEvents_%s_Val_fixedCDGH"%(tag), args.sig, args.mass)
 
     # get the table for Validation region sub-division D
-    subdBinEdgesTable = SubDivDeventsTable(tablesPath[sample], args.channel, args.year, "%s_FinalBinEdges_Val_subDivD"%(tag), args.sig, args.mass)
+    subdBinEdgesTable = SubDivDeventsTable(tablesPath["TT"], args.channel, args.year, "%s_FinalBinEdges_Val_subDivD"%(tag), args.sig, args.mass)
+
+    # get the table for bkg and sig+bkg events in ABCD regions
+    bkgEventsTable = BkgTotEvents(tablesPath["TT"], args.channel, args.year, "TT_Fracs_%s_ABCD"%(tag), args.sig, args.mass)
 
     # hold on edges per njet
     edgesPerNjets = {njet : None for njet in njets}
@@ -160,6 +170,7 @@ def main():
         # initialize the dictionaries of quantities and variables with the final choice of bin edges
         allRegionsFinalEdges  = {}
         allRegionsSigFracs_TT = {}; allRegionsFinalSigFracs_TT = {}
+        allRegionsTTFracs     = {}; allRegionsFinalTTFracs     = {}
         allRegionsEvents      = {}; allRegionsFinalEvents      = {} 
 
         # loop over for initialize the big dictionaries to get all regions' events
@@ -171,8 +182,10 @@ def main():
         # loop over for populating the dictionaries for all regions
         for key, region in regions.items():
 
-            allRegionsSigFracs_TT[key]       = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}  
-            allRegionsFinalSigFracs_TT[key]  = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
+            allRegionsSigFracs_TT[key]      = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}  
+            allRegionsFinalSigFracs_TT[key] = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
+            allRegionsTTFracs[key]          = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
+            allRegionsFinalTTFracs[key]     = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
 
             # loop over for TT, NonTT, Data to get all regions' events
             for hist_key in hist_lists.keys():
@@ -282,6 +295,10 @@ def main():
                                           "B" : theEdgesClass.get("sigFractionB", None, None, Sig),
                                           "C" : theEdgesClass.get("sigFractionC", None, None, Sig),
                                           "D" : theEdgesClass.get("sigFractionD", None, None, Sig)}
+            allRegionsTTFracs[key]     = {"A" : theEdgesClass.get("ttFractionA", None, None, "TT"),
+                                          "B" : theEdgesClass.get("ttFractionB", None, None, "TT"),
+                                          "C" : theEdgesClass.get("ttFractionC", None, None, "TT"),
+                                          "D" : theEdgesClass.get("ttFractionD", None, None, "TT")}
 
             # quantities and variables with the final choice of bin edges
             finalSignificance               = theEdgesClass.getFinal("significance", "TT")
@@ -289,6 +306,10 @@ def main():
                                                "B" : theEdgesClass.getFinal("sigFractionB", Sig),
                                                "C" : theEdgesClass.getFinal("sigFractionC", Sig),
                                                "D" : theEdgesClass.getFinal("sigFractionD", Sig)}
+            allRegionsFinalTTFracs[key]     = {"A" : theEdgesClass.getFinal("ttFractionA", "TT"),
+                                               "B" : theEdgesClass.getFinal("ttFractionB", "TT"),
+                                               "C" : theEdgesClass.getFinal("ttFractionC", "TT"),
+                                               "D" : theEdgesClass.getFinal("ttFractionD", "TT")}
             
             # -----------------------------------------------
             # loop over for getting plots for TT, NonTT, Data
@@ -368,6 +389,9 @@ def main():
         # get the table for Validation region sub-division D
         subdBinEdgesTable.writeLine(njet=njet, finalDiscs=allRegionsFinalEdges["Val_subDivD"], finalSigFracs=allRegionsFinalSigFracs_TT["Val_subDivD"], final_nTot_Sig=allRegionsFinalEvents[Sig]["Val_subDivD"], final_nTot_Bkg=allRegionsFinalEvents["TT"]["Val_subDivD"]) 
 
+        # get the table for bkg and sig+bkg events in ABCD regions
+        bkgEventsTable.writeLine(njet=njet, finalBkgFracs=allRegionsFinalTTFracs["ABCD"])
+
     # ----------------------
     # make all closure plots
     # ----------------------
@@ -408,6 +432,9 @@ def main():
 
     # get the table for Validation region sub-division D
     subdBinEdgesTable.writeClose()    
+
+    # get the table for bkg and sig+bkg events in ABCD regions
+    bkgEventsTable.writeClose()
 
 if __name__ == '__main__':
     main()

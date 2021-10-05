@@ -190,7 +190,7 @@ class All_Regions:
             nDataEvents_C,  nDataEventsErr_C  = self.get("nEventsC", disc1Key, disc2Key, "Data")
             nDataEvents_D,  nDataEventsErr_D  = self.get("nEventsD", disc1Key, disc2Key, "Data")
 
-            # Region by region signal fractions for 1D-2D plots / for only TT !!!
+            # Region by region signal and bkg fractions for 1D-2D plots / for only TT !!!
             nTot_SigTT_A = nSigEvents_A + nTTEvents_A
             nTot_SigTT_B = nSigEvents_B + nTTEvents_B
             nTot_SigTT_C = nSigEvents_C + nTTEvents_C
@@ -198,31 +198,85 @@ class All_Regions:
 
             sigFracsA    = -1.0; sigFracsB    = -1.0; sigFracsC    = -1.0; sigFracsD    = -1.0
             sigFracsErrA = -1.0; sigFracsErrB = -1.0; sigFracsErrC = -1.0; sigFracsErrD = -1.0
-    
+            bkgFracsA    = -1.0; bkgFracsB    = -1.0; bkgFracsC    = -1.0; bkgFracsD    = -1.0
+            bkgFracsErrA = -1.0; bkgFracsErrB = -1.0; bkgFracsErrC = -1.0; bkgFracsErrD = -1.0
+ 
             if nTot_SigTT_A > 0.0: 
                 sigFracsA    = nSigEvents_A / nTot_SigTT_A
                 sigFracsErrA = ((nTTEvents_A * nSigEventsErr_A**0.5 / (nTot_SigTT_A)**2.0)**2.0 + \
+                                (nSigEvents_A * nTTEventsErr_A**0.5 / (nTot_SigTT_A)**2.0)**2.0 )**0.5
+                bkgFracsA    = 1 - sigFracsA
+                bkgFracsErrA = ((nTTEvents_A * nSigEventsErr_A**0.5 / (nTot_SigTT_A)**2.0)**2.0 + \
                                 (nSigEvents_A * nTTEventsErr_A**0.5 / (nTot_SigTT_A)**2.0)**2.0)**0.5
-            
+ 
             if nTot_SigTT_B > 0.0: 
                 sigFracsB    = nSigEvents_B / nTot_SigTT_B
                 sigFracsErrB = ((nTTEvents_B * nSigEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0 + \
                                 (nSigEvents_B * nTTEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0)**0.5
-            
+                bkgFracsB    = 1 - sigFracsB
+                bkgFracsErrB = ((nTTEvents_B * nSigEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0 + \
+                                (nSigEvents_B * nTTEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0)**0.5           
+
             if nTot_SigTT_C > 0.0: 
                 sigFracsC    = nSigEvents_C / nTot_SigTT_C
                 sigFracsErrC = ((nTTEvents_C * nSigEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0 + \
+                                (nSigEvents_C * nTTEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0)**0.5
+                bkgFracsC    = 1 - sigFracsC 
+                bkgFracsErrC = ((nTTEvents_C * nSigEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0 + \
                                 (nSigEvents_C * nTTEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0)**0.5
     
             if nTot_SigTT_D > 0.0: 
                 sigFracsD    = nSigEvents_D / nTot_SigTT_D
                 sigFracsErrD = ((nTTEvents_D * nSigEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0 + \
                                 (nSigEvents_D * nTTEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0)**0.5
-            
+                bkgFracsD    = 1 - sigFracsD
+                bkgFracsErrD = ((nTTEvents_D * nSigEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0 + \
+                                (nSigEvents_D * nTTEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0)**0.5   
+         
             self.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA), self.Sig)
             self.add("sigFractionB", disc1Key, disc2Key, (sigFracsB, sigFracsErrB), self.Sig)
             self.add("sigFractionC", disc1Key, disc2Key, (sigFracsC, sigFracsErrC), self.Sig)
             self.add("sigFractionD", disc1Key, disc2Key, (sigFracsD, sigFracsErrD), self.Sig)   
+
+            self.add("bkgFractionA", disc1Key, disc2Key, (bkgFracsA, bkgFracsErrA), "TT")
+            self.add("bkgFractionB", disc1Key, disc2Key, (bkgFracsB, bkgFracsErrB), "TT")
+            self.add("bkgFractionC", disc1Key, disc2Key, (bkgFracsC, bkgFracsErrC), "TT")
+            self.add("bkgFractionD", disc1Key, disc2Key, (bkgFracsD, bkgFracsErrD), "TT")
+    
+            # TT fraction by looking at (TT + NonTT) events in each A,B,C,D region
+            # to understand how NonTT events dominated in each region
+            nTot_TT_NonTT_A = nTTEvents_A + nNonTTEvents_A
+            nTot_TT_NonTT_B = nTTEvents_B + nNonTTEvents_B
+            nTot_TT_NonTT_C = nTTEvents_C + nNonTTEvents_C
+            nTot_TT_NonTT_D = nTTEvents_D + nNonTTEvents_D
+
+            ttFracsA    = -1.0; ttFracsB    = -1.0; ttFracsC    = -1.0; ttFracsD    = -1.0
+            ttFracsErrA = -1.0; ttFracsErrB = -1.0; ttFracsErrC = -1.0; ttFracsErrD = -1.0
+
+            if nTot_TT_NonTT_A > 0.0:
+                ttFracsA    = nTTEvents_A / nTot_TT_NonTT_A
+                ttFracsErrA = ( (nTTEvents_A * nNonTTEventsErr_A**0.5 / (nTot_TT_NonTT_A)**2.0 )**2.0 + \
+                               (nNonTTEvents_A * nTTEventsErr_A**0.5 / (nTot_TT_NonTT_A)**2.0)**2.0 )**0.5
+
+            if nTot_TT_NonTT_B > 0.0:
+                ttFracsB    = nTTEvents_B / nTot_TT_NonTT_B
+                ttFracsErrB = ( (nTTEvents_B * nNonTTEventsErr_B**0.5 / (nTot_TT_NonTT_B)**2.0 )**2.0 + \
+                               (nNonTTEvents_B * nTTEventsErr_B**0.5 / (nTot_TT_NonTT_B)**2.0)**2.0 )**0.5
+
+            if nTot_TT_NonTT_C > 0.0:
+                ttFracsC    = nTTEvents_C / nTot_TT_NonTT_C
+                ttFracsErrC = ( (nTTEvents_C * nNonTTEventsErr_C**0.5 / (nTot_TT_NonTT_C)**2.0 )**2.0 + \
+                               (nNonTTEvents_C * nTTEventsErr_C**0.5 / (nTot_TT_NonTT_C)**2.0)**2.0 )**0.5
+
+            if nTot_TT_NonTT_D > 0.0:
+                ttFracsD    = nTTEvents_D / nTot_TT_NonTT_D
+                ttFracsErrD = ( (nTTEvents_D * nNonTTEventsErr_D**0.5 / (nTot_TT_NonTT_D)**2.0 )**2.0 + \
+                               (nNonTTEvents_D * nTTEventsErr_D**0.5 / (nTot_TT_NonTT_D)**2.0)**2.0 )**0.5
+
+            self.add("ttFractionA", disc1Key, disc2Key, (ttFracsA, ttFracsErrA), "TT")
+            self.add("ttFractionB", disc1Key, disc2Key, (ttFracsB, ttFracsErrB), "TT")
+            self.add("ttFractionC", disc1Key, disc2Key, (ttFracsC, ttFracsErrC), "TT")
+            self.add("ttFractionD", disc1Key, disc2Key, (ttFracsD, ttFracsErrD), "TT")
 
             # closure for optimization metric for only TT
             # closure error and pull for 2D plots / for TT, NonTT, Data

@@ -186,7 +186,7 @@ class Common_Calculations_Plotters:
                 # bkgObs / bkgPred 
                 pullUnc   = 1.0
                 pull1, ratio1, ratio1Unc = cal_ratioUnc(bkgObs[i], bkgPred[i]) 
-
+            
                 # dataObs / dataPred 
                 pull2, ratio2, ratio2Unc = cal_ratioUnc(dataObs[i], dataPred[i]) 
 
@@ -206,7 +206,12 @@ class Common_Calculations_Plotters:
                 MC_correction_val  = ratio1
                 dataPred_corrected = MC_correction_val * dataPred[i][0]
                 _, ratio, ratioUnc = cal_ratioUnc( dataObs[i], (dataPred_corrected, dataPred[i][1]) )
-           
+               
+                PullUnc.append(pullUnc)
+                Pull1.append(pull1)
+                Ratio1.append(ratio1)
+                Ratio1Unc.append(ratio1Unc)
+ 
                 # -------------------------------------------- 
                 # append the information of 7th, 8th Njet bins
                 # -------------------------------------------- 
@@ -217,11 +222,6 @@ class Common_Calculations_Plotters:
                     data_obs.append(dataObs[i][0])
                     data_obsUnc.append(dataObs[i][1])
     
-                    PullUnc.append(pullUnc)
-                    Pull1.append(pull1)
-                    Ratio1.append(ratio1)
-                    Ratio1Unc.append(ratio1Unc)                
-                
                     Pull2.append(pull2)
                     Ratio2.append(ratio2)
                     Ratio2Unc.append(ratio2Unc)
@@ -251,11 +251,6 @@ class Common_Calculations_Plotters:
                     data_predUnc.append(0)
                     data_obs.append(999999999999)
                     data_obsUnc.append(0)
-
-                    PullUnc.append(0)
-                    Pull1.append(-999)
-                    Ratio1.append(-999)
-                    Ratio1Unc.append(0)
 
                     Pull2.append(-999)
                     Ratio2.append(-999)
