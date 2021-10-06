@@ -8,7 +8,8 @@ import matplotlib.lines as ml
 import matplotlib.pyplot as plt
 
 from matplotlib.colors import LogNorm
-
+from matplotlib.patches import Rectangle
+from matplotlib.collections import PatchCollection
 
 class Common_Calculations_Plotters:
 
@@ -44,9 +45,31 @@ class Common_Calculations_Plotters:
         pred      = []; predUnc      = []
         abcdError = []; abcdErrorUnc = []
         abcdPull  = []; abcdPullUnc  = []
+        pullDenom = []; zeros        = []
         
         totalChi2 = 0.0; ndof = 0
-    
+
+        # ------------------------------------------   
+        # make a band with (pull denominator) / pred
+        # ------------------------------------------  
+        def makeErrorBoxes(x, zeros, xUnc, pullDenom):
+
+            # list for all the error patches
+            errorBoxes = []
+
+            # loop over data points / create box from errors at each point
+            for xc, yc, xe, ye in zip(x, zeros, xUnc.T, pullDenom.T):
+                rect = Rectangle( (xc-xe[0], yc-ye[0]), xe.sum(), ye.sum() )
+                errorBoxes.append(rect)
+
+            # create patch collection with specified colour/alpha
+            pc = PatchCollection(errorBoxes, facecolor='mediumslateblue', alpha=0.5, edgecolor='none')
+
+            return pc
+ 
+        # -------------------
+        # loop over the njets
+        # -------------------
         for i in range(0, len(Njets)):
     
             if bkgObs[i][1] != 0.0:
@@ -58,6 +81,8 @@ class Common_Calculations_Plotters:
                 pullUnc         = 1.0
                 closureError    = 1.0 - ( bkgPred[i][0] / bkgObs[i][0] )
                 closureErrorUnc = ((bkgPred[i][1] / bkgObs[i][0])**2.0 + (bkgObs[i][1] * bkgPred[i][0] / bkgObs[i][0]**2.0)**2.0)**0.5
+                pullDenominator = ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5 / bkgPred[i][0]
+                zero            = 0.0
 
                 # for the data closure / blind the 9-10-11 njet bins
                 if isBlind and i >= 2:
@@ -69,6 +94,8 @@ class Common_Calculations_Plotters:
                     abcdPullUnc.append(0)
                     abcdError.append(999)
                     abcdErrorUnc.append(0)
+                    pullDenom.append(0)
+                    zeros.append(999)
 
                 else:
                     pred.append(bkgPred[i][0])
@@ -79,13 +106,17 @@ class Common_Calculations_Plotters:
                     abcdPullUnc.append(pullUnc)
                     abcdError.append(closureError)
                     abcdErrorUnc.append(closureErrorUnc)
+                    pullDenom.append(pullDenominator)
+                    zeros.append(zero)
                     totalChi2 += pull ** 2.0
                     ndof      += 1                    
 
- 
+        # ------------------
+        # plot usual closure
+        # ------------------
         fig = plt.figure(figsize=(6, 6))
         ax  = fig.add_subplot(111)
-        fig.subplots_adjust(hspace=0, left=0.15, right=0.95, top=0.94)
+        fig.subplots_adjust(hspace=0, left=0.15, right=0.85, top=0.94)
     
         lowerNjets  = float(Njets[0])
         higherNjets = float(Njets[(-1)])
@@ -129,6 +160,15 @@ class Common_Calculations_Plotters:
         ax3.set_ylabel('Pull') # (Pred - Obs) / ObsUnc') 
         ax3.set_ylim([-5.4, 5.4])
  
+        # ( obsUnc^2 + predUnc^2 )^0.5 / pred
+        pc = makeErrorBoxes(np.array(x), np.array(zeros), np.array([xUnc, xUnc]), np.array([pullDenom, pullDenom]))
+        ax4 = ax3.twinx()
+        ax4.set_ylabel('pullDen / pred', color='mediumslateblue')
+        ax4.add_collection(pc)
+        ax4.set_ylim([-0.2, 0.2])        
+        #ax4.set_yscale('log')
+        plt.show()
+
         plt.xticks([int(Njet) for Njet in Njets])
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
@@ -156,6 +196,9 @@ class Common_Calculations_Plotters:
         Ratio1Unc = []; Ratio2Unc = []; Ratio3Unc = []; Ratio4Unc = []; Ratio5Unc = []; Ratio6Unc = [] 
         Ratio     = []; RatioUnc  = []; DataPred_corrected = []
 
+        # ------------------------------------
+        # calculate pull, ratio and ratio unc.
+        # ------------------------------------
         def cal_ratioUnc(numerator, denominator):
 
             pull     = ( numerator[0] - denominator[0] ) / ( (numerator[1])**2 + (denominator[1])**2 )**0.5
@@ -164,7 +207,9 @@ class Common_Calculations_Plotters:
 
             return pull, ratio, ratioUnc
 
-
+        # -------------------
+        # loop over njet bins
+        # -------------------
         for i in range(0, len(Njets)):
 
             if bkgObs[i][1] != 0.0:

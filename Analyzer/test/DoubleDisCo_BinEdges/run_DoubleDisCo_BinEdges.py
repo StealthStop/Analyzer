@@ -46,7 +46,7 @@ def main():
             plotsPath[sample]  = "plots_fixedEdges_%s_%s/%s_%s/%s/"%(args.fixedDisc1edge, sample, args.sig, args.mass, args.channel)
             
             if sample == "TT":
-                tablesPath[sample] = "tables_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
+                tablesPath[sample] = "tables_fixedEdges_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
 
         else:
             plotsPath[sample]  = "plots_%s/%s_%s/%s/"%(sample, args.sig, args.mass, args.channel)
