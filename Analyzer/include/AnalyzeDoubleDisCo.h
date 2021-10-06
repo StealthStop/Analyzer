@@ -44,13 +44,16 @@ public:
     std::vector<TH2DInfo> hist2DInfos;
 
     std::vector<std::string> njets;
+    std::vector<std::string> abcds;
+
+    std::map<std::string, std::vector<std::string> > subRegionsMap;
 
     unsigned int nMVAJets;
     
     AnalyzeDoubleDisCo();
     ~AnalyzeDoubleDisCo(){};
     
-    std::vector<std::string> getSubregions(const std::string& region);
+    void makeSubregions(const std::vector<std::vector<std::string>>& regionsVec);
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
     void Preinit(unsigned int);
     void InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec);
