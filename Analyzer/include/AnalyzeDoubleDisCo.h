@@ -44,7 +44,6 @@ public:
     std::vector<TH2DInfo> hist2DInfos;
 
     std::vector<std::string> njets;
-    std::vector<std::string> abcds;
 
     std::map<std::string, std::vector<std::string> > subRegionsMap;
 
