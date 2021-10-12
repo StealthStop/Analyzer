@@ -30,42 +30,56 @@ void Semra_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) // de
     
     for (const auto& cutVar : cutmap) 
     {  
-        // --------------------------------------
-        // -- variables for baseline selection
-        // --------------------------------------
-        my_histos.emplace( "h_ntops_"+cutVar.first, std::make_shared<TH1D> ( ("h_ntops_"+cutVar.first).c_str(), ("h_ntops_"+cutVar.first).c_str(), 10, 0, 10 ) );
-        my_histos.emplace( "h_njets_"+cutVar.first, std::make_shared<TH1D> ( ("h_njets_"+cutVar.first).c_str(), ("h_njets_"+cutVar.first).c_str(), 20, 0, 20 ) );
-        my_histos.emplace( "h_nbjets_"+cutVar.first, std::make_shared<TH1D> ( ("h_nbjets_"+cutVar.first).c_str(), ("h_nbjets_"+cutVar.first).c_str(), 20, 0, 20 ) );
-        my_histos.emplace( "h_ht_"+cutVar.first, std::make_shared<TH1D> ( ("h_ht_"+cutVar.first).c_str(), ("h_ht_"+cutVar.first).c_str(), 60, 0, 3000 ) );
-        my_histos.emplace( "h_met_"+cutVar.first, std::make_shared<TH1D> ( ("h_met_"+cutVar.first).c_str(), ("h_met_"+cutVar.first).c_str(), 200, 0, 2000 ) ) ;
+        // get jet variables
+        my_histos.emplace( "h_ntops_"+cutVar.first,         std::make_shared<TH1D> ( ("h_ntops_"+cutVar.first).c_str(),         ("h_ntops_"+cutVar.first).c_str(),         10, 0, 10     ) );
+        my_histos.emplace( "h_njets_"+cutVar.first,         std::make_shared<TH1D> ( ("h_njets_"+cutVar.first).c_str(),         ("h_njets_"+cutVar.first).c_str(),         20, 0, 20     ) );
+        my_histos.emplace( "h_nbjets_"+cutVar.first,        std::make_shared<TH1D> ( ("h_nbjets_"+cutVar.first).c_str(),        ("h_nbjets_"+cutVar.first).c_str(),        20, 0, 20     ) );
+        my_histos.emplace( "h_ht_"+cutVar.first,            std::make_shared<TH1D> ( ("h_ht_"+cutVar.first).c_str(),            ("h_ht_"+cutVar.first).c_str(),            60, 0, 3000   ) );
+        my_histos.emplace( "h_met_"+cutVar.first,           std::make_shared<TH1D> ( ("h_met_"+cutVar.first).c_str(),           ("h_met_"+cutVar.first).c_str(),           200, 0, 2000  ) );
         
-        my_histos.emplace( "h_jetsPt_"+cutVar.first, std::make_shared<TH1D> ( ("h_jetsPt_"+cutVar.first).c_str(), ("h_jetsPt_"+cutVar.first).c_str(), 1000, 0, 2000 ) );
-        my_histos.emplace( "h_jetsMass_"+cutVar.first, std::make_shared<TH1D> ( ("h_jetsMass_"+cutVar.first).c_str(), ("h_jetsMass_"+cutVar.first).c_str(), 1000, 0, 500) );
-        my_histos.emplace( "h_jetsEta_"+cutVar.first, std::make_shared<TH1D> ( ("h_jetsEta_"+cutVar.first).c_str(), ("h_jetsEta_"+cutVar.first).c_str(), 100, -6, 6 ) );        
+        my_histos.emplace( "h_jetsPt_"+cutVar.first,        std::make_shared<TH1D> ( ("h_jetsPt_"+cutVar.first).c_str(),        ("h_jetsPt_"+cutVar.first).c_str(),        1000, 0, 2000 ) );
+        my_histos.emplace( "h_jetsMass_"+cutVar.first,      std::make_shared<TH1D> ( ("h_jetsMass_"+cutVar.first).c_str(),      ("h_jetsMass_"+cutVar.first).c_str(),      1000, 0, 500  ) );
+        my_histos.emplace( "h_jetsEta_"+cutVar.first,       std::make_shared<TH1D> ( ("h_jetsEta_"+cutVar.first).c_str(),       ("h_jetsEta_"+cutVar.first).c_str(),       100, -6, 6    ) );        
 
-        my_histos.emplace( "h_bjetsPt_"+cutVar.first, std::make_shared<TH1D> ( ("h_bjetsPt_"+cutVar.first).c_str(), ("h_bjetsPt_"+cutVar.first).c_str(), 1000, 0, 2000 ) );
-        my_histos.emplace( "h_bjetsMass_"+cutVar.first, std::make_shared<TH1D> ( ("h_bjetsMass_"+cutVar.first).c_str(), ("h_bjetsMass_"+cutVar.first).c_str(), 1000, 0, 500 ) );
-        my_histos.emplace( "h_bjetsEta_"+cutVar.first, std::make_shared<TH1D> ( ("h_bjetsEta_"+cutVar.first).c_str(), ("h_bjetsEta_"+cutVar.first).c_str(), 100, -6, 6 ) );
+        my_histos.emplace( "h_bjetsPt_"+cutVar.first,       std::make_shared<TH1D> ( ("h_bjetsPt_"+cutVar.first).c_str(),       ("h_bjetsPt_"+cutVar.first).c_str(),       1000, 0, 2000 ) );
+        my_histos.emplace( "h_bjetsMass_"+cutVar.first,     std::make_shared<TH1D> ( ("h_bjetsMass_"+cutVar.first).c_str(),     ("h_bjetsMass_"+cutVar.first).c_str(),     1000, 0, 500  ) );
+        my_histos.emplace( "h_bjetsEta_"+cutVar.first,      std::make_shared<TH1D> ( ("h_bjetsEta_"+cutVar.first).c_str(),      ("h_bjetsEta_"+cutVar.first).c_str(),      100, -6, 6    ) );
 
         // get the top object (actual top jets from top TLorentzVector) jets' Mass, Eta, Phi, Pt  
-        my_histos.emplace( "h_topsMass_"+cutVar.first, std::make_shared<TH1D> ( ("h_topsMass_"+cutVar.first).c_str(), ("h_topsMass_"+cutVar.first).c_str(), 1000, 0, 500 ) );
-        my_histos.emplace( "h_topsEta_"+cutVar.first, std::make_shared<TH1D> ( ("h_topsEta_"+cutVar.first).c_str(), ("h_topsEta_"+cutVar.first).c_str(), 100, -6, 6 ) );
-        my_histos.emplace( "h_topsPhi_"+cutVar.first, std::make_shared<TH1D> ( ("h_topsPhi_"+cutVar.first).c_str(), ("h_topsPhi_"+cutVar.first).c_str(), 80, -4, 4 ) );
-        my_histos.emplace( "h_topsPt_"+cutVar.first, std::make_shared<TH1D> ( ("h_topsPt_"+cutVar.first).c_str(), ("h_topsPt_"+cutVar.first).c_str(), 1000, 0, 2000 ) );
+        my_histos.emplace( "h_topsMass_"+cutVar.first,      std::make_shared<TH1D> ( ("h_topsMass_"+cutVar.first).c_str(),      ("h_topsMass_"+cutVar.first).c_str(),      1000, 0, 500  ) );
+        my_histos.emplace( "h_topsEta_"+cutVar.first,       std::make_shared<TH1D> ( ("h_topsEta_"+cutVar.first).c_str(),       ("h_topsEta_"+cutVar.first).c_str(),       100, -6, 6    ) );
+        my_histos.emplace( "h_topsPhi_"+cutVar.first,       std::make_shared<TH1D> ( ("h_topsPhi_"+cutVar.first).c_str(),       ("h_topsPhi_"+cutVar.first).c_str(),       80, -4, 4     ) );
+        my_histos.emplace( "h_topsPt_"+cutVar.first,        std::make_shared<TH1D> ( ("h_topsPt_"+cutVar.first).c_str(),        ("h_topsPt_"+cutVar.first).c_str(),        1000, 0, 2000 ) );
 
-        my_histos.emplace( "h_bestTopMass_"+cutVar.first, std::make_shared<TH1D> ( ("h_bestTopMass_"+cutVar.first).c_str(), ("h_bestTopMass_"+cutVar.first).c_str(), 1000, 0, 500 ) );
-        my_histos.emplace( "h_bestTopEta_"+cutVar.first, std::make_shared<TH1D> ( ("h_bestTopEta_"+cutVar.first).c_str(), ("h_bestTopEta_"+cutVar.first).c_str(), 100, -6, 6 ) );
-        my_histos.emplace( "h_bestTopPt_"+cutVar.first, std::make_shared<TH1D> ( ("h_bestTopPt_"+cutVar.first).c_str(), ("h_bestTopPt_"+cutVar.first).c_str(), 1000, 0, 2000 ) );
+        my_histos.emplace( "h_bestTopMass_"+cutVar.first,   std::make_shared<TH1D> ( ("h_bestTopMass_"+cutVar.first).c_str(),   ("h_bestTopMass_"+cutVar.first).c_str(),   1000, 0, 500  ) );
+        my_histos.emplace( "h_bestTopEta_"+cutVar.first,    std::make_shared<TH1D> ( ("h_bestTopEta_"+cutVar.first).c_str(),    ("h_bestTopEta_"+cutVar.first).c_str(),    100, -6, 6    ) );
+        my_histos.emplace( "h_bestTopPt_"+cutVar.first,     std::make_shared<TH1D> ( ("h_bestTopPt_"+cutVar.first).c_str(),     ("h_bestTopPt_"+cutVar.first).c_str(),     1000, 0, 2000 ) );
         
-        my_histos.emplace( "h_dR_bjets_"+cutVar.first, std::make_shared<TH1D> ( ("h_dR_bjets_"+cutVar.first).c_str(), ("h_dR_bjets_"+cutVar.first).c_str(), 50, 0, 10 ) );
-        my_histos.emplace( "h_dR_top1_top2_"+cutVar.first, std::make_shared<TH1D> ( ("h_dR_top1_top2_"+cutVar.first).c_str(), ("h_dR_top1_top2_"+cutVar.first).c_str(), 50, 0, 10 ) );
-        my_histos.emplace( "h_dR_tops_bjets_"+cutVar.first, std::make_shared<TH1D> ( ("h_dR_tops_bjets_"+cutVar.first).c_str(), ("h_dR_tops_bjets_"+cutVar.first).c_str(), 50, 0, 10 ) );
+        my_histos.emplace( "h_dR_bjets_"+cutVar.first,      std::make_shared<TH1D> ( ("h_dR_bjets_"+cutVar.first).c_str(),      ("h_dR_bjets_"+cutVar.first).c_str(),      50, 0, 10     ) );
+        my_histos.emplace( "h_dR_top1_top2_"+cutVar.first,  std::make_shared<TH1D> ( ("h_dR_top1_top2_"+cutVar.first).c_str(),  ("h_dR_top1_top2_"+cutVar.first).c_str(),  50, 0, 10     ) );
+        my_histos.emplace( "h_dR_tops_bjets_"+cutVar.first, std::make_shared<TH1D> ( ("h_dR_tops_bjets_"+cutVar.first).c_str(), ("h_dR_tops_bjets_"+cutVar.first).c_str(), 50, 0, 10     ) );
 
-        my_2d_histos.emplace( "h_njets_dR_bjets_"+cutVar.first, std::make_shared<TH2D>( ("h_njets_dR_bjets_"+cutVar.first).c_str(), ("h_njets_dR_bjets_"+cutVar.first).c_str(), 1000, 0, 10, 20, 0, 20 ) ); // for cut optimization of dR_bjets cut                    
+        // for cut optimization of dR_bjets cut
+        my_2d_histos.emplace( "h_njets_dR_bjets_"+cutVar.first, std::make_shared<TH2D>( ("h_njets_dR_bjets_"+cutVar.first).c_str(), ("h_njets_dR_bjets_"+cutVar.first).c_str(), 1000, 0, 10, 20, 0, 20 ) );                     
     }
 
     // cut flow absolute numbers 
-    my_histos.emplace( "h_cutFlow_absolute", std::make_shared<TH1D>("h_cutFlow_absolute", "h_cutFlow_absolute", 9,0,9));    
+    my_histos.emplace( "h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets", 5,0,5));
+
+    my_histos.emplace( "h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets", 5,0,5));
+
+    my_histos.emplace( "h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets", 5,0,5));
+    
+    my_histos.emplace( "h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets", 5,0,5));
+
 }
 
 // ---------------------------------------------
@@ -85,9 +99,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );
 
         const auto& runtype         = tr.getVar<std::string>("runtype");     
-        const auto& JetID           = tr.getVar<bool>("JetID");
         const auto& Jets            = tr.getVec<TLorentzVector>("Jets");
-        const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
         const auto& MET             = tr.getVar<double>("MET");
         const auto& GoodJets_pt45   = tr.getVec<bool>("GoodJets_pt45");
         const auto& GoodBJets_pt45  = tr.getVec<bool>("GoodBJets_pt45");
@@ -101,34 +113,31 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ------------------------------
         // -- Define Top Tag variables
         // ------------------------------
-        const auto& ntops          = tr.getVar<int>("ntops");
-        const auto& ntops_1jet     = tr.getVar<int>("ntops_1jet"); // merged
-        const auto& ntops_2jet     = tr.getVar<int>("ntops_2jet");
-        const auto& ntops_3jet     = tr.getVar<int>("ntops_3jet"); // resolved 
-        const auto& topsMass       = tr.getVec<double>("topsMass");
-        const auto& topsEta        = tr.getVec<double>("topsEta");
-        const auto& topsPhi        = tr.getVec<double>("topsPhi");  
-        const auto& topsPt         = tr.getVec<double>("topsPt");
-        const auto& bestTopMass    = tr.getVar<double>("bestTopMass");
-        const auto& bestTopEta     = tr.getVar<double>("bestTopEta");
-        const auto& bestTopPt      = tr.getVar<double>("bestTopPt");
-       
-        const auto& passMadHT      = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline0l_testTopCuts = tr.getVar<bool>("passBaseline0l_testTopCuts"); // for data-MC
-        const auto& passMETFilters = tr.getVar<bool>("passMETFilters");
-        const bool pass_general    = JetID && passMETFilters && passMadHT;
-        const bool pass_0l         = NGoodLeptons==0;  
-        const bool pass_HT500      = HT_trigger_pt45 > 500;
-        const bool pass_ge2b       = NGoodBJets_pt45 >= 2;
-        const bool pass_ge6j       = NGoodJets_pt45 >= 6;
-        const bool pass_ge7j       = NGoodJets_pt45 >= 7;
-        const bool pass_ge8j       = NGoodJets_pt45 >= 8;
-        const bool pass_ge9j       = NGoodJets_pt45 >= 9;
-        const bool pass_ge2t       = ntops >= 2;
-        const bool pass_ge2tM      = ntops >= 2 && ntops_3jet == 0 && ntops_2jet == 0;
-        const bool pass_ge2tR      = ntops >= 2 && ntops_1jet == 0 && ntops_2jet == 0;
-        const bool pass_ge2tMR     = ntops >= 2 && ntops_1jet >= 1 && ntops_3jet >= 1 && ntops_2jet == 0;
-        const bool pass_ge1dRbjets = dR_bjets >= 1.0;       
+        const auto& ntops              = tr.getVar<int>("ntops");
+        const auto& ntops_1jet         = tr.getVar<int>("ntops_1jet"); // merged
+        const auto& ntops_2jet         = tr.getVar<int>("ntops_2jet");
+        const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet"); // resolved 
+        const auto& topsMass           = tr.getVec<double>("topsMass");
+        const auto& topsEta            = tr.getVec<double>("topsEta");
+        const auto& topsPhi            = tr.getVec<double>("topsPhi");  
+        const auto& topsPt             = tr.getVec<double>("topsPt");
+        const auto& bestTopMass        = tr.getVar<double>("bestTopMass");
+        const auto& bestTopEta         = tr.getVar<double>("bestTopEta");
+        const auto& bestTopPt          = tr.getVar<double>("bestTopPt");
+        const auto& passBaseline0l_pre = tr.getVar<bool>("passBaseline0l_pre");
+        const bool pass_ge7j           = NGoodJets_pt45 >= 7;
+        const bool pass_ge8j           = NGoodJets_pt45 >= 8;
+        const bool pass_ge9j           = NGoodJets_pt45 >= 9;
+        const bool pass_ge1b           = NGoodBJets_pt45 >= 1; 
+        const bool pass_ge2b           = NGoodBJets_pt45 >= 2;
+        const bool pass_ge1t           = ntops >= 1;
+        const bool pass_ge1tR          = ntops >= 1 && ntops_1jet == 0 && ntops_2jet == 0;
+        const bool pass_ge1tM          = ntops >= 1 && ntops_3jet == 0 && ntops_2jet == 0;
+        const bool pass_ge2t           = ntops >= 2;
+        const bool pass_ge2tR          = ntops >= 2 && ntops_1jet == 0 && ntops_2jet == 0;
+        const bool pass_ge2tM          = ntops >= 2 && ntops_3jet == 0 && ntops_2jet == 0;
+        const bool pass_ge2tRM         = ntops >= 2 && ntops_3jet >= 1 && ntops_1jet >= 1 && ntops_2jet == 0;
+        const bool pass_ge1dRbjets     = dR_bjets >= 1.0;       
 
         // -------------------
         // -- Define weight
@@ -174,38 +183,91 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------------------
         const std::map<std::string, bool>& cutmap
         {
-            {"",                   true                                                            },
-            //{"0l",                 pass_general && pass_0l                                         },
-            //{"0l_HT500",           pass_general && pass_0l && pass_HT500                           },           
-            //{"0l_HT500_ge2b",      pass_general && pass_0l && pass_HT500 && pass_ge2b              },     
-            //{"0l_HT500_ge2b_ge6j", pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge6j },
- 
-            // >= 2 tops
-            //{"0l_HT500_ge2b_ge6j_ge2t",   passBaseline0l_testTopCuts && pass_ge2t },
-            //{"0l_HT500_ge2b_ge6j_ge2tM",  passBaseline0l_testTopCuts && pass_ge2tM },
-            //{"0l_HT500_ge2b_ge6j_ge2tR",  passBaseline0l_testTopCuts && pass_ge2tR },
-            //{"0l_HT500_ge2b_ge6j_ge2tMR", passBaseline0l_testTopCuts && pass_ge2tMR }, 
+            {"",                                     true                                                                           },
+            // >= 6jet combinations    
+            {"0l_HT500_ge6j",                        passBaseline0l_pre                                                             },        
+            {"0l_HT500_ge6j_ge1t",                   passBaseline0l_pre && pass_ge1t                                                },
+            {"0l_HT500_ge6j_ge1t_ge1b",              passBaseline0l_pre && pass_ge1t  && pass_ge1b                                  },
+            {"0l_HT500_ge6j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge1t  && pass_ge1b && pass_ge1dRbjets               },
+            {"0l_HT500_ge6j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tR && pass_ge1b && pass_ge1dRbjets               },
+            {"0l_HT500_ge6j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tM && pass_ge1b && pass_ge1dRbjets               },
+
+            {"0l_HT500_ge6j_ge2t",                   passBaseline0l_pre && pass_ge2t                                                },
+            {"0l_HT500_ge6j_ge2t_ge1b",              passBaseline0l_pre && pass_ge2t   && pass_ge1b                                 },
+            {"0l_HT500_ge6j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge2t   && pass_ge1b && pass_ge1dRbjets              },
+            {"0l_HT500_ge6j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets              },
+            {"0l_HT500_ge6j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets              },
+            {"0l_HT500_ge6j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets              }, 
+
+            {"0l_HT500_ge6j_ge2t_ge2b",              passBaseline0l_pre && pass_ge2t   && pass_ge2b                                 },
+            {"0l_HT500_ge6j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge2t   && pass_ge2b && pass_ge1dRbjets              },
+            {"0l_HT500_ge6j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets              },
+            {"0l_HT500_ge6j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets              },     
+            {"0l_HT500_ge6j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets              },
+
+            // >= 7jet combinations 
+            {"0l_HT500_ge7j",                        passBaseline0l_pre && pass_ge7j                                                },
+            {"0l_HT500_ge7j_ge1t",                   passBaseline0l_pre && pass_ge7j && pass_ge1t                                   },
+            {"0l_HT500_ge7j_ge1t_ge1b",              passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge1b                     },
+            {"0l_HT500_ge7j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_HT500_ge7j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  },            
+            {"0l_HT500_ge7j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
+
+            {"0l_HT500_ge7j_ge2t",                   passBaseline0l_pre && pass_ge7j && pass_ge2t                                   },
+            {"0l_HT500_ge7j_ge2t_ge1b",              passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge1b                    },
+            {"0l_HT500_ge7j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge7j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge7j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge7j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge7j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+
+            {"0l_HT500_ge7j_ge2t_ge2b",              passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge2b                    },
+            {"0l_HT500_ge7j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge7j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge7j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },  
+            {"0l_HT500_ge7j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge7j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets },
+
+            // >= 8jet combinations 
+            {"0l_HT500_ge8j",                        passBaseline0l_pre && pass_ge8j                                                },
+            {"0l_HT500_ge8j_ge1t",                   passBaseline0l_pre && pass_ge8j && pass_ge1t                                   },
+            {"0l_HT500_ge8j_ge1t_ge1b",              passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge1b                     },
+            {"0l_HT500_ge8j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_HT500_ge8j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  }, 
+            {"0l_HT500_ge8j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
+
+            {"0l_HT500_ge8j_ge2t",                   passBaseline0l_pre && pass_ge8j && pass_ge2t                                   },
+            {"0l_HT500_ge8j_ge2t_ge1b",              passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge1b                    },
+            {"0l_HT500_ge8j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge8j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge8j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge8j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge8j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+
+            {"0l_HT500_ge8j_ge2t_ge2b",              passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge2b                    },
+            {"0l_HT500_ge8j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge8j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge8j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge8j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge8j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets },
+
+            // >= 9jet combinations
+            {"0l_HT500_ge9j",                        passBaseline0l_pre && pass_ge9j                                                },
+            {"0l_HT500_ge9j_ge1t",                   passBaseline0l_pre && pass_ge9j && pass_ge1t                                   },
+            {"0l_HT500_ge9j_ge1t_ge1b",              passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge1b                     },
+            {"0l_HT500_ge9j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_HT500_ge9j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  }, 
+            {"0l_HT500_ge9j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
+
+            {"0l_HT500_ge9j_ge2t",                   passBaseline0l_pre && pass_ge9j && pass_ge2t                                   },
+            {"0l_HT500_ge9j_ge2t_ge1b",              passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge1b                    },
+            {"0l_HT500_ge9j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge9j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge9j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_HT500_ge9j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge9j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+
+            {"0l_HT500_ge9j_ge2t_ge2b",              passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge2b                    },
+            {"0l_HT500_ge9j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge9j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge9j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_HT500_ge9j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge9j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets }, 
             
-            // dR_bjets >= 1
-            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets },
-
-            //{"0l_HT500_ge2b_ge7j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge7j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge7j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tMR && pass_ge1dRbjets },
-
-            //{"0l_HT500_ge2b_ge8j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge8j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge8j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tMR && pass_ge1dRbjets },
-
-            //{"0l_HT500_ge2b_ge9j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge9j && pass_ge2t   && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
-            //{"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
         };
 
         if (!inithisto) 
@@ -293,15 +355,69 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------
         // -- Cut flow absolute numbers
         // -------------------------------
-        if(true) my_histos["h_cutFlow_absolute"]->Fill(0.5, weight);
-        if(true && pass_general) my_histos["h_cutFlow_absolute"]->Fill(1.5, weight);  
-        if(true && pass_general && pass_0l) my_histos["h_cutFlow_absolute"]->Fill(2.5, weight);
-        if(true && pass_general && pass_0l && pass_HT500) my_histos["h_cutFlow_absolute"]->Fill(3.5, weight);
-        if(true && pass_general && pass_0l && pass_HT500 && pass_ge2b) my_histos["h_cutFlow_absolute"]->Fill(4.5, weight);
-        if(true && pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge6j) my_histos["h_cutFlow_absolute"]->Fill(5.5, weight);
-        if(true && pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge6j && pass_ge2t) my_histos["h_cutFlow_absolute"]->Fill(6.5, weight);
-        if(true && pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge6j && pass_ge2t && pass_ge1dRbjets) my_histos["h_cutFlow_absolute"]->Fill(7.5, weight);        
-    
+        // ≥ 6jets
+        if (passBaseline0l_pre                                                          ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets"]->Fill(0.5, weight); 
+        if (passBaseline0l_pre && pass_ge1t                                             ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge1t && pass_ge1b                                ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge1t && pass_ge1b && pass_ge1dRbjets             ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight); 
+
+        if (passBaseline0l_pre                                                          ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight); 
+        if (passBaseline0l_pre && pass_ge2t                                             ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);     
+        if (passBaseline0l_pre && pass_ge2t && pass_ge1b                                ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge2t && pass_ge1b && pass_ge1dRbjets             ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre                                                          ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets"]->Fill(0.5, weight); 
+        if (passBaseline0l_pre && pass_ge2t                                             ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge2t && pass_ge2b                                ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge2t && pass_ge2b && pass_ge1dRbjets             ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets"]->Fill(3.5, weight);
+  
+        // ≥ 7jets
+        if (passBaseline0l_pre && pass_ge7j                                             ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge1t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge1t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge7j                                             ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge2t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge2t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge7j                                             ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge2t && pass_ge2b                   ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge2t && pass_ge2b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets"]->Fill(3.5, weight); 
+
+        // ≥ 8jets
+        if (passBaseline0l_pre && pass_ge8j                                             ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge1t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge1t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge8j                                             ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge2t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge2t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge8j                                             ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge2t && pass_ge2b                   ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge2t && pass_ge2b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets"]->Fill(3.5, weight); 
+
+        // ≥ 9jets
+        if (passBaseline0l_pre && pass_ge9j                                             ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge1t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge1t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge9j                                             ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge2t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge2t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge9j                                             ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge2t && pass_ge2b                   ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge2t && pass_ge2b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets"]->Fill(3.5, weight);
     } 
 }
 
