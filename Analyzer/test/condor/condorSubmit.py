@@ -34,6 +34,7 @@ def main():
     # Parse command line arguments
     parser = optparse.OptionParser("usage: %prog [options]\n")    
     parser.add_option ('-n',        dest='numfile',  type='int',                         default = 10,            help="number of files per job")
+    parser.add_option ('-M',        dest='maxfiles',  type='int',                         default = 100000,            help="Maximum number of files to process")
     parser.add_option ('-d',        dest='datasets', type='string',                      default = '',            help="List of datasets, comma separated")
     parser.add_option ('-l',        dest='dataCollections',         action='store_true', default = False,         help="List all datacollections")
     parser.add_option ('-L',        dest='dataCollectionslong',     action='store_true', default = False,         help="List all datacollections and sub collections")
@@ -48,6 +49,7 @@ def main():
     # Prepare the list of files to transfer
     mvaFileName2016 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016.cfg" % repo)
     mvaFileName2017 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2017.cfg" % repo)
+<<<<<<< HEAD
     mvaFileName2018 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo)
 
     filestoTransfer = [testDir + "/MyAnalysis", 
@@ -86,6 +88,98 @@ def main():
                        testDir + "/DeepCSV_2016LegacySF_WP_V1.csv",
                        testDir + "/DeepCSV_94XSF_WP_V4_B_F.csv",
                        testDir + "/L1prefiring_jetpt_2017BtoF.root",
+||||||| merged common ancestors
+    mvaFileName2018 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo)
+
+    filestoTransfer = [environ["CMSSW_BASE"] + "/src/%s/test/MyAnalysis" % repo, 
+                       environ["CMSSW_BASE"] + "/src/%s/test/%s" % (repo,mvaFileName2016),
+                       environ["CMSSW_BASE"] + "/src/%s/test/%s" % (repo,mvaFileName2017),
+                       environ["CMSSW_BASE"] + "/src/%s/test/%s" % (repo,mvaFileName2018),
+                       environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2017.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                       environ["CMSSW_BASE"] + "/src/%s/test/sampleSets.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/sampleCollections.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Mass_Regression.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2017.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2018pre.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2018post.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2017.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2018pre.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2018post.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_DoubleDisCo_Reg_0l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_DoubleDisCo_Reg_1l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_Regression.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2016.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2017.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2018pre.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2018post.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_DoubleDisCo_Reg_0l_2016.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_DoubleDisCo_Reg_1l_2016.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_BTagEff.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_SFMean.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_leptonSF_2016.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_leptonSF_2017.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_leptonSF_2018.root" % repo, 
+                       environ["CMSSW_BASE"] + "/src/%s/test/PileupHistograms_0121_69p2mb_pm4p6.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/pu_ratio.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/PileupHistograms_2018_69mb_pm5.root" % repo, 
+                       environ["CMSSW_BASE"] + "/src/%s/test/CSVv2_Moriond17_B_H.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepCSV_102XSF_WP_V1.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepCSV_2016LegacySF_WP_V1.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepCSV_94XSF_WP_V4_B_F.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/L1prefiring_jetpt_2017BtoF.root" % repo,
+=======
+    mvaFileName2018 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo) 
+    filestoTransfer = [environ["CMSSW_BASE"] + "/src/%s/test/MyAnalysis" % repo, 
+                       environ["CMSSW_BASE"] + "/src/%s/test/%s" % (repo,mvaFileName2016),
+                       environ["CMSSW_BASE"] + "/src/%s/test/%s" % (repo,mvaFileName2017),
+                       environ["CMSSW_BASE"] + "/src/%s/test/%s" % (repo,mvaFileName2018),
+                       environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2017.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/TopTagger/TopTagger/test/libTopTagger.so",
+                       environ["CMSSW_BASE"] + "/src/%s/test/sampleSets.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/sampleCollections.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Mass_Regression.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2017.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2018pre.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_2018post.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2017.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2018pre.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepEventShape_NonIsoMuon_2018post.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_DoubleDisCo_Reg_0l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_DoubleDisCo_Reg_1l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2016.cfg" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_Regression.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2016.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2017.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2018pre.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_2018post.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_DoubleDisCo_Reg_0l_2016.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/keras_frozen_DoubleDisCo_Reg_1l_2016.pb" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_BTagEff.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_SFMean.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_leptonSF_2016.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_leptonSF_2017.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/allInOne_leptonSF_2018.root" % repo, 
+                       environ["CMSSW_BASE"] + "/src/%s/test/PileupHistograms_0121_69p2mb_pm4p6.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/pu_ratio.root" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/PileupHistograms_2018_69mb_pm5.root" % repo, 
+                       environ["CMSSW_BASE"] + "/src/%s/test/CSVv2_Moriond17_B_H.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepCSV_102XSF_WP_V1.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepCSV_2016LegacySF_WP_V1.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/DeepCSV_94XSF_WP_V4_B_F.csv" % repo,
+                       environ["CMSSW_BASE"] + "/src/%s/test/L1prefiring_jetpt_2017BtoF.root" % repo,
+>>>>>>> More Stuff
                        ]
     
     print "--------------Files to Transfer-----------------"
@@ -124,6 +218,7 @@ def main():
 
     nFilesPerJob = options.numfile
     numberOfJobs = 0
+    ds_files = 0
     for ds in datasets:
         ds = ds.strip()
         # create the directory
@@ -139,6 +234,8 @@ def main():
                     if '.root' in l:
                         count = count + 1
                 for startFileNum in xrange(0, count, nFilesPerJob):
+                    if startFileNum > options.maxfiles:
+                        break
                     numberOfJobs+=1
                     outputDir = "%s/output-files/%s" % (options.outPath, ds)
                     outputFiles = [

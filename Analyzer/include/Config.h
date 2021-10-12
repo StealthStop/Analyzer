@@ -566,10 +566,32 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
+<<<<<<< HEAD
                 "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
+||||||| merged common ancestors
+                 "FatJetCombine",
+                 // "Make2WMT2",
+                // "Baseline",
+                "MakeMVAVariables_2l",
+                 "MakeStopHemispheres_All",
+                "StopGenMatch",
+//   "BTagCorrector",
+             //   "ScaleFactors",
+            //    "TrainingNTupleVars",
+=======
+                 "FatJetCombine",
+                 // "Make2WMT2",
+                 //"Baseline",
+                "MakeMVAVariables_2l",
+                 "MakeStopHemispheres_All",
+                "StopGenMatch",
+//   "BTagCorrector",
+             //   "ScaleFactors",
+            //    "TrainingNTupleVars",
+>>>>>>> More Stuff
             };
             registerModules(tr, std::move(modulesList));
         }

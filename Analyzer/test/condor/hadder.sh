@@ -1,6 +1,7 @@
 #!/bin/bash
 
 dir=${CMSSW_BASE}/src/Analyzer/Analyzer/test/condor/output-files
+finaldir=${CMSSW_BASE}/src/Analyzer/Analyzer/test/condor/final
 
 function strip {
     local STRING=${1#$"$2"}
@@ -32,7 +33,8 @@ do
     fi
 
     #echo "hadd ${sc}.root *.root"
-    hadd -fk ${f}/${sc}.root ${f}/*.root
+    hadd -fk ${finaldir}/${sc}.root ${f}/*.root
+    
 
     #if [ "${sc}" = "Rare" ]
     #then
