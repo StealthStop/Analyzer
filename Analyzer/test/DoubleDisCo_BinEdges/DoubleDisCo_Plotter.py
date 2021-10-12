@@ -151,19 +151,21 @@ class Common_Calculations_Plotters:
         ax2.set_ylim([-1.4, 1.4])
    
         # pull plot
+        #pc = makeErrorBoxes(np.array(x), np.array(zeros), np.array([xUnc, xUnc]), np.array([pullDenom, pullDenom]))
         ax3 = fig.add_subplot(4, 1, 4)
         ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
+        #ax3.add_collection(pc)
         ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax3.set_xlabel('Number of jets')
-        ax3.set_ylabel('Pull') # (Pred - Obs) / ObsUnc') 
+        ax3.set_ylabel('Pull') 
         ax3.set_ylim([-5.4, 5.4])
  
         # ( obsUnc^2 + predUnc^2 )^0.5 / pred
         pc = makeErrorBoxes(np.array(x), np.array(zeros), np.array([xUnc, xUnc]), np.array([pullDenom, pullDenom]))
         ax4 = ax3.twinx()
-        ax4.set_ylabel('pullDen / pred', color='mediumslateblue')
+        ax4.set_ylabel(r'pullDen / pred')
         ax4.add_collection(pc)
         ax4.set_ylim([-0.2, 0.2])        
         #ax4.set_yscale('log')
