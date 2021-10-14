@@ -165,3 +165,32 @@ class SubDivDeventsTable(TableWriter):
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
+
+# -------------------------------------------------------
+# Derived table writer class for the bkg - sig+bkg events
+# Over ride the writeHeader and writeLine method
+# -------------------------------------------------------
+class BkgTotEvents(TableWriter):
+
+    def writeHeader(self):
+        self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
+        self.f.write("    \\begin{tabular}{| c | c | c | c | c |}")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+        self.f.write("        \\textcolor{massReg}{NJets} & \multicolumn{4}{c|} {\\textcolor{ttjetscol}{TT purity}} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("        & \scriptsize \\textcolor{ttjetscol}{A} & \scriptsize \\textcolor{ttjetscol}{B} & \scriptsize \\textcolor{ttjetscol}{C} & \scriptsize \\textcolor{ttjetscol}{D} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
+    def writeLine(self, **kwargs):
+        self.f.write("        \\tiny \\textcolor{massReg}{%s} & \\tiny \\textcolor{ttjetscol}{%.3f} & \\tiny \\textcolor{ttjetscol}{%.3f} & \\tiny \\textcolor{ttjetscol}{%.3f} & \\tiny \\textcolor{ttjetscol}{%.3f} \\\\" %(kwargs["njet"], kwargs["finalBkgFracs"]["A"][0], kwargs["finalBkgFracs"]["B"][0], kwargs["finalBkgFracs"]["C"][0], kwargs["finalBkgFracs"]["D"][0])) 
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
