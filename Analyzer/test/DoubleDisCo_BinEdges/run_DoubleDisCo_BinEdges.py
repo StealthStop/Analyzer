@@ -332,11 +332,11 @@ def main():
                 for disc in [1, 2]:
 
                     if hist_key == Sig:
-                        plotter["TT"].plot_VarVsDisc(allRegionsEvents[hist_key][key]["A"], edges, binWidth/2.0, -1.0, "Weighted Signal Events",     "wSigEvts", disc, njet, name = key)
+                        plotter["TT"].plot_VarVsDisc(allRegionsEvents[hist_key][key]["A"], edges, binWidth/2.0, -1.0, "Weighted Signal Events", "wSigEvts", disc, njet, name = key)
 
                     else:
                         plotter[hist_key].plot_VarVsDisc(allRegionsEvents[hist_key][key]["A"], edges, binWidth/2.0, -1.0, "Weighted Background Events", "wBkgEvts", disc, njet, name = key)
-                        plotter[hist_key].plot_VarVsDisc(closureErrs,                          edges, binWidth/2.0, 1.0,  "%s Closure"%(key),           "Closure",  disc, njet, name = key)
+                        plotter[hist_key].plot_VarVsDisc(closureErrs,                          edges, binWidth/2.0, 1.0,  "Closure",                    "Closure",  disc, njet, name = key)
 
                     if hist_key == "TT":
                         plotter[hist_key].plot_VarVsDisc(significances, edges, binWidth/2.0, 5.0, "%s Significance"%(key), "Significance", disc, njet, name = key)

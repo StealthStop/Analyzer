@@ -128,7 +128,8 @@ class Common_Calculations_Plotters:
         ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
     
         # closure plot
-        ax1 = fig.add_subplot(4, 1, (1, 2))
+        ax1 = fig.add_subplot(4, 1, (1, 2)) 
+        #ax1 = fig.add_subplot(3, 1, (1, 2))
         fig.subplots_adjust(left=0.15, right=0.95)
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
@@ -137,19 +138,22 @@ class Common_Calculations_Plotters:
         ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
         ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
         ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
-        ax1.set_ylabel('Unweighted Event Counts')
+        ax1.set_ylabel('Unweighted Event Counts', fontsize=14)
         ax1.errorbar(x, pred, yerr=predUnc, label='Predicted', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label='Observed',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
         # simple ratio plot    
         ax2 = fig.add_subplot(4, 1, 3)
+        #ax2 = fig.add_subplot(3, 1, 3)
         ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
         ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
-        ax2.set_ylabel('1 - Pred./Obs.')
-        ax2.set_ylim([-1.4, 1.4])
-   
+        ax2.set_ylabel('1 - Pred./Obs.', fontsize=14)
+        #ax2.set_ylim([-1.4, 1.4])
+        ax2.set_ylim([-0.5, 0.5])   
+        #ax2.set_xlabel('Number of jets', fontsize=14)
+
         # pull plot
         #pc = makeErrorBoxes(np.array(x), np.array(zeros), np.array([xUnc, xUnc]), np.array([pullDenom, pullDenom]))
         ax3 = fig.add_subplot(4, 1, 4)
@@ -158,7 +162,7 @@ class Common_Calculations_Plotters:
         #ax3.add_collection(pc)
         ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
-        ax3.set_xlabel('Number of jets')
+        ax3.set_xlabel('Number of jets', fontsize=14)
         ax3.set_ylabel('Pull') 
         ax3.set_ylim([-5.4, 5.4])
  
@@ -518,19 +522,20 @@ class Common_Calculations_Plotters:
         nBins = math.ceil((1.0 + binWidth)/binWidth)
 
         fig = plt.figure() 
-        fig.subplots_adjust(top = 0.94)
+        fig.subplots_adjust()
         plt.hist2d(edges[:,0], edges[:,1], bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=var, cmin=cmin, cmax=cmax, vmin=vmin, vmax=vmax)
         plt.colorbar()
         ax = plt.gca()
-        ax.set_xlabel("Disc. 1 Bin Edge")
-        ax.set_ylabel("Disc. 2 Bin Edge")
+        ax.set_xlabel("Disc. 1 Bin Edge", fontsize=14)
+        ax.set_ylabel("Disc. 2 Bin Edge", fontsize=14)
         ax.text(0.16, 1.065, 'CMS',                     transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
         ax.text(0.50, 1.055, 'Preliminary',             transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
         ax.text(1.0,  1.055, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
 
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
-        ax.add_line(l1); ax.add_line(l2)
-        fig.tight_layout()
+        ax.add_line(l1); 
+        ax.add_line(l2)
+        #fig.tight_layout()
 
         fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s_%s.pdf"%(self.year, variable, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
@@ -552,9 +557,9 @@ class Common_Calculations_Plotters:
 
         if finalSignificance != 0.0:
             plt.scatter([1.0 / finalSignificance[0]], [finalClosureErr[0]], color='red', marker='o', label='Chosen Solution')
-        plt.xlabel('1 / Significance')
+        plt.xlabel('1 / Significance', fontsize=14)
         plt.xlim(left=0)
-        plt.ylabel('|1 - Pred./Obs.|')
+        plt.ylabel('|1 - Pred./Obs.|', fontsize=14)
         plt.legend(loc='best', numpoints=1, frameon=False)
         plt.ylim(bottom=0)
         plt.gca().invert_yaxis()
@@ -590,21 +595,21 @@ class Common_Calculations_Plotters:
         ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
         ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
-        l1 = ml.Line2D([float(allRegionsEdges["ABCD"][0]), float(allRegionsEdges["ABCD"][0])], [0.0, 1.0],   color="darkviolet", linewidth=4, linestyle='solid')
-        l2 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["ABCD"][1]), float(allRegionsEdges["ABCD"][1])],   color="darkviolet", linewidth=4, linestyle='solid')
-        
-        l3 = None; l4 = None
-        if name == "Val_SubDivD":
-            l3 = ml.Line2D([float(allRegionsEdges["Val_subDivD"][0]), float(allRegionsEdges["Val_subDivD"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
-            l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_subDivD"][1]), float(allRegionsEdges["Val_subDivD"][1])], color=col2, linewidth=4, linestyle='solid')
-        else:
-            l3 = ml.Line2D([float(allRegionsEdges["Val_bdEF"][0]), float(allRegionsEdges["Val_bdEF"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
-            l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_cdiGH"][1]), float(allRegionsEdges["Val_cdiGH"][1])], color=col2, linewidth=4, linestyle='solid')
-           
-        ax.add_line(l1)
-        ax.add_line(l2)
-        ax.add_line(l3)
-        ax.add_line(l4)
+        #l1 = ml.Line2D([float(allRegionsEdges["ABCD"][0]), float(allRegionsEdges["ABCD"][0])], [0.0, 1.0],   color="darkviolet", linewidth=4, linestyle='solid')
+        #l2 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["ABCD"][1]), float(allRegionsEdges["ABCD"][1])],   color="darkviolet", linewidth=4, linestyle='solid')
+        #
+        #l3 = None; l4 = None
+        #if name == "Val_SubDivD":
+        #    l3 = ml.Line2D([float(allRegionsEdges["Val_subDivD"][0]), float(allRegionsEdges["Val_subDivD"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
+        #    l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_subDivD"][1]), float(allRegionsEdges["Val_subDivD"][1])], color=col2, linewidth=4, linestyle='solid')
+        #else:
+        #    l3 = ml.Line2D([float(allRegionsEdges["Val_bdEF"][0]), float(allRegionsEdges["Val_bdEF"][0])], [0.0, 1.0],   color=col1, linewidth=4, linestyle='solid')
+        #    l4 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["Val_cdiGH"][1]), float(allRegionsEdges["Val_cdiGH"][1])], color=col2, linewidth=4, linestyle='solid')
+        #   
+        #ax.add_line(l1)
+        #ax.add_line(l2)
+        #ax.add_line(l3)
+        #ax.add_line(l4)
 
         fig.tight_layout()
         fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name, self.channel, self.metric), dpi=fig.dpi)
@@ -660,8 +665,8 @@ class Common_Calculations_Plotters:
         if ylim != -1.0:
              ax.set_ylim((0.0, ylim))
 
-        ax.set_ylabel(ylabel)
-        ax.set_xlabel("Disc. %d Value"%(3-disc))
+        ax.set_xlabel("Disc. %d Value"%(3-disc), fontsize=14)
+        ax.set_ylabel(ylabel, fontsize=14)
         plt.legend(loc='best', numpoints=1)
 
         ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
