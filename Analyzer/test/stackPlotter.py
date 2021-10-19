@@ -54,7 +54,7 @@ class Histogram:
             S = self.histogram.GetBinContent(xBin)
             B = otherHist.GetBinContent(xBin)
 
-            if B > 5.0 and S > 5.0:
+            if B > 1.0 and S > 1.0:
                 significance += (S / math.sqrt(B + (0.3*B)**2.0))**2.0
 
         return significance**0.5
@@ -153,23 +153,23 @@ class Histogram:
             self.histogram = -1
 
 # The StackPlotter class oversees the creation of all stack plots
-#     approved    : are these plots approved, then no "Preliminary"
-#     noRatio           : do not make a ratio plot in bottom panel
-#     printNEvents      : show the number of events in legend
-#     printSignificance : show a simple S / sqrt(B) significance
-#     year              : corresponding year for the plots/inputs
-#     outpath           : where to put the plots, path is created if missing
-#     inpath            : where the input ROOT files are located
-#     normMC2Data       : normalize MC to the data
-#     normalize         : normalize all processes to unity area
-#     histograms        : dictionary containing config info for desired histos
-#     selections        : list of cut strings appearing in the names of plots
-#     backgrounds       : dictionary containing config info for desired backgrounds
-#     signals           : dictionary containing config info for desired signals
-#     data              : dictionary containing config info for data
+#     approved     : are these plots approved, then no "Preliminary"
+#     noRatio      : do not make a ratio plot in bottom panel
+#     printNEvents : show the number of events in legend
+#     printInfo    : show significance and cut label
+#     year         : corresponding year for the plots/inputs
+#     outpath      : where to put the plots, path is created if missing
+#     inpath       : where the input ROOT files are located
+#     normMC2Data  : normalize MC to the data
+#     normalize    : normalize all processes to unity area
+#     histograms   : dictionary containing config info for desired histos
+#     selections   : list of cut strings appearing in the names of plots
+#     backgrounds  : dictionary containing config info for desired backgrounds
+#     signals      : dictionary containing config info for desired signals
+#     data         : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, noRatio, printNEvents, printSignificance, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
+    def __init__(self, approved, noRatio, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -180,16 +180,18 @@ class StackPlotter:
         self.year        = year
         self.inpath      = inpath
         self.outpath     = outpath
+        
+        self.tableDictionary = {}
 
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
 
-        self.approved          = approved
-        self.noRatio           = noRatio
-        self.normMC2Data       = normMC2Data
-        self.normalize         = normalize
-        self.printNEvents      = printNEvents
-        self.printSignificance = printSignificance
+        self.approved     = approved
+        self.noRatio      = noRatio
+        self.normMC2Data  = normMC2Data
+        self.normalize    = normalize
+        self.printNEvents = printNEvents
+        self.printInfo    = printInfo
 
         # Customized numbers that are scaled
         # to work with or without a ratio plot
@@ -198,15 +200,16 @@ class StackPlotter:
         self.RightMargin  = 0.04
         self.LeftMargin   = 0.16
 
-    # Draw the significance value on the plot
-    def addSignificance(self, canvas, sign, legBottom):
+    # Draw the significance and cut labels on the plot
+    def add_Significance_CutLabel(self, canvas, significance, selections):
 
         mark = ROOT.TLatex()
         mark.SetNDC(True)
 
         mark.SetTextAlign(11)
         mark.SetTextFont(52); mark.SetTextSize(0.025)
-        mark.DrawLatex(self.LeftMargin + 0.05, legBottom / (1.0-self.TopMargin) - 0.01, "S / #sqrt{B} = %.2f"%(sign))
+        mark.DrawLatex(0.2, 0.92, "Significance = %.3f"%(significance))
+        mark.DrawLatex(0.45, 0.92, "%s"%(selections))
 
     # Create a canvas and determine if it should be split for a ratio plot
     # Margins are scaled on-the-fly so that distances are the same in either
@@ -269,6 +272,9 @@ class StackPlotter:
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.01
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
+        
+        if self.printInfo:
+            bkgYmax -= 0.025
 
         bkgYFrac = (1.0-self.TopMargin-bkgYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
@@ -280,6 +286,9 @@ class StackPlotter:
         sigYmax = bkgYmax
         sigXmax = bkgXmin
         sigYmin = bkgYmax-nSigs*(textSize+space) 
+
+        if self.printInfo:
+            bkgYmax -= 0.025
 
         sigYFrac = (1.0-self.TopMargin-sigYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
@@ -294,7 +303,7 @@ class StackPlotter:
 
         theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
 
-        if self.printSignificance:
+        if self.printInfo:
             yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
         else:                             
             yMax = (theMax-theMin) * (1.0 - theFrac)**(-power) * factor
@@ -348,7 +357,10 @@ class StackPlotter:
             newName = hname
             for order in orders:
                 for selection in self.selections:
-            
+         
+                    # initialize a dictionary to make tables   
+                    self.tableDictionary[selection] = {}
+
                     newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
                     newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
@@ -372,6 +384,7 @@ class StackPlotter:
                     dataScale = 0.0
                     mcScale = 0.0
                     theMax = 0.0
+
                     # Preemptively get data counts to be used for normalzing the histograms later
                     for dname, dinfo in self.data.items():
 
@@ -404,6 +417,8 @@ class StackPlotter:
                             if tempMax > theMax:
                                 theMax = tempMax
 
+                            self.tableDictionary[selection][sname] = sigScale
+
                     # Preemptively get MC counts to be used for normalizing the histograms later
                     for bname, binfo in self.backgrounds.items(): 
 
@@ -412,6 +427,8 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
                         if Hobj.IsGood(): mcScale += Hobj.Integral()
+
+                        self.tableDictionary[selection][bname] = Hobj.Integral()
 
                     # Loop over each background and get their respective histo, scale if necessary
                     option = "HIST"; loption = "F"
@@ -479,7 +496,7 @@ class StackPlotter:
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
-                        if "550" in sname or len(self.signals) == 1:
+                        if "350" in sname or len(self.signals) == 1:
                             theSignificance = Hobj.Significance(totalMC)
                         
                         scale = Hobj.Integral()
@@ -487,6 +504,8 @@ class StackPlotter:
                             Hobj.Scale(1.0 / scale)
 
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend)
+
+                        self.tableDictionary[selection]["significance"] = theSignificance
 
                     # Loop over the data and get their respective histo
                     option = "E0P"; loption = "ELP"
@@ -514,12 +533,15 @@ class StackPlotter:
                                 if totalMC.GetBinContent(xbin) == 0.0 or Hobj.histogram.GetBinContent(xbin) == 0.0:
                                     ratio.SetBinContent(xbin, -999.0)
 
+
                     if nBkgLegend != 0: bkgLegend.Draw("SAME")
                     if nSigLegend != 0: sigLegend.Draw("SAME")
 
                     self.addCMSlogo(canvas)
-                    if self.printSignificance:
-                        self.addSignificance(canvas, theSignificance, sigLegend.GetY1())
+
+                    # put the siginificance and cut label on the canvas
+                    if self.printInfo:
+                        self.add_Significance_CutLabel(canvas, theSignificance, selection)
 
                     # Here we go into bottom panel if drawing the ratio
                     if not self.noRatio:
@@ -540,20 +562,95 @@ class StackPlotter:
 
                     canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
 
+
+    # function to put the nEvents and significance for each MC sample cut label by cut label
+    def makeTable(self):
+
+        f = open("%s/%s_nEvents_significance_stackPlots_0l_.tex" %(self.outpath, self.year), "w")
+        f.write("\\resizebox{\linewidth}{!}{%")
+        f.write("\n")
+        f.write("    \def\\arraystretch{0.6}")
+        f.write("\n")
+        f.write("    \\begin{tabular}{| l | c | c | c | c | c | c | c | c|}")
+        f.write("\n")
+        f.write("        \hline")
+        f.write("\n")
+        f.write("        \\textcolor{massReg}{cuts} &  \multicolumn{2}{c|}{\\textcolor{ttjetscol}{TT}} & \multicolumn{2}{c|}{\\textcolor{qcdcol}{QCD}} & \\textcolor{rpvcol}{RPV350} & \\textcolor{rpvcol}{RPV550} & \\textcolor{rpvcol}{RPV850} & \\textbf{significance} \\\\")
+        f.write("\n")
+        f.write("        \hline")
+        f.write("\n")
+
+        labels = [
+                  ["0l_0NonIsoMuon_HT500_ge6j_ge2t", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge2b_ge1dRbjets"], 
+                  ["0l_0NonIsoMuon_HT500_ge7j_ge2t", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge2b_ge1dRbjets"], 
+                  ["0l_0NonIsoMuon_HT500_ge8j_ge2t", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge2b_ge1dRbjets"], 
+                  ["0l_0NonIsoMuon_HT500_ge9j_ge2t", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge2b_ge1dRbjets"],
+        ]
+
+        for label in labels:
+
+            ttFrac_0 = self.tableDictionary[label[0]]["TT"] / ( self.tableDictionary[label[0]]["TT"] + self.tableDictionary[label[0]]["QCD"] + self.tableDictionary[label[0]]["TTX"] + self.tableDictionary[label[0]]["BG_OTHER"] )   
+            ttFrac_1 = self.tableDictionary[label[1]]["TT"] / ( self.tableDictionary[label[1]]["TT"] + self.tableDictionary[label[1]]["QCD"] + self.tableDictionary[label[1]]["TTX"] + self.tableDictionary[label[1]]["BG_OTHER"] )
+            ttFrac_2 = self.tableDictionary[label[2]]["TT"] / ( self.tableDictionary[label[2]]["TT"] + self.tableDictionary[label[2]]["QCD"] + self.tableDictionary[label[2]]["TTX"] + self.tableDictionary[label[2]]["BG_OTHER"] )
+            ttFrac_3 = self.tableDictionary[label[3]]["TT"] / ( self.tableDictionary[label[3]]["TT"] + self.tableDictionary[label[3]]["QCD"] + self.tableDictionary[label[3]]["TTX"] + self.tableDictionary[label[3]]["BG_OTHER"] )
+            ttFrac_4 = self.tableDictionary[label[4]]["TT"] / ( self.tableDictionary[label[4]]["TT"] + self.tableDictionary[label[4]]["QCD"] + self.tableDictionary[label[4]]["TTX"] + self.tableDictionary[label[4]]["BG_OTHER"] )
+
+            qcdFrac_0 = self.tableDictionary[label[0]]["QCD"] / ( self.tableDictionary[label[0]]["TT"] + self.tableDictionary[label[0]]["QCD"] + self.tableDictionary[label[0]]["TTX"] + self.tableDictionary[label[0]]["BG_OTHER"] ) 
+            qcdFrac_1 = self.tableDictionary[label[1]]["QCD"] / ( self.tableDictionary[label[1]]["TT"] + self.tableDictionary[label[1]]["QCD"] + self.tableDictionary[label[1]]["TTX"] + self.tableDictionary[label[1]]["BG_OTHER"] )
+            qcdFrac_2 = self.tableDictionary[label[2]]["QCD"] / ( self.tableDictionary[label[2]]["TT"] + self.tableDictionary[label[2]]["QCD"] + self.tableDictionary[label[2]]["TTX"] + self.tableDictionary[label[2]]["BG_OTHER"] )
+            qcdFrac_3 = self.tableDictionary[label[3]]["QCD"] / ( self.tableDictionary[label[3]]["TT"] + self.tableDictionary[label[3]]["QCD"] + self.tableDictionary[label[3]]["TTX"] + self.tableDictionary[label[3]]["BG_OTHER"] )
+            qcdFrac_4 = self.tableDictionary[label[4]]["QCD"] / ( self.tableDictionary[label[4]]["TT"] + self.tableDictionary[label[4]]["QCD"] + self.tableDictionary[label[4]]["TTX"] + self.tableDictionary[label[4]]["BG_OTHER"] )
+
+            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
+                    %(label[0], self.tableDictionary[label[0]]["TT"], ttFrac_0, self.tableDictionary[label[0]]["QCD"], qcdFrac_0, self.tableDictionary[label[0]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[0]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[0]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[0]]["significance"]) )
+            f.write("\n")
+            f.write("        \hline")
+            f.write("\n")
+            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
+                    %(label[1], self.tableDictionary[label[1]]["TT"], ttFrac_1, self.tableDictionary[label[1]]["QCD"], qcdFrac_1, self.tableDictionary[label[1]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[1]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[1]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[1]]["significance"]) )
+            f.write("\n")
+            f.write("        \hline")
+            f.write("\n")
+            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
+                    %(label[2], self.tableDictionary[label[2]]["TT"], ttFrac_2, self.tableDictionary[label[2]]["QCD"], qcdFrac_2, self.tableDictionary[label[2]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[2]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[2]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[2]]["significance"]) )
+            f.write("\n")
+            f.write("        \hline")
+            f.write("\n")
+            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
+                    %(label[3], self.tableDictionary[label[3]]["TT"], ttFrac_3, self.tableDictionary[label[3]]["QCD"], qcdFrac_3, self.tableDictionary[label[3]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[3]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[3]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[3]]["significance"]) )
+            f.write("\n")
+            f.write("        \hline")
+            f.write("\n")
+            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
+                    %(label[4], self.tableDictionary[label[4]]["TT"], ttFrac_4, self.tableDictionary[label[4]]["QCD"], qcdFrac_4, self.tableDictionary[label[4]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[4]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[4]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[4]]["significance"]) )
+            f.write("\n")
+            f.write("        \hline")
+            f.write("\n")
+            f.write("        \hline")
+            f.write("\n")
+
+        f.write("    \end{tabular}")
+        f.write("\n")
+        f.write("}")
+        f.write("\n")
+        f.close()
+
+        
+
 if __name__ == "__main__":
 
     usage = "usage: %stackPlotter [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",             default=False,  action="store_true") 
-    parser.add_argument("--approved",     dest="approved",     help="Plot is approved",          default=False,  action="store_true") 
-    parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",     default=False,  action="store_true") 
-    parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",      default=False,  action="store_true") 
-    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",    default=False,  action="store_true") 
-    parser.add_argument("--printSign",    dest="printSign",    help="Print simple significance", default=False,  action="store_true") 
-    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",        default="NULL", required=True)
-    parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",        default="NULL", required=True)
-    parser.add_argument("--year",         dest="year",         help="which year",                                required=True)
-    parser.add_argument("--options",      dest="options",      help="options file",              default="stackPlotter_aux", type=str)
+    parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",               default=False,  action="store_true") 
+    parser.add_argument("--approved",     dest="approved",     help="Plot is approved",            default=False,  action="store_true") 
+    parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",       default=False,  action="store_true") 
+    parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
+    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",      default=False,  action="store_true") 
+    parser.add_argument("--printInfo",    dest="printInfo",    help="Print significance and cuts", default=False,  action="store_true")
+    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="NULL", required=True)
+    parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="NULL", required=True)
+    parser.add_argument("--year",         dest="year",         help="which year",                                  required=True)
+    parser.add_argument("--options",      dest="options",      help="options file",                default="stackPlotter_aux", type=str)
     args = parser.parse_args()
 
     # The auxiliary file contains many "hardcoded" items
@@ -571,5 +668,6 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printSign, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
+    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
+    plotter.makeTable()
