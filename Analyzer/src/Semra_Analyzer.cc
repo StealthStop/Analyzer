@@ -65,18 +65,22 @@ void Semra_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) // de
 
     // cut flow absolute numbers 
     my_histos.emplace( "h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge6j_ge2t_ge2b_ge1dRbjets", 5,0,5));
 
     my_histos.emplace( "h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge7j_ge2t_ge2b_ge1dRbjets", 5,0,5));
 
     my_histos.emplace( "h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge8j_ge2t_ge2b_ge1dRbjets", 5,0,5));
     
     my_histos.emplace( "h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets", 5,0,5));
+    my_histos.emplace( "h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets", 5,0,5));
     my_histos.emplace( "h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets", std::make_shared<TH1D>("h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets", "h_cutFlow_absolute_ge9j_ge2t_ge2b_ge1dRbjets", 5,0,5));
 
@@ -185,88 +189,108 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             {"",                                     true                                                                           },
             // >= 6jet combinations    
-            {"0l_HT500_ge6j",                        passBaseline0l_pre                                                             },        
-            {"0l_HT500_ge6j_ge1t",                   passBaseline0l_pre && pass_ge1t                                                },
-            {"0l_HT500_ge6j_ge1t_ge1b",              passBaseline0l_pre && pass_ge1t  && pass_ge1b                                  },
-            {"0l_HT500_ge6j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge1t  && pass_ge1b && pass_ge1dRbjets               },
-            {"0l_HT500_ge6j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tR && pass_ge1b && pass_ge1dRbjets               },
-            {"0l_HT500_ge6j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tM && pass_ge1b && pass_ge1dRbjets               },
+            {"0l_0NonIsoMuon_HT500_ge6j",                        passBaseline0l_pre                                                             },        
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1t",                   passBaseline0l_pre && pass_ge1t                                                },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1t_ge1b",              passBaseline0l_pre && pass_ge1t  && pass_ge1b                                  },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge1t  && pass_ge1b && pass_ge1dRbjets               },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tR && pass_ge1b && pass_ge1dRbjets               },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tM && pass_ge1b && pass_ge1dRbjets               },
+            
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1t_ge2b",              passBaseline0l_pre && pass_ge1t  && pass_ge2b                                  },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge1t  && pass_ge2b && pass_ge1dRbjets               },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tR && pass_ge2b && pass_ge1dRbjets               },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge1tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge1tM && pass_ge2b && pass_ge1dRbjets               },
 
-            {"0l_HT500_ge6j_ge2t",                   passBaseline0l_pre && pass_ge2t                                                },
-            {"0l_HT500_ge6j_ge2t_ge1b",              passBaseline0l_pre && pass_ge2t   && pass_ge1b                                 },
-            {"0l_HT500_ge6j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge2t   && pass_ge1b && pass_ge1dRbjets              },
-            {"0l_HT500_ge6j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets              },
-            {"0l_HT500_ge6j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets              },
-            {"0l_HT500_ge6j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets              }, 
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2t",                   passBaseline0l_pre && pass_ge2t                                                },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b",              passBaseline0l_pre && pass_ge2t   && pass_ge1b                                 },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge2t   && pass_ge1b && pass_ge1dRbjets              },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets              },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets              },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets              }, 
 
-            {"0l_HT500_ge6j_ge2t_ge2b",              passBaseline0l_pre && pass_ge2t   && pass_ge2b                                 },
-            {"0l_HT500_ge6j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge2t   && pass_ge2b && pass_ge1dRbjets              },
-            {"0l_HT500_ge6j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets              },
-            {"0l_HT500_ge6j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets              },     
-            {"0l_HT500_ge6j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets              },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2t_ge2b",              passBaseline0l_pre && pass_ge2t   && pass_ge2b                                 },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge2t   && pass_ge2b && pass_ge1dRbjets              },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets              },
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets              },     
+            {"0l_0NonIsoMuon_HT500_ge6j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets              },
 
             // >= 7jet combinations 
-            {"0l_HT500_ge7j",                        passBaseline0l_pre && pass_ge7j                                                },
-            {"0l_HT500_ge7j_ge1t",                   passBaseline0l_pre && pass_ge7j && pass_ge1t                                   },
-            {"0l_HT500_ge7j_ge1t_ge1b",              passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge1b                     },
-            {"0l_HT500_ge7j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
-            {"0l_HT500_ge7j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  },            
-            {"0l_HT500_ge7j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge7j",                        passBaseline0l_pre && pass_ge7j                                                },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1t",                   passBaseline0l_pre && pass_ge7j && pass_ge1t                                   },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1t_ge1b",              passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge1b                     },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  },            
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
 
-            {"0l_HT500_ge7j_ge2t",                   passBaseline0l_pre && pass_ge7j && pass_ge2t                                   },
-            {"0l_HT500_ge7j_ge2t_ge1b",              passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge1b                    },
-            {"0l_HT500_ge7j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge7j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge7j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge7j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge7j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1t_ge2b",              passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge2b                     },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge1t  && pass_ge2b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tR && pass_ge2b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge1tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge1tM && pass_ge2b && pass_ge1dRbjets  },
 
-            {"0l_HT500_ge7j_ge2t_ge2b",              passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge2b                    },
-            {"0l_HT500_ge7j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge7j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge7j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },  
-            {"0l_HT500_ge7j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge7j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2t",                   passBaseline0l_pre && pass_ge7j && pass_ge2t                                   },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b",              passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge1b                    },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge7j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2t_ge2b",              passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge2b                    },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge7j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge7j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },  
+            {"0l_0NonIsoMuon_HT500_ge7j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge7j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets },
 
             // >= 8jet combinations 
-            {"0l_HT500_ge8j",                        passBaseline0l_pre && pass_ge8j                                                },
-            {"0l_HT500_ge8j_ge1t",                   passBaseline0l_pre && pass_ge8j && pass_ge1t                                   },
-            {"0l_HT500_ge8j_ge1t_ge1b",              passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge1b                     },
-            {"0l_HT500_ge8j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
-            {"0l_HT500_ge8j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  }, 
-            {"0l_HT500_ge8j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge8j",                        passBaseline0l_pre && pass_ge8j                                                },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1t",                   passBaseline0l_pre && pass_ge8j && pass_ge1t                                   },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1t_ge1b",              passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge1b                     },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  }, 
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
 
-            {"0l_HT500_ge8j_ge2t",                   passBaseline0l_pre && pass_ge8j && pass_ge2t                                   },
-            {"0l_HT500_ge8j_ge2t_ge1b",              passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge1b                    },
-            {"0l_HT500_ge8j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge8j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge8j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge8j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge8j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1t_ge2b",              passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge2b                     },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge1t  && pass_ge2b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tR && pass_ge2b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge1tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge1tM && pass_ge2b && pass_ge1dRbjets  },
 
-            {"0l_HT500_ge8j_ge2t_ge2b",              passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge2b                    },
-            {"0l_HT500_ge8j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge8j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge8j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge8j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge8j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2t",                   passBaseline0l_pre && pass_ge8j && pass_ge2t                                   },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b",              passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge1b                    },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge8j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2t_ge2b",              passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge2b                    },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge8j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge8j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge8j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge8j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets },
 
             // >= 9jet combinations
-            {"0l_HT500_ge9j",                        passBaseline0l_pre && pass_ge9j                                                },
-            {"0l_HT500_ge9j_ge1t",                   passBaseline0l_pre && pass_ge9j && pass_ge1t                                   },
-            {"0l_HT500_ge9j_ge1t_ge1b",              passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge1b                     },
-            {"0l_HT500_ge9j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
-            {"0l_HT500_ge9j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  }, 
-            {"0l_HT500_ge9j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge9j",                        passBaseline0l_pre && pass_ge9j                                                },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1t",                   passBaseline0l_pre && pass_ge9j && pass_ge1t                                   },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1t_ge1b",              passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge1b                     },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge1b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tR && pass_ge1b && pass_ge1dRbjets  }, 
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tM && pass_ge1b && pass_ge1dRbjets  },
 
-            {"0l_HT500_ge9j_ge2t",                   passBaseline0l_pre && pass_ge9j && pass_ge2t                                   },
-            {"0l_HT500_ge9j_ge2t_ge1b",              passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge1b                    },
-            {"0l_HT500_ge9j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge9j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge9j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
-            {"0l_HT500_ge9j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge9j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1t_ge2b",              passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge2b                     },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge1t  && pass_ge2b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tR && pass_ge2b && pass_ge1dRbjets  },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge1tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge1tM && pass_ge2b && pass_ge1dRbjets  },    
 
-            {"0l_HT500_ge9j_ge2t_ge2b",              passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge2b                    },
-            {"0l_HT500_ge9j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge9j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge9j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },
-            {"0l_HT500_ge9j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge9j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets }, 
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2t",                   passBaseline0l_pre && pass_ge9j && pass_ge2t                                   },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b",              passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge1b                    },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2tR_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tR  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2tM_ge1b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tM  && pass_ge1b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2tRM_ge1b_ge1dRbjets", passBaseline0l_pre && pass_ge9j && pass_ge2tRM && pass_ge1b && pass_ge1dRbjets },
+
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2t_ge2b",              passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge2b                    },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2t_ge2b_ge1dRbjets",   passBaseline0l_pre && pass_ge9j && pass_ge2t   && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2tR_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tR  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2tM_ge2b_ge1dRbjets",  passBaseline0l_pre && pass_ge9j && pass_ge2tM  && pass_ge2b && pass_ge1dRbjets },
+            {"0l_0NonIsoMuon_HT500_ge9j_ge2tRM_ge2b_ge1dRbjets", passBaseline0l_pre && pass_ge9j && pass_ge2tRM && pass_ge2b && pass_ge1dRbjets }, 
             
         };
 
@@ -361,6 +385,11 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if (passBaseline0l_pre && pass_ge1t && pass_ge1b                                ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
         if (passBaseline0l_pre && pass_ge1t && pass_ge1b && pass_ge1dRbjets             ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight); 
 
+        if (passBaseline0l_pre                                                          ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge1t                                             ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge1t && pass_ge2b                                ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge1t && pass_ge2b && pass_ge1dRbjets             ) my_histos["h_cutFlow_absolute_ge6j_ge1t_ge2b_ge1dRbjets"]->Fill(3.5, weight);
+
         if (passBaseline0l_pre                                                          ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight); 
         if (passBaseline0l_pre && pass_ge2t                                             ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);     
         if (passBaseline0l_pre && pass_ge2t && pass_ge1b                                ) my_histos["h_cutFlow_absolute_ge6j_ge2t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
@@ -376,6 +405,11 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if (passBaseline0l_pre && pass_ge7j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
         if (passBaseline0l_pre && pass_ge7j && pass_ge1t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
         if (passBaseline0l_pre && pass_ge7j && pass_ge1t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge7j                                             ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge1t && pass_ge2b                   ) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge7j && pass_ge1t && pass_ge2b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge7j_ge1t_ge2b_ge1dRbjets"]->Fill(3.5, weight);
 
         if (passBaseline0l_pre && pass_ge7j                                             ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
         if (passBaseline0l_pre && pass_ge7j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge7j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
@@ -393,6 +427,11 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if (passBaseline0l_pre && pass_ge8j && pass_ge1t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
         if (passBaseline0l_pre && pass_ge8j && pass_ge1t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
 
+        if (passBaseline0l_pre && pass_ge8j                                             ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge1t && pass_ge2b                   ) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge8j && pass_ge1t && pass_ge2b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge8j_ge1t_ge2b_ge1dRbjets"]->Fill(3.5, weight);
+
         if (passBaseline0l_pre && pass_ge8j                                             ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
         if (passBaseline0l_pre && pass_ge8j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
         if (passBaseline0l_pre && pass_ge8j && pass_ge2t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge8j_ge2t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
@@ -408,6 +447,11 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if (passBaseline0l_pre && pass_ge9j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
         if (passBaseline0l_pre && pass_ge9j && pass_ge1t && pass_ge1b                   ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(2.5, weight);
         if (passBaseline0l_pre && pass_ge9j && pass_ge1t && pass_ge1b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge1b_ge1dRbjets"]->Fill(3.5, weight);
+
+        if (passBaseline0l_pre && pass_ge9j                                             ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets"]->Fill(0.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge1t                                ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets"]->Fill(1.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge1t && pass_ge2b                   ) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets"]->Fill(2.5, weight);
+        if (passBaseline0l_pre && pass_ge9j && pass_ge1t && pass_ge2b && pass_ge1dRbjets) my_histos["h_cutFlow_absolute_ge9j_ge1t_ge2b_ge1dRbjets"]->Fill(3.5, weight);
 
         if (passBaseline0l_pre && pass_ge9j                                             ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets"]->Fill(0.5, weight);
         if (passBaseline0l_pre && pass_ge9j && pass_ge2t                                ) my_histos["h_cutFlow_absolute_ge9j_ge2t_ge1b_ge1dRbjets"]->Fill(1.5, weight);
