@@ -64,7 +64,7 @@ void AnalyzeDoubleDisCo::makeSubregions(const std::vector<std::vector<std::strin
                 }
 
                 // Attention to subregion names for bdEF
-                if (region[0+offset] == 'b') {
+                if (region[0+offset] == 'b' or region[0+offset] == 'B') {
                     subRegionsMap[region].push_back(std::string(1, region[0+offset]));
                     subRegionsMap[region].push_back(std::string(1, region[2+offset]));
                     subRegionsMap[region].push_back(std::string(1, region[1+offset]));
@@ -123,12 +123,12 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
 
     // mycut.first : cut string, mycut.second : boolean if cut passed
-    for(auto& mycut : cutMap)
+    for (auto& mycut : cutMap)
     {
-        for(const auto& hInfo : histInfos)
+        for (const auto& hInfo : histInfos)
         { 
             // Njet string, can also be "Incl"
-            for(const auto& Njet : njets)
+            for (const auto& Njet : njets)
             {
                 std::string njetStr = "";
                 // For 1D histos, don't make any where we exclude all but one njets bin
@@ -136,7 +136,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     njetStr = "_Njets" + Njet;
 
                 // regions : a vector of region string names for 0L or 1L
-                for(const auto& regionPair : subRegionsMap)
+                for (const auto& regionPair : subRegionsMap)
                 {
                     std::string region = regionPair.first; 
                     // Only make mass reg histos for per-njets scenarios not inclusive
@@ -169,7 +169,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
 
         for(const auto& h2dInfo : hist2DInfos)
         {
-            for(const auto& Njet : njets)
+            for (const auto& Njet : njets)
             {
             
                 // For the disc1 vs disc2 plots, no need for njets inclusive one
@@ -178,14 +178,20 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
 
                 std::string njetsStr = "_Njets" + Njet;
 
-                for(const auto& regionPair : subRegionsMap)
+                for (const auto& regionPair : subRegionsMap)
                 {
                     std::string region = regionPair.first;
+                    std::vector<std::string> subregions = regionPair.second;
 
                     std::string regionStr = "";
                     if (region != "Incl")
                         regionStr = "_" + region;
 
+                    for (const auto& subregion : subregions)
+                    {
+                        std::string name = h2dInfo.name + mycut.first + njetsStr + regionStr + "_" + subregion;
+                        my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
+                    }
                     std::string name = h2dInfo.name + mycut.first + njetsStr + regionStr;
                     my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
                 }
@@ -632,6 +638,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_njets_11incl" + name]->Fill(NNonIsoMuonJets[channel]>=11 ? 11-nMVAJets[channel]+shift*5 : NNonIsoMuonJets[channel]-nMVAJets[channel]+shift*5, w);
                                     my_histos["h_njets_12incl" + name]->Fill(NNonIsoMuonJets[channel]>=12 ? 12-nMVAJets[channel]+shift*6 : NNonIsoMuonJets[channel]-nMVAJets[channel]+shift*6, w);
                                 }
+                            }
+                            if (njets != "Incl")
+                            {
+                                name = kv.first + njetsStr + regionStr + "_" + subRegionsMap[region][iSubRegion];
+                                if (!isQCD)
+                                    my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
+                                else
+                                    my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_QCDCR_disc1[channel], DoubleDisCo_QCDCR_disc2[channel], w);
                             }
                         }
                     }
