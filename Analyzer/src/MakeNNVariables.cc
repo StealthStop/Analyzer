@@ -241,6 +241,23 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "Stop1_scalarPt_cm_OldSeed"+myVarSuffix, "Stop2_scalarPt_cm_OldSeed"+myVarSuffix,
                 };
 
+                std::set<std::string> varTops = 
+                {
+                    "top1_pt_cm"+myVarSuffix,   "top2_pt_cm"+myVarSuffix,
+                    "top1_eta_cm"+myVarSuffix,  "top2_eta_cm"+myVarSuffix,
+                    "top1_phi_cm"+myVarSuffix,  "top2_phi_cm"+myVarSuffix,
+                    "top1_mass_cm"+myVarSuffix, "top2_mass_cm"+myVarSuffix,
+                };
+
+                std::set<std::string> var7toLastJet =
+                {
+                    "combined7thToLastJet_pt_cm"+myVarSuffix,
+                    "combined7thToLastJet_eta_cm"+myVarSuffix,
+                    "combined7thToLastJet_phi_cm"+myVarSuffix,
+                    "combined7thToLastJet_m_cm"+myVarSuffix,
+                    "combined7thToLastJet_E_cm"+myVarSuffix,
+                };
+
                 // -----------------------------------------------
                 // get the jet variables separately for 0l, 1l, 2l
                 // -----------------------------------------------
@@ -278,32 +295,18 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                         "Jet_flavq_1"+label+myVarSuffix,     "Jet_flavq_2"+label+myVarSuffix,     "Jet_flavq_3"+label+myVarSuffix,     "Jet_flavq_4"+label+myVarSuffix,     "Jet_flavq_5"+label+myVarSuffix,     "Jet_flavq_6"+label+myVarSuffix,     "Jet_flavq_7"+label+myVarSuffix,
                     };            
 
-                    std::set<std::string> varJetsAK8 =
-                    {
-                        "JetsAK8_m_1"+label+myVarSuffix,              "JetsAK8_m_2"+label+myVarSuffix,              "JetsAK8_m_3"+label+myVarSuffix,              "JetsAK8_m_4"+label+myVarSuffix,              "JetsAK8_m_5"+label+myVarSuffix,
-                        "JetsAK8_eta_1"+label+myVarSuffix,            "JetsAK8_eta_2"+label+myVarSuffix,            "JetsAK8_eta_3"+label+myVarSuffix,            "JetsAK8_eta_4"+label+myVarSuffix,            "JetsAK8_eta_5"+label+myVarSuffix,
-                        "JetsAK8_phi_1"+label+myVarSuffix,            "JetsAK8_phi_2"+label+myVarSuffix,            "JetsAK8_phi_3"+label+myVarSuffix,            "JetsAK8_phi_4"+label+myVarSuffix,            "JetsAK8_phi_5"+label+myVarSuffix,
-                        "JetsAK8_pt_1"+label+myVarSuffix,             "JetsAK8_pt_2"+label+myVarSuffix,             "JetsAK8_pt_3"+label+myVarSuffix,             "JetsAK8_pt_4"+label+myVarSuffix,             "JetsAK8_pt_5"+label+myVarSuffix,            
-                        "JetsAK8_SDM_1"+label+myVarSuffix,            "JetsAK8_SDM_2"+label+myVarSuffix,            "JetsAK8_SDM_3"+label+myVarSuffix,            "JetsAK8_SDM_4"+label+myVarSuffix,            "JetsAK8_SDM_5"+label+myVarSuffix,
-                        "JetsAK8_Pruned_1"+label+myVarSuffix,         "JetsAK8_Pruned_2"+label+myVarSuffix,         "JetsAK8_Pruned_3"+label+myVarSuffix,         "JetsAK8_Pruned_4"+label+myVarSuffix,         "JetsAK8_Pruned_5"+label+myVarSuffix,
-                        "JetsAK8_Tau1_1"+label+myVarSuffix,           "JetsAK8_Tau1_2"+label+myVarSuffix,           "JetsAK8_Tau1_3"+label+myVarSuffix,           "JetsAK8_Tau1_4"+label+myVarSuffix,           "JetsAK8_Tau1_5"+label+myVarSuffix,
-                        "JetsAK8_Tau2_1"+label+myVarSuffix,           "JetsAK8_Tau2_2"+label+myVarSuffix,           "JetsAK8_Tau2_3"+label+myVarSuffix,           "JetsAK8_Tau2_4"+label+myVarSuffix,           "JetsAK8_Tau2_5"+label+myVarSuffix,
-                        "JetsAK8_Tau3_1"+label+myVarSuffix,           "JetsAK8_Tau3_2"+label+myVarSuffix,           "JetsAK8_Tau3_3"+label+myVarSuffix,           "JetsAK8_Tau3_4"+label+myVarSuffix,           "JetsAK8_Tau3_5"+label+myVarSuffix,
-                        "JetsAK8_axismajor_1"+label+myVarSuffix,      "JetsAK8_axismajor_2"+label+myVarSuffix,      "JetsAK8_axismajor_3"+label+myVarSuffix,      "JetsAK8_axismajor_4"+label+myVarSuffix,      "JetsAK8_axismajor_5"+label+myVarSuffix,
-                        "JetsAK8_axisminor_1"+label+myVarSuffix,      "JetsAK8_axisminor_2"+label+myVarSuffix,      "JetsAK8_axisminor_3"+label+myVarSuffix,      "JetsAK8_axisminor_4"+label+myVarSuffix,      "JetsAK8_axisminor_5"+label+myVarSuffix,
-                        "JetsAK8_tDiscriminator_1"+label+myVarSuffix, "JetsAK8_tDiscriminator_2"+label+myVarSuffix, "JetsAK8_tDiscriminator_3"+label+myVarSuffix, "JetsAK8_tDiscriminator_4"+label+myVarSuffix, "JetsAK8_tDiscriminator_5"+label+myVarSuffix,
-                        "JetsAK8_wDiscriminator_1"+label+myVarSuffix, "JetsAK8_wDiscriminator_2"+label+myVarSuffix, "JetsAK8_wDiscriminator_3"+label+myVarSuffix, "JetsAK8_wDiscriminator_4"+label+myVarSuffix, "JetsAK8_wDiscriminator_5"+label+myVarSuffix,
-                        "JetsAK8_hDiscriminator_1"+label+myVarSuffix, "JetsAK8_hDiscriminator_2"+label+myVarSuffix, "JetsAK8_hDiscriminator_3"+label+myVarSuffix, "JetsAK8_hDiscriminator_4"+label+myVarSuffix, "JetsAK8_hDiscriminator_5"+label+myVarSuffix,
-                    };
-
                     for (const auto& split : myTree)
                     {
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varGeneral);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varEventShape); 
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varChannelSpecific);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varJets);
-                        //myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varJetsAK8);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varOldSeed);
+                        myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(var7toLastJet);
+                
+                        if (label == "_0l")
+                            myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varTops);
+
                         myMiniTuple[split.first][label][myVarSuffix]->initBranches(tr);
                     }
                 }
