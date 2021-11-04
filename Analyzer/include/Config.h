@@ -30,22 +30,22 @@ class Config
 private:
     void registerModules(NTupleReader& tr, const std::vector<std::string>&& modules) const
     {
-        const auto& runtype                           = tr.getVar<std::string>("runtype"              );
-        const auto& runYear                           = tr.getVar<std::string>("runYear"              );
-        const auto& DeepESMCfg                        = tr.getVar<std::string>("DeepESMCfg"           );
-        const auto& DeepESMModel                      = tr.getVar<std::string>("DeepESMModel"         );
-        const auto& DeepESMCfg_NonIsoMuon             = tr.getVar<std::string>("DeepESMCfg_NonIsoMuon");
-        const auto& DoubleDisCo_Cfg_0l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_RPV"   );
-        const auto& DoubleDisCo_Model_0l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_0l_RPV" );
+        const auto& runtype                           = tr.getVar<std::string>("runtype"                          );
+        const auto& runYear                           = tr.getVar<std::string>("runYear"                          );
+        const auto& DeepESMCfg                        = tr.getVar<std::string>("DeepESMCfg"                       );
+        const auto& DeepESMModel                      = tr.getVar<std::string>("DeepESMModel"                     );
+        const auto& DeepESMCfg_NonIsoMuon             = tr.getVar<std::string>("DeepESMCfg_NonIsoMuon"            );
+        const auto& DoubleDisCo_Cfg_0l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_RPV"           );
+        const auto& DoubleDisCo_Model_0l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_0l_RPV"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_0l_RPV");
-        const auto& DoubleDisCo_Cfg_1l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_RPV"   );  
-        const auto& DoubleDisCo_Model_1l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_1l_RPV" );    
+        const auto& DoubleDisCo_Cfg_1l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_RPV"           );  
+        const auto& DoubleDisCo_Model_1l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_1l_RPV"         );    
         const auto& DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_1l_RPV");
-        const auto& DoubleDisCo_Cfg_0l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_SYY"   );
-        const auto& DoubleDisCo_Model_0l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_0l_SYY" );
+        const auto& DoubleDisCo_Cfg_0l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_SYY"           );
+        const auto& DoubleDisCo_Model_0l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_0l_SYY"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_0l_SYY");
-        const auto& DoubleDisCo_Cfg_1l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_SYY"   );  
-        const auto& DoubleDisCo_Model_1l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_1l_SYY" );    
+        const auto& DoubleDisCo_Cfg_1l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_SYY"           );  
+        const auto& DoubleDisCo_Model_1l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_1l_SYY"         );    
         const auto& DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_1l_SYY");
 
         //const auto& DoubleDisCo_Cfg_2l    = tr.getVar<std::string>("DoubleDisCo_Cfg_2l"   ); 
@@ -140,14 +140,14 @@ public:
 
         if(filetag.find("2016") != std::string::npos)
         {
-            runYear               = "2016";
-            Lumi                  = 35900.0;
-            deepCSV_WP_loose      = 0.2217;
-            deepCSV_WP_medium     = 0.6321;
-            deepCSV_WP_tight      = 0.8953;            
-            DeepESMCfg            = "DeepEventShape_2016.cfg";
-            DeepESMModel          = "keras_frozen_2016.pb";
-            DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2016.cfg";
+            runYear                           = "2016";
+            Lumi                              = 35900.0;
+            deepCSV_WP_loose                  = 0.2217;
+            deepCSV_WP_medium                 = 0.6321;
+            deepCSV_WP_tight                  = 0.8953;            
+            DeepESMCfg                        = "DeepEventShape_2016.cfg";
+            DeepESMModel                      = "keras_frozen_2016.pb";
+            DeepESMCfg_NonIsoMuon             = "DeepEventShape_NonIsoMuon_2016.cfg";
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
@@ -381,6 +381,20 @@ public:
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
+                "MakeMVAVariables_2l",
+                "MakeMVAVariables_NonIsoMuon_0l",
+                "MakeMVAVariables_NonIsoMuon_1l",
+                "StopJets",
+                "MakeStopHemispheres_OldSeed",
+                "MakeStopHemispheres_NonIsoMuon_OldSeed",
+                "MakeStopHemispheres_TopSeed",
+                "StopGenMatch",
+                "DoubleDisCo_0l_RPV",
+                "DoubleDisCo_1l_RPV",
+                "DoubleDisCo_NonIsoMuon_0l_RPV",
+                "DoubleDisCo_NonIsoMuon_1l_RPV",
             };
             registerModules(tr, std::move(modulesList));
         } 
