@@ -181,7 +181,7 @@ class StackPlotter:
         self.inpath      = inpath
         self.outpath     = outpath
         
-        self.tableDictionary = {}
+        self.njetsTableDictionary = {}
 
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
@@ -201,14 +201,14 @@ class StackPlotter:
         self.LeftMargin   = 0.16
 
     # Draw the significance and cut labels on the plot
-    def add_Significance_CutLabel(self, canvas, significance, selections):
+    def add_Significance_CutLabel(self, canvas, significance_550, selections):
 
         mark = ROOT.TLatex()
         mark.SetNDC(True)
 
         mark.SetTextAlign(11)
         mark.SetTextFont(52); mark.SetTextSize(0.025)
-        mark.DrawLatex(0.2, 0.92, "Significance = %.3f"%(significance))
+        mark.DrawLatex(0.2, 0.92, "Significance = %.3f"%(significance_550))
         mark.DrawLatex(0.45, 0.92, "%s"%(selections))
 
     # Create a canvas and determine if it should be split for a ratio plot
@@ -299,7 +299,7 @@ class StackPlotter:
 
         yMax = 1.0; factor = 1.05; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
-            power = math.log10(theMax / theMin) * 3.0
+            power = math.log10(theMax / theMin) * 5.0
 
         theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
 
@@ -358,9 +358,6 @@ class StackPlotter:
             for order in orders:
                 for selection in self.selections:
          
-                    # initialize a dictionary to make tables   
-                    self.tableDictionary[selection] = {}
-
                     newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
                     newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
@@ -379,7 +376,9 @@ class StackPlotter:
     
                     nBkgLegend = 0
                     nSigLegend = 0
-                    theSignificance = 0.0
+                    theSignificance_350 = 0.0
+                    theSignificance_550 = 0.0
+                    theSignificance_850 = 0.0
 
                     dataScale = 0.0
                     mcScale = 0.0
@@ -401,8 +400,45 @@ class StackPlotter:
                             if tempMax > theMax:
                                 theMax = tempMax
 
+
+                    # Preemptively get MC counts to be used for normalizing the histograms later
+                    totalWegBkg = 0.0; wegTT    = 0.0; wegQCD = 0.0; ttFrac = 0.0; qcdFrac = 0.0                     
+                    unWegTT     = 0.0; unWegQCD = 0.0
+
+                    for bname, binfo in self.backgrounds.items(): 
+
+                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+    
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
+                        
+                        if Hobj.IsGood(): mcScale += Hobj.Integral()
+
+                        # get fractions and unweighted events for TT and QCD
+                        totalWegBkg += Hobj.Integral()
+            
+                        if bname == "TT":
+                            wegTT   = Hobj.Integral()
+                            unWegTT = Hobj.histogram.GetEntries()                        
+
+                        if bname == "QCD":
+                            wegQCD   = Hobj.Integral()
+                            unWegQCD = Hobj.histogram.GetEntries()
+
+                    ttFrac  = wegTT / totalWegBkg
+                    qcdFrac = wegQCD / totalWegBkg
+          
+                    if "njets" in hname:
+                        self.njetsTableDictionary[selection] = {}
+                        self.njetsTableDictionary[selection]["TT Frac"]               = ttFrac
+                        self.njetsTableDictionary[selection]["QCD Frac"]              = qcdFrac
+                        self.njetsTableDictionary[selection]["TT Unweighted Events"]  = unWegTT
+                        self.njetsTableDictionary[selection]["QCD Unweighted Events"] = unWegQCD
+
                     # Preemptively loop over signal to determine maximums
-                    for sname, sinfo in self.signals.items(): 
+                    wegRPV350   = 0.0; wegRPV550   = 0.0; wegRPV850   = 0.0; rpv350Frac = 0.0; rpv550Frac = 0.0; rpv850Frac = 0.0;
+                    unWegRPV350 = 0.0; unWegRPV550 = 0.0; unWegRPV850 = 0.0;
+
+                    for sname, sinfo in self.signals.items():
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
 
@@ -417,18 +453,30 @@ class StackPlotter:
                             if tempMax > theMax:
                                 theMax = tempMax
 
-                            self.tableDictionary[selection][sname] = sigScale
+                            # get fractions and unweighted events for RPV 350, 550, 850
+                            if "350" in sname:
+                                wegRPV350   = Hobj.Integral()
+                                unWegRPV350 = Hobj.histogram.GetEntries()
 
-                    # Preemptively get MC counts to be used for normalizing the histograms later
-                    for bname, binfo in self.backgrounds.items(): 
+                            if "550" in sname:
+                                wegRPV550   = Hobj.Integral()
+                                unWegRPV550 = Hobj.histogram.GetEntries()
 
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
-    
-                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
-                        
-                        if Hobj.IsGood(): mcScale += Hobj.Integral()
+                            if "850" in sname:
+                                wegRPV850   = Hobj.Integral()
+                                unWegRPV850 = Hobj.histogram.GetEntries()
 
-                        self.tableDictionary[selection][bname] = Hobj.Integral()
+                    rpv350Frac = wegRPV350 / (wegRPV350 + totalWegBkg) 
+                    rpv550Frac = wegRPV550 / (wegRPV550 + totalWegBkg)
+                    rpv850Frac = wegRPV850 / (wegRPV850 + totalWegBkg)
+                   
+                    if "njets" in hname: 
+                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-350 Frac"]              = rpv350Frac
+                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-550 Frac"]              = rpv550Frac
+                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-850 Frac"]              = rpv850Frac
+                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-350 Unweighted Events"] = unWegRPV350
+                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-550 Unweighted Events"] = unWegRPV550
+                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-850 Unweighted Events"] = unWegRPV850
 
                     # Loop over each background and get their respective histo, scale if necessary
                     option = "HIST"; loption = "F"
@@ -497,15 +545,24 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
                         if "350" in sname or len(self.signals) == 1:
-                            theSignificance = Hobj.Significance(totalMC)
-                        
+                            theSignificance_350 = Hobj.Significance(totalMC)
+                       
+                        elif "550" in sname or len(self.signals) == 1:
+                            theSignificance_550 = Hobj.Significance(totalMC)
+                
+                        elif "850" in sname or len(self.signals) == 1:
+                            theSignificance_850 = Hobj.Significance(totalMC)
+ 
                         scale = Hobj.Integral()
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend)
 
-                        self.tableDictionary[selection]["significance"] = theSignificance
+                        if "njets" in hname:
+                            self.njetsTableDictionary[selection]["significance_350"] = theSignificance_350
+                            self.njetsTableDictionary[selection]["significance_550"] = theSignificance_550
+                            self.njetsTableDictionary[selection]["significance_850"] = theSignificance_850
 
                     # Loop over the data and get their respective histo
                     option = "E0P"; loption = "ELP"
@@ -541,7 +598,7 @@ class StackPlotter:
 
                     # put the siginificance and cut label on the canvas
                     if self.printInfo:
-                        self.add_Significance_CutLabel(canvas, theSignificance, selection)
+                        self.add_Significance_CutLabel(canvas, theSignificance_350, selection)
 
                     # Here we go into bottom panel if drawing the ratio
                     if not self.noRatio:
@@ -563,68 +620,37 @@ class StackPlotter:
                     canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
 
 
-    # function to put the nEvents and significance for each MC sample cut label by cut label
-    def makeTable(self):
+    # function to put the raw nEvents significance and njet bin by njet bin bkg & sig fractions for baseline selection
+    def make_njetsTable(self):        
 
-        f = open("%s/%s_nEvents_significance_stackPlots_0l_.tex" %(self.outpath, self.year), "w")
+        f = open("%s/%s_nRawEvents_significance_bkgSigFracs_njets_stackPlots_0l_.tex" %(self.outpath, self.year), "w")
         f.write("\\resizebox{\linewidth}{!}{%")
         f.write("\n")
         f.write("    \def\\arraystretch{0.6}")
         f.write("\n")
-        f.write("    \\begin{tabular}{| l | c | c | c | c | c | c | c | c|}")
+        f.write("    \\begin{tabular}{| l | c | c | c | c | c | c | c | c | c | c | c | c | c |}")
         f.write("\n")
         f.write("        \hline")
         f.write("\n")
-        f.write("        \\textcolor{massReg}{cuts} &  \multicolumn{2}{c|}{\\textcolor{ttjetscol}{TT}} & \multicolumn{2}{c|}{\\textcolor{qcdcol}{QCD}} & \\textcolor{rpvcol}{RPV350} & \\textcolor{rpvcol}{RPV550} & \\textcolor{rpvcol}{RPV850} & \\textbf{significance} \\\\")
+        f.write("        & \multicolumn{2}{c|}{\\textcolor{ttjetscol}{TT}} & \multicolumn{2}{c|}{\\textcolor{qcdcol}{QCD}} & \multicolumn{2}{c|}{\\textcolor{rpvcol}{RPV350}} & \multicolumn{2}{c|}{\\textcolor{rpvcol}{RPV550}} & \multicolumn{2}{c|}{\\textcolor{rpvcol}{RPV850}} & \multicolumn{3}{c|}{Significance} \\\\")
         f.write("\n")
         f.write("        \hline")
         f.write("\n")
-
-        labels = [
-                  ["0l_0NonIsoMuon_HT500_ge6j_ge2t", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge2b_ge1dRbjets"], 
-                  ["0l_0NonIsoMuon_HT500_ge7j_ge2t", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge2b_ge1dRbjets"], 
-                  ["0l_0NonIsoMuon_HT500_ge8j_ge2t", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge2b_ge1dRbjets"], 
-                  ["0l_0NonIsoMuon_HT500_ge9j_ge2t", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b_ge1dRbjets", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge2b", "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge2b_ge1dRbjets"],
-        ]
-
-        for label in labels:
-
-            ttFrac_0 = self.tableDictionary[label[0]]["TT"] / ( self.tableDictionary[label[0]]["TT"] + self.tableDictionary[label[0]]["QCD"] + self.tableDictionary[label[0]]["TTX"] + self.tableDictionary[label[0]]["BG_OTHER"] )   
-            ttFrac_1 = self.tableDictionary[label[1]]["TT"] / ( self.tableDictionary[label[1]]["TT"] + self.tableDictionary[label[1]]["QCD"] + self.tableDictionary[label[1]]["TTX"] + self.tableDictionary[label[1]]["BG_OTHER"] )
-            ttFrac_2 = self.tableDictionary[label[2]]["TT"] / ( self.tableDictionary[label[2]]["TT"] + self.tableDictionary[label[2]]["QCD"] + self.tableDictionary[label[2]]["TTX"] + self.tableDictionary[label[2]]["BG_OTHER"] )
-            ttFrac_3 = self.tableDictionary[label[3]]["TT"] / ( self.tableDictionary[label[3]]["TT"] + self.tableDictionary[label[3]]["QCD"] + self.tableDictionary[label[3]]["TTX"] + self.tableDictionary[label[3]]["BG_OTHER"] )
-            ttFrac_4 = self.tableDictionary[label[4]]["TT"] / ( self.tableDictionary[label[4]]["TT"] + self.tableDictionary[label[4]]["QCD"] + self.tableDictionary[label[4]]["TTX"] + self.tableDictionary[label[4]]["BG_OTHER"] )
-
-            qcdFrac_0 = self.tableDictionary[label[0]]["QCD"] / ( self.tableDictionary[label[0]]["TT"] + self.tableDictionary[label[0]]["QCD"] + self.tableDictionary[label[0]]["TTX"] + self.tableDictionary[label[0]]["BG_OTHER"] ) 
-            qcdFrac_1 = self.tableDictionary[label[1]]["QCD"] / ( self.tableDictionary[label[1]]["TT"] + self.tableDictionary[label[1]]["QCD"] + self.tableDictionary[label[1]]["TTX"] + self.tableDictionary[label[1]]["BG_OTHER"] )
-            qcdFrac_2 = self.tableDictionary[label[2]]["QCD"] / ( self.tableDictionary[label[2]]["TT"] + self.tableDictionary[label[2]]["QCD"] + self.tableDictionary[label[2]]["TTX"] + self.tableDictionary[label[2]]["BG_OTHER"] )
-            qcdFrac_3 = self.tableDictionary[label[3]]["QCD"] / ( self.tableDictionary[label[3]]["TT"] + self.tableDictionary[label[3]]["QCD"] + self.tableDictionary[label[3]]["TTX"] + self.tableDictionary[label[3]]["BG_OTHER"] )
-            qcdFrac_4 = self.tableDictionary[label[4]]["QCD"] / ( self.tableDictionary[label[4]]["TT"] + self.tableDictionary[label[4]]["QCD"] + self.tableDictionary[label[4]]["TTX"] + self.tableDictionary[label[4]]["BG_OTHER"] )
-
-            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
-                    %(label[0], self.tableDictionary[label[0]]["TT"], ttFrac_0, self.tableDictionary[label[0]]["QCD"], qcdFrac_0, self.tableDictionary[label[0]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[0]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[0]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[0]]["significance"]) )
-            f.write("\n")
-            f.write("        \hline")
-            f.write("\n")
-            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
-                    %(label[1], self.tableDictionary[label[1]]["TT"], ttFrac_1, self.tableDictionary[label[1]]["QCD"], qcdFrac_1, self.tableDictionary[label[1]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[1]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[1]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[1]]["significance"]) )
-            f.write("\n")
-            f.write("        \hline")
-            f.write("\n")
-            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
-                    %(label[2], self.tableDictionary[label[2]]["TT"], ttFrac_2, self.tableDictionary[label[2]]["QCD"], qcdFrac_2, self.tableDictionary[label[2]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[2]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[2]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[2]]["significance"]) )
-            f.write("\n")
-            f.write("        \hline")
-            f.write("\n")
-            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
-                    %(label[3], self.tableDictionary[label[3]]["TT"], ttFrac_3, self.tableDictionary[label[3]]["QCD"], qcdFrac_3, self.tableDictionary[label[3]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[3]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[3]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[3]]["significance"]) )
-            f.write("\n")
-            f.write("        \hline")
-            f.write("\n")
-            f.write("        \scriptsize \\textcolor{massReg}{%s} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textbf{%.3f} \\\\"
-                    %(label[4], self.tableDictionary[label[4]]["TT"], ttFrac_4, self.tableDictionary[label[4]]["QCD"], qcdFrac_4, self.tableDictionary[label[4]]["RPV_2t6j_mStop-350"], self.tableDictionary[label[4]]["RPV_2t6j_mStop-550"], self.tableDictionary[label[4]]["RPV_2t6j_mStop-850"], self.tableDictionary[label[4]]["significance"]) )
-            f.write("\n")
-            f.write("        \hline")
+        f.write("        Cuts & \\textcolor{ttjetscol}{Raw Events} & \\textcolor{ttjetscol}{Frac} & \\textcolor{qcdcol}{Raw Events} & \\textcolor{qcdcol}{Frac} & \\textcolor{rpvcol}{Raw Events}    & \\textcolor{rpvcol}{Frac} & \\textcolor{rpvcol}{Raw Events} & \\textcolor{rpvcol}{Frac} & \\textcolor{rpvcol}{Raw Events} & \\textcolor{rpvcol}{Frac} & RPV350 & RPV550 & RPV850 \\\\")
+        f.write("\n")
+        f.write("        \hline")
+        f.write("\n")
+ 
+        # loops for putting the table
+        for cut in self.selections:  
+ 
+            f.write("    \scriptsize %s & \scriptsize \\textcolor{ttjetscol}{%d} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%d} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%d} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%d} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%d} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize %.3f & \scriptsize %.3f & \scriptsize %.3f \\\\"
+                %(cut.replace("_", "\_"), self.njetsTableDictionary[cut]["TT Unweighted Events"],  self.njetsTableDictionary[cut]["TT Frac"], 
+                       self.njetsTableDictionary[cut]["QCD Unweighted Events"], self.njetsTableDictionary[cut]["QCD Frac"],
+                       self.njetsTableDictionary[cut]["RPV_2t6j_mStop-350 Unweighted Events"], self.njetsTableDictionary[cut]["RPV_2t6j_mStop-350 Frac"], 
+                       self.njetsTableDictionary[cut]["RPV_2t6j_mStop-550 Unweighted Events"], self.njetsTableDictionary[cut]["RPV_2t6j_mStop-550 Frac"],
+                       self.njetsTableDictionary[cut]["RPV_2t6j_mStop-850 Unweighted Events"], self.njetsTableDictionary[cut]["RPV_2t6j_mStop-850 Frac"],
+                       self.njetsTableDictionary[cut]["significance_350"], self.njetsTableDictionary[cut]["significance_550"], self.njetsTableDictionary[cut]["significance_850"]))
             f.write("\n")
             f.write("        \hline")
             f.write("\n")
@@ -633,9 +659,8 @@ class StackPlotter:
         f.write("\n")
         f.write("}")
         f.write("\n")
-        f.close()
+        f.close()                             
 
-        
 
 if __name__ == "__main__":
 
@@ -670,4 +695,4 @@ if __name__ == "__main__":
 
     plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
-    plotter.makeTable()
+    plotter.make_njetsTable()
