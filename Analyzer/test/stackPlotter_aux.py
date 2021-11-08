@@ -17,10 +17,10 @@ selections = [
         "0l_0NonIsoMuon_HT500_ge6j_ge1tR_ge1b_ge1dRbjets",
         "0l_0NonIsoMuon_HT500_ge6j_ge1tM_ge1b_ge1dRbjets",
 
-        #"0l_0NonIsoMuon_HT500_ge6j_ge1t_ge2b",
-        #"0l_0NonIsoMuon_HT500_ge6j_ge1t_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge6j_ge1tR_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge6j_ge1tM_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge6j_ge1t_ge2b",
+        "0l_0NonIsoMuon_HT500_ge6j_ge1t_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge6j_ge1tR_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge6j_ge1tM_ge2b_ge1dRbjets",
 
         "0l_0NonIsoMuon_HT500_ge6j_ge2t",
         "0l_0NonIsoMuon_HT500_ge6j_ge2t_ge1b",
@@ -43,10 +43,10 @@ selections = [
         "0l_0NonIsoMuon_HT500_ge7j_ge1tR_ge1b_ge1dRbjets",
         "0l_0NonIsoMuon_HT500_ge7j_ge1tM_ge1b_ge1dRbjets",
 
-        #"0l_0NonIsoMuon_HT500_ge7j_ge1t_ge2b",
-        #"0l_0NonIsoMuon_HT500_ge7j_ge1t_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge7j_ge1tR_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge7j_ge1tM_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge7j_ge1t_ge2b",
+        "0l_0NonIsoMuon_HT500_ge7j_ge1t_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge7j_ge1tR_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge7j_ge1tM_ge2b_ge1dRbjets",
 
         "0l_0NonIsoMuon_HT500_ge7j_ge2t",
         "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1b",
@@ -69,10 +69,10 @@ selections = [
         "0l_0NonIsoMuon_HT500_ge8j_ge1tR_ge1b_ge1dRbjets",
         "0l_0NonIsoMuon_HT500_ge8j_ge1tM_ge1b_ge1dRbjets",
 
-        #"0l_0NonIsoMuon_HT500_ge8j_ge1t_ge2b",
-        #"0l_0NonIsoMuon_HT500_ge8j_ge1t_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge8j_ge1tR_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge8j_ge1tM_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge8j_ge1t_ge2b",
+        "0l_0NonIsoMuon_HT500_ge8j_ge1t_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge8j_ge1tR_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge8j_ge1tM_ge2b_ge1dRbjets",
 
         "0l_0NonIsoMuon_HT500_ge8j_ge2t",
         "0l_0NonIsoMuon_HT500_ge8j_ge2t_ge1b",
@@ -95,10 +95,10 @@ selections = [
         "0l_0NonIsoMuon_HT500_ge9j_ge1tR_ge1b_ge1dRbjets",
         "0l_0NonIsoMuon_HT500_ge9j_ge1tM_ge1b_ge1dRbjets",
 
-        #"0l_0NonIsoMuon_HT500_ge9j_ge1t_ge2b",
-        #"0l_0NonIsoMuon_HT500_ge9j_ge1t_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge9j_ge1tR_ge2b_ge1dRbjets",
-        #"0l_0NonIsoMuon_HT500_ge9j_ge1tM_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge9j_ge1t_ge2b",
+        "0l_0NonIsoMuon_HT500_ge9j_ge1t_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge9j_ge1tR_ge2b_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge9j_ge1tM_ge2b_ge1dRbjets",
 
         "0l_0NonIsoMuon_HT500_ge9j_ge2t",
         "0l_0NonIsoMuon_HT500_ge9j_ge2t_ge1b",
@@ -136,8 +136,8 @@ histograms = {
     #"Stop@_phi_cm_OldSeed?"         : {"logY" : False, "orders" : list(xrange(1,3)),  "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "Stop @ #phi",           "rebin" : 1, "min" : -6, "max" :    6}},
     #"h_njets?"                      : {"logY" : True,                                 "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{jets}",              "rebin" : 1, "min" :  6, "max" :   18}},
     #"h_DoubleDisCo_massReg?_Njets@" : {"logY" : False, "orders" : list(xrange(7,13)), "Y" : {"title" : "A.U.",            "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]", "rebin" : 2, "min" :  0, "max" : 1500}},
-    "h_njets_?"                      : {"logY" : True,                                 "Y" : {"title" : "Events",         "min" : 2e-3}, "X" : {"title" : "N_{jets}", "rebin" : 1, "min" :  -0.5, "max" : 20.5}},
-
+    #"h_njets_?"                      : {"logY" : True,                                 "Y" : {"title" : "Events",         "min" : 2e-3}, "X" : {"title" : "N_{jets}", "rebin" : 1, "min" :  -0.5, "max" : 20.5}},
+    "h_ntops_?"                      : {"logY" : True,                                 "Y" : {"title" : "Events",         "min" : 2e-3}, "X" : {"title" : "N_{tops}", "rebin" : 1, "min" :  -0.5, "max" : 10.5}},
 }
 
 backgrounds = {
