@@ -278,14 +278,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& Stop2_phi_cm_OldSeed              = tr.getVar<double>("Stop2_phi_cm_OldSeed");
         const auto& Stop2_mass_cm_OldSeed             = tr.getVar<double>("Stop2_mass_cm_OldSeed");
 
-        const auto& Stop1_pt_cm_NonIsoMuon_OldSeed    = tr.getVar<double>("Stop1_pt_cm_NonIsoMuon_OldSeed");
-        const auto& Stop1_eta_cm_NonIsoMuon_OldSeed   = tr.getVar<double>("Stop1_eta_cm_NonIsoMuon_OldSeed");
-        const auto& Stop1_phi_cm_NonIsoMuon_OldSeed   = tr.getVar<double>("Stop1_phi_cm_NonIsoMuon_OldSeed");
-        const auto& Stop1_mass_cm_NonIsoMuon_OldSeed  = tr.getVar<double>("Stop1_mass_cm_NonIsoMuon_OldSeed");
-        const auto& Stop2_pt_cm_NonIsoMuon_OldSeed    = tr.getVar<double>("Stop2_pt_cm_NonIsoMuon_OldSeed");
-        const auto& Stop2_eta_cm_NonIsoMuon_OldSeed   = tr.getVar<double>("Stop2_eta_cm_NonIsoMuon_OldSeed");
-        const auto& Stop2_phi_cm_NonIsoMuon_OldSeed   = tr.getVar<double>("Stop2_phi_cm_NonIsoMuon_OldSeed");
-        const auto& Stop2_mass_cm_NonIsoMuon_OldSeed  = tr.getVar<double>("Stop2_mass_cm_NonIsoMuon_OldSeed");
+        const auto& Stop1_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_phi_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop1_mass_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop2_pt_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_eta_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon");
 
         const auto& regions_0l = tr.getVec<std::string>("regions_0l_RPV");
         const auto& regions_1l = tr.getVec<std::string>("regions_1l_RPV");
@@ -524,26 +524,26 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             // Plots of stop 4-vector are made with pt-ranked stops
                             if (Stop1_pt_cm_OldSeed  > Stop2_pt_cm_OldSeed)
                             {
-                                my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed   : Stop1_pt_cm_NonIsoMuon_OldSeed,   w);
-                                my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop1_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_NonIsoMuon_OldSeed, w);
+                                my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed   : Stop1_pt_cm_OldSeed_NonIsoMuon,   w);
+                                my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop1_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_OldSeed_NonIsoMuon, w);
                             
-                                my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_NonIsoMuon_OldSeed,   w);
-                                my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop2_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_NonIsoMuon_OldSeed, w);
+                                my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_OldSeed_NonIsoMuon,   w);
+                                my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop2_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_OldSeed_NonIsoMuon, w);
                             } else
                             {
-                                my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_NonIsoMuon_OldSeed,   w);
-                                my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop1_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_NonIsoMuon_OldSeed, w);
+                                my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_OldSeed_NonIsoMuon,   w);
+                                my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop1_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_OldSeed_NonIsoMuon, w);
                             
-                                my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed   : Stop1_pt_cm_NonIsoMuon_OldSeed,   w);
-                                my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_NonIsoMuon_OldSeed,  w);
-                                my_histos["Stop2_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_NonIsoMuon_OldSeed, w);
+                                my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed   : Stop1_pt_cm_OldSeed_NonIsoMuon,   w);
+                                my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
+                                my_histos["Stop2_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_OldSeed_NonIsoMuon, w);
                             }
 
                             unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
