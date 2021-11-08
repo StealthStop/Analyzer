@@ -58,10 +58,11 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         FatJetCombine       fatJetCombine(myVarSuffix);
         BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         CommonVariables     commonVariables(myVarSuffix);
-        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
+        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
         //MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
-        MakeStopHemispheres stopHemispheres("Jets", "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
 
         bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
   
@@ -80,7 +81,8 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(makeMVAVariables1L);
         //tr.registerFunction(makeMVAVariables2L);
         tr.registerFunction(stopJets);
-        tr.registerFunction(stopHemispheres);
+        tr.registerFunction(stopHemispheres_OldSeed);
+        tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(bTagCorrector);
         tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
@@ -98,7 +100,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& filetag      = tr.getVar<std::string>("filetag");
 
             std::map<std::string, bool> baselines;
-            baselines["_0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
+            baselines["_0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
             //baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
 
@@ -241,6 +243,17 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "Stop1_scalarPt_cm_OldSeed"+myVarSuffix, "Stop2_scalarPt_cm_OldSeed"+myVarSuffix,
                 };
 
+                std::set<std::string> varTopSeed =
+                {
+                    "dR_Stop1Stop2_cm_TopSeed"+myVarSuffix,
+                    "dPhi_Stop1Stop2_cm_TopSeed"+myVarSuffix,
+                    "Stop1_mass_cm_TopSeed"+myVarSuffix,     "Stop2_mass_cm_TopSeed"+myVarSuffix,
+                    "Stop1_pt_cm_TopSeed"+myVarSuffix,       "Stop2_pt_cm_TopSeed"+myVarSuffix,
+                    "Stop1_phi_cm_TopSeed"+myVarSuffix,      "Stop2_phi_cm_TopSeed"+myVarSuffix,
+                    "Stop1_eta_cm_TopSeed"+myVarSuffix,      "Stop2_eta_cm_TopSeed"+myVarSuffix,
+                    "Stop1_scalarPt_cm_TopSeed"+myVarSuffix, "Stop2_scalarPt_cm_TopSeed"+myVarSuffix,
+                };
+
                 std::set<std::string> varTops = 
                 {
                     "top1_pt_cm"+myVarSuffix,   "top2_pt_cm"+myVarSuffix,
@@ -265,9 +278,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 for (std::string label : my_labels)
                 {
                     std::string ptCut = "pt30";
-                    if (label == "_0l")
-                        ptCut = "pt45";
-
+                    
                     std::set<std::string> varChannelSpecific =
                     {
                         "HT_trigger_"+ptCut+myVarSuffix,
@@ -304,8 +315,11 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varOldSeed);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(var7toLastJet);
                 
-                        if (label == "_0l")
+                        if (label == "_0l") 
+                        {
+                            myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varTopSeed);
                             myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varTops);
+                        }
 
                         myMiniTuple[split.first][label][myVarSuffix]->initBranches(tr);
                     }

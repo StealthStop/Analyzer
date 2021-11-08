@@ -84,8 +84,8 @@ private:
             else if(module=="TrainingNTupleVars")                    tr.emplaceModule<TrainingNTupleVars>();
             else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",                 "NJets",                    "_All",                "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",            "", Hemisphere::InvMassSeed);
-            else if(module=="MakeStopHemispheres_NonIsoMuon_OldSeed")tr.emplaceModule<MakeStopHemispheres>("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_NonIsoMuon_OldSeed", "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR",  "", Hemisphere::InvMassSeed);
+            else if(module=="MakeStopHemispheres_OldSeed_NonIsoMuon")tr.emplaceModule<MakeStopHemispheres>("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_OldSeed_NonIsoMuon", "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_TopSeed")           tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",            "NGoodStopJets",            "_TopSeed",            "", Hemisphere::TopSeed);
             else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR",  "", Hemisphere::TopSeed);
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
@@ -141,7 +141,7 @@ public:
         if(filetag.find("2016") != std::string::npos)
         {
             runYear                           = "2016";
-            Lumi                              = 35900.0;
+            Lumi                              = 36330.0;
             deepCSV_WP_loose                  = 0.2217;
             deepCSV_WP_medium                 = 0.6321;
             deepCSV_WP_tight                  = 0.8953;            
@@ -331,15 +331,15 @@ public:
                 "MakeMVAVariables_NonIsoMuon_1l",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_NonIsoMuon_OldSeed",
+                "MakeStopHemispheres_OldSeed_NonIsoMuon",
                 "MakeStopHemispheres_TopSeed",
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
-                "DoubleDisCo_0l_RPV",
-                "DoubleDisCo_1l_RPV",
-                "DoubleDisCo_NonIsoMuon_0l_RPV",
-                "DoubleDisCo_NonIsoMuon_1l_RPV",
+                //"DoubleDisCo_0l_RPV",
+                //"DoubleDisCo_1l_RPV",
+                //"DoubleDisCo_NonIsoMuon_0l_RPV",
+                //"DoubleDisCo_NonIsoMuon_1l_RPV",
                 //"DoubleDisCo_0l_SYY",
                 //"DoubleDisCo_1l_SYY",
                 //"DoubleDisCo_NonIsoMuon_0l_SYY",
@@ -388,7 +388,7 @@ public:
                 "MakeMVAVariables_NonIsoMuon_1l",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_NonIsoMuon_OldSeed",
+                "MakeStopHemispheres_OldSeed_NonIsoMuon",
                 "MakeStopHemispheres_TopSeed",
                 "StopGenMatch",
                 "DoubleDisCo_0l_RPV",
