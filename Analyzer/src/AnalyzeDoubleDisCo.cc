@@ -206,17 +206,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
     {
         const auto& runtype                           = tr.getVar<std::string>("runtype");     
         const auto& NGoodJets_pt30                    = tr.getVar<int>("NGoodJets_pt30");
-        const auto& NGoodJets_pt45                    = tr.getVar<int>("NGoodJets_pt45");
         const auto& NNonIsoMuonJets_pt30              = tr.getVar<int>("NNonIsoMuonJets_pt30");
-        const auto& NNonIsoMuonJets_pt45              = tr.getVar<int>("NNonIsoMuonJets_pt45");
         const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30");
-        const auto& HT_trigger_pt45                   = tr.getVar<double>("HT_trigger_pt45");
         const auto& HT_NonIsoMuon_pt30                = tr.getVar<double>("HT_NonIsoMuon_pt30");
-        const auto& HT_NonIsoMuon_pt45                = tr.getVar<double>("HT_NonIsoMuon_pt45");
 
-        const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_Good");
+        const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good");
         const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("passBaseline0l_NonIsoMuon");
+        const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR");
         const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon");
 
         const auto& DoubleDisCo_massReg_0l            = tr.getVar<double>("DoubleDisCo_massReg_0l_RPV");
@@ -246,13 +242,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& jmt_ev0_top6_1l                   = tr.getVar<double>("jmt_ev0_top6_1l");
         const auto& jmt_ev1_top6_1l                   = tr.getVar<double>("jmt_ev1_top6_1l");
         const auto& jmt_ev2_top6_1l                   = tr.getVar<double>("jmt_ev2_top6_1l");
-        const auto& NonIsoMuons_fwm2_top6_0l          = tr.getVar<double>("NonIsoMuons_fwm2_top6_0l");
-        const auto& NonIsoMuons_fwm3_top6_0l          = tr.getVar<double>("NonIsoMuons_fwm3_top6_0l");
-        const auto& NonIsoMuons_fwm4_top6_0l          = tr.getVar<double>("NonIsoMuons_fwm4_top6_0l");
-        const auto& NonIsoMuons_fwm5_top6_0l          = tr.getVar<double>("NonIsoMuons_fwm5_top6_0l");
-        const auto& NonIsoMuons_jmt_ev0_top6_0l       = tr.getVar<double>("NonIsoMuons_jmt_ev0_top6_0l");
-        const auto& NonIsoMuons_jmt_ev1_top6_0l       = tr.getVar<double>("NonIsoMuons_jmt_ev1_top6_0l");
-        const auto& NonIsoMuons_jmt_ev2_top6_0l       = tr.getVar<double>("NonIsoMuons_jmt_ev2_top6_0l");
+        const auto& NonIsoMuons_fwm2_top6_0l          = tr.getVar<double>("fwm2_top6_0l");
+        const auto& NonIsoMuons_fwm3_top6_0l          = tr.getVar<double>("fwm3_top6_0l");
+        const auto& NonIsoMuons_fwm4_top6_0l          = tr.getVar<double>("fwm4_top6_0l");
+        const auto& NonIsoMuons_fwm5_top6_0l          = tr.getVar<double>("fwm5_top6_0l");
+        const auto& NonIsoMuons_jmt_ev0_top6_0l       = tr.getVar<double>("jmt_ev0_top6_0l");
+        const auto& NonIsoMuons_jmt_ev1_top6_0l       = tr.getVar<double>("jmt_ev1_top6_0l");
+        const auto& NonIsoMuons_jmt_ev2_top6_0l       = tr.getVar<double>("jmt_ev2_top6_0l");
         const auto& NonIsoMuons_fwm2_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm2_top6_1l");
         const auto& NonIsoMuons_fwm3_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm3_top6_1l");
         const auto& NonIsoMuons_fwm4_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm4_top6_1l");
@@ -263,7 +259,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const auto& Jets_cm_top6_0l                   = tr.getVec<TLorentzVector>("Jets_cm_top6_0l");
         const auto& Jets_cm_top6_1l                   = tr.getVec<TLorentzVector>("Jets_cm_top6_1l");
-        const auto& NonIsoMuons_Jets_cm_top6_0l       = tr.getVec<TLorentzVector>("NonIsoMuons_Jets_cm_top6_0l");
+        const auto& NonIsoMuons_Jets_cm_top6_0l       = tr.getVec<TLorentzVector>("Jets_cm_top6_0l");
         const auto& NonIsoMuons_Jets_cm_top6_1l       = tr.getVec<TLorentzVector>("NonIsoMuons_Jets_cm_top6_1l");
         const auto& nMVAJets_0l                       = tr.getVar<unsigned int>("nMVAJets_0l");
         const auto& nMVAJets_1l                       = tr.getVar<unsigned int>("nMVAJets_1l");
@@ -323,11 +319,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             Jets_flavuds_0l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
             Jets_flavq_0l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
 
-            JetNonIsoMuons_flavb_0l.push_back(tr.getVar<double>("JetNonIsoMuons_flavb_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavc_0l.push_back(tr.getVar<double>("JetNonIsoMuons_flavc_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavg_0l.push_back(tr.getVar<double>("JetNonIsoMuons_flavg_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavuds_0l.push_back(tr.getVar<double>("JetNonIsoMuons_flavuds_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavq_0l.push_back(tr.getVar<double>("JetNonIsoMuons_flavq_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavb_0l.push_back(tr.getVar<double>("Jet_flavb_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavc_0l.push_back(tr.getVar<double>("Jet_flavc_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavg_0l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavuds_0l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavq_0l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
         }
 
         for (unsigned int iJet = 1; iJet <= nMVAJets_1l; iJet++) {
@@ -346,10 +342,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         // Put 0L and 1L version of variables into vector
         // 0th position is for 0L and 1st position is for 1L for convenience in the event loop
-        std::vector<int>                                        NGoodJets                     {NGoodJets_pt45,                        NGoodJets_pt30};
-        std::vector<int>                                        NNonIsoMuonJets               {NNonIsoMuonJets_pt45,                  NNonIsoMuonJets_pt30};
-        std::vector<double>                                     HT_trigger                    {HT_trigger_pt45,                       HT_trigger_pt30};
-        std::vector<double>                                     HT_NonIsoMuon                 {HT_NonIsoMuon_pt45,                    HT_NonIsoMuon_pt30};
+        std::vector<int>                                        NGoodJets                     {NGoodJets_pt30,                        NGoodJets_pt30};
+        std::vector<int>                                        NNonIsoMuonJets               {NNonIsoMuonJets_pt30,                  NNonIsoMuonJets_pt30};
+        std::vector<double>                                     HT_trigger                    {HT_trigger_pt30,                       HT_trigger_pt30};
+        std::vector<double>                                     HT_NonIsoMuon                 {HT_NonIsoMuon_pt30,                    HT_NonIsoMuon_pt30};
         std::vector<double>                                     DoubleDisCo_massReg           {DoubleDisCo_massReg_0l,                DoubleDisCo_massReg_1l};
         std::vector<double>                                     DoubleDisCo_disc1             {DoubleDisCo_disc1_0l,                  DoubleDisCo_disc1_1l};
         std::vector<double>                                     DoubleDisCo_disc2             {DoubleDisCo_disc2_0l,                  DoubleDisCo_disc2_1l};
@@ -428,7 +424,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         }
 
         std::vector<double> weight        {weight0L,            weight1L};
-        std::vector<double> weight_noHTsf {weight0L_noHTsf,     weight1L_noHTsf};
         std::vector<double> weight_QCDCR  {weight0L_NonIsoMuon, weight1L_NonIsoMuon};
 
         const std::map<std::string, bool> cut_map 
@@ -437,7 +432,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"_0l"            , passBaseline0l_Good},                         
             {"_1l_QCDCR"      , passBaseline1l_NonIsoMuon},                         
             {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
-            {"_1l_noHTsf"     , passBaseline1l_Good},                         
         };
 
         std::map<std::string, bool>               njetsMap;
@@ -462,7 +456,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 channel = std::stoi(kv.first.substr(1,1));
 
             bool isQCD  = kv.first.find("QCDCR")  != std::string::npos;
-            bool noHTsf = kv.first.find("noHTsf") != std::string::npos;
 
             njetsMap = {{"Incl",     true},
                         {"7",      !isQCD ? NGoodJets[channel]==7  : NNonIsoMuonJets[channel]==7},
@@ -480,10 +473,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 ABCDmap[region] = !isQCD ? DoubleDisCo_passRegions[channel][region] : DoubleDisCo_passRegions_QCDCR[channel][region];
 
             double w = 1.0;
-            if (noHTsf)
-                w = !isQCD ? weight_noHTsf[channel] : weight_QCDCR[channel];
-            else
-                w = !isQCD ? weight[channel]        : weight_QCDCR[channel];
+            w = !isQCD ? weight[channel]        : weight_QCDCR[channel];
 
             std::string name;
             for (auto& njetsPass : njetsMap)
