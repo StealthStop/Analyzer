@@ -72,11 +72,11 @@ private:
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
             else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 12, 2, "");
             else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 12, 2, "");
-            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45",                  false, true, 7,  2, "_0l");
-            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt45",            false, true, 7,  2, "_0l");
+            else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_0l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_0l");
             else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_1l");
             else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 7,  2, "_1l");
-            else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
+            else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30_GoodLeptons_pt20", false, true, 7,  2, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
@@ -310,7 +310,42 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeDoubleDisCo" || analyzer=="MakeNNVariables")
+        else if(analyzer=="AnalyzeDoubleDisCo")
+        {
+            const std::vector<std::string> modulesList = {
+                "PartialUnBlinding",
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
+                "CommonVariables",
+                "Baseline",
+                "FatJetCombine",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
+                "MakeMVAVariables_NonIsoMuon_0l",
+                "MakeMVAVariables_NonIsoMuon_1l",
+                "StopJets",
+                "MakeStopHemispheres_OldSeed",
+                "MakeStopHemispheres_OldSeed_NonIsoMuon",
+                "BTagCorrector",
+                "ScaleFactors",
+                "StopGenMatch",
+                "DoubleDisCo_0l_RPV",
+                "DoubleDisCo_1l_RPV",
+                "DoubleDisCo_NonIsoMuon_0l_RPV",
+                "DoubleDisCo_NonIsoMuon_1l_RPV",
+                "DoubleDisCo_0l_SYY",
+                "DoubleDisCo_1l_SYY",
+                "DoubleDisCo_NonIsoMuon_0l_SYY",
+                "DoubleDisCo_NonIsoMuon_1l_SYY",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="MakeNNVariables")
         {
             const std::vector<std::string> modulesList = {
                 "PartialUnBlinding",
@@ -336,18 +371,10 @@ public:
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
-                //"DoubleDisCo_0l_RPV",
-                //"DoubleDisCo_1l_RPV",
-                //"DoubleDisCo_NonIsoMuon_0l_RPV",
-                //"DoubleDisCo_NonIsoMuon_1l_RPV",
-                //"DoubleDisCo_0l_SYY",
-                //"DoubleDisCo_1l_SYY",
-                //"DoubleDisCo_NonIsoMuon_0l_SYY",
-                //"DoubleDisCo_NonIsoMuon_1l_SYY",
-                //"DoubleDisCo_2l",
             };
             registerModules(tr, std::move(modulesList));
         }
+
         else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateBTagSF" || analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
