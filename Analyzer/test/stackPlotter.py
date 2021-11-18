@@ -672,6 +672,7 @@ if __name__ == "__main__":
     parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
     parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",      default=False,  action="store_true") 
     parser.add_argument("--printInfo",    dest="printInfo",    help="Print significance and cuts", default=False,  action="store_true")
+    parser.add_argument("--makeTable",    dest="makeTable",    help="Make the table of fracs",     default=False,  action="store_true")
     parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="NULL", required=True)
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="NULL", required=True)
     parser.add_argument("--year",         dest="year",         help="which year",                                  required=True)
@@ -696,3 +697,6 @@ if __name__ == "__main__":
     plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
     plotter.make_njetsTable()
+
+    if args.makeTable:
+        plotter.makeTable()
