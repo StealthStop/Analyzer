@@ -105,7 +105,7 @@ private:
  
             if(runtype == "MC")
             {
-                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, puFileName, meanFileName);
+                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, meanFileName);
                 else if(module=="BTagCorrector")
                 {
                     auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, filetag);
