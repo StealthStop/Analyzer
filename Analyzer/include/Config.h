@@ -142,9 +142,9 @@ public:
         {
             runYear                           = "2016";
             Lumi                              = 36330.0;
-            deepCSV_WP_loose                  = 0.2217;
-            deepCSV_WP_medium                 = 0.6321;
-            deepCSV_WP_tight                  = 0.8953;            
+            deepCSV_WP_loose                  = 0.1918;
+            deepCSV_WP_medium                 = 0.5847;
+            deepCSV_WP_tight                  = 0.8767;            
             DeepESMCfg                        = "DeepEventShape_2016.cfg";
             DeepESMModel                      = "keras_frozen_2016.pb";
             DeepESMCfg_NonIsoMuon             = "DeepEventShape_NonIsoMuon_2016.cfg";
@@ -177,10 +177,10 @@ public:
         else if(filetag.find("2017") != std::string::npos)
         { 
             runYear               = "2017";
-            Lumi                  = 41525.0;
-            deepCSV_WP_loose      = 0.1522;
-            deepCSV_WP_medium     = 0.4941;       
-            deepCSV_WP_tight      = 0.8001;
+            Lumi                  = 41480.0;
+            deepCSV_WP_loose      = 0.1355;
+            deepCSV_WP_medium     = 0.4506;       
+            deepCSV_WP_tight      = 0.7738;
             DeepESMCfg            = "DeepEventShape_2017.cfg";
             DeepESMModel          = "keras_frozen_2017.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2017.cfg";
@@ -205,9 +205,9 @@ public:
         {
             runYear               = "2018pre";
             Lumi                  = 21071.0;
-            deepCSV_WP_loose      = 0.1241;
-            deepCSV_WP_medium     = 0.4184;       
-            deepCSV_WP_tight      = 0.7527;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
             DeepESMCfg            = "DeepEventShape_2018pre.cfg";
             DeepESMModel          = "keras_frozen_2018pre.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018pre.cfg";
@@ -232,9 +232,9 @@ public:
         {
             runYear               = "2018post";
             Lumi                  = 38654.0;
-            deepCSV_WP_loose      = 0.1241;
-            deepCSV_WP_medium     = 0.4184;       
-            deepCSV_WP_tight      = 0.7527;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
             DeepESMCfg            = "DeepEventShape_2018post.cfg";
             DeepESMModel          = "keras_frozen_2018post.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018post.cfg";
