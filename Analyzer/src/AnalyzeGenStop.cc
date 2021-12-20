@@ -56,10 +56,10 @@ void AnalyzeGenStop::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype             = tr.getVar<std::string>("runtype");     
 
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
-        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
 
-        const auto& recoStopMass1       = tr.getVar<TLorentzVector>("GM_Stop1");
-        const auto& recoStopMass2       = tr.getVar<TLorentzVector>("GM_Stop2");
+        const auto& recoStopMass1       = tr.getVar<utility::LorentzVector>("GM_Stop1");
+        const auto& recoStopMass2       = tr.getVar<utility::LorentzVector>("GM_Stop2");
 
         const auto& Stop1pdgs       = tr.getVec<int>("GM_Stop1_pdgs");
         const auto& Stop2pdgs       = tr.getVec<int>("GM_Stop2_pdgs");

@@ -37,7 +37,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );        
 
         const auto& runtype          = tr.getVar<std::string>("runtype");
-        const auto& Jets             = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets             = tr.getVec<utility::LorentzVector>("Jets");
         const auto& JetID            = tr.getVar<bool>("JetID");        
         const auto& passMETFilters   = tr.getVar<bool>("passMETFilters");
         const auto& passMadHT        = tr.getVar<bool>("passMadHT");
@@ -79,7 +79,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -----------------------------------------------------
         // -- Create variables for setStealthStopVar function
         // -----------------------------------------------------
-        auto& goodjets_pt45 = tr.createDerivedVec<TLorentzVector>("GoodJets_pt45_tlv");
+        auto& goodjets_pt45 = tr.createDerivedVec<utility::LorentzVector>("GoodJets_pt45_tlv");
         for (unsigned int i = 0; i < Jets.size(); ++i )
         {
             if (!GoodJets_pt45[i]) continue;

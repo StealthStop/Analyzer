@@ -64,9 +64,9 @@ void AnalyzeSignalModels::Loop(NTupleReader& tr, double, int maxevents, bool)
         
         const auto& runtype         = tr.getVar<std::string>("runtype");     
         const auto& GoodJets        = tr.getVec<bool>("GoodJets");
-        const auto& Jets            = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets            = tr.getVec<utility::LorentzVector>("Jets");
 
-        const auto& GenParticles    = tr.getVec<TLorentzVector>("GenParticles");
+        const auto& GenParticles    = tr.getVec<utility::LorentzVector>("GenParticles");
         const auto& GenParticlesPDG = tr.getVec<int>("GenParticles_PdgId");
         const auto& GenParentsPDG = tr.getVec<int>("GenParticles_ParentId");
 
@@ -119,8 +119,8 @@ void AnalyzeSignalModels::Loop(NTupleReader& tr, double, int maxevents, bool)
             weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
         }
 
-        TLorentzVector stop; TLorentzVector astop; TLorentzVector top; TLorentzVector atop;
-        TLorentzVector nlino; TLorentzVector anlino;
+        utility::LorentzVector stop; utility::LorentzVector astop; utility::LorentzVector top; utility::LorentzVector atop;
+        utility::LorentzVector nlino; utility::LorentzVector anlino;
         for (unsigned int genPart = 0; genPart < GenParticles.size(); genPart++) {
             
             if (GenParticlesPDG[genPart] == 1000006) {
@@ -151,14 +151,14 @@ void AnalyzeSignalModels::Loop(NTupleReader& tr, double, int maxevents, bool)
         }
 
         if (nlino.E() != 0) {
-            my_2d_histos["h_top_nlino_dphi"]->Fill(top.DeltaPhi(nlino), NGoodLeptons, weight);
+            my_2d_histos["h_top_nlino_dphi"]->Fill(utility::DeltaPhi(top, nlino), NGoodLeptons, weight);
             my_2d_histos["h_top_nlino_deta"]->Fill(std::abs(top.Eta() - nlino.Eta()), NGoodLeptons, weight);
-            my_2d_histos["h_atop_nlino_dphi"]->Fill(atop.DeltaPhi(anlino), NGoodLeptons, weight);
+            my_2d_histos["h_atop_nlino_dphi"]->Fill(utility::DeltaPhi(atop, anlino), NGoodLeptons, weight);
             my_2d_histos["h_atop_nlino_deta"]->Fill(std::abs(atop.Eta() - anlino.Eta()), NGoodLeptons, weight);
-            my_3d_histos["h_toppt_top_nlino_dphi"]->Fill(stop.Pt(), top.DeltaPhi(nlino), NGoodLeptons, weight) ;
+            my_3d_histos["h_toppt_top_nlino_dphi"]->Fill(stop.Pt(), utility::DeltaPhi(top, nlino), NGoodLeptons, weight) ;
 
         }
-        my_2d_histos["h_atop_top_dphi"]->Fill(atop.DeltaPhi(top), NGoodLeptons, weight);
+        my_2d_histos["h_atop_top_dphi"]->Fill(utility::DeltaPhi(atop, top), NGoodLeptons, weight);
         my_2d_histos["h_atop_top_deta"]->Fill(std::abs(atop.Eta() - top.Eta()), NGoodLeptons, weight);
 
         double jetPtMax = 0.0;

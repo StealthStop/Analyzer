@@ -5,7 +5,8 @@
 #include <TH2D.h>
 #include <TEfficiency.h>
 #include <TTree.h>
-#include <TLorentzVector.h>
+
+#include "Framework/Framework/include/Utility.h"
 
 #include <map>
 #include <string>
@@ -27,9 +28,9 @@ public:
     void WriteHistos(TFile* outfile);
     void printTriggerList( const std::vector<std::string>& TriggerNames );
     
-    bool containsGoodLepton( const std::vector<TLorentzVector>& leptons, const std::vector<bool>& goodLeptons, double ptThreshold, double etaSelection);
-    int goodLeptonIndex( const std::vector<TLorentzVector>& leptons, const std::vector<bool>& goodLeptons );
-    void fillHistos( const std::map<std::string, bool>& cutMap, bool passLeptonTriggers, const TLorentzVector& lepton, double theWeight );
+    bool containsGoodLepton( const std::vector<utility::LorentzVector>& leptons, const std::vector<bool>& goodLeptons, double ptThreshold, double etaSelection);
+    int goodLeptonIndex( const std::vector<utility::LorentzVector>& leptons, const std::vector<bool>& goodLeptons );
+    void fillHistos( const std::map<std::string, bool>& cutMap, bool passLeptonTriggers, const utility::LorentzVector& lepton, double theWeight );
 };
 
 #endif

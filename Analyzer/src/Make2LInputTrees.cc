@@ -31,9 +31,9 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
         my_histos["EventCounter"]->Fill( eventCounter );
 
         const auto& runtype             = tr.getVar<std::string>("runtype");
-//        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+//        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
         const auto& GoodLeptonsCharge   = tr.getVec<int>("GoodLeptonsCharge");
-//        const auto& Jets                = tr.getVec<TLorentzVector>("Jets");
+//        const auto& Jets                = tr.getVec<utility::LorentzVector>("Jets");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
 //        const auto& onZ                 = tr.getVar<bool>("onZ");
         const auto& JetID               = tr.getVar<bool>("JetID");

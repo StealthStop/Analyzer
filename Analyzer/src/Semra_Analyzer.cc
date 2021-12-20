@@ -43,7 +43,7 @@ void Semra_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) // de
         my_histos.emplace( "h_bjetsPhi_"+cutVar.first,      std::make_shared<TH1D> ( ("h_bjetsPhi_"+cutVar.first).c_str(),      ("h_bjetsPhi_"+cutVar.first).c_str(),      80, -4, 4     ) ); 
         my_histos.emplace( "h_bjetsPt_"+cutVar.first,       std::make_shared<TH1D> ( ("h_bjetsPt_"+cutVar.first).c_str(),       ("h_bjetsPt_"+cutVar.first).c_str(),       1000, 0, 2000 ) );
 
-        // get the top object (actual top jets from top TLorentzVector) jets' Mass, Eta, Phi, Pt  
+        // get the top object (actual top jets from top utility::LorentzVector) jets' Mass, Eta, Phi, Pt  
         my_histos.emplace( "h_ntops_"+cutVar.first,         std::make_shared<TH1D> ( ("h_ntops_"+cutVar.first).c_str(),         ("h_ntops_"+cutVar.first).c_str(),         10, 0, 10     ) );
         my_histos.emplace( "h_nRtops_"+cutVar.first,        std::make_shared<TH1D> ( ("h_nRtops_"+cutVar.first).c_str(),        ("h_nRtops_"+cutVar.first).c_str(),        10, 0, 10     ) );
         my_histos.emplace( "h_nMtops_"+cutVar.first,        std::make_shared<TH1D> ( ("h_nMtops_"+cutVar.first).c_str(),        ("h_nMtops_"+cutVar.first).c_str(),        10, 0, 10     ) );
@@ -95,7 +95,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         // General variables
         const auto& runtype               = tr.getVar<std::string>("runtype");     
-        const auto& Jets                  = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
         const auto& MET                   = tr.getVar<double>("MET");
         const auto& HT_trigger_pt30       = tr.getVar<double>("HT_trigger_pt30");
         const auto& GoodJets_pt30         = tr.getVec<bool>("GoodJets_pt30");
@@ -111,7 +111,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& topsEta               = tr.getVec<double>("topsEta");
         const auto& topsPhi               = tr.getVec<double>("topsPhi");  
         const auto& topsPt                = tr.getVec<double>("topsPt");
-        const auto& topsLV                = tr.getVec<TLorentzVector>("topsLV");
+        const auto& topsLV                = tr.getVec<utility::LorentzVector>("topsLV");
         const auto& bestTopMass           = tr.getVar<double>("bestTopMass");
         const auto& bestTopEta            = tr.getVar<double>("bestTopEta");
         const auto& bestTopPhi            = tr.getVar<double>("bestTopPhi");
@@ -171,7 +171,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ---------------------------------------------
         // -- Calculate DeltaR between tops and bjets
         // ---------------------------------------------
-        std::vector<TLorentzVector> bjets;
+        std::vector<utility::LorentzVector> bjets;
         
         for(unsigned int ijet = 0; ijet < Jets.size(); ijet++)
         {
@@ -185,7 +185,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             for (unsigned int b = 0; b < bjets.size(); b++) 
             {
-                double deltaR = topsLV.at(t).DeltaR(bjets.at(b));
+                double deltaR = utility::DeltaR(topsLV.at(t), bjets.at(b));
                 dR_top_bjet.push_back(deltaR);
             }
         }
@@ -260,7 +260,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                     my_histos["h_jetsPt_"+cutVar.first]->Fill(Jets.at(ijet).Pt(), weight);
  
                     if(!GoodBJets_pt30[ijet]) continue;
-                    const TLorentzVector& bjet = Jets.at(ijet);                     
+                    const utility::LorentzVector& bjet = Jets.at(ijet);                     
                     my_histos["h_bjetsMass_"+cutVar.first]->Fill(bjet.M(), weight);
                     my_histos["h_bjetsEta_"+cutVar.first]->Fill(bjet.Eta(), weight);
                     my_histos["h_bjetsPhi_"+cutVar.first]->Fill(bjet.Phi(), weight);

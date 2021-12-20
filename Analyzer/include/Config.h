@@ -51,7 +51,6 @@ private:
         //const auto& DoubleDisCo_Cfg_2l    = tr.getVar<std::string>("DoubleDisCo_Cfg_2l"   ); 
         //const auto& DoubleDisCo_Model_2l  = tr.getVar<std::string>("DoubleDisCo_Model_2l" );
         //const auto& DoubleDisCo_Cfg_NonIsoMuon_2l = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l");
-        const auto& puFileName            = tr.getVar<std::string>("puFileName"           );
         const auto& leptonFileName        = tr.getVar<std::string>("leptonFileName"       );
         const auto& bjetFileName          = tr.getVar<std::string>("bjetFileName"         );
         const auto& bjetCSVFileName       = tr.getVar<std::string>("bjetCSVFileName"      );
@@ -133,7 +132,7 @@ public:
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
         //std::string DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l, DoubleDisCo_Cfg_NonIsoMuon_2l;      
-        std::string puFileName, leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
+        std::string leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
  
         double Lumi=0.0, deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
@@ -166,7 +165,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            puFileName            = "PileupHistograms_0121_69p2mb_pm4p6.root";
             leptonFileName        = "allInOne_leptonSF_2016.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
@@ -193,7 +191,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2017.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2017.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2017.cfg";
-            puFileName            = "pu_ratio.root";
             leptonFileName        = "allInOne_leptonSF_2017.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_94XSF_WP_V4_B_F.csv";
@@ -220,7 +217,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018pre.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018pre.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018pre.cfg";
-            puFileName            = "PileupHistograms_2018_69mb_pm5.root";
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
@@ -247,7 +243,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018post.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018post.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018post.cfg";
-            puFileName            = "PileupHistograms_2018_69mb_pm5.root";
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
@@ -281,7 +276,6 @@ public:
         //tr.registerDerivedVar("DoubleDisCo_Cfg_2l",    DoubleDisCo_Cfg_2l   );
         //tr.registerDerivedVar("DoubleDisCo_Model_2l",  DoubleDisCo_Model_2l );
         //tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l",    DoubleDisCo_Cfg_NonIsoMuon_2l   );
-        tr.registerDerivedVar("puFileName",            puFileName           );
         tr.registerDerivedVar("leptonFileName",        leptonFileName       );        
         tr.registerDerivedVar("bjetFileName",          bjetFileName         );        
         tr.registerDerivedVar("bjetCSVFileName",       bjetCSVFileName      );        

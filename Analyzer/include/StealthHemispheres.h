@@ -2,7 +2,6 @@
 #define StealthHemispheres_H
 
 #include "TObject.h"
-#include "TLorentzVector.h"
 #include "TVector3.h"
 #include "TFile.h"
 #include "TFile.h"

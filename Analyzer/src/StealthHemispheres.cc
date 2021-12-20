@@ -176,12 +176,12 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------
         // -- Make Stop Hemispheres variables
         // -------------------------------------
-        const auto& Stop1_PtRank               = tr.getVar<TLorentzVector>("Stop1_PtRank_OldSeed");
-        const auto& Stop2_PtRank               = tr.getVar<TLorentzVector>("Stop2_PtRank_OldSeed");
-        const auto& Stop1_MassRank             = tr.getVar<TLorentzVector>("Stop1_MassRank_OldSeed");
-        const auto& Stop2_MassRank             = tr.getVar<TLorentzVector>("Stop2_MassRank_OldSeed");
-        const auto& Stop1_ScalarPtRank         = tr.getVar<TLorentzVector>("Stop1_ScalarPtRank_OldSeed");
-        const auto& Stop2_ScalarPtRank         = tr.getVar<TLorentzVector>("Stop2_ScalarPtRank_OldSeed");
+        const auto& Stop1_PtRank               = tr.getVar<utility::LorentzVector>("Stop1_PtRank_OldSeed");
+        const auto& Stop2_PtRank               = tr.getVar<utility::LorentzVector>("Stop2_PtRank_OldSeed");
+        const auto& Stop1_MassRank             = tr.getVar<utility::LorentzVector>("Stop1_MassRank_OldSeed");
+        const auto& Stop2_MassRank             = tr.getVar<utility::LorentzVector>("Stop2_MassRank_OldSeed");
+        const auto& Stop1_ScalarPtRank         = tr.getVar<utility::LorentzVector>("Stop1_ScalarPtRank_OldSeed");
+        const auto& Stop2_ScalarPtRank         = tr.getVar<utility::LorentzVector>("Stop2_ScalarPtRank_OldSeed");
         const auto& Stop1ScalarPt_ScalarPtRank = tr.getVar<double>("Stop1ScalarPt_ScalarPtRank_OldSeed");
         const auto& Stop2ScalarPt_ScalarPtRank = tr.getVar<double>("Stop2ScalarPt_ScalarPtRank_OldSeed");
         const auto& MT2                        = tr.getVar<double>("MT2_OldSeed"); 
