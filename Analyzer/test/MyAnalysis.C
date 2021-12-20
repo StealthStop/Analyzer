@@ -7,21 +7,17 @@
 #include "TopTagger/CfgParser/interface/TTException.h"
 
 #include "Analyzer/Analyzer/include/AnalyzeBackground.h"
-#include "Analyzer/Analyzer/include/AnalyzeWControlRegion.h"
 #include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
 #include "Analyzer/Analyzer/include/AnalyzeEventSelection.h"
 #include "Analyzer/Analyzer/include/AnalyzeEventShape.h"
 #include "Analyzer/Analyzer/include/Analyze0Lep.h"
 #include "Analyzer/Analyzer/include/Analyze1Lep.h"
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
-#include "Analyzer/Analyzer/include/AnalyzeNjetsMinusOneCSFillDijetHists.h"
-#include "Analyzer/Analyzer/include/AnalyzeNjetsMinusOneCSJetReplacement.h"
 #include "Analyzer/Analyzer/include/AnalyzeStealthTopTagger.h"
 #include "Analyzer/Analyzer/include/AnalyzeHEM.h"
 #include "Analyzer/Analyzer/include/AnalyzeSignalModels.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
-#include "Analyzer/Analyzer/include/AnalyzeEENoise.h"
 #include "Analyzer/Analyzer/include/AnalyzeBTagSF.h"
 #include "Analyzer/Analyzer/include/MakeNJetDists.h"
 #include "Analyzer/Analyzer/include/MakeMiniTree.h"
@@ -176,7 +172,6 @@ int main(int argc, char *argv[])
 
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&,const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
         {"AnalyzeBackground",       run<AnalyzeBackground>},
-        {"AnalyzeWControlRegion",   run<AnalyzeWControlRegion>},
         {"AnalyzeTopTagger",        run<AnalyzeTopTagger>},
         {"AnalyzeEventSelection",   run<AnalyzeEventSelection>},
         {"AnalyzeEventShape",       run<AnalyzeEventShape>},
@@ -187,15 +182,12 @@ int main(int argc, char *argv[])
         {"AnalyzeStealthTopTagger", run<AnalyzeStealthTopTagger>},
         {"AnalyzeBTagSF",           run<AnalyzeBTagSF>},
         {"AnalyzeHEM",              run<AnalyzeHEM>},
-        {"AnalyzeEENoise",          run<AnalyzeEENoise>},
         {"AnalyzeSignalModels",     run<AnalyzeSignalModels>},
         {"AnalyzeTest",             run<AnalyzeTest>},
         {"CalculateBTagSF",         run<CalculateBTagSF>},
         {"CalculateSFMean",         run<CalculateSFMean>},
         {"MakeMiniTree",            run<MakeMiniTree>},
         {"MakeNJetDists",           run<MakeNJetDists>},
-        {"AnalyzeNjetsMinusOneCSFillDijetHists", run<AnalyzeNjetsMinusOneCSFillDijetHists>},
-        {"AnalyzeNjetsMinusOneCSJetReplacement", run<AnalyzeNjetsMinusOneCSJetReplacement>},
         {"Semra_Analyzer",          run<Semra_Analyzer>},
         {"ISRJets_Analyzer",        run<ISRJets_Analyzer>},
         {"HadTriggers_Analyzer",    run<HadTriggers_Analyzer>},
