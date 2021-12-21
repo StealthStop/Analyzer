@@ -40,7 +40,7 @@ LIBSTOPTAGGER += -L$(TTTDIR) -lTopTagger
 INCLUDESDIRS  += $(shell root-config --cflags)
 
 # ROOT libraries
-LIBS          += $(shell root-config --glibs)
+LIBS          += $(shell root-config --glibs) -lGenVector
 
 # Tensorflow includes and libraries
 ifdef TENSORFLOW_DIR
