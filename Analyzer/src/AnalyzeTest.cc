@@ -59,8 +59,8 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
         const auto& passTriggerMC       = tr.getVar<bool>("passTriggerMC");
         const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& Mbl                 = tr.getVar<double>("Mbl");
-        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
+        const auto& Mbl                 = tr.getVar<float>("Mbl");
+        const auto& HT_trigger_pt30     = tr.getVar<float>("HT_trigger_pt30");
         const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
         
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
@@ -84,23 +84,23 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<double>("Weight");
-            const auto& lumi = tr.getVar<double>("Lumi");
+            const auto& Weight  = tr.getVar<float>("Weight");
+            const auto& lumi = tr.getVar<float>("Lumi");
             eventweight = lumi*Weight;
             
             // Define lepton weight
             if(NGoodLeptons == 1)
             {
-                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
+                const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
             
-            //PileupWeight = tr.getVar<double>("_PUweightFactor");
-            bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor = tr.getVar<double>("puWeightCorr");
+            //PileupWeight = tr.getVar<float>("_PUweightFactor");
+            bTagScaleFactor   = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            htDerivedScaleFactor = tr.getVar<float>("htDerivedweight");
+            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
+            puScaleFactor = tr.getVar<float>("puWeightCorr");
             
             weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
         }

@@ -269,14 +269,14 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ----------------------
         // -- ISR gen matching
         // ----------------------
-        const auto& GM_ISRmatching_allDR                    = tr.getVec<double>("GM_ISRmatching_allDR");
-        const auto& GM_ISRmatching_bestDR                   = tr.getVec<double>("GM_ISRmatching_bestDR");
-        const auto& GM_ISRmatching_justCutOnDR_DR           = tr.getVec<double>("GM_ISRmatching_justCutOnDR_DR");
-        const auto& GM_ISRmatching_justCutOnPtRatio_DR      = tr.getVec<double>("GM_ISRmatching_justCutOnPtRatio_DR");
-        const auto& GM_ISRmatching_allPtRatio               = tr.getVec<double>("GM_ISRmatching_allPtRatio");
-        const auto& GM_ISRmatching_bestPtRatio              = tr.getVec<double>("GM_ISRmatching_bestPtRatio");
-        const auto& GM_ISRmatching_justCutOnDR_PtRatio      = tr.getVec<double>("GM_ISRmatching_justCutOnDR_PtRatio");
-        const auto& GM_ISRmatching_justCutOnPtRatio_PtRatio = tr.getVec<double>("GM_ISRmatching_justCutOnPtRatio_PtRatio");
+        const auto& GM_ISRmatching_allDR                    = tr.getVec<float>("GM_ISRmatching_allDR");
+        const auto& GM_ISRmatching_bestDR                   = tr.getVec<float>("GM_ISRmatching_bestDR");
+        const auto& GM_ISRmatching_justCutOnDR_DR           = tr.getVec<float>("GM_ISRmatching_justCutOnDR_DR");
+        const auto& GM_ISRmatching_justCutOnPtRatio_DR      = tr.getVec<float>("GM_ISRmatching_justCutOnPtRatio_DR");
+        const auto& GM_ISRmatching_allPtRatio               = tr.getVec<float>("GM_ISRmatching_allPtRatio");
+        const auto& GM_ISRmatching_bestPtRatio              = tr.getVec<float>("GM_ISRmatching_bestPtRatio");
+        const auto& GM_ISRmatching_justCutOnDR_PtRatio      = tr.getVec<float>("GM_ISRmatching_justCutOnDR_PtRatio");
+        const auto& GM_ISRmatching_justCutOnPtRatio_PtRatio = tr.getVec<float>("GM_ISRmatching_justCutOnPtRatio_PtRatio");
         const auto& nGenISR                                 = tr.getVar<int>("nGenISR");
         const auto& nGenISR_qg                              = tr.getVar<int>("nGenISR_qg");
         const auto& nGenISR_gq                              = tr.getVar<int>("nGenISR_gq");
@@ -285,21 +285,21 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& GenISR_qg                               = tr.getVec<utility::LorentzVector>("GenISR_qg");
         const auto& GenISR_gq                               = tr.getVec<utility::LorentzVector>("GenISR_gq");
         const auto& GenISR_gg                               = tr.getVec<utility::LorentzVector>("GenISR_gg");
-        const auto& dEta_RecoISR_GenISR                     = tr.getVec<double>("dEta_RecoISR_GenISR");
+        const auto& dEta_RecoISR_GenISR                     = tr.getVec<float>("dEta_RecoISR_GenISR");
         const auto& ISRmatched_dr_ptr                       = tr.getVec<bool>("ISRmatched_dr_ptr");
         const auto& NonISRmatched_dr_ptr                    = tr.getVec<bool>("NonISRmatched_dr_ptr"); 
         // AK4 variables from ntuple
-        const auto& Jets_axismajor                          = tr.getVec<double>("Jets_axismajor");
-        const auto& Jets_axisminor                          = tr.getVec<double>("Jets_axisminor");
-        const auto& Jets_ptD                                = tr.getVec<double>("Jets_ptD");
-        const auto& Jets_chargedHadronEnergyFraction        = tr.getVec<double>("Jets_chargedHadronEnergyFraction");
-        const auto& Jets_neutralHadronEnergyFraction        = tr.getVec<double>("Jets_neutralHadronEnergyFraction");
+        const auto& Jets_axismajor                          = tr.getVec<float>("Jets_axismajor");
+        const auto& Jets_axisminor                          = tr.getVec<float>("Jets_axisminor");
+        const auto& Jets_ptD                                = tr.getVec<float>("Jets_ptD");
+        const auto& Jets_chargedHadronEnergyFraction        = tr.getVec<float>("Jets_chargedHadronEnergyFraction");
+        const auto& Jets_neutralHadronEnergyFraction        = tr.getVec<float>("Jets_neutralHadronEnergyFraction");
         const auto& Jets_chargedHadronMultiplicity          = tr.getVec<int>("Jets_chargedHadronMultiplicity");
         const auto& Jets_neutralHadronMultiplicity          = tr.getVec<int>("Jets_neutralHadronMultiplicity");
         const auto& Jets_chargedMultiplicity                = tr.getVec<int>("Jets_chargedMultiplicity");
         const auto& Jets_neutralMultiplicity                = tr.getVec<int>("Jets_neutralMultiplicity");
-        const auto& Jets_qgLikelihood                       = tr.getVec<double>("Jets_qgLikelihood");
-        const auto& Jets_bJetTagDeepCSVtotb                 = tr.getVec<double>("Jets_bJetTagDeepCSVtotb");
+        const auto& Jets_qgLikelihood                       = tr.getVec<float>("Jets_qgLikelihood");
+        const auto& Jets_bJetTagDeepCSVtotb                 = tr.getVec<float>("Jets_bJetTagDeepCSVtotb");
 
         const auto& Jets_ISRMask                            = tr.getVec<bool>("Jets_ISRMask");
 
@@ -314,13 +314,13 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight   = tr.getVar<double>("Weight");
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& Weight   = tr.getVar<float>("Weight");
+            const auto& lumi     = tr.getVar<float>("Lumi");
             eventweight          = lumi*Weight;
         
-            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            bTagScaleFactor      = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
+            puScaleFactor        = tr.getVar<float>("puWeightCorr");
         
             weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
             //weight *= eventweight;

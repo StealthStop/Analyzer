@@ -148,10 +148,10 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype         = tr.getVar<std::string>("runtype");     
         const auto& JetID           = tr.getVar<bool>("JetID");
         const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
-        const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
+        const auto& HT_trigger_pt45 = tr.getVar<float>("HT_trigger_pt45");
         const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& dR_bjets        = tr.getVar<double>("dR_bjets");               
+        const auto& dR_bjets        = tr.getVar<float>("dR_bjets");               
         const auto& ntops           = tr.getVar<int>("ntops");
         const auto& ntops_1jet      = tr.getVar<int>("ntops_1jet"); // merged
         const auto& ntops_2jet      = tr.getVar<int>("ntops_2jet");
@@ -182,14 +182,14 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& Stop2_MassRank             = tr.getVar<utility::LorentzVector>("Stop2_MassRank_OldSeed");
         const auto& Stop1_ScalarPtRank         = tr.getVar<utility::LorentzVector>("Stop1_ScalarPtRank_OldSeed");
         const auto& Stop2_ScalarPtRank         = tr.getVar<utility::LorentzVector>("Stop2_ScalarPtRank_OldSeed");
-        const auto& Stop1ScalarPt_ScalarPtRank = tr.getVar<double>("Stop1ScalarPt_ScalarPtRank_OldSeed");
-        const auto& Stop2ScalarPt_ScalarPtRank = tr.getVar<double>("Stop2ScalarPt_ScalarPtRank_OldSeed");
-        const auto& MT2                        = tr.getVar<double>("MT2_OldSeed"); 
-        const auto& dR_Stop1Stop2              = tr.getVar<double>("dR_Stop1Stop2_OldSeed");
-        const auto& dPhi_Stop1Stop2            = tr.getVar<double>("dPhi_Stop1Stop2_OldSeed");
-        const auto& difference_stopMasses      = tr.getVar<double>("difference_stopMasses_OldSeed");
-        const auto& average_stopMasses         = tr.getVar<double>("average_stopMasses_OldSeed");
-        const auto& relativeDiff_stopMasses    = tr.getVar<double>("relativeDiff_stopMasses_OldSeed");
+        const auto& Stop1ScalarPt_ScalarPtRank = tr.getVar<float>("Stop1ScalarPt_ScalarPtRank_OldSeed");
+        const auto& Stop2ScalarPt_ScalarPtRank = tr.getVar<float>("Stop2ScalarPt_ScalarPtRank_OldSeed");
+        const auto& MT2                        = tr.getVar<float>("MT2_OldSeed"); 
+        const auto& dR_Stop1Stop2              = tr.getVar<float>("dR_Stop1Stop2_OldSeed");
+        const auto& dPhi_Stop1Stop2            = tr.getVar<float>("dPhi_Stop1Stop2_OldSeed");
+        const auto& difference_stopMasses      = tr.getVar<float>("difference_stopMasses_OldSeed");
+        const auto& average_stopMasses         = tr.getVar<float>("average_stopMasses_OldSeed");
+        const auto& relativeDiff_stopMasses    = tr.getVar<float>("relativeDiff_stopMasses_OldSeed");
 
         double stop1Mass_PtRank       = 0.0, stop1Eta_PtRank       = 0.0, stop1Phi_PtRank       = 0.0, stop1Pt_PtRank       = 0.0;
         double stop2Mass_PtRank       = 0.0, stop2Eta_PtRank       = 0.0, stop2Phi_PtRank       = 0.0, stop2Pt_PtRank       = 0.0;
@@ -236,13 +236,13 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight   = tr.getVar<double>("Weight");
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& Weight   = tr.getVar<float>("Weight");
+            const auto& lumi     = tr.getVar<float>("Lumi");
             eventweight          = lumi*Weight;
         
-            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            bTagScaleFactor      = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
+            puScaleFactor        = tr.getVar<float>("puWeightCorr");
         
             weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }

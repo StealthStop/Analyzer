@@ -71,8 +71,8 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
     while( tr.getNextEvent() )
     {
-        const auto& MET                = tr.getVar<double>("MET");
-        const auto& HT_trigger         = tr.getVar<double>("HT_trigger");
+        const auto& MET                = tr.getVar<float>("MET");
+        const auto& HT_trigger         = tr.getVar<float>("HT_trigger");
         const auto& ntops              = tr.getVar<int>("ntops");
         const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet");
         const auto& ntops_2jet         = tr.getVar<int>("ntops_2jet");
@@ -104,7 +104,7 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         //eventweight = weight;
 
         if(runtype == "MC"){
-            const auto& Weight  = tr.getVar<double>("Weight");
+            const auto& Weight  = tr.getVar<float>("Weight");
             double lumi = 35900; // Lumi for 2016
             // Weight from NTuples            
             eventweight = lumi*Weight;

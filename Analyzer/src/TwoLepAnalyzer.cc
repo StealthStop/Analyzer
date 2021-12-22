@@ -114,7 +114,7 @@ void TwoLepAnalyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& JetID               = tr.getVar<bool>("JetID");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
         const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
+        const auto& HT_trigger_pt30     = tr.getVar<float>("HT_trigger_pt30");
         const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
         const auto& GoodBJets_pt30      = tr.getVec<bool>("GoodBJets_pt30");
         
@@ -124,28 +124,28 @@ void TwoLepAnalyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& Jets                = tr.getVec<utility::LorentzVector>("Jets");
         const auto& passBlind           = tr.getVar<bool>("passBlindLep_Good");
 
-        const auto& Mbl1                = tr.getVar<double>("TwoLep_Mbl1");
-        const auto& Mbl2                = tr.getVar<double>("TwoLep_Mbl2");
+        const auto& Mbl1                = tr.getVar<float>("TwoLep_Mbl1");
+        const auto& Mbl2                = tr.getVar<float>("TwoLep_Mbl2");
       
-        const auto& Stop1Mass           = tr.getVar<double>("GM_Stop1Mass");
-        const auto& Stop2Mass           = tr.getVar<double>("GM_Stop2Mass");
-        // const auto& Stop1GenMass        = tr.getVar<double>("GM_Stop1GenMass");
-        //const auto& Stop2GenMass        = tr.getVar<double>("GM_Stop2GenMass");
-        // const auto& Nlino1Mass          = tr.getVar<double>("GM_Nlino1Mass");
-        //const auto& Nlino2Mass          = tr.getVar<double>("GM_Nlino2Mass");
-        //const auto& Nlino1GenMass       = tr.getVar<double>("GM_Nlino1GenMass");
-        //const auto& Nlino2GenMass       = tr.getVar<double>("GM_Nlino2GenMass");
-        //const auto& Single1Mass         = tr.getVar<double>("GM_Single1Mass");
-        //const auto& Single2Mass         = tr.getVar<double>("GM_Single2Mass");
-        //const auto& Single1GenMass      = tr.getVar<double>("GM_Single1GenMass");
-        //const auto& Single2GenMass      = tr.getVar<double>("GM_Single2GenMass");
-        const auto& StopMT2             = tr.getVar<double>("GM_StopMT2");
-        //const auto& StopMT2Gen          = tr.getVar<double>("GM_StopGenMT2"); 
-        const auto& fracGenMatched        = tr.getVar<double>("fracGenMatched");
+        const auto& Stop1Mass           = tr.getVar<float>("GM_Stop1Mass");
+        const auto& Stop2Mass           = tr.getVar<float>("GM_Stop2Mass");
+        // const auto& Stop1GenMass        = tr.getVar<float>("GM_Stop1GenMass");
+        //const auto& Stop2GenMass        = tr.getVar<float>("GM_Stop2GenMass");
+        // const auto& Nlino1Mass          = tr.getVar<float>("GM_Nlino1Mass");
+        //const auto& Nlino2Mass          = tr.getVar<float>("GM_Nlino2Mass");
+        //const auto& Nlino1GenMass       = tr.getVar<float>("GM_Nlino1GenMass");
+        //const auto& Nlino2GenMass       = tr.getVar<float>("GM_Nlino2GenMass");
+        //const auto& Single1Mass         = tr.getVar<float>("GM_Single1Mass");
+        //const auto& Single2Mass         = tr.getVar<float>("GM_Single2Mass");
+        //const auto& Single1GenMass      = tr.getVar<float>("GM_Single1GenMass");
+        //const auto& Single2GenMass      = tr.getVar<float>("GM_Single2GenMass");
+        const auto& StopMT2             = tr.getVar<float>("GM_StopMT2");
+        //const auto& StopMT2Gen          = tr.getVar<float>("GM_StopGenMT2"); 
+        const auto& fracGenMatched        = tr.getVar<float>("fracGenMatched");
 
         const auto& RecoStop1           = tr.getVar<utility::LorentzVector>("RecoStop1");
         const auto& RecoStop2           = tr.getVar<utility::LorentzVector>("RecoStop2");
-        const auto& RecoStopMT2         = tr.getVar<double>("RecoStopMT2");
+        const auto& RecoStopMT2         = tr.getVar<float>("RecoStopMT2");
         // ------------------------
         // -- Define weight
         // ------------------------
@@ -160,23 +160,23 @@ void TwoLepAnalyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<double>("Weight");
-            const auto& lumi = tr.getVar<double>("Lumi");
+            const auto& Weight  = tr.getVar<float>("Weight");
+            const auto& lumi = tr.getVar<float>("Lumi");
             eventweight = lumi*Weight;
             
             // Define lepton weight
             if(NGoodLeptons == 1)
             {
-                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
+                const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
             
-            //PileupWeight = tr.getVar<double>("_PUweightFactor");
-            bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor = tr.getVar<double>("puWeightCorr");
+            //PileupWeight = tr.getVar<float>("_PUweightFactor");
+            bTagScaleFactor   = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            htDerivedScaleFactor = tr.getVar<float>("htDerivedweight");
+            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
+            puScaleFactor = tr.getVar<float>("puWeightCorr");
             
             weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
         }

@@ -96,8 +96,8 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // General variables
         const auto& runtype               = tr.getVar<std::string>("runtype");     
         const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
-        const auto& MET                   = tr.getVar<double>("MET");
-        const auto& HT_trigger_pt30       = tr.getVar<double>("HT_trigger_pt30");
+        const auto& MET                   = tr.getVar<float>("MET");
+        const auto& HT_trigger_pt30       = tr.getVar<float>("HT_trigger_pt30");
         const auto& GoodJets_pt30         = tr.getVec<bool>("GoodJets_pt30");
         const auto& NGoodJets_pt30        = tr.getVar<int>("NGoodJets_pt30");
         const auto& GoodBJets_pt30        = tr.getVec<bool>("GoodBJets_pt30");
@@ -107,17 +107,17 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& ntops_1jet            = tr.getVar<int>("ntops_1jet"); // merged
         const auto& ntops_2jet            = tr.getVar<int>("ntops_2jet"); // medium
         const auto& ntops_3jet            = tr.getVar<int>("ntops_3jet"); // resolved 
-        const auto& topsMass              = tr.getVec<double>("topsMass");
-        const auto& topsEta               = tr.getVec<double>("topsEta");
-        const auto& topsPhi               = tr.getVec<double>("topsPhi");  
-        const auto& topsPt                = tr.getVec<double>("topsPt");
+        const auto& topsMass              = tr.getVec<float>("topsMass");
+        const auto& topsEta               = tr.getVec<float>("topsEta");
+        const auto& topsPhi               = tr.getVec<float>("topsPhi");  
+        const auto& topsPt                = tr.getVec<float>("topsPt");
         const auto& topsLV                = tr.getVec<utility::LorentzVector>("topsLV");
-        const auto& bestTopMass           = tr.getVar<double>("bestTopMass");
-        const auto& bestTopEta            = tr.getVar<double>("bestTopEta");
-        const auto& bestTopPhi            = tr.getVar<double>("bestTopPhi");
-        const auto& bestTopPt             = tr.getVar<double>("bestTopPt");
-        const auto& dR_bjets              = tr.getVar<double>("dR_bjets");
-        const auto& dR_top1_top2          = tr.getVar<double>("dR_top1_top2");
+        const auto& bestTopMass           = tr.getVar<float>("bestTopMass");
+        const auto& bestTopEta            = tr.getVar<float>("bestTopEta");
+        const auto& bestTopPhi            = tr.getVar<float>("bestTopPhi");
+        const auto& bestTopPt             = tr.getVar<float>("bestTopPt");
+        const auto& dR_bjets              = tr.getVar<float>("dR_bjets");
+        const auto& dR_top1_top2          = tr.getVar<float>("dR_top1_top2");
         // Baseline selection
         const auto& passBaseline0l_pre    = tr.getVar<bool>("passBaseline0l_pre");
         const auto& passBaseline0l_good   = tr.getVar<bool>("passBaseline0l_good");
@@ -137,12 +137,12 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // QCD CR
         const bool pass_qcdCR                            = tr.getVar<bool>("pass_qcdCR"); // 1l qcd cr
         const auto NNonIsoMuonJets_pt30                  = tr.getVar<int>("NNonIsoMuonJets_pt30"); 
-        const auto DoubleDisCo_disc1_NonIsoMuon_0l_RPV   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_0l_RPV");
-        const auto DoubleDisCo_disc2_NonIsoMuon_0l_RPV   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_0l_RPV");
-        const auto DoubleDisCo_massReg_NonIsoMuon_0l_RPV = tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_0l_RPV");
-        const auto DoubleDisCo_disc1_0l_RPV              = tr.getVar<double>("DoubleDisCo_disc1_0l_RPV");
-        const auto DoubleDisCo_disc2_0l_RPV              = tr.getVar<double>("DoubleDisCo_disc2_0l_RPV");
-        const auto DoubleDisCo_massReg_0l_RPV            = tr.getVar<double>("DoubleDisCo_massReg_0l_RPV");
+        const auto DoubleDisCo_disc1_NonIsoMuon_0l_RPV   = tr.getVar<float>("DoubleDisCo_disc1_NonIsoMuon_0l_RPV");
+        const auto DoubleDisCo_disc2_NonIsoMuon_0l_RPV   = tr.getVar<float>("DoubleDisCo_disc2_NonIsoMuon_0l_RPV");
+        const auto DoubleDisCo_massReg_NonIsoMuon_0l_RPV = tr.getVar<float>("DoubleDisCo_massReg_NonIsoMuon_0l_RPV");
+        const auto DoubleDisCo_disc1_0l_RPV              = tr.getVar<float>("DoubleDisCo_disc1_0l_RPV");
+        const auto DoubleDisCo_disc2_0l_RPV              = tr.getVar<float>("DoubleDisCo_disc2_0l_RPV");
+        const auto DoubleDisCo_massReg_0l_RPV            = tr.getVar<float>("DoubleDisCo_massReg_0l_RPV");
         const bool pass_7j_pt30           = NGoodJets_pt30 == 7;
         const bool pass_8j_pt30           = NGoodJets_pt30 == 8;
         const bool pass_9j_pt30           = NGoodJets_pt30 == 9;
@@ -160,10 +160,10 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& lumi     = tr.getVar<double>("Lumi");
-            const auto& Weight   = tr.getVar<double>("Weight");
+            const auto& lumi     = tr.getVar<float>("Lumi");
+            const auto& Weight   = tr.getVar<float>("Weight");
             eventweight          = lumi*Weight;
-            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            puScaleFactor        = tr.getVar<float>("puWeightCorr");
         
             weight *= eventweight * puScaleFactor;
         }

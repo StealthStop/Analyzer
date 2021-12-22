@@ -206,55 +206,55 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype                           = tr.getVar<std::string>("runtype");     
         const auto& NGoodJets_pt30                    = tr.getVar<int>("NGoodJets_pt30");
         const auto& NNonIsoMuonJets_pt30              = tr.getVar<int>("NNonIsoMuonJets_pt30");
-        const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30");
-        const auto& HT_NonIsoMuon_pt30                = tr.getVar<double>("HT_NonIsoMuon_pt30");
+        const auto& HT_trigger_pt30                   = tr.getVar<float>("HT_trigger_pt30");
+        const auto& HT_NonIsoMuon_pt30                = tr.getVar<float>("HT_NonIsoMuon_pt30");
 
         const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good");
         const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good");
         const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR");
         const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon");
 
-        const auto& DoubleDisCo_massReg_0l            = tr.getVar<double>("DoubleDisCo_massReg_0l_RPV");
-        const auto& DoubleDisCo_massReg_1l            = tr.getVar<double>("DoubleDisCo_massReg_1l_RPV");
-        const auto& DoubleDisCo_massReg_NonIsoMuon_0l = tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_0l_RPV");
-        const auto& DoubleDisCo_massReg_NonIsoMuon_1l = tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_1l_RPV");
-        const auto& DoubleDisCo_disc1_0l              = tr.getVar<double>("DoubleDisCo_disc1_0l_RPV");
-        const auto& DoubleDisCo_disc2_0l              = tr.getVar<double>("DoubleDisCo_disc2_0l_RPV");
-        const auto& DoubleDisCo_disc1_1l              = tr.getVar<double>("DoubleDisCo_disc1_1l_RPV");
-        const auto& DoubleDisCo_disc2_1l              = tr.getVar<double>("DoubleDisCo_disc2_1l_RPV");
-        const auto& DoubleDisCo_disc1_NonIsoMuon_0l   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_0l_RPV");
-        const auto& DoubleDisCo_disc2_NonIsoMuon_0l   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_0l_RPV");
-        const auto& DoubleDisCo_disc1_NonIsoMuon_1l   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_1l_RPV");
-        const auto& DoubleDisCo_disc2_NonIsoMuon_1l   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_1l_RPV");
+        const auto& DoubleDisCo_massReg_0l            = tr.getVar<float>("DoubleDisCo_massReg_0l_RPV");
+        const auto& DoubleDisCo_massReg_1l            = tr.getVar<float>("DoubleDisCo_massReg_1l_RPV");
+        const auto& DoubleDisCo_massReg_NonIsoMuon_0l = tr.getVar<float>("DoubleDisCo_massReg_NonIsoMuon_0l_RPV");
+        const auto& DoubleDisCo_massReg_NonIsoMuon_1l = tr.getVar<float>("DoubleDisCo_massReg_NonIsoMuon_1l_RPV");
+        const auto& DoubleDisCo_disc1_0l              = tr.getVar<float>("DoubleDisCo_disc1_0l_RPV");
+        const auto& DoubleDisCo_disc2_0l              = tr.getVar<float>("DoubleDisCo_disc2_0l_RPV");
+        const auto& DoubleDisCo_disc1_1l              = tr.getVar<float>("DoubleDisCo_disc1_1l_RPV");
+        const auto& DoubleDisCo_disc2_1l              = tr.getVar<float>("DoubleDisCo_disc2_1l_RPV");
+        const auto& DoubleDisCo_disc1_NonIsoMuon_0l   = tr.getVar<float>("DoubleDisCo_disc1_NonIsoMuon_0l_RPV");
+        const auto& DoubleDisCo_disc2_NonIsoMuon_0l   = tr.getVar<float>("DoubleDisCo_disc2_NonIsoMuon_0l_RPV");
+        const auto& DoubleDisCo_disc1_NonIsoMuon_1l   = tr.getVar<float>("DoubleDisCo_disc1_NonIsoMuon_1l_RPV");
+        const auto& DoubleDisCo_disc2_NonIsoMuon_1l   = tr.getVar<float>("DoubleDisCo_disc2_NonIsoMuon_1l_RPV");
 
-        const auto& fwm2_top6_0l                      = tr.getVar<double>("fwm2_top6_0l");
-        const auto& fwm3_top6_0l                      = tr.getVar<double>("fwm3_top6_0l");
-        const auto& fwm4_top6_0l                      = tr.getVar<double>("fwm4_top6_0l");
-        const auto& fwm5_top6_0l                      = tr.getVar<double>("fwm5_top6_0l");
-        const auto& jmt_ev0_top6_0l                   = tr.getVar<double>("jmt_ev0_top6_0l");
-        const auto& jmt_ev1_top6_0l                   = tr.getVar<double>("jmt_ev1_top6_0l");
-        const auto& jmt_ev2_top6_0l                   = tr.getVar<double>("jmt_ev2_top6_0l");
-        const auto& fwm2_top6_1l                      = tr.getVar<double>("fwm2_top6_1l");
-        const auto& fwm3_top6_1l                      = tr.getVar<double>("fwm3_top6_1l");
-        const auto& fwm4_top6_1l                      = tr.getVar<double>("fwm4_top6_1l");
-        const auto& fwm5_top6_1l                      = tr.getVar<double>("fwm5_top6_1l");
-        const auto& jmt_ev0_top6_1l                   = tr.getVar<double>("jmt_ev0_top6_1l");
-        const auto& jmt_ev1_top6_1l                   = tr.getVar<double>("jmt_ev1_top6_1l");
-        const auto& jmt_ev2_top6_1l                   = tr.getVar<double>("jmt_ev2_top6_1l");
-        const auto& NonIsoMuons_fwm2_top6_0l          = tr.getVar<double>("fwm2_top6_0l");
-        const auto& NonIsoMuons_fwm3_top6_0l          = tr.getVar<double>("fwm3_top6_0l");
-        const auto& NonIsoMuons_fwm4_top6_0l          = tr.getVar<double>("fwm4_top6_0l");
-        const auto& NonIsoMuons_fwm5_top6_0l          = tr.getVar<double>("fwm5_top6_0l");
-        const auto& NonIsoMuons_jmt_ev0_top6_0l       = tr.getVar<double>("jmt_ev0_top6_0l");
-        const auto& NonIsoMuons_jmt_ev1_top6_0l       = tr.getVar<double>("jmt_ev1_top6_0l");
-        const auto& NonIsoMuons_jmt_ev2_top6_0l       = tr.getVar<double>("jmt_ev2_top6_0l");
-        const auto& NonIsoMuons_fwm2_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm2_top6_1l");
-        const auto& NonIsoMuons_fwm3_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm3_top6_1l");
-        const auto& NonIsoMuons_fwm4_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm4_top6_1l");
-        const auto& NonIsoMuons_fwm5_top6_1l          = tr.getVar<double>("NonIsoMuons_fwm5_top6_1l");
-        const auto& NonIsoMuons_jmt_ev0_top6_1l       = tr.getVar<double>("NonIsoMuons_jmt_ev0_top6_1l");
-        const auto& NonIsoMuons_jmt_ev1_top6_1l       = tr.getVar<double>("NonIsoMuons_jmt_ev1_top6_1l");
-        const auto& NonIsoMuons_jmt_ev2_top6_1l       = tr.getVar<double>("NonIsoMuons_jmt_ev2_top6_1l");
+        const auto& fwm2_top6_0l                      = tr.getVar<float>("fwm2_top6_0l");
+        const auto& fwm3_top6_0l                      = tr.getVar<float>("fwm3_top6_0l");
+        const auto& fwm4_top6_0l                      = tr.getVar<float>("fwm4_top6_0l");
+        const auto& fwm5_top6_0l                      = tr.getVar<float>("fwm5_top6_0l");
+        const auto& jmt_ev0_top6_0l                   = tr.getVar<float>("jmt_ev0_top6_0l");
+        const auto& jmt_ev1_top6_0l                   = tr.getVar<float>("jmt_ev1_top6_0l");
+        const auto& jmt_ev2_top6_0l                   = tr.getVar<float>("jmt_ev2_top6_0l");
+        const auto& fwm2_top6_1l                      = tr.getVar<float>("fwm2_top6_1l");
+        const auto& fwm3_top6_1l                      = tr.getVar<float>("fwm3_top6_1l");
+        const auto& fwm4_top6_1l                      = tr.getVar<float>("fwm4_top6_1l");
+        const auto& fwm5_top6_1l                      = tr.getVar<float>("fwm5_top6_1l");
+        const auto& jmt_ev0_top6_1l                   = tr.getVar<float>("jmt_ev0_top6_1l");
+        const auto& jmt_ev1_top6_1l                   = tr.getVar<float>("jmt_ev1_top6_1l");
+        const auto& jmt_ev2_top6_1l                   = tr.getVar<float>("jmt_ev2_top6_1l");
+        const auto& NonIsoMuons_fwm2_top6_0l          = tr.getVar<float>("fwm2_top6_0l");
+        const auto& NonIsoMuons_fwm3_top6_0l          = tr.getVar<float>("fwm3_top6_0l");
+        const auto& NonIsoMuons_fwm4_top6_0l          = tr.getVar<float>("fwm4_top6_0l");
+        const auto& NonIsoMuons_fwm5_top6_0l          = tr.getVar<float>("fwm5_top6_0l");
+        const auto& NonIsoMuons_jmt_ev0_top6_0l       = tr.getVar<float>("jmt_ev0_top6_0l");
+        const auto& NonIsoMuons_jmt_ev1_top6_0l       = tr.getVar<float>("jmt_ev1_top6_0l");
+        const auto& NonIsoMuons_jmt_ev2_top6_0l       = tr.getVar<float>("jmt_ev2_top6_0l");
+        const auto& NonIsoMuons_fwm2_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm2_top6_1l");
+        const auto& NonIsoMuons_fwm3_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm3_top6_1l");
+        const auto& NonIsoMuons_fwm4_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm4_top6_1l");
+        const auto& NonIsoMuons_fwm5_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm5_top6_1l");
+        const auto& NonIsoMuons_jmt_ev0_top6_1l       = tr.getVar<float>("NonIsoMuons_jmt_ev0_top6_1l");
+        const auto& NonIsoMuons_jmt_ev1_top6_1l       = tr.getVar<float>("NonIsoMuons_jmt_ev1_top6_1l");
+        const auto& NonIsoMuons_jmt_ev2_top6_1l       = tr.getVar<float>("NonIsoMuons_jmt_ev2_top6_1l");
 
         const auto& Jets_cm_top6_0l                   = tr.getVec<utility::LorentzVector>("Jets_cm_top6_0l");
         const auto& Jets_cm_top6_1l                   = tr.getVec<utility::LorentzVector>("Jets_cm_top6_1l");
@@ -264,23 +264,23 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& nMVAJets_1l                       = tr.getVar<unsigned int>("nMVAJets_1l");
 
         const auto& eventCounter                      = tr.getVar<int>("eventCounter");
-        const auto& Stop1_pt_cm_OldSeed               = tr.getVar<double>("Stop1_pt_cm_OldSeed");
-        const auto& Stop1_eta_cm_OldSeed              = tr.getVar<double>("Stop1_eta_cm_OldSeed");
-        const auto& Stop1_phi_cm_OldSeed              = tr.getVar<double>("Stop1_phi_cm_OldSeed");
-        const auto& Stop1_mass_cm_OldSeed             = tr.getVar<double>("Stop1_mass_cm_OldSeed");
-        const auto& Stop2_pt_cm_OldSeed               = tr.getVar<double>("Stop2_pt_cm_OldSeed");
-        const auto& Stop2_eta_cm_OldSeed              = tr.getVar<double>("Stop2_eta_cm_OldSeed");
-        const auto& Stop2_phi_cm_OldSeed              = tr.getVar<double>("Stop2_phi_cm_OldSeed");
-        const auto& Stop2_mass_cm_OldSeed             = tr.getVar<double>("Stop2_mass_cm_OldSeed");
+        const auto& Stop1_pt_cm_OldSeed               = tr.getVar<float>("Stop1_pt_cm_OldSeed");
+        const auto& Stop1_eta_cm_OldSeed              = tr.getVar<float>("Stop1_eta_cm_OldSeed");
+        const auto& Stop1_phi_cm_OldSeed              = tr.getVar<float>("Stop1_phi_cm_OldSeed");
+        const auto& Stop1_mass_cm_OldSeed             = tr.getVar<float>("Stop1_mass_cm_OldSeed");
+        const auto& Stop2_pt_cm_OldSeed               = tr.getVar<float>("Stop2_pt_cm_OldSeed");
+        const auto& Stop2_eta_cm_OldSeed              = tr.getVar<float>("Stop2_eta_cm_OldSeed");
+        const auto& Stop2_phi_cm_OldSeed              = tr.getVar<float>("Stop2_phi_cm_OldSeed");
+        const auto& Stop2_mass_cm_OldSeed             = tr.getVar<float>("Stop2_mass_cm_OldSeed");
 
-        const auto& Stop1_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon");
-        const auto& Stop1_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon");
-        const auto& Stop1_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_phi_cm_OldSeed_NonIsoMuon");
-        const auto& Stop1_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop1_mass_cm_OldSeed_NonIsoMuon");
-        const auto& Stop2_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop2_pt_cm_OldSeed_NonIsoMuon");
-        const auto& Stop2_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_eta_cm_OldSeed_NonIsoMuon");
-        const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon");
-        const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<float>("Stop1_pt_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<float>("Stop1_eta_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<float>("Stop1_phi_cm_OldSeed_NonIsoMuon");
+        const auto& Stop1_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<float>("Stop1_mass_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<float>("Stop2_pt_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<float>("Stop2_eta_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<float>("Stop2_phi_cm_OldSeed_NonIsoMuon");
+        const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<float>("Stop2_mass_cm_OldSeed_NonIsoMuon");
 
         const auto& regions_0l = tr.getVec<std::string>("regions_0l_RPV");
         const auto& regions_1l = tr.getVec<std::string>("regions_1l_RPV");
@@ -312,31 +312,31 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         // Here assume number cm jets is same in CR and SR selection
         for (unsigned int iJet = 1; iJet <= nMVAJets_0l; iJet++) {
-            Jets_flavb_0l.push_back(tr.getVar<double>("Jet_flavb_"+std::to_string(iJet)+"_0l"));
-            Jets_flavc_0l.push_back(tr.getVar<double>("Jet_flavc_"+std::to_string(iJet)+"_0l"));
-            Jets_flavg_0l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_0l"));
-            Jets_flavuds_0l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
-            Jets_flavq_0l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
+            Jets_flavb_0l.push_back(tr.getVar<float>("Jet_flavb_"+std::to_string(iJet)+"_0l"));
+            Jets_flavc_0l.push_back(tr.getVar<float>("Jet_flavc_"+std::to_string(iJet)+"_0l"));
+            Jets_flavg_0l.push_back(tr.getVar<float>("Jet_flavg_"+std::to_string(iJet)+"_0l"));
+            Jets_flavuds_0l.push_back(tr.getVar<float>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
+            Jets_flavq_0l.push_back(tr.getVar<float>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
 
-            JetNonIsoMuons_flavb_0l.push_back(tr.getVar<double>("Jet_flavb_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavc_0l.push_back(tr.getVar<double>("Jet_flavc_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavg_0l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavuds_0l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
-            JetNonIsoMuons_flavq_0l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavb_0l.push_back(tr.getVar<float>("Jet_flavb_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavc_0l.push_back(tr.getVar<float>("Jet_flavc_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavg_0l.push_back(tr.getVar<float>("Jet_flavg_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavuds_0l.push_back(tr.getVar<float>("Jet_flavuds_"+std::to_string(iJet)+"_0l"));
+            JetNonIsoMuons_flavq_0l.push_back(tr.getVar<float>("Jet_flavq_"+std::to_string(iJet)+"_0l"));
         }
 
         for (unsigned int iJet = 1; iJet <= nMVAJets_1l; iJet++) {
-            Jets_flavb_1l.push_back(tr.getVar<double>("Jet_flavb_"+std::to_string(iJet)+"_1l"));
-            Jets_flavc_1l.push_back(tr.getVar<double>("Jet_flavc_"+std::to_string(iJet)+"_1l"));
-            Jets_flavg_1l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_1l"));
-            Jets_flavuds_1l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_1l"));
-            Jets_flavq_1l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_1l"));
+            Jets_flavb_1l.push_back(tr.getVar<float>("Jet_flavb_"+std::to_string(iJet)+"_1l"));
+            Jets_flavc_1l.push_back(tr.getVar<float>("Jet_flavc_"+std::to_string(iJet)+"_1l"));
+            Jets_flavg_1l.push_back(tr.getVar<float>("Jet_flavg_"+std::to_string(iJet)+"_1l"));
+            Jets_flavuds_1l.push_back(tr.getVar<float>("Jet_flavuds_"+std::to_string(iJet)+"_1l"));
+            Jets_flavq_1l.push_back(tr.getVar<float>("Jet_flavq_"+std::to_string(iJet)+"_1l"));
 
-            JetNonIsoMuons_flavb_1l.push_back(tr.getVar<double>("JetNonIsoMuons_flavb_"+std::to_string(iJet)+"_1l"));
-            JetNonIsoMuons_flavc_1l.push_back(tr.getVar<double>("JetNonIsoMuons_flavc_"+std::to_string(iJet)+"_1l"));
-            JetNonIsoMuons_flavg_1l.push_back(tr.getVar<double>("JetNonIsoMuons_flavg_"+std::to_string(iJet)+"_1l"));
-            JetNonIsoMuons_flavuds_1l.push_back(tr.getVar<double>("JetNonIsoMuons_flavuds_"+std::to_string(iJet)+"_1l"));
-            JetNonIsoMuons_flavq_1l.push_back(tr.getVar<double>("JetNonIsoMuons_flavq_"+std::to_string(iJet)+"_1l"));
+            JetNonIsoMuons_flavb_1l.push_back(tr.getVar<float>("JetNonIsoMuons_flavb_"+std::to_string(iJet)+"_1l"));
+            JetNonIsoMuons_flavc_1l.push_back(tr.getVar<float>("JetNonIsoMuons_flavc_"+std::to_string(iJet)+"_1l"));
+            JetNonIsoMuons_flavg_1l.push_back(tr.getVar<float>("JetNonIsoMuons_flavg_"+std::to_string(iJet)+"_1l"));
+            JetNonIsoMuons_flavuds_1l.push_back(tr.getVar<float>("JetNonIsoMuons_flavuds_"+std::to_string(iJet)+"_1l"));
+            JetNonIsoMuons_flavq_1l.push_back(tr.getVar<float>("JetNonIsoMuons_flavq_"+std::to_string(iJet)+"_1l"));
         }
 
         // Put 0L and 1L version of variables into vector
@@ -398,19 +398,19 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight = tr.getVar<double>("Weight");
-            const auto& lumi   = tr.getVar<double>("Lumi");
+            const auto& Weight = tr.getVar<float>("Weight");
+            const auto& lumi   = tr.getVar<float>("Lumi");
             eventweight        = lumi * Weight;
            
-            const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
-            const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
-            const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF");
+            const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
+            const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
+            const auto& muNonIso     = tr.getVar<float>("totNonIsoMuonSF");
             leptonweight             = eleLepWeight * muLepWeight;
           
-            pileupWeight         = tr.getVar<double>("puWeightCorr");
-            bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedweight      = tr.getVar<double>("htDerivedweight");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            pileupWeight         = tr.getVar<float>("puWeightCorr");
+            bTagWeight           = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            htDerivedweight      = tr.getVar<float>("htDerivedweight");
+            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
             
             weight1L_noHTsf     *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight;
             weight0L_noHTsf     *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;

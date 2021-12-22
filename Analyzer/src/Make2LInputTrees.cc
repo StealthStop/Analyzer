@@ -38,11 +38,11 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
 //        const auto& onZ                 = tr.getVar<bool>("onZ");
         const auto& JetID               = tr.getVar<bool>("JetID");
         const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
-//        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
+//        const auto& HT_trigger_pt30     = tr.getVar<float>("HT_trigger_pt30");
 //        const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
 
-        const auto& TwoLep_Mbl1              = tr.getVar<double>("TwoLep_Mbl1");
-        const auto& TwoLep_Mbl2              = tr.getVar<double>("TwoLep_Mbl2");
+        const auto& TwoLep_Mbl1              = tr.getVar<float>("TwoLep_Mbl1");
+        const auto& TwoLep_Mbl2              = tr.getVar<float>("TwoLep_Mbl2");
 //        const auto& GoodBJets_pt30           = tr.getVec<bool>("GoodBJets_pt30");
 
 

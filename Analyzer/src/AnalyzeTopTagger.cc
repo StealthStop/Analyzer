@@ -43,10 +43,10 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passMadHT        = tr.getVar<bool>("passMadHT");
         const auto& passTriggerHadMC = tr.getVar<bool>("passTriggerHadMC");
         const auto& NGoodLeptons     = tr.getVar<int>("NGoodLeptons");
-        const auto& HT_trigger_pt45  = tr.getVar<double>("HT_trigger_pt45");
+        const auto& HT_trigger_pt45  = tr.getVar<float>("HT_trigger_pt45");
         const auto& NGoodBJets_pt45  = tr.getVar<int>("NGoodBJets_pt45");
         const auto& NGoodJets_pt45   = tr.getVar<int>("NGoodJets_pt45");
-        const auto& dR_bjets         = tr.getVar<double>("dR_bjets");
+        const auto& dR_bjets         = tr.getVar<float>("dR_bjets");
         const auto& GoodJets_pt45    = tr.getVec<bool>("GoodJets_pt45");
         const bool pass_Resolved     = JetID && passMETFilters && passMadHT && passTriggerHadMC 
                                       && NGoodLeptons==0       && HT_trigger_pt45 > 500 
@@ -65,13 +65,13 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight = tr.getVar<double>("Weight");
-            const auto& lumi   = tr.getVar<double>("Lumi");
+            const auto& Weight = tr.getVar<float>("Weight");
+            const auto& lumi   = tr.getVar<float>("Lumi");
             eventweight        = lumi*Weight;
 
-            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            bTagScaleFactor      = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
+            puScaleFactor        = tr.getVar<float>("puWeightCorr");
 
             weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }

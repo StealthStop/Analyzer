@@ -71,7 +71,7 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
         //Define useful variables here
         const auto& runtype             = tr.getVar<std::string>("runtype");
         const auto& filetag             = tr.getVar<std::string>("filetag");
-        const auto& etaCut              = tr.getVar<double>("etaCut");
+        const auto& etaCut              = tr.getVar<float>("etaCut");
         const auto& GoodLeptons         = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
 
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
@@ -110,20 +110,20 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<double>("Weight");
-            const auto& lumi = tr.getVar<double>("Lumi");
-            const auto& puWeight = tr.getVar<double>("puWeightCorr");
+            const auto& Weight  = tr.getVar<float>("Weight");
+            const auto& lumi = tr.getVar<float>("Lumi");
+            const auto& puWeight = tr.getVar<float>("puWeightCorr");
 
             // Define lepton weight
             if(NGoodLeptons == 1)
             {
-                const auto& eleLepWeight = tr.getVar<double>("noTrigGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<double>("noTrigGoodMuonSF");
+                const auto& eleLepWeight = tr.getVar<float>("noTrigGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<float>("noTrigGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
 
-            const auto& bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            const auto& prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            const auto& bTagScaleFactor   = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            const auto& prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
 
             theweight = lumi*Weight*puWeight*leptonScaleFactor*bTagScaleFactor*prefiringScaleFactor;            
         }
