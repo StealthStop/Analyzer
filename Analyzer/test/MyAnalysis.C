@@ -6,16 +6,11 @@
 
 #include "TopTagger/CfgParser/interface/TTException.h"
 
-#include "Analyzer/Analyzer/include/AnalyzeBackground.h"
 #include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
-#include "Analyzer/Analyzer/include/AnalyzeEventSelection.h"
-#include "Analyzer/Analyzer/include/AnalyzeEventShape.h"
 #include "Analyzer/Analyzer/include/Analyze0Lep.h"
 #include "Analyzer/Analyzer/include/Analyze1Lep.h"
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
-#include "Analyzer/Analyzer/include/AnalyzeStealthTopTagger.h"
 #include "Analyzer/Analyzer/include/AnalyzeHEM.h"
-#include "Analyzer/Analyzer/include/AnalyzeSignalModels.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
 #include "Analyzer/Analyzer/include/AnalyzeBTagSF.h"
@@ -171,18 +166,13 @@ int main(int argc, char *argv[])
     TFile* outfile = TFile::Open(histFile.c_str(), "RECREATE");
 
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&,const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
-        {"AnalyzeBackground",       run<AnalyzeBackground>},
         {"AnalyzeTopTagger",        run<AnalyzeTopTagger>},
-        {"AnalyzeEventSelection",   run<AnalyzeEventSelection>},
-        {"AnalyzeEventShape",       run<AnalyzeEventShape>},
         {"Analyze0Lep",             run<Analyze0Lep>},
         {"Analyze1Lep",             run<Analyze1Lep>},
         {"AnalyzeDoubleDisCo",      run<AnalyzeDoubleDisCo>},
         {"AnalyzeLepTrigger",       run<AnalyzeLepTrigger>},
-        {"AnalyzeStealthTopTagger", run<AnalyzeStealthTopTagger>},
         {"AnalyzeBTagSF",           run<AnalyzeBTagSF>},
         {"AnalyzeHEM",              run<AnalyzeHEM>},
-        {"AnalyzeSignalModels",     run<AnalyzeSignalModels>},
         {"AnalyzeTest",             run<AnalyzeTest>},
         {"CalculateBTagSF",         run<CalculateBTagSF>},
         {"CalculateSFMean",         run<CalculateSFMean>},

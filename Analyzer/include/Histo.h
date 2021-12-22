@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 
+#include "TH3D.h"
+
 class Histo_Base
 {
 public:

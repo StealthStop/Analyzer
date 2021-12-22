@@ -234,15 +234,21 @@ public:
             DeepESMCfg            = "DeepEventShape_2018post.cfg";
             DeepESMModel          = "keras_frozen_2018post.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018post.cfg";
-            //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2018post.cfg";    
-            //DoubleDisCo_Model_0l  = "eras_frozen_DoubleDisCo_Reg_0l_2018post.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2018post.cfg";
-            //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2018post.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2018post.cfg";
-            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018post.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018post.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018post.cfg";
+            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            // Use RPV config for now --- switch to SYY with dedicated training
+            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
@@ -378,6 +384,7 @@ public:
                 "Jet",
                 "BJet",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
