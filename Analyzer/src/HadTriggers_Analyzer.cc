@@ -108,7 +108,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& GoodJets_pt45         = tr.getVec<bool>("GoodJets_pt45");
         const auto& NGoodJets_pt45        = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45       = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& HT_trigger_pt45       = tr.getVar<float>("HT_trigger_pt45");
+        const auto& HT_trigger_pt45       = tr.getVar<double>("HT_trigger_pt45");
         const auto& passBaseline0l_pt45   = tr.getVar<bool>("passBaseline0l_pt45");
         const auto& passTriggerMuonsRefAN = tr.getVar<bool>("passTriggerMuonsRefAN");
         const auto& passTriggerAllHad     = tr.getVar<bool>("passTriggerAllHad");

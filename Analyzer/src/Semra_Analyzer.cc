@@ -97,7 +97,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype               = tr.getVar<std::string>("runtype");     
         const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
         const auto& MET                   = tr.getVar<float>("MET");
-        const auto& HT_trigger_pt30       = tr.getVar<float>("HT_trigger_pt30");
+        const auto& HT_trigger_pt30       = tr.getVar<double>("HT_trigger_pt30");
         const auto& GoodJets_pt30         = tr.getVec<bool>("GoodJets_pt30");
         const auto& NGoodJets_pt30        = tr.getVar<int>("NGoodJets_pt30");
         const auto& GoodBJets_pt30        = tr.getVec<bool>("GoodBJets_pt30");

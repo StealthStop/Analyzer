@@ -127,13 +127,13 @@ void AnalyzeGenStop::Loop(NTupleReader& tr, double, int maxevents, bool)
             // Define lepton weight
             if(NGoodLeptons == 1)
             {
-                const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
+                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
             
             bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<float>("htDerivedweight");
+            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor = tr.getVar<double>("puWeightCorr");
             

@@ -114,7 +114,7 @@ void TwoLepAnalyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& JetID               = tr.getVar<bool>("JetID");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
         const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& HT_trigger_pt30     = tr.getVar<float>("HT_trigger_pt30");
+        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
         const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
         const auto& GoodBJets_pt30      = tr.getVec<bool>("GoodBJets_pt30");
         
@@ -167,14 +167,14 @@ void TwoLepAnalyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             // Define lepton weight
             if(NGoodLeptons == 1)
             {
-                const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
+                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
             
             //PileupWeight = tr.getVar<float>("_PUweightFactor");
             bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<float>("htDerivedweight");
+            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor = tr.getVar<double>("puWeightCorr");
             

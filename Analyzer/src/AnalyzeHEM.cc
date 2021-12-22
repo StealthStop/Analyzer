@@ -106,7 +106,7 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& GoodJets_pt30       = tr.getVec<bool>("GoodJets_pt30");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
         const auto& NGoodBJets_pt30     = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& HT_trigger_pt30     = tr.getVar<float>("HT_trigger_pt30");
+        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
         const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
         const auto& RunNum              = tr.getVar<unsigned int>("RunNum");
         const auto& met                 = tr.getVar<float>("MET");
@@ -114,18 +114,18 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& lvMET_cm_eta        = tr.getVar<float>("lvMET_cm_eta");
         const auto& lvMET_cm_phi        = tr.getVar<float>("lvMET_cm_phi");
         const auto& lvMET_cm_m          = tr.getVar<float>("lvMET_cm_m");
-        const auto& fwm2_top6           = tr.getVar<float>("fwm2_top6");
-        const auto& fwm3_top6           = tr.getVar<float>("fwm3_top6");
-        const auto& fwm4_top6           = tr.getVar<float>("fwm4_top6");
-        const auto& fwm5_top6           = tr.getVar<float>("fwm5_top6");
-        const auto& fwm6_top6           = tr.getVar<float>("fwm6_top6");
-        const auto& fwm7_top6           = tr.getVar<float>("fwm7_top6");
-        const auto& fwm8_top6           = tr.getVar<float>("fwm8_top6");
-        const auto& fwm9_top6           = tr.getVar<float>("fwm9_top6");
-        const auto& fwm10_top6          = tr.getVar<float>("fwm10_top6");
-        const auto& jmt_ev0_top6        = tr.getVar<float>("jmt_ev0_top6");
-        const auto& jmt_ev1_top6        = tr.getVar<float>("jmt_ev1_top6");
-        const auto& jmt_ev2_top6        = tr.getVar<float>("jmt_ev2_top6");
+        const auto& fwm2_top6           = tr.getVar<double>("fwm2_top6");
+        const auto& fwm3_top6           = tr.getVar<double>("fwm3_top6");
+        const auto& fwm4_top6           = tr.getVar<double>("fwm4_top6");
+        const auto& fwm5_top6           = tr.getVar<double>("fwm5_top6");
+        const auto& fwm6_top6           = tr.getVar<double>("fwm6_top6");
+        const auto& fwm7_top6           = tr.getVar<double>("fwm7_top6");
+        const auto& fwm8_top6           = tr.getVar<double>("fwm8_top6");
+        const auto& fwm9_top6           = tr.getVar<double>("fwm9_top6");
+        const auto& fwm10_top6          = tr.getVar<double>("fwm10_top6");
+        const auto& jmt_ev0_top6        = tr.getVar<double>("jmt_ev0_top6");
+        const auto& jmt_ev1_top6        = tr.getVar<double>("jmt_ev1_top6");
+        const auto& jmt_ev2_top6        = tr.getVar<double>("jmt_ev2_top6");
         const auto& event_beta_z        = tr.getVar<float>("event_beta_z");
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
         const auto& passBaseline        = tr.getVar<bool>("passBaseline1l_Good");
@@ -155,14 +155,14 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
             // Define lepton weight
             if(NGoodLeptons == 1)
             {
-                const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
+                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
             
             //PileupWeight = tr.getVar<float>("_PUweightFactor");
             bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<float>("htDerivedweight");
+            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor = tr.getVar<double>("puWeightCorr");
             

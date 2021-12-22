@@ -148,7 +148,7 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype         = tr.getVar<std::string>("runtype");     
         const auto& JetID           = tr.getVar<bool>("JetID");
         const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
-        const auto& HT_trigger_pt45 = tr.getVar<float>("HT_trigger_pt45");
+        const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
         const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
         const auto& dR_bjets        = tr.getVar<float>("dR_bjets");               

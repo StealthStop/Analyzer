@@ -206,8 +206,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype                           = tr.getVar<std::string>("runtype");     
         const auto& NGoodJets_pt30                    = tr.getVar<int>("NGoodJets_pt30");
         const auto& NNonIsoMuonJets_pt30              = tr.getVar<int>("NNonIsoMuonJets_pt30");
-        const auto& HT_trigger_pt30                   = tr.getVar<float>("HT_trigger_pt30");
-        const auto& HT_NonIsoMuon_pt30                = tr.getVar<float>("HT_NonIsoMuon_pt30");
+        const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30");
+        const auto& HT_NonIsoMuon_pt30                = tr.getVar<double>("HT_NonIsoMuon_pt30");
 
         const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good");
         const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good");
@@ -227,27 +227,27 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& DoubleDisCo_disc1_NonIsoMuon_1l   = tr.getVar<float>("DoubleDisCo_disc1_NonIsoMuon_1l_RPV");
         const auto& DoubleDisCo_disc2_NonIsoMuon_1l   = tr.getVar<float>("DoubleDisCo_disc2_NonIsoMuon_1l_RPV");
 
-        const auto& fwm2_top6_0l                      = tr.getVar<float>("fwm2_top6_0l");
-        const auto& fwm3_top6_0l                      = tr.getVar<float>("fwm3_top6_0l");
-        const auto& fwm4_top6_0l                      = tr.getVar<float>("fwm4_top6_0l");
-        const auto& fwm5_top6_0l                      = tr.getVar<float>("fwm5_top6_0l");
-        const auto& jmt_ev0_top6_0l                   = tr.getVar<float>("jmt_ev0_top6_0l");
-        const auto& jmt_ev1_top6_0l                   = tr.getVar<float>("jmt_ev1_top6_0l");
-        const auto& jmt_ev2_top6_0l                   = tr.getVar<float>("jmt_ev2_top6_0l");
-        const auto& fwm2_top6_1l                      = tr.getVar<float>("fwm2_top6_1l");
-        const auto& fwm3_top6_1l                      = tr.getVar<float>("fwm3_top6_1l");
-        const auto& fwm4_top6_1l                      = tr.getVar<float>("fwm4_top6_1l");
-        const auto& fwm5_top6_1l                      = tr.getVar<float>("fwm5_top6_1l");
-        const auto& jmt_ev0_top6_1l                   = tr.getVar<float>("jmt_ev0_top6_1l");
-        const auto& jmt_ev1_top6_1l                   = tr.getVar<float>("jmt_ev1_top6_1l");
-        const auto& jmt_ev2_top6_1l                   = tr.getVar<float>("jmt_ev2_top6_1l");
-        const auto& NonIsoMuons_fwm2_top6_0l          = tr.getVar<float>("fwm2_top6_0l");
-        const auto& NonIsoMuons_fwm3_top6_0l          = tr.getVar<float>("fwm3_top6_0l");
-        const auto& NonIsoMuons_fwm4_top6_0l          = tr.getVar<float>("fwm4_top6_0l");
-        const auto& NonIsoMuons_fwm5_top6_0l          = tr.getVar<float>("fwm5_top6_0l");
-        const auto& NonIsoMuons_jmt_ev0_top6_0l       = tr.getVar<float>("jmt_ev0_top6_0l");
-        const auto& NonIsoMuons_jmt_ev1_top6_0l       = tr.getVar<float>("jmt_ev1_top6_0l");
-        const auto& NonIsoMuons_jmt_ev2_top6_0l       = tr.getVar<float>("jmt_ev2_top6_0l");
+        const auto& fwm2_top6_0l                      = tr.getVar<double>("fwm2_top6_0l");
+        const auto& fwm3_top6_0l                      = tr.getVar<double>("fwm3_top6_0l");
+        const auto& fwm4_top6_0l                      = tr.getVar<double>("fwm4_top6_0l");
+        const auto& fwm5_top6_0l                      = tr.getVar<double>("fwm5_top6_0l");
+        const auto& jmt_ev0_top6_0l                   = tr.getVar<double>("jmt_ev0_top6_0l");
+        const auto& jmt_ev1_top6_0l                   = tr.getVar<double>("jmt_ev1_top6_0l");
+        const auto& jmt_ev2_top6_0l                   = tr.getVar<double>("jmt_ev2_top6_0l");
+        const auto& fwm2_top6_1l                      = tr.getVar<double>("fwm2_top6_1l");
+        const auto& fwm3_top6_1l                      = tr.getVar<double>("fwm3_top6_1l");
+        const auto& fwm4_top6_1l                      = tr.getVar<double>("fwm4_top6_1l");
+        const auto& fwm5_top6_1l                      = tr.getVar<double>("fwm5_top6_1l");
+        const auto& jmt_ev0_top6_1l                   = tr.getVar<double>("jmt_ev0_top6_1l");
+        const auto& jmt_ev1_top6_1l                   = tr.getVar<double>("jmt_ev1_top6_1l");
+        const auto& jmt_ev2_top6_1l                   = tr.getVar<double>("jmt_ev2_top6_1l");
+        const auto& NonIsoMuons_fwm2_top6_0l          = tr.getVar<double>("fwm2_top6_0l");
+        const auto& NonIsoMuons_fwm3_top6_0l          = tr.getVar<double>("fwm3_top6_0l");
+        const auto& NonIsoMuons_fwm4_top6_0l          = tr.getVar<double>("fwm4_top6_0l");
+        const auto& NonIsoMuons_fwm5_top6_0l          = tr.getVar<double>("fwm5_top6_0l");
+        const auto& NonIsoMuons_jmt_ev0_top6_0l       = tr.getVar<double>("jmt_ev0_top6_0l");
+        const auto& NonIsoMuons_jmt_ev1_top6_0l       = tr.getVar<double>("jmt_ev1_top6_0l");
+        const auto& NonIsoMuons_jmt_ev2_top6_0l       = tr.getVar<double>("jmt_ev2_top6_0l");
         const auto& NonIsoMuons_fwm2_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm2_top6_1l");
         const auto& NonIsoMuons_fwm3_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm3_top6_1l");
         const auto& NonIsoMuons_fwm4_top6_1l          = tr.getVar<float>("NonIsoMuons_fwm4_top6_1l");
@@ -402,14 +402,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& lumi   = tr.getVar<double>("Lumi");
             eventweight        = lumi * Weight;
            
-            const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
-            const auto& muLepWeight  = tr.getVar<float>("totGoodMuonSF");
-            const auto& muNonIso     = tr.getVar<float>("totNonIsoMuonSF");
+            const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
+            const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
+            const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF");
             leptonweight             = eleLepWeight * muLepWeight;
           
             pileupWeight         = tr.getVar<double>("puWeightCorr");
             bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedweight      = tr.getVar<float>("htDerivedweight");
+            htDerivedweight      = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             
             weight1L_noHTsf     *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight;
