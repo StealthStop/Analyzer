@@ -72,7 +72,7 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
     while( tr.getNextEvent() )
     {
         const auto& MET                = tr.getVar<float>("MET");
-        const auto& HT_trigger         = tr.getVar<float>("HT_trigger");
+        const auto& HT_trigger         = tr.getVar<double>("HT_trigger");
         const auto& ntops              = tr.getVar<int>("ntops");
         const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet");
         const auto& ntops_2jet         = tr.getVar<int>("ntops_2jet");
@@ -83,7 +83,7 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& NBJets             = tr.getVar<int>("NGoodBJets");
         const auto& NBJets_pt45        = tr.getVar<int>("NGoodBJets_pt45");
         const auto& NGoodLeptons       = tr.getVar<int>("NGoodLeptons");
-        const auto& passBaseline0l     = tr.getVar<bool>("passBaseline0l_Good");
+        const auto& passBaseline0l     = tr.getVar<bool>("passBaseline0l_good");
         const auto& passBlindHad       = tr.getVar<bool>("passBlindHad_Good");
         const auto& passTrigger        = tr.getVar<bool>("passTrigger");
         const auto& passMadHT          = tr.getVar<bool>("passMadHT");
