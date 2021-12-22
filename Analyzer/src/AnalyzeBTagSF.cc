@@ -85,9 +85,9 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
         
-        const auto& bTagSF              = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
-        const auto& bTagSF_u            = tr.getVar<float>("bTagSF_EventWeightSimple_Up");
-        const auto& bTagSF_d            = tr.getVar<float>("bTagSF_EventWeightSimple_Down");
+        const auto& bTagSF              = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+        const auto& bTagSF_u            = tr.getVar<double>("bTagSF_EventWeightSimple_Up");
+        const auto& bTagSF_d            = tr.getVar<double>("bTagSF_EventWeightSimple_Down");
         
         const auto& bMisTagSF_u         = tr.getVar<float>("mistagSF_EventWeightSimple_Up");
         const auto& bMisTagSF_d         = tr.getVar<float>("mistagSF_EventWeightSimple_Down");

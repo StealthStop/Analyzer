@@ -149,7 +149,7 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
             const auto& Weight  = tr.getVar<float>("Weight");
-            const auto& lumi = tr.getVar<float>("Lumi");
+            const auto& lumi = tr.getVar<double>("Lumi");
             eventweight = lumi*Weight;
             
             // Define lepton weight
@@ -161,10 +161,10 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
             }
             
             //PileupWeight = tr.getVar<float>("_PUweightFactor");
-            bTagScaleFactor   = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             htDerivedScaleFactor = tr.getVar<float>("htDerivedweight");
-            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
-            puScaleFactor = tr.getVar<float>("puWeightCorr");
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            puScaleFactor = tr.getVar<double>("puWeightCorr");
             
             weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
         }

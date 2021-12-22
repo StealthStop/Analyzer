@@ -163,12 +163,12 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             // Define Lumi weight
             const auto& Weight   = tr.getVar<float>("Weight");
-            const auto& lumi     = tr.getVar<float>("Lumi");
+            const auto& lumi     = tr.getVar<double>("Lumi");
             eventweight          = lumi*Weight;
 
-            bTagScaleFactor      = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
-            puScaleFactor        = tr.getVar<float>("puWeightCorr");
+            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            puScaleFactor        = tr.getVar<double>("puWeightCorr");
 
             weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }

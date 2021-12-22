@@ -160,10 +160,10 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& lumi     = tr.getVar<float>("Lumi");
+            const auto& lumi     = tr.getVar<double>("Lumi");
             const auto& Weight   = tr.getVar<float>("Weight");
             eventweight          = lumi*Weight;
-            puScaleFactor        = tr.getVar<float>("puWeightCorr");
+            puScaleFactor        = tr.getVar<double>("puWeightCorr");
         
             weight *= eventweight * puScaleFactor;
         }

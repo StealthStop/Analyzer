@@ -399,7 +399,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<float>("Weight");
-            const auto& lumi   = tr.getVar<float>("Lumi");
+            const auto& lumi   = tr.getVar<double>("Lumi");
             eventweight        = lumi * Weight;
            
             const auto& eleLepWeight = tr.getVar<float>("totGoodElectronSF");
@@ -407,10 +407,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& muNonIso     = tr.getVar<float>("totNonIsoMuonSF");
             leptonweight             = eleLepWeight * muLepWeight;
           
-            pileupWeight         = tr.getVar<float>("puWeightCorr");
-            bTagWeight           = tr.getVar<float>("bTagSF_EventWeightSimple_Central");
+            pileupWeight         = tr.getVar<double>("puWeightCorr");
+            bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             htDerivedweight      = tr.getVar<float>("htDerivedweight");
-            prefiringScaleFactor = tr.getVar<float>("prefiringScaleFactor");
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             
             weight1L_noHTsf     *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight;
             weight0L_noHTsf     *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;

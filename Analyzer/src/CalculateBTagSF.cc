@@ -82,7 +82,7 @@ void CalculateBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& deepCSV_WP_medium = tr.getVar<float>("deepCSV_WP_medium");
 
             const auto& Weight = tr.getVar<float>("Weight");
-            const auto& Lumi   = tr.getVar<float>("Lumi");
+            const auto& Lumi   = tr.getVar<double>("Lumi");
             const double eventweight = Lumi*Weight;
             
             for( unsigned int ij = 0; ij < Jets.size(); ++ij ) 
