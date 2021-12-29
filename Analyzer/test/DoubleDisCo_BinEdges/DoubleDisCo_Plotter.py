@@ -128,7 +128,7 @@ class Common_Calculations_Plotters:
         ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
     
         # closure plot
-        ax1 = fig.add_subplot(4, 1, (1, 2)) 
+        ax1 = fig.add_subplot(4, 1, (1, 2))  
         #ax1 = fig.add_subplot(3, 1, (1, 2))
         fig.subplots_adjust(left=0.15, right=0.95)
         ax1.set_yscale('log')
@@ -142,7 +142,7 @@ class Common_Calculations_Plotters:
         ax1.errorbar(x, pred, yerr=predUnc, label='Predicted', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label='Observed',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
-        # simple ratio plot    
+        # non-closure   
         ax2 = fig.add_subplot(4, 1, 3)
         #ax2 = fig.add_subplot(3, 1, 3)
         ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
