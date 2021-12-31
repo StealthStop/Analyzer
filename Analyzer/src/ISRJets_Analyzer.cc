@@ -259,47 +259,47 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );
 
         const auto& runtype               = tr.getVar<std::string>("runtype");     
-        const auto& Jets                  = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
         const auto& GoodJets_pt20         = tr.getVec<bool>("GoodJets_pt20");
         const auto& GoodBJets_pt45        = tr.getVec<bool>("GoodBJets_pt45");
-        //const auto& GenParticles          = tr.getVec<TLorentzVector>("GenParticles");
+        //const auto& GenParticles          = tr.getVec<utility::LorentzVector>("GenParticles");
         const auto& passBaseline0l_Good   = tr.getVar<bool>("passBaseline0l_Good");
-        const auto& topsLV                = tr.getVec<TLorentzVector>("topsLV");
+        const auto& topsLV                = tr.getVec<utility::LorentzVector>("topsLV");
 
         // ----------------------
         // -- ISR gen matching
         // ----------------------
-        const auto& GM_ISRmatching_allDR                    = tr.getVec<double>("GM_ISRmatching_allDR");
-        const auto& GM_ISRmatching_bestDR                   = tr.getVec<double>("GM_ISRmatching_bestDR");
-        const auto& GM_ISRmatching_justCutOnDR_DR           = tr.getVec<double>("GM_ISRmatching_justCutOnDR_DR");
-        const auto& GM_ISRmatching_justCutOnPtRatio_DR      = tr.getVec<double>("GM_ISRmatching_justCutOnPtRatio_DR");
-        const auto& GM_ISRmatching_allPtRatio               = tr.getVec<double>("GM_ISRmatching_allPtRatio");
-        const auto& GM_ISRmatching_bestPtRatio              = tr.getVec<double>("GM_ISRmatching_bestPtRatio");
-        const auto& GM_ISRmatching_justCutOnDR_PtRatio      = tr.getVec<double>("GM_ISRmatching_justCutOnDR_PtRatio");
-        const auto& GM_ISRmatching_justCutOnPtRatio_PtRatio = tr.getVec<double>("GM_ISRmatching_justCutOnPtRatio_PtRatio");
+        const auto& GM_ISRmatching_allDR                    = tr.getVec<float>("GM_ISRmatching_allDR");
+        const auto& GM_ISRmatching_bestDR                   = tr.getVec<float>("GM_ISRmatching_bestDR");
+        const auto& GM_ISRmatching_justCutOnDR_DR           = tr.getVec<float>("GM_ISRmatching_justCutOnDR_DR");
+        const auto& GM_ISRmatching_justCutOnPtRatio_DR      = tr.getVec<float>("GM_ISRmatching_justCutOnPtRatio_DR");
+        const auto& GM_ISRmatching_allPtRatio               = tr.getVec<float>("GM_ISRmatching_allPtRatio");
+        const auto& GM_ISRmatching_bestPtRatio              = tr.getVec<float>("GM_ISRmatching_bestPtRatio");
+        const auto& GM_ISRmatching_justCutOnDR_PtRatio      = tr.getVec<float>("GM_ISRmatching_justCutOnDR_PtRatio");
+        const auto& GM_ISRmatching_justCutOnPtRatio_PtRatio = tr.getVec<float>("GM_ISRmatching_justCutOnPtRatio_PtRatio");
         const auto& nGenISR                                 = tr.getVar<int>("nGenISR");
         const auto& nGenISR_qg                              = tr.getVar<int>("nGenISR_qg");
         const auto& nGenISR_gq                              = tr.getVar<int>("nGenISR_gq");
         const auto& nGenISR_gg                              = tr.getVar<int>("nGenISR_gg");
-        const auto& GenISR                                  = tr.getVec<TLorentzVector>("GenISR");
-        const auto& GenISR_qg                               = tr.getVec<TLorentzVector>("GenISR_qg");
-        const auto& GenISR_gq                               = tr.getVec<TLorentzVector>("GenISR_gq");
-        const auto& GenISR_gg                               = tr.getVec<TLorentzVector>("GenISR_gg");
-        const auto& dEta_RecoISR_GenISR                     = tr.getVec<double>("dEta_RecoISR_GenISR");
+        const auto& GenISR                                  = tr.getVec<utility::LorentzVector>("GenISR");
+        const auto& GenISR_qg                               = tr.getVec<utility::LorentzVector>("GenISR_qg");
+        const auto& GenISR_gq                               = tr.getVec<utility::LorentzVector>("GenISR_gq");
+        const auto& GenISR_gg                               = tr.getVec<utility::LorentzVector>("GenISR_gg");
+        const auto& dEta_RecoISR_GenISR                     = tr.getVec<float>("dEta_RecoISR_GenISR");
         const auto& ISRmatched_dr_ptr                       = tr.getVec<bool>("ISRmatched_dr_ptr");
         const auto& NonISRmatched_dr_ptr                    = tr.getVec<bool>("NonISRmatched_dr_ptr"); 
         // AK4 variables from ntuple
-        const auto& Jets_axismajor                          = tr.getVec<double>("Jets_axismajor");
-        const auto& Jets_axisminor                          = tr.getVec<double>("Jets_axisminor");
-        const auto& Jets_ptD                                = tr.getVec<double>("Jets_ptD");
-        const auto& Jets_chargedHadronEnergyFraction        = tr.getVec<double>("Jets_chargedHadronEnergyFraction");
-        const auto& Jets_neutralHadronEnergyFraction        = tr.getVec<double>("Jets_neutralHadronEnergyFraction");
+        const auto& Jets_axismajor                          = tr.getVec<float>("Jets_axismajor");
+        const auto& Jets_axisminor                          = tr.getVec<float>("Jets_axisminor");
+        const auto& Jets_ptD                                = tr.getVec<float>("Jets_ptD");
+        const auto& Jets_chargedHadronEnergyFraction        = tr.getVec<float>("Jets_chargedHadronEnergyFraction");
+        const auto& Jets_neutralHadronEnergyFraction        = tr.getVec<float>("Jets_neutralHadronEnergyFraction");
         const auto& Jets_chargedHadronMultiplicity          = tr.getVec<int>("Jets_chargedHadronMultiplicity");
         const auto& Jets_neutralHadronMultiplicity          = tr.getVec<int>("Jets_neutralHadronMultiplicity");
         const auto& Jets_chargedMultiplicity                = tr.getVec<int>("Jets_chargedMultiplicity");
         const auto& Jets_neutralMultiplicity                = tr.getVec<int>("Jets_neutralMultiplicity");
-        const auto& Jets_qgLikelihood                       = tr.getVec<double>("Jets_qgLikelihood");
-        const auto& Jets_bJetTagDeepCSVtotb                 = tr.getVec<double>("Jets_bJetTagDeepCSVtotb");
+        const auto& Jets_qgLikelihood                       = tr.getVec<float>("Jets_qgLikelihood");
+        const auto& Jets_bJetTagDeepCSVtotb                 = tr.getVec<float>("Jets_bJetTagDeepCSVtotb");
 
         const auto& Jets_ISRMask                            = tr.getVec<bool>("Jets_ISRMask");
 
@@ -314,7 +314,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight   = tr.getVar<double>("Weight");
+            const auto& Weight   = tr.getVar<float>("Weight");
             const auto& lumi     = tr.getVar<double>("Lumi");
             eventweight          = lumi*Weight;
         
@@ -329,8 +329,8 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // --------------------------------------------
         // DeltaR between each ISR and each NonISR jets
         // --------------------------------------------
-        std::vector<TLorentzVector> ISRJets;
-        std::vector<TLorentzVector> NonISRJets;
+        std::vector<utility::LorentzVector> ISRJets;
+        std::vector<utility::LorentzVector> NonISRJets;
         for(unsigned int j = 0; j < Jets.size(); j++) 
         {
             if(!GoodJets_pt20[j]) continue;
@@ -353,7 +353,8 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             
             for (unsigned int n = 0; n < NonISRJets.size(); n++)
             {
-                double deltaR = ISRJets.at(i).DeltaR(NonISRJets.at(n));
+//                double deltaR = ISRJets.at(i).DeltaR(NonISRJets.at(n));
+                double deltaR = utility::DeltaR(ISRJets.at(i), NonISRJets.at(n));
                 if (deltaR < tempDR) tempDR = deltaR; 
             }
             
@@ -370,7 +371,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
          
             for (unsigned int t = 0; t < topsLV.size(); t++)
             {   
-                double deltaR = topsLV.at(t).DeltaR(ISRJets.at(j));
+                double deltaR = utility::DeltaR(topsLV.at(t), ISRJets.at(j));
                 if (deltaR < tempDR) tempDR = deltaR; // set temp variable to newest smaller dR
             }
             
@@ -387,7 +388,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             
             for (unsigned int t = 0; t < topsLV.size(); t++)
             {
-                double deltaR = topsLV.at(t).DeltaR(NonISRJets.at(j));
+                double deltaR = utility::DeltaR(topsLV.at(t), NonISRJets.at(j));
                 if (deltaR < tempDR) tempDR = deltaR; // set temp variable to newest smaller dR
             }
             
@@ -397,7 +398,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ---------------------------------------------
         // DeltaR between closest bjet and each ISR jets  
         // ---------------------------------------------
-        std::vector<TLorentzVector> bjets;
+        std::vector<utility::LorentzVector> bjets;
         for(unsigned int ijet = 0; ijet < Jets.size(); ijet++) 
         {
             if(!GoodBJets_pt45[ijet]) continue;
@@ -411,7 +412,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             for (unsigned int t = 0; t < bjets.size(); t++)
             {
-                double deltaR = bjets.at(t).DeltaR(ISRJets.at(j));
+                double deltaR = utility::DeltaR(bjets.at(t), ISRJets.at(j));
                 if (deltaR < tempDR) tempDR = deltaR; 
             }
 
@@ -428,7 +429,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             for (unsigned int t = 0; t < bjets.size(); t++)
             {
-                double deltaR = bjets.at(t).DeltaR(NonISRJets.at(j));
+                double deltaR = utility::DeltaR(bjets.at(t), NonISRJets.at(j));
                 if (deltaR < tempDR) tempDR = deltaR;
             }
 

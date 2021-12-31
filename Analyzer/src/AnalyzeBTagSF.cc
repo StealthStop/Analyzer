@@ -81,7 +81,7 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
     {
         const auto& NJets_pt30          = tr.getVar<int>("NGoodJets_pt30");
         const auto& NBJets_pt30         = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& Jets_CSV            = tr.getVec<double>("Jets_bDiscriminatorCSV");
+        const auto& Jets_CSV            = tr.getVec<float>("Jets_bDiscriminatorCSV");
 
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
         
@@ -89,23 +89,23 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& bTagSF_u            = tr.getVar<double>("bTagSF_EventWeightSimple_Up");
         const auto& bTagSF_d            = tr.getVar<double>("bTagSF_EventWeightSimple_Down");
         
-        const auto& bMisTagSF_u         = tr.getVar<double>("mistagSF_EventWeightSimple_Up");
-        const auto& bMisTagSF_d         = tr.getVar<double>("mistagSF_EventWeightSimple_Down");
+        const auto& bMisTagSF_u         = tr.getVar<float>("mistagSF_EventWeightSimple_Up");
+        const auto& bMisTagSF_d         = tr.getVar<float>("mistagSF_EventWeightSimple_Down");
         
-        const auto& puSF                = tr.getVar<double>("puWeight");
+        const auto& puSF                = tr.getVar<float>("puWeight");
         //const auto& puSF_JP             = tr.getVar<float>("_PUweightFactor");
-        const auto& ntru_PV             = tr.getVar<double>("TrueNumInteractions");
+        const auto& ntru_PV             = tr.getVar<float>("TrueNumInteractions");
 
-        const auto& scaleSF             = tr.getVar<double>("scaleWeightNom");
-        const auto& scaleSF_u           = tr.getVar<double>("scaleWeightUp");
-        const auto& scaleSF_d           = tr.getVar<double>("scaleWeightDown");
+        const auto& scaleSF             = tr.getVar<float>("scaleWeightNom");
+        const auto& scaleSF_u           = tr.getVar<float>("scaleWeightUp");
+        const auto& scaleSF_d           = tr.getVar<float>("scaleWeightDown");
 
-        const auto& pdfSF               = tr.getVar<double>("PDFweightNom");
-        const auto& pdfSF_u             = tr.getVar<double>("PDFweightUp");
-        const auto& pdfSF_d             = tr.getVar<double>("PDFweightDown");
+        const auto& pdfSF               = tr.getVar<float>("PDFweightNom");
+        const auto& pdfSF_u             = tr.getVar<float>("PDFweightUp");
+        const auto& pdfSF_d             = tr.getVar<float>("PDFweightDown");
 
-        const auto& electronSF          = tr.getVar<double>("leadGoodElectronSF");
-        const auto& muonSF              = tr.getVar<double>("leadGoodMuonSF");
+        const auto& electronSF          = tr.getVar<float>("leadGoodElectronSF");
+        const auto& muonSF              = tr.getVar<float>("leadGoodMuonSF");
 
 
         //------------------------------------
@@ -128,7 +128,7 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         if( passMadHT )
         {
-            const auto& Weight = tr.getVar<double>("Weight");
+            const auto& Weight = tr.getVar<float>("Weight");
             
             eventweight         = Lumi*Weight;
             PUaddweight         = Lumi*Weight*puSF;

@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 
+#include "TH3D.h"
+
 class Histo_Base
 {
 public:
@@ -55,7 +57,7 @@ protected:
         return weight;
     }
 
-    template<typename T> T tlvGetValue(const TLorentzVector& lv, const std::string& varType) const
+    template<typename T, typename LV> T lvGetValue(const LV& lv, const std::string& varType) const
     {
         T val = 0;
         if     (varType.find("P()")   != std::string::npos) val = lv.P();
@@ -86,11 +88,11 @@ private:
         }
     }
 
-    void vecFilltlv(const double weight, const NTupleReader& tr) const
+    template<typename T> void vecFillLV(const double weight, const NTupleReader& tr) const
     {
         const std::string& varType = utility::split("last",  varX_, ".");
         const std::string&     var = utility::split("first", varX_, ".");
-        const auto& vec = tr.getVec<TLorentzVector>(var);
+        const auto& vec = tr.getVec<T>(var);
         const auto& vecMask = (varXMask_ != "") ? tr.getVec<bool>(varXMask_) : std::vector<bool>();
         for(unsigned int j = 0; j < vec.size(); j++)
         {
@@ -98,7 +100,7 @@ private:
             {
                 if(!vecMask[j]) continue;
             }
-            histo_->Fill( tlvGetValue<double>(vec[j],varType), weight ); 
+            histo_->Fill( lvGetValue<double, T>(vec[j],varType), weight ); 
         }
     }
 
@@ -110,15 +112,16 @@ private:
 
         if(type.find("std::vector<") != std::string::npos)
         {
-            if     (type.find("double")         != std::string::npos) vecFill<double>      ( weight, tr );
-            else if(type.find("unsigned int")   != std::string::npos) vecFill<unsigned int>( weight, tr );
-            else if(type.find("int")            != std::string::npos) vecFill<int>         ( weight, tr );
-            else if(type.find("bool")           != std::string::npos) vecFill<bool>        ( weight, tr );
-            else if(type.find("float")          != std::string::npos) vecFill<float>       ( weight, tr );
-            else if(type.find("char")           != std::string::npos) vecFill<char>        ( weight, tr );
-            else if(type.find("short")          != std::string::npos) vecFill<short>       ( weight, tr );
-            else if(type.find("long")           != std::string::npos) vecFill<long>        ( weight, tr );        
-            else if(type.find("TLorentzVector") != std::string::npos) vecFilltlv           ( weight, tr );        
+            if     (type.find("double")                 != std::string::npos) vecFill<double>                   ( weight, tr );
+            else if(type.find("unsigned int")           != std::string::npos) vecFill<unsigned int>             ( weight, tr );
+            else if(type.find("int")                    != std::string::npos) vecFill<int>                      ( weight, tr );
+            else if(type.find("bool")                   != std::string::npos) vecFill<bool>                     ( weight, tr );
+            else if(type.find("float")                  != std::string::npos) vecFill<float>                    ( weight, tr );
+            else if(type.find("char")                   != std::string::npos) vecFill<char>                     ( weight, tr );
+            else if(type.find("short")                  != std::string::npos) vecFill<short>                    ( weight, tr );
+            else if(type.find("long")                   != std::string::npos) vecFill<long>                     ( weight, tr );        
+            else if(type.find("TLorentzVector")         != std::string::npos) vecFillLV<TLorentzVector>         ( weight, tr );        
+            else if(type.find("utility::LorentzVector") != std::string::npos) vecFillLV<utility::LorentzVector> ( weight, tr );        
             else std::cout<<utility::color("Type \""+type+"\" is not an option for vector variable \""+varX_+"\"", "red")<<std::endl;
         }
         else
@@ -131,11 +134,19 @@ private:
             else if(type.find("char")           != std::string::npos) histo_->Fill( tr.getVar<char>(varX_),         weight );
             else if(type.find("short")          != std::string::npos) histo_->Fill( tr.getVar<short>(varX_),        weight );
             else if(type.find("long")           != std::string::npos) histo_->Fill( tr.getVar<long>(varX_),         weight );        
-            else if(type.find("TLorentzVector") != std::string::npos)
+            else if(type.find("Vector")         != std::string::npos)
             {
                 const std::string& varType = utility::split("last",  varX_, ".");
                 const std::string&     var = utility::split("first", varX_, ".");
-                histo_->Fill( tlvGetValue<double>(tr.getVar<TLorentzVector>(var), varType), weight );
+
+                if(type.find("TLorentzVector") != std::string::npos)
+                {
+                    histo_->Fill( lvGetValue<double, TLorentzVector>(tr.getVar<TLorentzVector>(var), varType), weight );
+                }
+                else if(type.find("utility::LorentzVector") != std::string::npos)
+                {
+                    histo_->Fill( lvGetValue<double, utility::LorentzVector>(tr.getVar<utility::LorentzVector>(var), varType), weight );
+                }
             }
             else std::cout<<utility::color("Type \""+type+"\" is not an option for variable \""+varX_+"\"", "red")<<std::endl;
         }

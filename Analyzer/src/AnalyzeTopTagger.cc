@@ -37,7 +37,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );        
 
         const auto& runtype          = tr.getVar<std::string>("runtype");
-        const auto& Jets             = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets             = tr.getVec<utility::LorentzVector>("Jets");
         const auto& JetID            = tr.getVar<bool>("JetID");        
         const auto& passMETFilters   = tr.getVar<bool>("passMETFilters");
         const auto& passMadHT        = tr.getVar<bool>("passMadHT");
@@ -46,7 +46,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& HT_trigger_pt45  = tr.getVar<double>("HT_trigger_pt45");
         const auto& NGoodBJets_pt45  = tr.getVar<int>("NGoodBJets_pt45");
         const auto& NGoodJets_pt45   = tr.getVar<int>("NGoodJets_pt45");
-        const auto& dR_bjets         = tr.getVar<double>("dR_bjets");
+        const auto& dR_bjets         = tr.getVar<float>("dR_bjets");
         const auto& GoodJets_pt45    = tr.getVec<bool>("GoodJets_pt45");
         const bool pass_Resolved     = JetID && passMETFilters && passMadHT && passTriggerHadMC 
                                       && NGoodLeptons==0       && HT_trigger_pt45 > 500 
@@ -65,7 +65,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight = tr.getVar<double>("Weight");
+            const auto& Weight = tr.getVar<float>("Weight");
             const auto& lumi   = tr.getVar<double>("Lumi");
             eventweight        = lumi*Weight;
 
@@ -79,7 +79,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -----------------------------------------------------
         // -- Create variables for setStealthStopVar function
         // -----------------------------------------------------
-        auto& goodjets_pt45 = tr.createDerivedVec<TLorentzVector>("GoodJets_pt45_tlv");
+        auto& goodjets_pt45 = tr.createDerivedVec<utility::LorentzVector>("GoodJets_pt45_tlv");
         for (unsigned int i = 0; i < Jets.size(); ++i )
         {
             if (!GoodJets_pt45[i]) continue;
