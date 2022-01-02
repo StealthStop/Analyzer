@@ -1,9 +1,9 @@
 #define MakeNNVariables_cxx
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
-#include "SusyAnaTools/Tools/MiniTupleMaker.h"
-#include "Framework/Framework/include/Utility.h" 
+#include "NTupleReader/include/NTupleReader.h"
 
+#include "Framework/Framework/include/MiniTupleMaker.h"
+#include "Framework/Framework/include/Utility.h" 
 #include "Framework/Framework/include/Muon.h"
 #include "Framework/Framework/include/Electron.h"
 #include "Framework/Framework/include/Photon.h"

@@ -16,7 +16,8 @@ IFWDIR  = $(CMSSW_BASE)/src/Framework/Framework/include
 SFWDIR  = $(CMSSW_BASE)/src/Framework/Framework/src
 IADIR   = $(CMSSW_BASE)/src/Analyzer/Analyzer/include
 SADIR   = $(CMSSW_BASE)/src/Analyzer/Analyzer/src
-SSDIR   = $(CMSSW_BASE)/src/SusyAnaTools/Tools
+INDIR   = $(CMSSW_BASE)/src/NTupleReader/include
+SNDIR   = $(CMSSW_BASE)/src/NTupleReader/src
 ITTDir  = $(CMSSW_BASE)/CfgParser/interface
 STTDir  = $(CMSSW_BASE)/CfgParser/src
 TDIR    = $(CMSSW_BASE)/src
@@ -56,7 +57,7 @@ ifdef FASTJET_DIR
 endif
 
 # Include our code
-INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(SSDIR) -I$(ITTDir) -I$(STTDir)
+INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(INDIR) -I$(SNDIR) -I$(ITTDir) -I$(STTDir)
 
 PROGRAMS = $(ODIR)/rootdict.cc plot_1l Stack_plot_0l Stack_plot_1l Stack_plot_2l MyAnalysis
 
@@ -66,10 +67,10 @@ ANALYZERS += $(ODIR)/AnalyzeTopTagger.o $(ODIR)/Analyze0Lep.o $(ODIR)/Analyze1Le
 ANALYZERS += $(ODIR)/Semra_Analyzer.o $(ODIR)/ISRJets_Analyzer.o  $(ODIR)/HadTriggers_Analyzer.o $(ODIR)/TwoLepAnalyzer.o 
 ANALYZERS += $(ODIR)/AnalyzeHEM.o $(ODIR)/MakeNNVariables.o $(ODIR)/AnalyzeDoubleDisCo.o $(ODIR)/AnalyzeGenStop.o
 
-HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/SATException.o $(ODIR)/histio.o 
+HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/NTRException.o $(ODIR)/histio.o 
 HELPERS += $(ODIR)/Make2LInputTrees.o $(ODIR)/Hemispheres.o $(ODIR)/StealthHemispheres.o 
 
-all: mkobj sampPyWrap $(PROGRAMS) link
+all: mkobj sampPyWrap $(PROGRAMS)
 
 mkobj:
 	@mkdir -p $(ODIR)
@@ -80,10 +81,10 @@ sampPyWrap: $(ODIR)/samplesModule.so
 $(ODIR)/samplesModule.so: $(ODIR)/samplesPyWrap.o $(ODIR)/samplesModulePyWrap.o
 	$(CXX) -shared -o $@ $^
 
-$(ODIR)/samplesPyWrap.o: $(SSDIR)/samples.cc $(SSDIR)/samples.h 
+$(ODIR)/samplesPyWrap.o: $(SFWDIR)/samples.cc $(IFWDIR)/samples.h 
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
-$(ODIR)/samplesModulePyWrap.o: $(SSDIR)/samplesModule.cc
+$(ODIR)/samplesModulePyWrap.o: $(SFWDIR)/samplesModule.cc
 	$(CXX) --std=c++11 -c -fPIC -o $@ $<
 
 $(ODIR)/rootdict.cc : $(WDIR)/rootdict.h 
@@ -91,7 +92,7 @@ $(ODIR)/rootdict.cc : $(WDIR)/rootdict.h
 	mv $(ODIR)/rootdict_rdict.pcm $(WDIR)
 
 SRC_EXT = cpp c cc C
-SRC_DIR = $(SFWDIR) $(SADIR) $(SSDIR) $(STTDir) $(WDIR) $(ODIR)
+SRC_DIR = $(SFWDIR) $(SADIR) $(SNDIR) $(STTDir) $(WDIR) $(ODIR)
 define compile_rule
 $$(ODIR)/%.o : $1/%.$2
 	$$(CXX) $$(CXXFLAGS) $$(CXXDEPFLAGS)  $$(INCLUDESDIRS) -o $$@ -c $$<
@@ -117,12 +118,8 @@ Stack_plot_2l: $(ODIR)/Stack_plot_2l.o
 Stack_plot: $(ODIR)/Stack_plot.o
 	$(LD) $^ $(LIBS) -o $@ 
 
-# Setup soft link to the SusyAnaTools repo for python API
-link:
-	@makeSoftLink.sh $(CMSSW_BASE)/src/Analyzer/Analyzer/test/ $(CDIR) $(CMSSW_BASE)/src/SusyAnaTools/Tools/
-
-# Unlink SusyAnaTools soft link and remove obj directory 
+# Remove obj directory 
 clean:
-	@rm -rf $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core $(ODIR) $(WDIR)/rootdict_rdict.pcm && rmSoftLink.sh ${CMSSW_BASE}/src/SusyAnaTools/Tools/$(ODIR)
+	@rm -rf $(ODIR)/*.o $(ODIR)/*.so $(ODIR)/*.d $(PROGRAMS) core $(ODIR) $(WDIR)/rootdict_rdict.pcm
 
 -include $(ODIR)/*.d

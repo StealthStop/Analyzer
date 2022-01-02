@@ -1,6 +1,6 @@
 #define AnalyzeDoubleDisCo_cxx
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 #include "Framework/Framework/include/Utility.h"
 
 #include <TH1D.h>

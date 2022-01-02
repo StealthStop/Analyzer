@@ -4,7 +4,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeBase.h"
 #include "Analyzer/Analyzer/include/Histo.h"
 
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include "Framework/Framework/include/RunTopTagger.h"
 #include "Framework/Framework/include/Muon.h"
