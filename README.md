@@ -25,7 +25,7 @@ Now also check out our repository if not done already:
 cd $CMSSW_BASE/src
 git clone -b Run2_UL git@github.com:StealthStop/Framework.git
 git clone -b Stealth git@github.com:susy2015/TopTaggerTools.git
-git clone git@github.com:susy2015/SusyAnaTools.git
+git clone git@github.com:susy2015/NTupleReader.git
 git clone -b Run2_UL git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
 source setup.sh #.csh if in tcsh
