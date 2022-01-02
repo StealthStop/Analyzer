@@ -1,7 +1,7 @@
 #define StealthHemispheres_cxx
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
 #include "Framework/Framework/include/Utility.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>

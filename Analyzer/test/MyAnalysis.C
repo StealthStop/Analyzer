@@ -1,7 +1,7 @@
-#include "SusyAnaTools/Tools/samples.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
-#include "SusyAnaTools/Tools/MiniTupleMaker.h"
+#include "NTupleReader/include/NTupleReader.h"
 
+#include "Framework/Framework/include/samples.h"
+#include "Framework/Framework/include/MiniTupleMaker.h"
 #include "Framework/Framework/include/Utility.h"
 
 #include "TopTagger/CfgParser/interface/TTException.h"
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
         std::cout << e << std::endl;
         return 0;
     }
-    catch(const SATException e)
+    catch(const NTRException e)
     {
         std::cout << e << std::endl;
         return 0;

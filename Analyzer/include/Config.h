@@ -1,7 +1,7 @@
 #ifndef Confg_h
 #define Confg_h
 
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include "Framework/Framework/include/PrepNTupleVars.h"
 #include "Framework/Framework/include/RunTopTagger.h"

@@ -1,6 +1,6 @@
 #define Analyze0Lep_cxx
 #include "Analyzer/Analyzer/include/Analyze0Lep.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>

@@ -1,7 +1,7 @@
 #ifndef Histo_h
 #define Histo_h
 
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 #include "Framework/Framework/include/Utility.h"
 #include <iostream>
 #include <string>

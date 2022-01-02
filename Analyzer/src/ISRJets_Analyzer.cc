@@ -1,7 +1,7 @@
 #define ISRJets_Analyzer_cxx
 #include "Analyzer/Analyzer/include/ISRJets_Analyzer.h"
 #include "Framework/Framework/include/Utility.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
