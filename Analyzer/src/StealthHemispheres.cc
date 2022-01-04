@@ -33,6 +33,15 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
         // ---------------------------
         // -- Make Stop Hemispheres  
         // ---------------------------
+        // without any rank
+        my_histos.emplace( "h_stop1Mass_"+cutVar.first, std::make_shared<TH1D> ( ("h_stop1Mass_"+cutVar.first).c_str(), ("h_stop1Mass_"+cutVar.first).c_str(), 500, 0, 1500) );
+        my_histos.emplace( "h_stop1Eta_"+cutVar.first,  std::make_shared<TH1D> ( ("h_stop1Eta_"+cutVar.first).c_str(),  ("h_stop1Eta_"+cutVar.first).c_str(), 100, -6, 6 ) );
+        my_histos.emplace( "h_stop1Phi_"+cutVar.first,  std::make_shared<TH1D> ( ("h_stop1Phi_"+cutVar.first).c_str(),  ("h_stop1Phi_"+cutVar.first).c_str(), 80, -4, 4 ) );
+        my_histos.emplace( "h_stop1Pt_"+cutVar.first,   std::make_shared<TH1D> ( ("h_stop1Pt_"+cutVar.first).c_str(),   ("h_stop1Pt_"+cutVar.first).c_str(), 100, 0, 1000 ) );
+        my_histos.emplace( "h_stop2Mass_"+cutVar.first, std::make_shared<TH1D> ( ("h_stop2Mass_"+cutVar.first).c_str(), ("h_stop2Mass_"+cutVar.first).c_str(), 500, 0, 1500) );
+        my_histos.emplace( "h_stop2Eta_"+cutVar.first,  std::make_shared<TH1D> ( ("h_stop2Eta_"+cutVar.first).c_str(),  ("h_stop2Eta_"+cutVar.first).c_str(), 100, -6, 6 ) );
+        my_histos.emplace( "h_stop2Phi_"+cutVar.first,  std::make_shared<TH1D> ( ("h_stop2Phi_"+cutVar.first).c_str(),  ("h_stop2Phi_"+cutVar.first).c_str(), 80, -4, 4 ) );
+        my_histos.emplace( "h_stop2Pt_"+cutVar.first,   std::make_shared<TH1D> ( ("h_stop2Pt_"+cutVar.first).c_str(),   ("h_stop2Pt_"+cutVar.first).c_str(), 100, 0, 1000 ) );
         // pt rank 
         my_histos.emplace( "h_stop1Mass_PtRank_"+cutVar.first, std::make_shared<TH1D> ( ("h_stop1Mass_PtRank_"+cutVar.first).c_str(), ("h_stop1Mass_PtRank_"+cutVar.first).c_str(), 500, 0, 1500) );
         my_histos.emplace( "h_stop1Eta_PtRank_"+cutVar.first, std::make_shared<TH1D> ( ("h_stop1Eta_PtRank_"+cutVar.first).c_str(), ("h_stop1Eta_PtRank_"+cutVar.first).c_str(), 100, -6, 6 ) );
@@ -71,7 +80,12 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
         my_histos.emplace( "h_average_stopMasses_"+cutVar.first, std::make_shared<TH1D> ( ("h_average_stopMasses_"+cutVar.first).c_str(), ("h_average_stopMasses_"+cutVar.first).c_str(), 500, 0, 1500) );
         my_histos.emplace( "h_relativeDiff_stopMasses_"+cutVar.first, std::make_shared<TH1D> ( ("h_relativeDiff_stopMasses_"+cutVar.first).c_str(), ("h_relativeDiff_stopMasses_"+cutVar.first).c_str(), 500, -1500, 1500) );
 
-        // stop1VSstop2 Mass, Eta, Phi, Pt       
+        // stop1VSstop2 Mass, Eta, Phi, Pt   
+        // without any rank
+        my_2d_histos.emplace( "h_Mass_stop1vsstop2_"+cutVar.first, std::make_shared<TH2D>( ("h_Mass_stop1vsstop2_"+cutVar.first).c_str(), ("h_Mass_stop1vsstop2_"+cutVar.first).c_str(), 500, 0, 1500, 500, 0, 1500 ) );
+        my_2d_histos.emplace( "h_Eta_stop1vsstop2_"+cutVar.first,  std::make_shared<TH2D>( ("h_Eta_stop1vsstop2_"+cutVar.first).c_str(),  ("h_Eta_stop1vsstop2_"+cutVar.first).c_str(),  100, -6, 6, 100, -6, 6 ) );
+        my_2d_histos.emplace( "h_Phi_stop1vsstop2_"+cutVar.first,  std::make_shared<TH2D>( ("h_Phi_stop1vsstop2_"+cutVar.first).c_str(),  ("h_Phi_stop1vsstop2_"+cutVar.first).c_str(),  80, -4, 4, 80, -4, 4 ) );
+        my_2d_histos.emplace( "h_Pt_stop1vsstop2_"+cutVar.first,   std::make_shared<TH2D>( ("h_Pt_stop1vsstop2_"+cutVar.first).c_str(),   ("h_Pt_stop1vsstop2_"+cutVar.first).c_str(),   100, 0, 1000, 100, 0, 1000) );    
         // pt rank
         my_2d_histos.emplace( "h_Mass_stop1vsstop2_PtRank_"+cutVar.first, std::make_shared<TH2D>( ("h_Mass_stop1vsstop2_PtRank_"+cutVar.first).c_str(), ("h_Mass_stop1vsstop2_PtRank_"+cutVar.first).c_str(), 500, 0, 1500, 500, 0, 1500 ) );
         my_2d_histos.emplace( "h_Eta_stop1vsstop2_PtRank_"+cutVar.first, std::make_shared<TH2D>( ("h_Eta_stop1vsstop2_PtRank_"+cutVar.first).c_str(), ("h_Eta_stop1vsstop2_PtRank_"+cutVar.first).c_str(), 100, -6, 6, 100, -6, 6 ) );
@@ -89,6 +103,8 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
         my_2d_histos.emplace( "h_Pt_stop1vsstop2_ScalarPtRank_"+cutVar.first, std::make_shared<TH2D>( ("h_Pt_stop1vsstop2_ScalarPtRank_"+cutVar.first).c_str(), ("h_Pt_stop1vsstop2_ScalarPtRank_"+cutVar.first).c_str(), 100, 0, 1000, 100, 0, 1000) ); 
         
         // NJetsVSstops
+        my_2d_histos.emplace( "h_Mass_NJetsVSstop1_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop1_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop1_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
+        my_2d_histos.emplace( "h_Mass_NJetsVSstop2_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop2_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop2_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
         my_2d_histos.emplace( "h_Mass_NJetsVSstop1_PtRank_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop1_PtRank_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop1_PtRank_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
         my_2d_histos.emplace( "h_Mass_NJetsVSstop2_PtRank_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop2_PtRank_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop2_PtRank_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
         my_2d_histos.emplace( "h_Mass_NJetsVSstop1_MassRank_"+cutVar.first, std::make_shared<TH2D> ( ("h_Mass_NJetsVSstop1_MassRank_"+cutVar.first).c_str(), ("h_Mass_NJetsVSstop1_MassRank_"+cutVar.first).c_str(), 20, 0, 20, 500, 0, 1500 ) );
@@ -105,6 +121,9 @@ void StealthHemispheres::InitHistos(const std::map<std::string, bool>& cutmap)
         my_2d_histos.emplace( "h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first, std::make_shared<TH2D>( ("h_Pt2_PtRankVsScalarPt2_ScalarPtRank_"+cutVar.first).c_str(), ("h_Pt2_PtRankVsScalarPt2_ScalarPtRank_"+cutVar.first).c_str(), 100, 0, 1000, 100, 0, 1000) );
 
         // stops MassVsPt
+        // without any rank
+        my_2d_histos.emplace( "h_stop1_MassVsPt_"+cutVar.first, std::make_shared<TH2D>( ("h_stop1_MassVsPt_"+cutVar.first).c_str(), ("h_stop1_MassVsPt_"+cutVar.first).c_str(), 500, 0, 1500, 100, 0, 1000 ) );
+        my_2d_histos.emplace( "h_stop2_MassVsPt_"+cutVar.first, std::make_shared<TH2D>( ("h_stop2_MassVsPt_"+cutVar.first).c_str(), ("h_stop2_MassVsPt_"+cutVar.first).c_str(), 500, 0, 1500, 100, 0, 1000 ) );
         // pt rank
         my_2d_histos.emplace( "h_stop1_MassVsPt_PtRank_"+cutVar.first, std::make_shared<TH2D>( ("h_stop1_MassVsPt_PtRank_"+cutVar.first).c_str(), ("h_stop1_MassVsPt_PtRank_"+cutVar.first).c_str(), 500, 0, 1500, 100, 0, 1000 ) );
         my_2d_histos.emplace( "h_stop2_MassVsPt_PtRank_"+cutVar.first, std::make_shared<TH2D>( ("h_stop2_MassVsPt_PtRank_"+cutVar.first).c_str(), ("h_stop2_MassVsPt_PtRank_"+cutVar.first).c_str(), 500, 0, 1500, 100, 0, 1000 ) );
@@ -145,37 +164,35 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );
 
-        const auto& runtype         = tr.getVar<std::string>("runtype");     
-        const auto& JetID           = tr.getVar<bool>("JetID");
-        const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
-        const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
-        const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
-        const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& dR_bjets        = tr.getVar<double>("dR_bjets");               
-        const auto& ntops           = tr.getVar<int>("ntops");
-        const auto& ntops_1jet      = tr.getVar<int>("ntops_1jet"); // merged
-        const auto& ntops_2jet      = tr.getVar<int>("ntops_2jet");
-        const auto& ntops_3jet      = tr.getVar<int>("ntops_3jet"); // resolved 
-        const auto& passMadHT       = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline0l_testTopCuts  = tr.getVar<bool>("passBaseline0l_testTopCuts"); // for MC
-        const auto& passMETFilters  = tr.getVar<bool>("passMETFilters");
-        const bool pass_general     = JetID && passMETFilters && passMadHT;
-        const bool pass_0l          = NGoodLeptons == 0;  
-        const bool pass_HT500       = HT_trigger_pt45 > 500;
-        const bool pass_ge2b        = NGoodBJets_pt45 >= 2;
-        const bool pass_ge6j        = NGoodJets_pt45 >= 6;
-        const bool pass_ge7j        = NGoodJets_pt45 >= 7;
-        const bool pass_ge8j        = NGoodJets_pt45 >= 8;
-        const bool pass_ge9j        = NGoodJets_pt45 >= 9;
-        const bool pass_ge2t        = ntops >= 2;
-        const bool pass_ge2tM       = ntops >= 2 && ntops_3jet == 0 && ntops_2jet == 0;
-        const bool pass_ge2tR       = ntops >= 2 && ntops_1jet == 0 && ntops_2jet == 0;
-        const bool pass_ge2tMR      = ntops >= 2 && ntops_1jet >= 1 && ntops_3jet >= 1 && ntops_2jet == 0;
-        const bool pass_ge1dRbjets  = dR_bjets >= 1.0;
-    
+        // General variables
+        const auto& runtype               = tr.getVar<std::string>("runtype");
+        // Old Baseline selection
+        const auto& passBaseline0l_old    = tr.getVar<bool>("passBaseline0l_old");
+        const auto& NGoodJets_pt45        = tr.getVar<int>("NGoodJets_pt45");
+        const bool pass_ge7j_pt45         = NGoodJets_pt45 >= 7;
+        const bool pass_6j_pt45           = NGoodJets_pt45 == 6;
+        const bool pass_7j_pt45           = NGoodJets_pt45 == 7;
+        const bool pass_8j_pt45           = NGoodJets_pt45 == 8;
+        const bool pass_9j_pt45           = NGoodJets_pt45 == 9;
+        const bool pass_10j_pt45          = NGoodJets_pt45 == 10;
+        const bool pass_11j_pt45          = NGoodJets_pt45 == 11;
+        const bool pass_ge12j_pt45        = NGoodJets_pt45 >= 12;
+        // New Baseline selection 
+        const auto& passBaseline0l_pre    = tr.getVar<bool>("passBaseline0l_pre");
+        const auto& passBaseline0l_good   = tr.getVar<bool>("passBaseline0l_good");
+        const auto& NGoodJets_pt30        = tr.getVar<int>("NGoodJets_pt30");
+        const bool pass_7j_pt30           = NGoodJets_pt30 == 7;
+        const bool pass_8j_pt30           = NGoodJets_pt30 == 8;
+        const bool pass_9j_pt30           = NGoodJets_pt30 == 9;
+        const bool pass_10j_pt30          = NGoodJets_pt30 == 10;
+        const bool pass_11j_pt30          = NGoodJets_pt30 == 11;
+        const bool pass_ge12j_pt30        = NGoodJets_pt30 >= 12;
+
         // -------------------------------------
         // -- Make Stop Hemispheres variables
         // -------------------------------------
+        const auto& Stop1                      = tr.getVar<TLorentzVector>("Stop1_OldSeed");
+        const auto& Stop2                      = tr.getVar<TLorentzVector>("Stop2_OldSeed");
         const auto& Stop1_PtRank               = tr.getVar<TLorentzVector>("Stop1_PtRank_OldSeed");
         const auto& Stop2_PtRank               = tr.getVar<TLorentzVector>("Stop2_PtRank_OldSeed");
         const auto& Stop1_MassRank             = tr.getVar<TLorentzVector>("Stop1_MassRank_OldSeed");
@@ -191,6 +208,8 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& average_stopMasses         = tr.getVar<double>("average_stopMasses_OldSeed");
         const auto& relativeDiff_stopMasses    = tr.getVar<double>("relativeDiff_stopMasses_OldSeed");
 
+        double stop1Mass              = 0.0, stop1Eta              = 0.0, stop1Phi              = 0.0, stop1Pt              = 0.0;
+        double stop2Mass              = 0.0, stop2Eta              = 0.0, stop2Phi              = 0.0, stop2Pt              = 0.0;
         double stop1Mass_PtRank       = 0.0, stop1Eta_PtRank       = 0.0, stop1Phi_PtRank       = 0.0, stop1Pt_PtRank       = 0.0;
         double stop2Mass_PtRank       = 0.0, stop2Eta_PtRank       = 0.0, stop2Phi_PtRank       = 0.0, stop2Pt_PtRank       = 0.0;
         double stop1Mass_MassRank     = 0.0, stop1Eta_MassRank     = 0.0, stop1Phi_MassRank     = 0.0, stop1Pt_MassRank     = 0.0;
@@ -198,6 +217,15 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         double stop1Mass_ScalarPtRank = 0.0, stop1Eta_ScalarPtRank = 0.0, stop1Phi_ScalarPtRank = 0.0, stop1Pt_ScalarPtRank = 0.0;
         double stop2Mass_ScalarPtRank = 0.0, stop2Eta_ScalarPtRank = 0.0, stop2Phi_ScalarPtRank = 0.0, stop2Pt_ScalarPtRank = 0.0;        
         
+        stop1Mass              = Stop1.M();
+        stop1Eta               = Stop1.Eta();
+        stop1Phi               = Stop1.Phi();
+        stop1Pt                = Stop1.Pt();
+        stop2Mass              = Stop2.M();
+        stop2Eta               = Stop2.Eta();
+        stop2Phi               = Stop2.Phi();
+        stop2Pt                = Stop2.Pt();
+    
         stop1Mass_PtRank       = Stop1_PtRank.M();
         stop1Eta_PtRank        = Stop1_PtRank.Eta();
         stop1Phi_PtRank        = Stop1_PtRank.Phi();       
@@ -252,79 +280,25 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------------------
         const std::map<std::string, bool>& cutmap
         {
-            {"",                                       true},
-           
-            // baseline 
-            {"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge6j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets },
-            
-            {"0l_HT500_ge2b_ge7j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge7j && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge7j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge7j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge7j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge7j && pass_ge2tMR && pass_ge1dRbjets },
-            
-            {"0l_HT500_ge2b_ge8j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge8j && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge8j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge8j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge8j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge8j && pass_ge2tMR && pass_ge1dRbjets },
-            
-            {"0l_HT500_ge2b_ge9j_ge2t_ge1dRbjets",   passBaseline0l_testTopCuts && pass_ge9j && pass_ge2t   && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge9j_ge2tM_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tM  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge9j_ge2tR_ge1dRbjets",  passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tR  && pass_ge1dRbjets },
-            {"0l_HT500_ge2b_ge9j_ge2tMR_ge1dRbjets", passBaseline0l_testTopCuts && pass_ge9j && pass_ge2tMR && pass_ge1dRbjets },
-       
-            // NJets cuts for stop hemispheres
-            {"baseline_0l_Njet6",    pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 6},
-            {"baseline_0l_Njet6_M",  pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 6},
-            {"baseline_0l_Njet6_R",  pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 6},
-            {"baseline_0l_Njet6_MR", pass_general && pass_0l && pass_HT500 && pass_ge2b && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 6},
+            // Old baseline selection
+            {"0l_HT500_ge6j_ge2b_ge2t_ge1dRbjets",  passBaseline0l_old                   },
+            {"0l_HT500_ge7j_ge2b_ge2t_ge1dRbjets",  passBaseline0l_old && pass_ge7j_pt45 },
+            {"0l_HT500_6j_ge2b_ge2t_ge1dRbjets",    passBaseline0l_old && pass_6j_pt45   },
+            {"0l_HT500_7j_ge2b_ge2t_ge1dRbjets",    passBaseline0l_old && pass_7j_pt45   },
+            {"0l_HT500_8j_ge2b_ge2t_ge1dRbjets",    passBaseline0l_old && pass_8j_pt45   },
+            {"0l_HT500_9j_ge2b_ge2t_ge1dRbjets",    passBaseline0l_old && pass_9j_pt45   },
+            {"0l_HT500_10j_ge2b_ge2t_ge1dRbjets",   passBaseline0l_old && pass_10j_pt45  },
+            {"0l_HT500_11j_ge2b_ge2t_ge1dRbjets",   passBaseline0l_old && pass_11j_pt45  },
+            {"0l_HT500_ge12j_ge2b_ge2t_ge1dRbjets", passBaseline0l_old && pass_ge12j_pt45},
 
-            {"baseline_0l_Njet7",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 7 },
-            {"baseline_0l_Njet7_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 7 },
-            {"baseline_0l_Njet7_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 7 },
-            {"baseline_0l_Njet7_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 7 },
-
-            {"baseline_0l_Njet8",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 8 },
-            {"baseline_0l_Njet8_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 8 },
-            {"baseline_0l_Njet8_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 8 },
-            {"baseline_0l_Njet8_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 8 },
-
-            {"baseline_0l_Njet9",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 9 },
-            {"baseline_0l_Njet9_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 9 },
-            {"baseline_0l_Njet9_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 9 },
-            {"baseline_0l_Njet9_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 9 },
-
-            {"baseline_0l_Njet10",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 10},
-            {"baseline_0l_Njet10_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 10},
-            {"baseline_0l_Njet10_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 10},
-            {"baseline_0l_Njet10_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 10},        
-
-            {"baseline_0l_Njet11",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 11},
-            {"baseline_0l_Njet11_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 11},
-            {"baseline_0l_Njet11_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 11},
-            {"baseline_0l_Njet11_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 11},
-    
-            {"baseline_0l_Njet12",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 12},
-            {"baseline_0l_Njet12_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 12},
-            {"baseline_0l_Njet12_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 12},
-            {"baseline_0l_Njet12_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 12},
-
-            {"baseline_0l_Njet13",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 13},
-            {"baseline_0l_Njet13_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 13},
-            {"baseline_0l_Njet13_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 13},
-            {"baseline_0l_Njet13_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 13},
-
-            {"baseline_0l_Njet14",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 14},
-            {"baseline_0l_Njet14_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 14},
-            {"baseline_0l_Njet14_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 14},
-            {"baseline_0l_Njet14_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 14},
-
-            {"baseline_0l_Njet15",    passBaseline0l_testTopCuts && pass_ge2t   && pass_ge1dRbjets && NGoodJets_pt45 == 15},
-            {"baseline_0l_Njet15_M",  passBaseline0l_testTopCuts && pass_ge2tM  && pass_ge1dRbjets && NGoodJets_pt45 == 15},
-            {"baseline_0l_Njet15_R",  passBaseline0l_testTopCuts && pass_ge2tR  && pass_ge1dRbjets && NGoodJets_pt45 == 15},
-            {"baseline_0l_Njet15_MR", passBaseline0l_testTopCuts && pass_ge2tMR && pass_ge1dRbjets && NGoodJets_pt45 == 15},
+            // New baseline selection
+            {"0l_HT500_0NonIsoMuon_ge7j_ge2t_ge1dRbjets",  passBaseline0l_pre && passBaseline0l_good                   },
+            {"0l_HT500_0NonIsoMuon_7j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_good && pass_7j_pt30   },
+            {"0l_HT500_0NonIsoMuon_8j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_good && pass_8j_pt30   },
+            {"0l_HT500_0NonIsoMuon_9j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_good && pass_9j_pt30   },
+            {"0l_HT500_0NonIsoMuon_10j_ge2t_ge1dRbjets",   passBaseline0l_pre && passBaseline0l_good && pass_10j_pt30  },
+            {"0l_HT500_0NonIsoMuon_11j_ge2t_ge1dRbjets",   passBaseline0l_pre && passBaseline0l_good && pass_11j_pt30  },
+            {"0l_HT500_0NonIsoMuon_ge12j_ge2t_ge1dRbjets", passBaseline0l_pre && passBaseline0l_good && pass_ge12j_pt30},
         };
 
         if (!inithisto) 
@@ -345,6 +319,15 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 // ---------------------------
                 // -- Make Stop Hemispheres  
                 // ---------------------------
+                // 1D - without any rank
+                my_histos["h_stop1Mass_"+cutVar.first]->Fill( stop1Mass, weight );
+                my_histos["h_stop1Eta_"+cutVar.first]->Fill( stop1Eta, weight );
+                my_histos["h_stop1Phi_"+cutVar.first]->Fill( stop1Phi, weight );
+                my_histos["h_stop1Pt_"+cutVar.first]->Fill( stop1Pt, weight );
+                my_histos["h_stop2Mass_"+cutVar.first]->Fill( stop2Mass, weight );
+                my_histos["h_stop2Eta_"+cutVar.first]->Fill( stop2Eta, weight );
+                my_histos["h_stop2Phi_"+cutVar.first]->Fill( stop2Phi, weight );
+                my_histos["h_stop2Pt_"+cutVar.first]->Fill( stop2Pt, weight );
                 // 1D - ptRank
                 my_histos["h_stop1Mass_PtRank_"+cutVar.first]->Fill( stop1Mass_PtRank, weight );
                 my_histos["h_stop1Eta_PtRank_"+cutVar.first]->Fill( stop1Eta_PtRank, weight );
@@ -382,6 +365,18 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_average_stopMasses_"+cutVar.first]->Fill( average_stopMasses, weight );
                 my_histos["h_relativeDiff_stopMasses_"+cutVar.first]->Fill( relativeDiff_stopMasses, weight );
                 // 2D - stop1VSstop2 Mass, Eta, Phi, Pt
+                my_2d_histos["h_Mass_stop1vsstop2_"+cutVar.first]->Fill(stop1Mass, stop2Mass, weight);
+                my_2d_histos["h_Mass_stop1vsstop2_"+cutVar.first]->GetXaxis()->SetTitle("M_{#tildet}_{1}");
+                my_2d_histos["h_Mass_stop1vsstop2_"+cutVar.first]->GetYaxis()->SetTitle("M_{#tildet}_{2}");
+                my_2d_histos["h_Eta_stop1vsstop2_"+cutVar.first]->Fill(stop1Eta, stop2Eta, weight);
+                my_2d_histos["h_Eta_stop1vsstop2_"+cutVar.first]->GetXaxis()->SetTitle("#eta_{#tildet}_{1}");
+                my_2d_histos["h_Eta_stop1vsstop2_"+cutVar.first]->GetYaxis()->SetTitle("#eta_{#tildet}_{2}");
+                my_2d_histos["h_Phi_stop1vsstop2_"+cutVar.first]->Fill(stop1Phi, stop2Phi, weight);
+                my_2d_histos["h_Phi_stop1vsstop2_"+cutVar.first]->GetXaxis()->SetTitle("#phi_{#tildet}_{1}");
+                my_2d_histos["h_Phi_stop1vsstop2_"+cutVar.first]->GetYaxis()->SetTitle("#phi_{#tildet}_{2}");
+                my_2d_histos["h_Pt_stop1vsstop2_"+cutVar.first]->Fill(stop1Pt, stop2Pt, weight);
+                my_2d_histos["h_Pt_stop1vsstop2_"+cutVar.first]->GetXaxis()->SetTitle("pT_{#tildet}_{1}");
+                my_2d_histos["h_Pt_stop1vsstop2_"+cutVar.first]->GetYaxis()->SetTitle("pT_{#tildet}_{2}");
                 my_2d_histos["h_Mass_stop1vsstop2_PtRank_"+cutVar.first]->Fill(stop1Mass_PtRank, stop2Mass_PtRank, weight);
                 my_2d_histos["h_Mass_stop1vsstop2_PtRank_"+cutVar.first]->GetXaxis()->SetTitle("Pt Rank M_{#tildet}_{1}");
                 my_2d_histos["h_Mass_stop1vsstop2_PtRank_"+cutVar.first]->GetYaxis()->SetTitle("Pt Rank M_{#tildet}_{2}");
@@ -419,6 +414,12 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_2d_histos["h_Pt_stop1vsstop2_ScalarPtRank_"+cutVar.first]->GetXaxis()->SetTitle("ScalarPt Rank pT_{#tildet}_{1}");
                 my_2d_histos["h_Pt_stop1vsstop2_ScalarPtRank_"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank pT_{#tildet}_{2}");
                 // 2D - NJetsVSstops
+                my_2d_histos["h_Mass_NJetsVSstop1_"+cutVar.first]->Fill( NGoodJets_pt45, stop1Mass, weight );
+                my_2d_histos["h_Mass_NJetsVSstop1_"+cutVar.first]->GetXaxis()->SetTitle("N_{J}");
+                my_2d_histos["h_Mass_NJetsVSstop1_"+cutVar.first]->GetYaxis()->SetTitle("M_{#tildet}_{1}");
+                my_2d_histos["h_Mass_NJetsVSstop2_"+cutVar.first]->Fill( NGoodJets_pt45, stop2Mass, weight );
+                my_2d_histos["h_Mass_NJetsVSstop2_"+cutVar.first]->GetXaxis()->SetTitle("N_{J}");
+                my_2d_histos["h_Mass_NJetsVSstop2_"+cutVar.first]->GetYaxis()->SetTitle("M_{#tildet}_{2}");
                 my_2d_histos["h_Mass_NJetsVSstop1_PtRank_"+cutVar.first]->Fill( NGoodJets_pt45, stop1Mass_PtRank, weight );
                 my_2d_histos["h_Mass_NJetsVSstop1_PtRank_"+cutVar.first]->GetXaxis()->SetTitle("N_{J}");
                 my_2d_histos["h_Mass_NJetsVSstop1_PtRank_"+cutVar.first]->GetYaxis()->SetTitle("Pt Rank M_{#tildet}_{1}"); 
@@ -457,6 +458,12 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_2d_histos["h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first]->GetXaxis()->SetTitle("Pt Rank pT_{#tildet}_{2}");
                 my_2d_histos["h_Pt2_PtRankVsScalarPt2_ScalarPtRank"+cutVar.first]->GetYaxis()->SetTitle("ScalarPt Rank Scalar pT_{#tildet}_{2}");
                 // 2D - stops MassVsPt
+                my_2d_histos["h_stop1_MassVsPt_"+cutVar.first]->Fill(stop1Mass, stop1Pt, weight);
+                my_2d_histos["h_stop1_MassVsPt_"+cutVar.first]->GetXaxis()->SetTitle("M_{#tildet}_{1}");
+                my_2d_histos["h_stop1_MassVsPt_"+cutVar.first]->GetYaxis()->SetTitle("pT_{#tildet}_{1}");
+                my_2d_histos["h_stop2_MassVsPt_"+cutVar.first]->Fill(stop2Mass, stop2Pt, weight);
+                my_2d_histos["h_stop2_MassVsPt_"+cutVar.first]->GetXaxis()->SetTitle("M_{#tildet}_{2}");
+                my_2d_histos["h_stop2_MassVsPt_"+cutVar.first]->GetYaxis()->SetTitle("pT_{#tildet}_{2}");
                 my_2d_histos["h_stop1_MassVsPt_PtRank_"+cutVar.first]->Fill(stop1Mass_PtRank, stop1Pt_PtRank, weight);
                 my_2d_histos["h_stop1_MassVsPt_PtRank_"+cutVar.first]->GetXaxis()->SetTitle("Pt Rank M_{#tildet}_{1}");
                 my_2d_histos["h_stop1_MassVsPt_PtRank_"+cutVar.first]->GetYaxis()->SetTitle("Pt Rank pT_{#tildet}_{1}");
