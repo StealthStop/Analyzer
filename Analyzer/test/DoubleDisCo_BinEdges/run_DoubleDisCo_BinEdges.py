@@ -19,8 +19,8 @@ def main():
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",           dest="year",           help="which year",            required=True)
-    parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_1L")
-    #parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms/home/jhiltb/nobackup/PO_Boxes/shared/2016_DisCo_0L_Cand2_1L")
+    #parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_1L") # Both 0L & 1l with OldSeed
+    parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_TopSeed_1L") # 0L with TopSeed
     parser.add_argument("--tt",             dest="tt",             help="TT",                    required=True)
     parser.add_argument("--nontt",          dest="nontt",          help="NonTT",                 required=True)
     parser.add_argument("--ttVar",          dest="ttVar",          help="TT Variances",          required=True)
@@ -338,9 +338,9 @@ def main():
                                                         "C" : theEdgesClass.getFinal("nEventsC", hist_key),
                                                         "D" : theEdgesClass.getFinal("nEventsD", hist_key)}
                 if hist_key != Sig:
-                    closureErrs      = theEdgesClass.get("closureError",      None, None, hist_key) # vars with any combination of bin edges
+                    closureErrs      = theEdgesClass.get("nonClosure",      None, None, hist_key) # vars with any combination of bin edges
                     pull             = theEdgesClass.get("pull",              None, None, hist_key)
-                    finalClosureErr  = theEdgesClass.getFinal("closureError", hist_key            ) # vars with the final choice of bin edges
+                    finalClosureErr  = theEdgesClass.getFinal("nonClosure", hist_key            ) # vars with the final choice of bin edges
                     finalPull        = theEdgesClass.getFinal("pull",         hist_key            )
                
                 # ---------------------------  
