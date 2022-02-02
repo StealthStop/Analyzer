@@ -17,10 +17,11 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 class All_Regions:
 
-    def __init__(self, hist=None, Sig=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
+    def __init__(self, hist=None, Sig=None, ttVar=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
 
         self.hist           = hist
         self.Sig            = Sig
+        self.ttVar          = ttVar
         self.fixedDisc1Edge = fixedDisc1Edge
         self.fixedDisc2Edge = fixedDisc2Edge
         self.leftBoundary   = leftBoundary
@@ -71,9 +72,9 @@ class All_Regions:
     
         return closureError, closureErrUnc
 
-    # ----------------
-    # Pull calculation
-    # ----------------
+    # ------------------------
+    # Closure Pull calculation
+    # ------------------------
     def cal_Pull(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
 
         if nEvents_D == 0.0 or nEventsErr_A == 0.0:
@@ -84,11 +85,58 @@ class All_Regions:
 
         return pull, pullUnc
 
+    # ---------------------------------------------------------------------
+    # SigFrac Pull calculation
+    #   SigFrac      = N_sig / (N_sig + N_bkg)
+    #   SigFrac Unc. = (N_sig * N_bkg) / (N_sig + N_bkg)^3
+    #   SigFrac Pull = (SigFrac / SigFrac Unc.) = (N_sig + N_bkg)^2 / N_bkg
+    # ---------------------------------------------------------------------
+    #def cal_SigFrac_Pull(self, nSigEvents_B, nSigEvents_C, nSigEvents_D, nTTEvents_B, nTTEvents_C, nTTEvents_D, Njets=None):
+
+    #    for Njet in Njets:
+
+    #        nTot_SigTT_B[Njet] = nSigEvents_B[Njet] + nTTEvents_B[Njet]
+    #        nTot_SigTT_C[Njet] = nSigEvents_C[Njet] + nTTEvents_C[Njet]
+    #        nTot_SigTT_D[Njet] = nSigEvents_D[Njet] + nTTEvents_D[Njet]
+
+    #        if nTot_SigTT_B > 0.0: 
+    #            sigFracsB    = nSigEvents_B / nTot_SigTT_B
+    #            sigFracsErrB = ((nTTEvents_B * nSigEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0 + \
+    #                            (nSigEvents_B * nTTEventsErr_B**0.5 / (nTot_SigTT_B)**2.0)**2.0)**0.5
+    #           
+    #        if nTot_SigTT_C > 0.0: 
+    #            sigFracsC    = nSigEvents_C / nTot_SigTT_C
+    #            sigFracsErrC = ((nTTEvents_C * nSigEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0 + \
+    #                            (nSigEvents_C * nTTEventsErr_C**0.5 / (nTot_SigTT_C)**2.0)**2.0)**0.5
+
+    #        if nTot_SigTT_D > 0.0: 
+    #            sigFracsD    = nSigEvents_D / nTot_SigTT_D
+    #            sigFracsErrD = ((nTTEvents_D * nSigEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0 + \
+    #                            (nSigEvents_D * nTTEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0)**0.5 
+    #        
+    #        sigFracsB_Pull = sigFracsB / sigFracsErrB
+    #        sigFracsC_Pull = sigFracsC / sigFracsErrC    
+    #        sigFracsD_Pull = sigFracsD / sigFracsErrD
+
+    #    return sigFracsB, sigFracsErrB, sigFracsB_Pull, sigFracsC, sigFracsErrC, sigFracsC_Pull, sigFracsD, sigFracsErrD, sigFracsD_Pull
+
+
     # --------------------------------------------------------------
     # Optimization metric function to be overridden by derived class
     # --------------------------------------------------------------
     def optimization_metric(self, **kwargs):
         return 0.0
+
+    # ----------------------------------------------
+    # Optimization metric to optimize the ABCD edges
+    # ----------------------------------------------
+    #def optMetric_forABCDedges(self, Njets=None, max_closure=0.1; max_sigFrac=0.1, closure=None, closure_pull=None, significance=None, significance_pull=None):
+
+    #    for Njet in Njets:
+
+
+
+
 
     # -----------------------------------------------------
     # get signal and background histograms' counts
@@ -164,7 +212,7 @@ class All_Regions:
     # ----------------------------------------------------------------------------
     def get_BinEdges(self, bkgNormUnc = 0.3, minBkgEvents = 1, minSigEvents = 5):
       
-        optMetric = 999.0
+        optMetric = 10e10 #999.0
 
         # loop over the disc1 and disc2 to get any possible combination of them
         for disc1Key, disc2Key in self.get("edges",None,None,"TT"):
@@ -179,6 +227,11 @@ class All_Regions:
             nNonTTEvents_B, nNonTTEventsErr_B = self.get("nEventsB", disc1Key, disc2Key, "NonTT")
             nNonTTEvents_C, nNonTTEventsErr_C = self.get("nEventsC", disc1Key, disc2Key, "NonTT")
             nNonTTEvents_D, nNonTTEventsErr_D = self.get("nEventsD", disc1Key, disc2Key, "NonTT")
+
+            nTTvarEvents_A, nTTvarEventsErr_A = self.get("nEventsA", disc1Key, disc2Key, self.ttVar)
+            nTTvarEvents_B, nTTvarEventsErr_B = self.get("nEventsB", disc1Key, disc2Key, self.ttVar)
+            nTTvarEvents_C, nTTvarEventsErr_C = self.get("nEventsC", disc1Key, disc2Key, self.ttVar)
+            nTTvarEvents_D, nTTvarEventsErr_D = self.get("nEventsD", disc1Key, disc2Key, self.ttVar)
 
             nSigEvents_A,   nSigEventsErr_A   = self.get("nEventsA", disc1Key, disc2Key, self.Sig) 
             nSigEvents_B,   nSigEventsErr_B   = self.get("nEventsB", disc1Key, disc2Key, self.Sig) 
@@ -282,22 +335,27 @@ class All_Regions:
             # closure error and pull for 2D plots / for TT, NonTT, Data
             closureErr_TT    = -999.0; closureErrUnc_TT    = -999.0; pull_TT    = -999.0; pullUnc_TT    = -999.0 
             closureErr_NonTT = -999.0; closureErrUnc_NonTT = -999.0; pull_NonTT = -999.0; pullUnc_NonTT = -999.0 
+            closureErr_TTvar = -999.0; closureErrUnc_TTvar = -999.0; pull_TTvar = -999.0; pullUnc_TTvar = -999.0
             closureErr_Data  = -999.0; closureErrUnc_Data  = -999.0; pull_Data  = -999.0; pullUnc_Data  = -999.0
     
             closureErr_TT,    closureErrUnc_TT    = self.cal_ClosureError(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             closureErr_NonTT, closureErrUnc_NonTT = self.cal_ClosureError(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
+            closureErr_TTvar, closureErrUnc_TTvar = self.cal_ClosureError(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             closureErr_Data,  closureErrUnc_Data  = self.cal_ClosureError(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
 
             pull_TT,    pullUnc_TT    = self.cal_Pull(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             pull_NonTT, pullUnc_NonTT = self.cal_Pull(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
+            pull_TTvar, pullUnc_TTvar = self.cal_Pull(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             pull_Data,  pullUnc_Data  = self.cal_Pull(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
 
-            self.add("closureError", disc1Key, disc2Key, (closureErr_TT,    closureErrUnc_TT) ,   "TT"   )
-            self.add("closureError", disc1Key, disc2Key, (closureErr_NonTT, closureErrUnc_NonTT), "NonTT")
-            self.add("closureError", disc1Key, disc2Key, (closureErr_Data,  closureErrUnc_Data ), "Data" )
-            self.add("pull",         disc1Key, disc2Key, (pull_TT,    pullUnc_TT),    "TT"   )
-            self.add("pull",         disc1Key, disc2Key, (pull_NonTT, pullUnc_NonTT), "NonTT")
-            self.add("pull",         disc1Key, disc2Key, (pull_Data,  pullUnc_Data),  "Data" )
+            self.add("closureError", disc1Key, disc2Key, (closureErr_TT,    closureErrUnc_TT) ,   "TT"      )
+            self.add("closureError", disc1Key, disc2Key, (closureErr_NonTT, closureErrUnc_NonTT), "NonTT"   )
+            self.add("closureError", disc1Key, disc2Key, (closureErr_TTvar, closureErrUnc_TTvar), self.ttVar)
+            self.add("closureError", disc1Key, disc2Key, (closureErr_Data,  closureErrUnc_Data ), "Data"    )
+            self.add("pull",         disc1Key, disc2Key, (pull_TT,    pullUnc_TT),    "TT"      )
+            self.add("pull",         disc1Key, disc2Key, (pull_NonTT, pullUnc_NonTT), "NonTT"   )
+            self.add("pull",         disc1Key, disc2Key, (pull_TTvar, pullUnc_TTvar), self.ttVar)
+            self.add("pull",         disc1Key, disc2Key, (pull_Data,  pullUnc_Data),  "Data"    )
        
             # significance for optimization metric for only TT !!! 
             # significance, significanceUnc for 2D plots
@@ -326,7 +384,7 @@ class All_Regions:
 
             # Determine based on the metric value if the current
             # choice of bin edges is better and if so, save them
-            if tempOptMetric < optMetric:
+            if tempOptMetric <= optMetric:
                 self.finalEdges = (disc1Key, disc2Key)
                 optMetric = tempOptMetric
 

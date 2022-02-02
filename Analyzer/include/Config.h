@@ -71,6 +71,7 @@ private:
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
             else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 12, 2, "");
             else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables_0l_old")               tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45",                  false, true, 7,  2, "_0l");
             else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_0l");
             else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_0l");
             else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_1l");
@@ -358,14 +359,15 @@ public:
                 "CommonVariables",
                 "Baseline",
                 "FatJetCombine",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
-                "MakeMVAVariables_2l",
-                "MakeMVAVariables_NonIsoMuon_0l",
-                "MakeMVAVariables_NonIsoMuon_1l",
+                "MakeMVAVariables_0l_old",
+                //"MakeMVAVariables_0l",
+                //"MakeMVAVariables_1l",
+                //"MakeMVAVariables_2l",
+                //"MakeMVAVariables_NonIsoMuon_0l",
+                //"MakeMVAVariables_NonIsoMuon_1l",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_OldSeed_NonIsoMuon",
+                //"MakeStopHemispheres_OldSeed_NonIsoMuon",
                 "MakeStopHemispheres_TopSeed",
                 "BTagCorrector",
                 "ScaleFactors",
@@ -391,7 +393,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="Semra_Analyzer" || analyzer=="AnalyzeTopTagger")
+        else if(analyzer=="Semra_Analyzer" || analyzer=="TopTagger_Analyzer" || analyzer=="AnalyzeTopTagger")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -416,10 +418,10 @@ public:
                 "MakeStopHemispheres_OldSeed_NonIsoMuon",
                 "MakeStopHemispheres_TopSeed",
                 "StopGenMatch",
-                "DoubleDisCo_0l_RPV",
-                "DoubleDisCo_1l_RPV",
-                "DoubleDisCo_NonIsoMuon_0l_RPV",
-                "DoubleDisCo_NonIsoMuon_1l_RPV",
+                //"DoubleDisCo_0l_RPV",
+                //"DoubleDisCo_1l_RPV",
+                //"DoubleDisCo_NonIsoMuon_0l_RPV",
+                //"DoubleDisCo_NonIsoMuon_1l_RPV",
             };
             registerModules(tr, std::move(modulesList));
         } 
