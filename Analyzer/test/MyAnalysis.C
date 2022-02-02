@@ -21,6 +21,7 @@
 #include "Analyzer/Analyzer/include/Config.h"
 #include "Analyzer/Analyzer/include/Semra_Analyzer.h"
 #include "Analyzer/Analyzer/include/TopTagger_Analyzer.h"
+#include "Analyzer/Analyzer/include/TopTaggerSF_Analyzer.h"
 #include "Analyzer/Analyzer/include/ISRJets_Analyzer.h"
 #include "Analyzer/Analyzer/include/HadTriggers_Analyzer.h"
 #include "Analyzer/Analyzer/include/TwoLepAnalyzer.h"
@@ -181,6 +182,7 @@ int main(int argc, char *argv[])
         {"MakeNJetDists",           run<MakeNJetDists>},
         {"Semra_Analyzer",          run<Semra_Analyzer>},
         {"TopTagger_Analyzer",      run<TopTagger_Analyzer>},
+        {"TopTaggerSF_Analyzer",    run<TopTaggerSF_Analyzer>},
         {"ISRJets_Analyzer",        run<ISRJets_Analyzer>},
         {"HadTriggers_Analyzer",    run<HadTriggers_Analyzer>},
         {"TwoLepAnalyzer",          run<TwoLepAnalyzer>},
