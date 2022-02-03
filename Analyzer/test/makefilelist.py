@@ -1,84 +1,96 @@
 import os
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
-privateNtuples = False
+# Usage: Populates a directory "filelists_Kevin_<versioning>" with a text file for each year + sample combination.
+#        Contents of the text file are simply a listing of paths to all relevant ROOT files for the year + sample
+#        The "filelists_Kevin_<versioning>" should be placed in /eos/uscms/store/user/lpcsusyhad/StealthStop/
+#        where it will be referenced by sampleSets.cfg
 
-if privateNtuples:
-    ## Making filelists for our own ntuples
-    samplesets = [
-        "WJetsToLNu",
-        "diboson",
-        "qcd",
-        "qcd_bgenfilter",
-        "signalR2",
-        "tX",
-        "ttWJetsToLNu",
-        "ttX",
-        "ttXX",
-        "ttbar",
-        "ttbar2",
-        "tttX",
-        "tttt"
-        ]
-    basedir = "/store/user/lpcsusyhad/StealthStop/TreeMaker_ntuples/"
-    tempfilename = "tmp.txt"
+treemakerdir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
-    samples = defaultdict(list)
+prod         = "V20"
+basedir      = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s/"%(prod)
+filelistsdir = "/eos/uscms/store/user/lpcsusyhad/StealthStop/filelists_Kevin_%s/"%(prod)
+ttreedir     = "TreeMaker2/PreSelection"
+tempfilename = "tmp.txt"
+fdir         = "filelists_Kevin_%s/"%prod
 
-    for sampleset in samplesets:
-        command = os.system("eos root://cmseos.fnal.gov ls %s/%s > %s" % (basedir, sampleset, tempfilename))
-        with open(tempfilename, 'r') as tempfile:
-            for line in tempfile:
-                # extract sample name, Summer16_private.TTTT_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8_6_RA2AnalysisTree.root
-                shortline = line.split(".")[1].rpartition("_")[0].rpartition("_")[0]
-                shortline = shortline.replace("_ext1","").replace("_ext2","").replace("_backup","")
-                newline = "root://cmseos.fnal.gov/" + basedir + sampleset + "/" + line
-                samples[shortline].append(newline)
+if not os.path.isdir(fdir):
+    os.mkdir(fdir)
+
+samples = OrderedDict()
+samples["2016"]    = defaultdict(list)
+samples["2016APV"] = defaultdict(list)
+samples["2017"]    = defaultdict(list)
+samples["2018"]    = defaultdict(list)
+
+command = os.system("eos root://cmseos.fnal.gov ls %s > %s" % (basedir, tempfilename))
+with open(tempfilename, 'r') as tempfile:
+    for line in tempfile:
+
+        # Each line will be simple ROOT file name e.g. Summer20UL18.ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8_9_RA2AnalysisTree.root
+        if not ".root" in line: continue
+        if     "Fast"  in line: continue
+
+        era = ""
+        if   ("UL2016" in line and "HIPM" in line) or "UL16APV" in line: 
+            era = "2016APV"
+        elif "UL2016" in line or "UL16" in line: 
+            era = "2016"
+        elif "UL2017" in line or "UL17" in line: 
+            era = "2017"
+        elif "UL2018" in line or "UL18" in line: 
+            era = "2018"
+        else:
+            continue
+
+        # With example above, drop the "Summer20UL18" and ".root", 
+        # grab string before the last two "_" i.e. "ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8"
+        shortline = line.split(".")[1].rpartition("_")[0].rpartition("_")[0]
+
+        # Now we construct shortline as "2018_ttHJetTobb" and remove extra things
+        shortline = era + "_" + shortline.replace("_ext1", "").replace("_ext2", "").replace("_ext3", "").replace("_backup", "")
+        
+        # Use "2018_ttHJetTobb" as key to list of all ttHJetTobb files for 2018
+        newline = "root://cmseos.fnal.gov/" + basedir + line
+        samples[era][shortline].append(newline)
+
+sampleSet = open("sampleSet_%s.txt"%(prod), "w")
+
+# Write out a "2018_ttHJetTobb.txt" file with the list of corresponding files
+for era, sampleLists in samples.iteritems():
+
+    # For some sanity, sort the samples alphabetically
+    theSamples = sampleLists.keys()
+    theSamples.sort()
+    for sample in theSamples:
+        newfile = open("filelists_Kevin_%s/"%(prod) + sample + ".txt", 'w')
+
+        xsec     = "-1.0,"
+        nevents  = "-1.0,"
+        nnevents = "-1.0,"
+        kfactor  = "-1.0,"
+
+        chunks = sample.split("_")
+
+        endpoint = 0
+        for chunk in chunks:
+            if "TuneCP5" in chunk:
+                if chunk != "TuneCP5":
+                    endpoint += 1
+                break
     
-    for k,v in samples.iteritems():
-        newfile = open("filelists/" + k + ".txt", 'w')
-        for l in v:
-            newfile.write(l)
+            endpoint += 1
+
+        name = "_".join(chunks[0:endpoint]) + ","
+        sample += ".txt,"
+                
+        sampleSet.write("%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), filelistsdir, sample.ljust(85), ttreedir, xsec.ljust(10), nevents.ljust(10), nnevents.ljust(10), kfactor.ljust(10)))
+
+        for f in sampleLists[sample]:
+            newfile.write(f)
         newfile.close()
 
+    sampleSet.write("\n")
 
-else:
-
-    prod = "V17"
-    basedir = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s/"%prod
-    tempfilename = "tmp.txt"
-    fdir = "filelists_Kevin_%s/"%prod
-    if not os.path.isdir(fdir):
-        os.mkdir(fdir)
-
-    samples = defaultdict(list)
-
-    command = os.system("eos root://cmseos.fnal.gov ls %s > %s" % (basedir, tempfilename))
-    with open(tempfilename, 'r') as tempfile:
-        for line in tempfile:
-            if not ".root" in line: continue
-            if "Fast" in line: continue
-            print line
-            era = ""
-            if "Run2016" in line or "Summer16v3" in line: 
-                era = "2016_"
-            elif "Run2017" in line or "Fall17" in line: 
-                era = "2017_"
-            elif "Run2018" in line or "Autumn18" in line: 
-                era = "2018_"
-            else:
-                continue
-            # extract sample name, Summer16_private.TTTT_TuneCUETP8M2T4_13TeV-amcatnlo-pythia8_6_RA2AnalysisTree.root
-            # for data: Run2016B-17Jul2018_ver2-v1.SingleMuon_106_RA2AnalysisTree.root
-            # for 2017 MC: RunIIFall17MiniAODv2.TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8_123_RA2AnalysisTree.root
-            shortline = line.split(".")[1].rpartition("_")[0].rpartition("_")[0]
-            shortline = era+shortline.replace("_ext1","").replace("_ext2","").replace("_ext3","").replace("_backup","").replace("mN1", "mSo").replace("CUEP", "CUETP")
-            print shortline
-            newline = "root://cmseos.fnal.gov/" + basedir + line
-            samples[shortline].append(newline)
-
-    for k,v in samples.iteritems():
-        newfile = open("filelists_Kevin_%s/"%prod + k + ".txt", 'w')
-        for l in v:
-            newfile.write(l)
-        newfile.close()
+sampleSet.close()
