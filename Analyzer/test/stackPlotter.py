@@ -424,8 +424,9 @@ class StackPlotter:
                             wegQCD   = Hobj.Integral()
                             unWegQCD = Hobj.histogram.GetEntries()
 
-                    ttFrac  = wegTT / totalWegBkg
-                    qcdFrac = wegQCD / totalWegBkg
+                    if totalWegBkg != 0.0:
+                        ttFrac  = wegTT / totalWegBkg
+                        qcdFrac = wegQCD / totalWegBkg
           
                     if "njets" in hname:
                         self.njetsTableDictionary[selection] = {}
@@ -466,9 +467,9 @@ class StackPlotter:
                                 wegRPV850   = Hobj.Integral()
                                 unWegRPV850 = Hobj.histogram.GetEntries()
 
-                    rpv350Frac = wegRPV350 / (wegRPV350 + totalWegBkg) 
-                    rpv550Frac = wegRPV550 / (wegRPV550 + totalWegBkg)
-                    rpv850Frac = wegRPV850 / (wegRPV850 + totalWegBkg)
+                    if wegRPV350 + totalWegBkg != 0.0: rpv350Frac = wegRPV350 / (wegRPV350 + totalWegBkg) 
+                    if wegRPV550 + totalWegBkg != 0.0: rpv550Frac = wegRPV550 / (wegRPV550 + totalWegBkg)
+                    if wegRPV850 + totalWegBkg != 0.0: rpv850Frac = wegRPV850 / (wegRPV850 + totalWegBkg)
                    
                     if "njets" in hname: 
                         self.njetsTableDictionary[selection]["RPV_2t6j_mStop-350 Frac"]              = rpv350Frac
@@ -515,7 +516,7 @@ class StackPlotter:
 
                     theMin = newInfo["Y"]["min"] if "min" in newInfo["Y"] else 0.0
 
-                    if self.normalize:
+                    if self.normalize and mcScale != 0.0:
                         theMin /= mcScale
 
                     # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
@@ -696,7 +697,7 @@ if __name__ == "__main__":
 
     plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
-    plotter.make_njetsTable()
 
     if args.makeTable:
+        plotter.make_njetsTable()
         plotter.makeTable()
