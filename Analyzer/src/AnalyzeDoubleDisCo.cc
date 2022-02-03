@@ -244,7 +244,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
     const auto& bjetFileName    = tr.getVar<std::string>("bjetFileName");
     const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
     const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
-    const auto& puFileName      = tr.getVar<std::string>("puFileName");
     const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
     const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
 
@@ -329,10 +328,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             const auto& runtype                           = tr.getVar<std::string>("runtype");     
             const auto& NGoodJets_pt30                    = tr.getVar<int>("NGoodJets_pt30"+myVarSuffix);
-            const auto& NGoodJets_pt45                    = tr.getVar<int>("NGoodJets_pt45"+myVarSuffix);
             const auto& NNonIsoMuonJets_pt30              = tr.getVar<int>("NNonIsoMuonJets_pt30"+myVarSuffix);
             const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30"+myVarSuffix);
-            const auto& HT_trigger_pt45                   = tr.getVar<double>("HT_trigger_pt45"+myVarSuffix);
             const auto& HT_NonIsoMuon_pt30                = tr.getVar<double>("HT_NonIsoMuon_pt30"+myVarSuffix);
 
             const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix);
@@ -527,8 +524,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
                 weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;
 
-                weight1L_NonIsoMuon *= eventweight;// * muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon *= eventweight;// * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
             }
 
             std::vector<double> weight        {weight0L,            weight1L};
