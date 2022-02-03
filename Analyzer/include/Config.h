@@ -1,7 +1,7 @@
 #ifndef Confg_h
 #define Confg_h
 
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include "Framework/Framework/include/PrepNTupleVars.h"
 #include "Framework/Framework/include/RunTopTagger.h"
@@ -51,7 +51,6 @@ private:
         //const auto& DoubleDisCo_Cfg_2l    = tr.getVar<std::string>("DoubleDisCo_Cfg_2l"   ); 
         //const auto& DoubleDisCo_Model_2l  = tr.getVar<std::string>("DoubleDisCo_Model_2l" );
         //const auto& DoubleDisCo_Cfg_NonIsoMuon_2l = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l");
-        const auto& puFileName            = tr.getVar<std::string>("puFileName"           );
         const auto& leptonFileName        = tr.getVar<std::string>("leptonFileName"       );
         const auto& bjetFileName          = tr.getVar<std::string>("bjetFileName"         );
         const auto& bjetCSVFileName       = tr.getVar<std::string>("bjetCSVFileName"      );
@@ -106,7 +105,7 @@ private:
  
             if(runtype == "MC")
             {
-                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, puFileName, meanFileName);
+                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, meanFileName);
                 else if(module=="BTagCorrector")
                 {
                     auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, filetag);
@@ -134,7 +133,7 @@ public:
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
         //std::string DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l, DoubleDisCo_Cfg_NonIsoMuon_2l;      
-        std::string puFileName, leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
+        std::string leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
  
         double Lumi=0.0, deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
@@ -143,9 +142,9 @@ public:
         {
             runYear                           = "2016";
             Lumi                              = 36330.0;
-            deepCSV_WP_loose                  = 0.2217;
-            deepCSV_WP_medium                 = 0.6321;
-            deepCSV_WP_tight                  = 0.8953;            
+            deepCSV_WP_loose                  = 0.1918;
+            deepCSV_WP_medium                 = 0.5847;
+            deepCSV_WP_tight                  = 0.8767;            
             DeepESMCfg                        = "DeepEventShape_2016.cfg";
             DeepESMModel                      = "keras_frozen_2016.pb";
             DeepESMCfg_NonIsoMuon             = "DeepEventShape_NonIsoMuon_2016.cfg";
@@ -167,7 +166,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            puFileName            = "PileupHistograms_0121_69p2mb_pm4p6.root";
             leptonFileName        = "allInOne_leptonSF_2016.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
@@ -178,10 +176,10 @@ public:
         else if(filetag.find("2017") != std::string::npos)
         { 
             runYear               = "2017";
-            Lumi                  = 41525.0;
-            deepCSV_WP_loose      = 0.1522;
-            deepCSV_WP_medium     = 0.4941;       
-            deepCSV_WP_tight      = 0.8001;
+            Lumi                  = 41480.0;
+            deepCSV_WP_loose      = 0.1355;
+            deepCSV_WP_medium     = 0.4506;       
+            deepCSV_WP_tight      = 0.7738;
             DeepESMCfg            = "DeepEventShape_2017.cfg";
             DeepESMModel          = "keras_frozen_2017.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2017.cfg";
@@ -194,7 +192,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2017.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2017.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2017.cfg";
-            puFileName            = "pu_ratio.root";
             leptonFileName        = "allInOne_leptonSF_2017.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_94XSF_WP_V4_B_F.csv";
@@ -206,9 +203,9 @@ public:
         {
             runYear               = "2018pre";
             Lumi                  = 21071.0;
-            deepCSV_WP_loose      = 0.1241;
-            deepCSV_WP_medium     = 0.4184;       
-            deepCSV_WP_tight      = 0.7527;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
             DeepESMCfg            = "DeepEventShape_2018pre.cfg";
             DeepESMModel          = "keras_frozen_2018pre.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018pre.cfg";
@@ -221,7 +218,6 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018pre.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018pre.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018pre.cfg";
-            puFileName            = "PileupHistograms_2018_69mb_pm5.root";
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
@@ -233,22 +229,27 @@ public:
         {
             runYear               = "2018post";
             Lumi                  = 38654.0;
-            deepCSV_WP_loose      = 0.1241;
-            deepCSV_WP_medium     = 0.4184;       
-            deepCSV_WP_tight      = 0.7527;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
             DeepESMCfg            = "DeepEventShape_2018post.cfg";
             DeepESMModel          = "keras_frozen_2018post.pb";
             DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018post.cfg";
-            //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2018post.cfg";    
-            //DoubleDisCo_Model_0l  = "eras_frozen_DoubleDisCo_Reg_0l_2018post.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2018post.cfg";
-            //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2018post.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2018post.cfg";
-            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018post.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018post.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018post.cfg";
-            puFileName            = "PileupHistograms_2018_69mb_pm5.root";
+            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            // Use RPV config for now --- switch to SYY with dedicated training
+            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
@@ -282,7 +283,6 @@ public:
         //tr.registerDerivedVar("DoubleDisCo_Cfg_2l",    DoubleDisCo_Cfg_2l   );
         //tr.registerDerivedVar("DoubleDisCo_Model_2l",  DoubleDisCo_Model_2l );
         //tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l",    DoubleDisCo_Cfg_NonIsoMuon_2l   );
-        tr.registerDerivedVar("puFileName",            puFileName           );
         tr.registerDerivedVar("leptonFileName",        leptonFileName       );        
         tr.registerDerivedVar("bjetFileName",          bjetFileName         );        
         tr.registerDerivedVar("bjetCSVFileName",       bjetCSVFileName      );        
@@ -386,6 +386,7 @@ public:
                 "Jet",
                 "BJet",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"

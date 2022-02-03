@@ -1,6 +1,6 @@
 #define Analyze1Lep_cxx
 #include "Analyzer/Analyzer/include/Analyze1Lep.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 #include "Framework/Framework/include/Utility.h"
 
 #include <TH1D.h>
@@ -93,11 +93,11 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
     while( tr.getNextEvent() )
     {
 
-        const auto& MET                       = tr.getVar<double>("MET");
-        const auto& METPhi                    = tr.getVar<double>("METPhi");
+        const auto& MET                       = tr.getVar<float>("MET");
+        const auto& METPhi                    = tr.getVar<float>("METPhi");
         const auto& runtype                   = tr.getVar<std::string>("runtype");     
         const auto& filetag                   = tr.getVar<std::string>("filetag");
-        const auto& Jets                      = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets                      = tr.getVec<utility::LorentzVector>("Jets");
         const auto& GoodJets_pt30             = tr.getVec<bool>("GoodJets_pt30");
         const auto& NJet                      = tr.getVar<int>("NJets");
         const auto& NGoodJets_pt30            = tr.getVar<int>("NGoodJets_pt30");
@@ -106,8 +106,8 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& NGoodMuons                = tr.getVar<int>("NGoodMuons");
         const auto& NGoodElectrons            = tr.getVar<int>("NGoodElectrons");
         const auto& NGoodLeptons              = tr.getVar<int>("NGoodLeptons");
-        const auto& GoodLeptons               = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
-        const auto& GoodNonIsoMuons           = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodNonIsoMuons");
+        const auto& GoodLeptons               = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
+        const auto& GoodNonIsoMuons           = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodNonIsoMuons");
         const auto& HT_trigger_pt30           = tr.getVar<double>("HT_trigger_pt30");
         const auto& HT_NonIsoMuon_pt30        = tr.getVar<double>("HT_NonIsoMuon_pt30");
         const auto& JetID                     = tr.getVar<bool>("JetID");
@@ -143,7 +143,7 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& jmt_ev0_top6              = tr.getVar<double>("jmt_ev0_top6");
         const auto& jmt_ev1_top6              = tr.getVar<double>("jmt_ev1_top6");
         const auto& jmt_ev2_top6              = tr.getVar<double>("jmt_ev2_top6");
-        const auto& Jets_cm_top6              = tr.getVec<TLorentzVector>("Jets_cm_top6");
+        const auto& Jets_cm_top6              = tr.getVec<utility::LorentzVector>("Jets_cm_top6");
         const auto& eventCounter              = tr.getVar<int>("eventCounter");
         const auto& nMVAJets                  = tr.getVar<unsigned int>("nMVAJets");
 
@@ -162,7 +162,7 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<double>("Weight");
+            const auto& Weight  = tr.getVar<float>("Weight");
             const auto& lumi = tr.getVar<double>("Lumi");
             eventweight = lumi*Weight;
             
@@ -187,7 +187,7 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             //Get the numer of GenJets 
-            const auto& GenJets = tr.getVec<TLorentzVector>("GenJets");           
+            const auto& GenJets = tr.getVec<utility::LorentzVector>("GenJets");           
             for(const auto& lv : GenJets)
             {
                 NGenJets++;
@@ -238,8 +238,8 @@ void Analyze1Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         bool pass_mT = false, pass_Mbl_all = false;
         if(pass_1l)
         {
-            TLorentzVector metLV;
-            metLV.SetPtEtaPhiE(MET,0,METPhi,MET);
+            utility::LorentzVector metLV;
+            metLV.SetPt(MET); metLV.SetEta(0.0); metLV.SetPhi(METPhi); metLV.SetE(MET);
             mT = utility::calcMT(GoodLeptons[0].second, metLV);
             pass_mT = mT > 50 && mT < 110;
         
