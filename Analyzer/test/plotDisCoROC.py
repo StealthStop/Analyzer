@@ -26,10 +26,7 @@ class RocAndRoll:
         if signal[0] == "S":
             self.signal = "Stealth" + signal
 
-        minNjet = 7; maxNjet = 11
-        if channel[0] == "0":
-            minNjet = 6
-            maxNjet = 12
+        minNjet = 7; maxNjet = 12
 
         self.Njets = [str(Njet) if Njet < maxNjet else str(Njet)+"incl" for Njet in range(minNjet, maxNjet+1)]
         self.masses = ["300", "450", "550", "650", "850", "1200"]
@@ -37,7 +34,7 @@ class RocAndRoll:
                            "650" : ROOT.kMagenta+2, "850" : ROOT.kOrange+1, "1200" : ROOT.kBlue
         }
 
-        self.njetsColors = {"6" : ROOT.kCyan+1, "7" : ROOT.kRed, "8" : ROOT.kGreen+2, "9" : ROOT.kBlack, "10" : ROOT.kMagenta+2, "11" : ROOT.kOrange+1, "11incl" : ROOT.kOrange+1, "12incl" : ROOT.kBlue}
+        self.njetsColors = {"7" : ROOT.kRed, "8" : ROOT.kGreen+2, "9" : ROOT.kBlack, "10" : ROOT.kMagenta+2, "11" : ROOT.kOrange+1, "11incl" : ROOT.kOrange+1, "12incl" : ROOT.kBlue}
 
         self.getHistograms()
 
@@ -95,7 +92,7 @@ class RocAndRoll:
     
         for Njet in self.Njets:
     
-            self.histograms[Njet][self.background] = f.Get("h_DoubleDisCo_disc1_disc2_%s_Njets%s"%(self.channel,Njet))
+            self.histograms[Njet][self.background] = f.Get("h_DoubleDisCo_disc1_disc2_%s_Njets%s_ABCD"%(self.channel,Njet))
             self.histograms[Njet][self.background].SetDirectory(0)
     
         f.Close()
@@ -104,7 +101,7 @@ class RocAndRoll:
             g = ROOT.TFile.Open(self.inputDir + "/%s_%s_2t6j_mStop-%s.root"%(self.year, self.signal, mass))
            
             for Njet in self.Njets:
-                self.histograms[Njet][self.signal+mass] = g.Get("h_DoubleDisCo_disc1_disc2_%s_Njets%s"%(self.channel,Njet)) 
+                self.histograms[Njet][self.signal+mass] = g.Get("h_DoubleDisCo_disc1_disc2_%s_Njets%s_ABCD"%(self.channel,Njet)) 
                 self.histograms[Njet][self.signal+mass].SetDirectory(0)
     
     def getROCs(self, disc):
