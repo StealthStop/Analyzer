@@ -160,7 +160,7 @@ with open(tempfilename, 'r') as tempfile:
         newline = "root://cmseos.fnal.gov/" + basedir + line
         samples[era][shortline].append(newline)
 
-sampleSet = open("sampleSets_%s.txt"%(prod), "w")
+sampleSet = open("sampleSets_%s.cfg"%(prod), "w")
 
 # Write out a "2018_ttHJetTobb.txt" file with the list of corresponding files
 for era, sampleLists in samples.iteritems():
