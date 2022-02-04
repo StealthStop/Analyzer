@@ -1,10 +1,40 @@
 import os
 from collections import defaultdict, OrderedDict
 
+# Take a sample name e.g. "2016_QCD_Pt_120to170_TuneCP5_13TeV_pythia8"
+# and return everything before the "TuneCP5" => "2016_QCD_Pt_120to170."
+# Special case if "TuneCP5" is modified e.g "TuneCP5down"
+def makeNiceName(oldname):
+    chunks = oldname.split("_")
+    endpoint = 0
+    for chunk in chunks:
+        if "TuneCP5" in chunk:
+            if chunk != "TuneCP5":
+                endpoint += 1
+            break
+    
+        endpoint += 1
+
+    return "_".join(chunks[0:endpoint]).replace("_NLO", "")
+
+# Search dictionary "d" for all entries with keys containing
+# "name" and add "payload" subdictionary". Do not mix inclusive sample
+# names with those for particular HT or Pt bins
+def addInfo(d, name, payload):
+    
+    for k in d.keys():
+        if name in k:
+            if ("_HT" in k or "_Pt" in k) and name != k:
+                continue 
+
+            d[k].update(payload) 
+
+    return d
+
 # Usage: Populates a directory "filelists_Kevin_<versioning>" with a text file for each year + sample combination.
 #        Contents of the text file are simply a listing of paths to all relevant ROOT files for the year + sample
 #        The "filelists_Kevin_<versioning>" should be placed in /eos/uscms/store/user/lpcsusyhad/StealthStop/
-#        where it will be referenced by sampleSets.cfg
+#        where it will be referenced by sampleSets.cfg. Likewise, a sampleSets_<versioning>.cfg is constructed
 
 treemakerdir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -18,6 +48,81 @@ fdir         = "filelists_Kevin_%s/"%prod
 if not os.path.isdir(fdir):
     os.mkdir(fdir)
 
+auxiliary = {}
+
+# Extract event numbers from MCSample files in the TreeMaker area
+for year in ["16", "16APV", "17", "18"]:
+    if os.path.exists(treemakerdir + "/MCSamples_Summer20UL%s.py"%(year)):
+        countsFile = open(treemakerdir + "/MCSamples_Summer20UL%s.py"%(year))
+        
+        lines = countsFile.readlines()
+        countsFile.close()
+
+        for line in lines:
+            if "MCSample(" not in line:
+                continue
+
+            temp = line.replace("'", "").replace(",", "")
+            temp = temp[temp.find("(")+1:temp.find(")")]
+            chunks = temp.split(" ")
+
+            process = chunks[0]
+
+            ntot = -1.0; ndiff = -1.0
+
+            if len(chunks) == 5:
+                ntot = chunks[-1]
+            elif len(chunks) > 5:
+                ntot = chunks[-2]
+                ndiff = chunks[-1]
+
+            name = makeNiceName(process)
+            if name not in auxiliary.keys():
+                auxiliary[name] = {}
+
+            if ndiff == -1.0:
+                auxiliary[name]["20%s_npos"%(year)] = float(ntot)
+                auxiliary[name]["20%s_nneg"%(year)] = 0.0
+            else:
+                auxiliary[name]["20%s_npos"%(year)] = (float(ntot) + float(ndiff))/2.0
+                auxiliary[name]["20%s_nneg"%(year)] = (float(ntot) - float(ndiff))/2.0
+
+# If there is a MCSamplesValues, use it to get info on xsec, kfactor, etc
+if os.path.exists(treemakerdir + "/MCSampleValues.py"):
+    xsecFile = open(treemakerdir + "/MCSampleValues.py")
+    lines = xsecFile.readlines()
+    xsecFile.close()
+    
+    seenDict = False
+    process = ""
+    xsec    = "-1.0" 
+    brf     = "1.0"
+    kfactor = "1.0"
+    for line in lines:
+    
+        if "values_dict =" in line:
+            seenDict = True
+    
+        if not seenDict:
+            continue
+    
+        if ":" in line and "{" in line:
+            
+            if process != "":
+                auxiliary = addInfo(auxiliary, process, {"xsec" : xsec, "brf" : brf, "kfactor" : kfactor})
+                process = ""; xsec = "-1.0"; brf = "1.0"; kfactor = "1.0"
+    
+            process = line.split("\"")[1] 
+    
+        if "XS_" in line:
+            xsec = line.split("=")[1].split(",")[0]
+    
+        if "BR_" in line:
+            brf = line.split("=")[1].split(",")[0] 
+    
+        if "kFactor_" in line:
+            kfactor = line.split("=")[1].split(",")[0]
+
 samples = OrderedDict()
 samples["2016"]    = defaultdict(list)
 samples["2016APV"] = defaultdict(list)
@@ -29,8 +134,8 @@ with open(tempfilename, 'r') as tempfile:
     for line in tempfile:
 
         # Each line will be simple ROOT file name e.g. Summer20UL18.ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8_9_RA2AnalysisTree.root
-        if not ".root" in line: continue
-        if     "Fast"  in line: continue
+        if ".root" not in line or "Fast" in line:
+            continue
 
         era = ""
         if   ("UL2016" in line and "HIPM" in line) or "UL16APV" in line: 
@@ -55,7 +160,7 @@ with open(tempfilename, 'r') as tempfile:
         newline = "root://cmseos.fnal.gov/" + basedir + line
         samples[era][shortline].append(newline)
 
-sampleSet = open("sampleSet_%s.txt"%(prod), "w")
+sampleSet = open("sampleSets_%s.txt"%(prod), "w")
 
 # Write out a "2018_ttHJetTobb.txt" file with the list of corresponding files
 for era, sampleLists in samples.iteritems():
@@ -66,26 +171,29 @@ for era, sampleLists in samples.iteritems():
     for sample in theSamples:
         newfile = open("filelists_Kevin_%s/"%(prod) + sample + ".txt", 'w')
 
-        xsec     = "-1.0,"
-        nevents  = "-1.0,"
-        nnevents = "-1.0,"
-        kfactor  = "-1.0,"
+        xsec       = "-1.0,"
+        nposevents = "-1.0,"
+        nnegevents = "-1.0,"
+        kfactor    = "-1.0"
 
-        chunks = sample.split("_")
+        # Everything before "TuneCP5" will be included in name
+        # "ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8" ==> "ttHJetTobb_M125"
+        name    = makeNiceName(sample)
+        auxName = name.partition("_")[-1]
 
-        endpoint = 0
-        for chunk in chunks:
-            if "TuneCP5" in chunk:
-                if chunk != "TuneCP5":
-                    endpoint += 1
-                break
-    
-            endpoint += 1
-
-        name = "_".join(chunks[0:endpoint]) + ","
+        name   += ","
         sample += ".txt,"
-                
-        sampleSet.write("%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), filelistsdir, sample.ljust(85), ttreedir, xsec.ljust(10), nevents.ljust(10), nnevents.ljust(10), kfactor.ljust(10)))
+
+        # Get any xsec, kfactor info that was retrieved from TreeMaker
+        if auxName in auxiliary.keys():
+            xsec       = str(float(auxiliary[auxName]["xsec"]) * eval(auxiliary[auxName]["brf"])) + ","
+            kfactor    = str(auxiliary[auxName]["kfactor"])
+
+            if "%s_npos"%(era) in auxiliary[auxName]:
+                nposevents = str(auxiliary[auxName]["%s_npos"%(era)]) + ","
+                nnegevents = str(auxiliary[auxName]["%s_nneg"%(era)]) + ","
+               
+        sampleSet.write("%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), filelistsdir, sample.ljust(85), ttreedir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6)))
 
         for f in sampleLists[sample]:
             newfile.write(f)
