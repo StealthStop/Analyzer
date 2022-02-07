@@ -163,7 +163,7 @@ with open(tempfilename, 'r') as tempfile:
 sampleSet = open("sampleSets_%s.cfg"%(prod), "w")
 
 # Write out a "2018_ttHJetTobb.txt" file with the list of corresponding files
-for era, sampleLists in samples.iteritems():
+for era, sampleLists in samples.items():
 
     # For some sanity, sort the samples alphabetically
     theSamples = sampleLists.keys()
@@ -181,6 +181,10 @@ for era, sampleLists in samples.iteritems():
         name    = makeNiceName(sample)
         auxName = name.partition("_")[-1]
 
+        for f in sampleLists[sample]:
+            newfile.write(f)
+        newfile.close()
+
         name   += ","
         sample += ".txt,"
 
@@ -194,11 +198,5 @@ for era, sampleLists in samples.iteritems():
                 nnegevents = str(auxiliary[auxName]["%s_nneg"%(era)]) + ","
                
         sampleSet.write("%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), filelistsdir, sample.ljust(85), ttreedir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6)))
-
-        for f in sampleLists[sample]:
-            newfile.write(f)
-        newfile.close()
-
     sampleSet.write("\n")
-
 sampleSet.close()
