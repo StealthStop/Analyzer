@@ -31,8 +31,7 @@ class All_Regions:
         self.metric         = metric
 
         self.extraArgs = kwargs
-
-        self.finalEdges = ()
+        self.finalEdges = (fixedDisc1Edge, fixedDisc2Edge)
         self.quantities = {}
 
         for key in hist.keys():
@@ -321,6 +320,14 @@ class All_Regions:
                                      + ( ( nTTEvents_A**2.0 * nonClosure_TT * nSigEvents_A * nonClosureUnc_TT) / ( nTTEvents_A * ( nTTEvents_A * (nonClosure_TT**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
 
             self.add("significance", disc1Key, disc2Key, (significance_TT, significanceUnc_TT), "TT") 
+
+            # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
+            if self.fixedDisc1Edge != None and abs(float(self.fixedDisc1Edge) - float(disc1Key)) > 0.01: continue
+
+            # use this statement for bdEF regions if fixed disc2 edge (horizontal edge)
+            if self.fixedDisc2Edge != None and abs(float(self.fixedDisc2Edge) - float(disc2Key)) > 0.01: continue
+
+            self.finalEdges = (disc1Key, disc2Key)
 
     # ----------------------------------
     # store quantities to make any plots
