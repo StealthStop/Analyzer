@@ -378,12 +378,12 @@ def main():
             mcCorrectionPerBoundaryData[key] = theAggy.getPerBoundary(variable = "mcCorrection", sample = "Data", region = key, njet = njet)
 
         # Add function to plotter
-        plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,   regionGridWidth/2.0, 0.3, "Non-closure",   "NonClosureExt", njet)
-        plotter["TT"].plot_VarVsBoundary(mcCorrectionPerBoundaryTT, regionGridWidth/2.0, 1.3, "MC Correction", "MCcorrectionExt", njet)
+        plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,   regionGridWidth/2.0, 0.0, 0.3, "Non-closure",   "NonClosureExt", njet)
+        plotter["TT"].plot_VarVsBoundary(mcCorrectionPerBoundaryTT, regionGridWidth/2.0, 0.7, 1.3, "MC Correction", "MCcorrectionExt", njet)
 
         if njet == "7":
-            plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryData,   regionGridWidth/2.0, 0.3, "Non-closure",   "NonClosureExt", njet)
-            plotter["Data"].plot_VarVsBoundary(mcCorrectionPerBoundaryData, regionGridWidth/2.0, 1.3, "MC Correction", "MCcorrectionExt", njet)
+            plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryData,   regionGridWidth/2.0, 0.0, 0.3, "Non-closure",   "NonClosureExt", njet)
+            plotter["Data"].plot_VarVsBoundary(mcCorrectionPerBoundaryData, regionGridWidth/2.0, 0.7, 1.3, "MC Correction", "MCcorrectionExt", njet)
 
 if __name__ == '__main__':
     main()

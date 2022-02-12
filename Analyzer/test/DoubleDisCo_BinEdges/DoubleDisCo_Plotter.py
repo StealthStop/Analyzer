@@ -682,7 +682,7 @@ class Common_Calculations_Plotters:
     # plot variable vs disc as 1D
     #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
     # ----------------------------------------------------------------------
-    def plot_VarVsBoundary(self, var, xWidth, ylim = -1.0, ylabel = "", tag = "", Njets = -1):
+    def plot_VarVsBoundary(self, var, xWidth, yMin = 0.0, yMax = 1.0, ylabel = "", tag = "", Njets = -1):
 
         regions = var.keys()
 
@@ -707,8 +707,7 @@ class Common_Calculations_Plotters:
 
             colors.pop()
 
-        if ylim != -1.0:
-             ax.set_ylim((2.0-ylim, ylim))
+            ax.set_ylim((yMin, yMax))
 
         ax.set_xlabel("Boundary Value", fontsize=14)
         ax.set_ylabel(ylabel, fontsize=14)
