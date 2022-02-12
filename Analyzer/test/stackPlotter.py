@@ -297,7 +297,7 @@ class StackPlotter:
         sigLegend.SetMargin(0.10)
         sigLegend.SetTextSize(textSize)
 
-        yMax = 1.0; factor = 1.05; power = 1.0
+        yMax = 1.0; factor = 1.0; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
             power = math.log10(theMax / theMin) * 5.0
 

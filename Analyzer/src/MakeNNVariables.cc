@@ -25,7 +25,9 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    my_labels     = {"_0l", "_1l"};//, "_2l"};
+    my_labels     = {"_0l"};
+    //my_labels     = {"_0l", "_1l"};
+    //my_labels     = {"_0l", "_1l", "_2l"};
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
 }
@@ -40,6 +42,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
     const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
     const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
     const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
+    
 
     for(const auto& myVarSuffix : my_var_suffix)
     {
@@ -57,8 +60,9 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         FatJetCombine       fatJetCombine(myVarSuffix);
         BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         CommonVariables     commonVariables(myVarSuffix);
-        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_0l");
-        MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
+        MakeMVAVariables    makeMVAVariables0L_old(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
+        //MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_0l");
+        //MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
         //MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
         MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
@@ -76,8 +80,9 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(commonVariables);
         tr.registerFunction(baseline);
         tr.registerFunction(fatJetCombine);
-        tr.registerFunction(makeMVAVariables0L);
-        tr.registerFunction(makeMVAVariables1L);
+        tr.registerFunction(makeMVAVariables0L_old);
+        //tr.registerFunction(makeMVAVariables0L);
+        //tr.registerFunction(makeMVAVariables1L);
         //tr.registerFunction(makeMVAVariables2L);
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres_OldSeed);
@@ -99,8 +104,9 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& filetag      = tr.getVar<std::string>("filetag");
 
             std::map<std::string, bool> baselines;
-            baselines["_0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
-            baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
+            baselines["_0l"] = tr.getVar<bool>("passBaseline0l_old"+myVarSuffix);
+            //baselines["_0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
+            //baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
             //baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
 
             // Add a branch containing the mass for the stop
@@ -276,7 +282,8 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 for (std::string label : my_labels)
                 {
-                    std::string ptCut = "pt30";
+                    std::string ptCut = "pt45";
+                    //std::string ptCut = "pt30";
                     
                     std::set<std::string> varChannelSpecific =
                     {
@@ -294,7 +301,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     std::set<std::string> varJets = 
                     {
                         "Jet_m_1"+label+myVarSuffix,         "Jet_m_2"+label+myVarSuffix,         "Jet_m_3"+label+myVarSuffix,         "Jet_m_4"+label+myVarSuffix,         "Jet_m_5"+label+myVarSuffix,         "Jet_m_6"+label+myVarSuffix,         "Jet_m_7"+label+myVarSuffix,
-                        "Jet_E_1"+label+myVarSuffix,         "Jet_E_2"+label+myVarSuffix,         "Jet_E_3"+label+myVarSuffix,         "Jet_E_4"+label+myVarSuffix,         "Jet_E_5"+label+myVarSuffix,         "Jet_E_6"+label+myVarSuffix,         "Jet_E_7"+label+myVarSuffix,
+                        //"Jet_E_1"+label+myVarSuffix,         "Jet_E_2"+label+myVarSuffix,         "Jet_E_3"+label+myVarSuffix,         "Jet_E_4"+label+myVarSuffix,         "Jet_E_5"+label+myVarSuffix,         "Jet_E_6"+label+myVarSuffix,         "Jet_E_7"+label+myVarSuffix,
                         "Jet_eta_1"+label+myVarSuffix,       "Jet_eta_2"+label+myVarSuffix,       "Jet_eta_3"+label+myVarSuffix,       "Jet_eta_4"+label+myVarSuffix,       "Jet_eta_5"+label+myVarSuffix,       "Jet_eta_6"+label+myVarSuffix,       "Jet_eta_7"+label+myVarSuffix,
                         "Jet_phi_1"+label+myVarSuffix,       "Jet_phi_2"+label+myVarSuffix,       "Jet_phi_3"+label+myVarSuffix,       "Jet_phi_4"+label+myVarSuffix,       "Jet_phi_5"+label+myVarSuffix,       "Jet_phi_6"+label+myVarSuffix,       "Jet_phi_7"+label+myVarSuffix,
                         "Jet_pt_1"+label+myVarSuffix,        "Jet_pt_2"+label+myVarSuffix,        "Jet_pt_3"+label+myVarSuffix,        "Jet_pt_4"+label+myVarSuffix,        "Jet_pt_5"+label+myVarSuffix,        "Jet_pt_6"+label+myVarSuffix,        "Jet_pt_7"+label+myVarSuffix,
