@@ -525,4 +525,3 @@ void StealthHemispheres::WriteHistos(TFile* outfile)
         p.second->Write();
     }    
 }
-
