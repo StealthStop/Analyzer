@@ -71,6 +71,20 @@ class All_Regions:
     
         return nonClosure, nonClosureUnc
 
+    def cal_McCorrection(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
+    
+        if nEvents_B == 0.0 or nEvents_C == 0.0:
+            return -999.0, -999.0
+        
+        mcCorr = (nEvents_A * nEvents_D) / (nEvents_B * nEvents_C)
+        
+        mcCorrUnc = ( ( ( nEvents_A * nEventsErr_D ) / ( nEvents_B * nEvents_C) )**2.0 
+                        + ( ( nEvents_D * nEventsErr_A ) / ( nEvents_B * nEvents_C) )**2.0 
+                        + ( ( nEvents_D * nEvents_A * nEventsErr_A ) / ( nEvents_B**2.0 * nEvents_C ) )**2.0 
+                        + ( ( nEvents_D * nEvents_A * nEventsErr_C ) / ( nEvents_B * nEvents_C**2.0 ) )**2.0 )**0.5
+    
+        return mcCorr, mcCorrUnc
+
     # ------------------------
     # Closure Pull calculation
     # ------------------------
@@ -283,15 +297,24 @@ class All_Regions:
 
             # closure for optimization metric for only TT
             # closure error and pull for 2D plots / for TT, NonTT, Data
-            nonClosure_TT    = -999.0; nonClosureUnc_TT    = -999.0; pull_TT    = -999.0; pullUnc_TT    = -999.0 
-            nonClosure_NonTT = -999.0; nonClosureUnc_NonTT = -999.0; pull_NonTT = -999.0; pullUnc_NonTT = -999.0 
-            nonClosure_TTvar = -999.0; nonClosureUnc_TTvar = -999.0; pull_TTvar = -999.0; pullUnc_TTvar = -999.0
-            nonClosure_Data  = -999.0; nonClosureUnc_Data  = -999.0; pull_Data  = -999.0; pullUnc_Data  = -999.0
+            closureErr_TT    = -999.0; closureErrUnc_TT    = -999.0; pull_TT    = -999.0; pullUnc_TT    = -999.0 
+            closureErr_NonTT = -999.0; closureErrUnc_NonTT = -999.0; pull_NonTT = -999.0; pullUnc_NonTT = -999.0 
+            closureErr_TTvar = -999.0; closureErrUnc_TTvar = -999.0; pull_TTvar = -999.0; pullUnc_TTvar = -999.0
+            closureErr_Data  = -999.0; closureErrUnc_Data  = -999.0; pull_Data  = -999.0; pullUnc_Data  = -999.0
+            mcCorrection_TT    = -999.0; mcCorrectionUnc_TT    = -999.0
+            mcCorrection_NonTT = -999.0; mcCorrectionUnc_NonTT = -999.0
+            mcCorrection_TTvar = -999.0; mcCorrectionUnc_TTvar = -999.0
+            mcCorrection_Data  = -999.0; mcCorrectionUnc_Data  = -999.0
     
             nonClosure_TT,    nonClosureUnc_TT    = self.cal_NonClosure(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             nonClosure_NonTT, nonClosureUnc_NonTT = self.cal_NonClosure(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
             nonClosure_TTvar, nonClosureUnc_TTvar = self.cal_NonClosure(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             nonClosure_Data,  nonClosureUnc_Data  = self.cal_NonClosure(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
+
+            mcCorrection_TT,    mcCorrectionUnc_TT    = self.cal_McCorrection(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
+            mcCorrection_Data,  mcCorrectionUnc_Data  = self.cal_McCorrection(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
+            mcCorrection_NonTT, mcCorrectionUnc_NonTT = self.cal_McCorrection(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D   )
+            mcCorrection_TTvar, mcCorrectionUnc_TTvar = self.cal_McCorrection(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D )
 
             pull_TT,    pullUnc_TT    = self.cal_Pull(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             pull_NonTT, pullUnc_NonTT = self.cal_Pull(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
@@ -307,6 +330,11 @@ class All_Regions:
             self.add("pull",         disc1Key, disc2Key, (pull_TTvar, pullUnc_TTvar), self.ttVar)
             self.add("pull",         disc1Key, disc2Key, (pull_Data,  pullUnc_Data),  "Data"    )
        
+            self.add("mcCorrection", disc1Key, disc2Key, (mcCorrection_TT,    mcCorrectionUnc_TT) ,    "TT"      )
+            self.add("mcCorrection", disc1Key, disc2Key, (mcCorrection_Data,  mcCorrectionUnc_Data ),  "Data"    )
+            self.add("mcCorrection", disc1Key, disc2Key, (mcCorrection_NonTT, mcCorrectionUnc_NonTT) , "NonTT"   )
+            self.add("mcCorrection", disc1Key, disc2Key, (mcCorrection_TTvar, mcCorrectionUnc_TTvar ), self.ttVar)
+
             # significance for optimization metric for only TT !!! 
             # significance, significanceUnc for 2D plots
             significance_TT = 0.0; significanceUnc_TT = 0.0; tempOptMetric = 999.0
