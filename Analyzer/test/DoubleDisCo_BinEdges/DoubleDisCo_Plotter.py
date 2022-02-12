@@ -677,3 +677,48 @@ class Common_Calculations_Plotters:
         fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
+
+    # ----------------------------------------------------------------------
+    # plot variable vs disc as 1D
+    #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
+    # ----------------------------------------------------------------------
+    def plot_VarVsBoundary(self, var, xWidth, ylim = -1.0, ylabel = "", tag = "", Njets = -1):
+
+        regions = var.keys()
+
+        x    = {region : [] for region in regions}
+        y    = {region : [] for region in regions}
+        yUnc = {region : [] for region in regions} 
+        xUnc = {region : [] for region in regions}
+
+        colors = ["red", "blue", "green"] 
+
+        fig = plt.figure(figsize=(5, 5))
+        ax = plt.gca()
+
+        for region in regions:
+            for boundary, value in var[region].items():
+                x[region].append(boundary)
+                y[region].append(value[0])
+                yUnc[region].append(value[1])
+                xUnc[region].append(xWidth)
+
+            ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=colors[-1], lw=0, elinewidth=2, marker="o", markeredgecolor=colors[-1], markerfacecolor=colors[-1])
+
+            colors.pop()
+
+        if ylim != -1.0:
+             ax.set_ylim((2.0-ylim, ylim))
+
+        ax.set_xlabel("Boundary Value", fontsize=14)
+        ax.set_ylabel(ylabel, fontsize=14)
+        plt.legend(loc='best', numpoints=1)
+
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+
+        fig.tight_layout()
+        fig.savefig('%s/%s_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, self.channel, self.metric), dpi=fig.dpi)
+
+        plt.close(fig)
