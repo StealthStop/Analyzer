@@ -9,13 +9,13 @@ from collections import OrderedDict
 
 temp_list1 = ["", "_0NonIsoMuon"] 
 
-temp_list2 = ["ge7j", "7j", "8j", "9j", "10j", "ge11j"]
+temp_list2 = ["ge7j"] #, "7j", "8j", "9j", "10j", "ge11j"]
 
 temp_list3 = [
-        #"0l_HT500@_?_ge2t",                   
-        #"0l_HT500@_?_ge2t_ge1b",             
-        #"0l_HT500@_?_ge2t_ge2b", 
-        "0l_HT500@_?_ge2t_ge1dRbjets",        
+        #"0l@_HT500_?_ge2t",                   
+        #"0l@_HT500_?_ge2t_ge1b",             
+        #"0l@_HT500_?_ge2t_ge2b", 
+        "0l@_HT500_?_ge2t_ge1dRbjets",        
 ]
 
 selections = []
@@ -34,25 +34,25 @@ histograms = {
     #"h_DoubleDisCo_disc2_?"   : {"logY" : False, "Y" : {"title" : "A.U.",   "min" : 2e-3}, "X" : {"title" : "Disc 2",                "rebin" : 1, "min" :  0,    "max" :    1}},
     #"h_DoubleDisCo_massReg_?" : {"logY" : False, "Y" : {"title" : "A.U.",   "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]", "rebin" : 2, "min" :  0,    "max" : 1500}},
 
-    "h_njets_?"         : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{jets}",        "rebin" : 1, "min" : -0.5, "max" : 20.5}},
-    "h_jetsMass_?"      : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet mass [GeV]",  "rebin" : 5, "min" :  0,   "max" :  500}},
-    "h_jetsEta_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet #eta",        "rebin" : 1, "min" : -6,   "max" :    6}},
-    "h_jetsPhi_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet #phi",        "rebin" : 1, "min" : -4,   "max" :    4}},
-    "h_jetsPt_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet p_{T} [GeV]", "rebin" : 5, "min" :  0,   "max" : 2000}},
+    "h_njets_?"         : {"logY" : True,  "Y" : {"title" : "Events", "min" : 1e-1}, "X" : {"title" : "N_{jets}",        "rebin" : 1, "min" : 5.5, "max" : 20.5}},
+    #"h_jetsMass_?"      : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet mass [GeV]",  "rebin" : 5, "min" :  0,   "max" :  500}},
+    #"h_jetsEta_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet #eta",        "rebin" : 1, "min" : -6,   "max" :    6}},
+    #"h_jetsPhi_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet #phi",        "rebin" : 1, "min" : -4,   "max" :    4}},
+    #"h_jetsPt_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Jet p_{T} [GeV]", "rebin" : 5, "min" :  0,   "max" : 2000}},
 
-    "h_nbjets_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{bjets}",        "rebin" : 1, "min" : -0.5, "max" : 20.5}},
+    #"h_nbjets_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{bjets}",        "rebin" : 1, "min" : -0.5, "max" : 20.5}},
     #"h_bjetsMass_?"     : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "BJet mass [GeV]",  "rebin" : 5, "min" :  0,   "max" :  500}},
     #"h_bjetsEta_?"      : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "BJet #eta",        "rebin" : 1, "min" : -6,   "max" :    6}},
     #"h_bjetsPhi_?"      : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "BJet #phi",        "rebin" : 1, "min" : -4,   "max" :    4}},
     #"h_bjetsPt_?"       : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "BJet p_{T} [GeV]", "rebin" : 5, "min" :  0,   "max" : 2000}},
 
-    "h_ntops_?"         : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{tops}",        "rebin" : 1, "min" :  -0.5, "max" : 10.5}},
-    #"h_nRtops_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{Res. tops}",   "rebin" : 1, "min" :  -0.5, "max" : 10.5}},
-    #"h_nMtops_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{Mer. tops}",   "rebin" : 1, "min" :  -0.5, "max" : 10.5}},
-    #"h_topsMass_?"      : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top mass [GeV]",  "rebin" : 5, "min" :  0,    "max" :  500}},
-    #"h_topsEta_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top #eta",        "rebin" : 1, "min" : -6,    "max" :    6}},
-    #"h_topsPhi_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top #phi",        "rebin" : 1, "min" : -4,    "max" :    4}},
-    #"h_topsPt_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top p_{T} [GeV]", "rebin" : 5, "min" :  0,    "max" : 2000}},
+    "h_ntops_?"         : {"logY" : True,  "Y" : {"title" : "Events", "min" : 1e-1}, "X" : {"title" : "N_{tops}",        "rebin" : 1,  "min" :  -0.5, "max" : 10.5}},
+    #"h_nRtops_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{Res. tops}",   "rebin" : 1,  "min" :  -0.5, "max" : 10.5}},
+    #"h_nMtops_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "N_{Mer. tops}",   "rebin" : 1,  "min" :  -0.5, "max" : 10.5}},
+    "h_topsMass_?"      : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top mass [GeV]",  "rebin" : 5,  "min" : 50,    "max" :  350}},
+    "h_topsEta_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top #eta",        "rebin" : 1,  "min" : -6,    "max" :    6}},
+    "h_topsPhi_?"       : {"logY" : False, "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top #phi",        "rebin" : 1,  "min" : -4,    "max" :    4}},
+    "h_topsPt_?"        : {"logY" : True,  "Y" : {"title" : "Events", "min" : 0.2},  "X" : {"title" : "Top p_{T} [GeV]", "rebin" : 10, "min" :  0,    "max" : 1500}},
     #
     #"h_ht_?"            : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "H_{T} [GeV]",                "rebin" : 1, "min" :  0, "max" : 3000}},  
     #"h_met_?"           : {"logY" : True,  "Y" : {"title" : "Events", "min" : 2e-3}, "X" : {"title" : "MET [GeV]",                  "rebin" : 1, "min" :  0, "max" : 2000}},  
