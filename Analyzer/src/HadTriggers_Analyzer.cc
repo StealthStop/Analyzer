@@ -1,7 +1,7 @@
 #define HadTriggers_Analyzer_cxx
 #include "Analyzer/Analyzer/include/HadTriggers_Analyzer.h"
 #include "Framework/Framework/include/Utility.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -104,7 +104,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         const auto& runtype               = tr.getVar<std::string>("runtype");
         const auto& filetag               = tr.getVar<std::string>("filetag");
-        const auto& Jets                  = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
         const auto& GoodJets_pt45         = tr.getVec<bool>("GoodJets_pt45");
         const auto& NGoodJets_pt45        = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45       = tr.getVar<int>("NGoodBJets_pt45");
@@ -162,7 +162,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight   = tr.getVar<double>("Weight");
+            const auto& Weight   = tr.getVar<float>("Weight");
             const auto& lumi     = tr.getVar<double>("Lumi");
             eventweight          = lumi*Weight;
 
@@ -242,14 +242,14 @@ void HadTriggers_Analyzer::WriteHistos(TFile* outfile)
     
 }
 
-bool HadTriggers_Analyzer::containsGoodHadron( const std::vector<TLorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection) 
+bool HadTriggers_Analyzer::containsGoodHadron( const std::vector<utility::LorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection) 
 { 
     // Require a good hadron in JetHT data
     for( unsigned int h = 0; h < hadrons.size(); h++ ) 
     {
         if( !goodHadrons.at(h) ) continue; 
     
-        TLorentzVector myHadron = hadrons.at(h);
+        utility::LorentzVector myHadron = hadrons.at(h);
     
         if( myHadron.Pt() >= ptThreshold && std::fabs( myHadron.Eta() ) < etaSelection ) return true;
     }

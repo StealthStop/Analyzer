@@ -1,11 +1,12 @@
 #ifndef HadTriggers_Analyzer_h
 #define HadTriggers_Analyzer_h
 
+#include "Framework/Framework/include/Utility.h"
+
 #include <TH1D.h>
 #include <TH2D.h>
 #include <TEfficiency.h>
 #include <TTree.h>
-#include <TLorentzVector.h>
 
 #include <map>
 #include <string>
@@ -27,7 +28,7 @@ public:
     void WriteHistos(TFile* outfile);
     void printTriggerList( const std::vector<std::string>& TriggerNames );
     
-    bool containsGoodHadron( const std::vector<TLorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection);
+    bool containsGoodHadron( const std::vector<utility::LorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection);
     void fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double HT, int njet, int nbjet, double weight );
     void fillHistosRefAN( const std::map<std::string, bool>& cutMap, bool passTriggerRefAN, double pt, double HT, int njet, int nbjet, double weight );
 };

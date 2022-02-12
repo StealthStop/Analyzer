@@ -1,7 +1,7 @@
 # Analyzer
-Runs all of our anaylsis code. 
+Makes input histograms for our combine setup
 
-## Using the tensor-flow based top tagger
+## Setup code
 
 To have easy access to TensorFlow and UpRoot, we need to work in a CMSSW_11_2_0_pre5 release:
 ```
@@ -15,10 +15,6 @@ Then, check out the latest tagged version of the top tagger repository.
 
 ```
 git clone git@github.com:susy2015/TopTagger.git
-```
-
-Then configure and compile the tagger:
-```
 cd TopTagger/TopTagger/test
 ./configure 
 make -j4
@@ -27,10 +23,10 @@ make -j4
 Now also check out our repository if not done already:
 ```
 cd $CMSSW_BASE/src
-git clone git@github.com:StealthStop/Framework.git
+git clone -b Run2_UL git@github.com:StealthStop/Framework.git
 git clone -b Stealth git@github.com:susy2015/TopTaggerTools.git
-git clone git@github.com:susy2015/SusyAnaTools.git
-git clone git@github.com:StealthStop/Analyzer.git
+git clone git@github.com:susy2015/NTupleReader.git
+git clone -b Run2_UL git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
 source setup.sh #.csh if in tcsh
 ./configure
@@ -48,14 +44,14 @@ getDeepESMCfg.sh -t Keras_Tensorflow_2016_v1.2 -o -s 2016
 getDeepESMCfg.sh -t Keras_Tensorflow_2017_v1.2 -o -s 2017
 getDeepESMCfg.sh -t Keras_Tensorflow_2018pre_v1.2 -o -s 2018pre
 getDeepESMCfg.sh -t Keras_Tensorflow_2018post_v1.2 -o -s 2018post
-getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_RPV_2016_v2.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_2016
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_RPV_2016_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_2016
 getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_2016
 ```
 
 Example of running MyAnalysis interactively
 ```
 cd $CMSSW_BASE/src/Analyzer/Analyzer/test/
-./MyAnalysis -A MakeNJetDists -H myoutputfile.root -D 2016_TT -E 1001
+./MyAnalysis -A AnalyzeTest -H myoutputfile.root -D 2018post_TTToSemiLeptonic -E 1001 
 ```
 
 

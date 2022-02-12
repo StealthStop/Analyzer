@@ -1,6 +1,7 @@
 #define MakeMiniTree_cxx
 #include "Analyzer/Analyzer/include/MakeMiniTree.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
+#include "Framework/Framework/include/MiniTupleMaker.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -9,8 +10,6 @@
 #include <TEfficiency.h>
 #include <TRandom3.h>
 #include <iostream>
-
-#include "SusyAnaTools/Tools/MiniTupleMaker.h"
 
 MakeMiniTree::MakeMiniTree()
 {

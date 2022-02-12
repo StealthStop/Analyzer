@@ -1,6 +1,7 @@
 #define CalculateBTagSF_cxx
 #include "Analyzer/Analyzer/include/CalculateBTagSF.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "Framework/Framework/include/Utility.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -74,13 +75,13 @@ void CalculateBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
         
         if( passMadHT )
         {
-            const auto& Jets           = tr.getVec<TLorentzVector>("Jets");
+            const auto& Jets           = tr.getVec<utility::LorentzVector>("Jets");
             const auto& GoodJets_pt30  = tr.getVec<bool>("GoodJets_pt30");
-            const auto& recoJetsBtag   = tr.getVec<double>("Jets_bJetTagDeepCSVtotb");
+            const auto& recoJetsBtag   = tr.getVec<float>("Jets_bJetTagDeepCSVtotb");
             const auto& recoJetsFlavor = tr.getVec<int>("Jets_hadronFlavor");
-            const auto& deepCSV_WP_medium = tr.getVar<double>("deepCSV_WP_medium");
+            const auto& deepCSV_WP_medium = tr.getVar<float>("deepCSV_WP_medium");
 
-            const auto& Weight = tr.getVar<double>("Weight");
+            const auto& Weight = tr.getVar<float>("Weight");
             const auto& Lumi   = tr.getVar<double>("Lumi");
             const double eventweight = Lumi*Weight;
             
