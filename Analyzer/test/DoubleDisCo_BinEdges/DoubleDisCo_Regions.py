@@ -321,7 +321,6 @@ class All_Regions:
                                      + ( ( nTTEvents_A**2.0 * nonClosure_TT * nSigEvents_A * nonClosureUnc_TT) / ( nTTEvents_A * ( nTTEvents_A * (nonClosure_TT**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
 
             self.add("significance", disc1Key, disc2Key, (significance_TT, significanceUnc_TT), "TT") 
-   
 
     # ----------------------------------
     # store quantities to make any plots
