@@ -61,20 +61,20 @@ class Aggregator:
         # quantities and variables with any combination of bin edges
         for subregion in self.subregions:
 
-            self.data[self.makeKey(variable = "sigFractions", **kwargs)] = {subregion : regionObj.get("sigFraction%s"%(subregion), None, None, Sig)  for subregion in self.subregions}
-            self.data[self.makeKey(variable = "ttFractions",  **kwargs)] = {subregion : regionObj.get("ttFraction%s"%(subregion),  None, None, "TT") for subregion in self.subregions}
+            self.data[self.makeKey(variable = "sigFractions%s"%(subregion), **kwargs)] = regionObj.get("sigFraction%s"%(subregion), None, None, Sig)
+            self.data[self.makeKey(variable = "ttFractions%s"%(subregion),  **kwargs)] = regionObj.get("ttFraction%s"%(subregion),  None, None, "TT")
 
             # quantities and variables with the final choice of bin edges
-            self.data[self.makeKey(variable = "sigFraction", **kwargs)] = {subregion : regionObj.getFinal("sigFractionA", Sig) for subregion in self.subregions}
-            self.data[self.makeKey(variable = "ttFraction",  **kwargs)] = {subregion : regionObj.getFinal("ttFractionA", "TT") for subregion in self.subregions}
+            self.data[self.makeKey(variable = "sigFraction%s"%(subregion), **kwargs)] = regionObj.getFinal("sigFraction%s"%(subregion), Sig)
+            self.data[self.makeKey(variable = "ttFraction%s"%(subregion),  **kwargs)] = regionObj.getFinal("ttFraction%s"%(subregion), "TT")
 
         # -----------------------------------------------
         # loop over for getting plots for TT, NonTT, Data
         # -----------------------------------------------
         for sample in self.samples:
 
-            self.data[self.makeKey(variable = "nEvents",  sample = sample, **kwargs)] = {subregion : regionObj.getFinal("nEvents%s"%(subregion), sample) for subregion in self.subregions}
-            self.data[self.makeKey(variable = "nEventsA", sample = sample, **kwargs)] = regionObj.get("nEventsA", None, None, sample)
+            for subregion in self.subregions:
+                self.data[self.makeKey(variable = "nEvents%s"%(subregion),  sample = sample, **kwargs)] = regionObj.getFinal("nEvents%s"%(subregion), sample)
 
             if not any(s in sample for s in ["RPV", "SYY", "SHH"]):
                 self.data[self.makeKey(variable = "nonClosures",  sample = sample, **kwargs)] = regionObj.get("nonClosure",      None, None, sample) # vars with any combination of bin edges
