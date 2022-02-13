@@ -714,6 +714,10 @@ class Common_Calculations_Plotters:
         ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
 
+        if ylabel == "MC Correction":
+            l1 = ml.Line2D([0.0, 1.05], [1.0, 1.0], color="black", linewidth=2, linestyle="dashed")
+            ax.add_line(l1); 
+
         fig.tight_layout()
         fig.savefig('%s/%s_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, self.channel, self.metric), dpi=fig.dpi)
 
