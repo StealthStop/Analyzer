@@ -340,7 +340,7 @@ def main():
                 if hist_key != Sig:
                     closureErrs      = theEdgesClass.get("nonClosure",      None, None, hist_key) # vars with any combination of bin edges
                     pull             = theEdgesClass.get("pull",              None, None, hist_key)
-                    finalClosureErr  = theEdgesClass.getFinal("nonClosure", hist_key            ) # vars with the final choice of bin edges
+                    finalNonClosure  = theEdgesClass.getFinal("nonClosure", hist_key            ) # vars with the final choice of bin edges
                     finalPull        = theEdgesClass.getFinal("pull",         hist_key            )
                
                 # ---------------------------  
@@ -370,12 +370,12 @@ def main():
                 #    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["B"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["B"]))
                 #    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["C"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["C"]))
                 #    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["D"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["D"]))
-                #    plotter[hist_key].plot_inverseSignificance_vsClosureErr(finalSignificance, finalClosureErr, significances, closureErrs, edges, allRegionsFinalEdges[key], njet, name=key)
+                #    plotter[hist_key].plot_inverseSignificance_vsNonClosure(finalSignificance, finalNonClosure, significances, closureErrs, edges, allRegionsFinalEdges[key], njet, name=key)
 
                 if hist_key != Sig:
 
-                    plotter[hist_key].plot_Var_vsDisc1Disc2(closureErrs[:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=key, variable="ClosureErr"   )
-                    plotter[hist_key].plot_Var_vsDisc1Disc2(closureErrs[:,1], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=key, variable="ClosureErrUnc")
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(closureErrs[:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=key, variable="NonClosure"   )
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(closureErrs[:,1], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=key, variable="NonClosureUnc")
                     #plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="Pull"         )
                     #plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,1],        edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="PullUnc"      )
 
