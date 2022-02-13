@@ -118,8 +118,8 @@ class All_Regions:
         firstXBin = 1 if self.leftBoundary   == None else self.hist["TT"].GetXaxis().FindBin(float(self.leftBoundary))
         firstYBin = 1 if self.bottomBoundary == None else self.hist["TT"].GetYaxis().FindBin(float(self.bottomBoundary))
  
-        lastXBin = self.hist["TT"].GetNbinsX()+1 if self.rightBoundary == None else self.hist["TT"].GetXaxis().FindBin(float(self.rightBoundary))
-        lastYBin = self.hist["TT"].GetNbinsY()+1 if self.topBoundary   == None else self.hist["TT"].GetYaxis().FindBin(float(self.topBoundary))
+        lastXBin = self.hist["TT"].GetNbinsX()+1 if self.rightBoundary == None else self.hist["TT"].GetXaxis().FindBin(float(self.rightBoundary)) + 1
+        lastYBin = self.hist["TT"].GetNbinsY()+1 if self.topBoundary   == None else self.hist["TT"].GetYaxis().FindBin(float(self.topBoundary))   + 1
 
         nXBins = range(firstXBin+1, lastXBin)
         nYBins = range(firstYBin+1, lastYBin)
