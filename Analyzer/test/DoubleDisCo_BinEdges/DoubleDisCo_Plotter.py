@@ -179,7 +179,7 @@ class Common_Calculations_Plotters:
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
-        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag, bkgTag))
+        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
    
         plt.close(fig)
 
@@ -266,7 +266,8 @@ class Common_Calculations_Plotters:
                 # -------------------------------------------- 
                 # append the information of 7th, 8th Njet bins
                 # -------------------------------------------- 
-                if i <= 1:
+                #if i <= 1: # for 7th, 8th Njet bins
+                if i < 1:   # for 7th Njet bin to get NonTT subtracted TT in data
                     # data
                     data_pred.append(dataPred[i][0])
                     data_predUnc.append(dataPred[i][1])
@@ -394,7 +395,7 @@ class Common_Calculations_Plotters:
             ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
             ax3.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
     
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag, bkgTag))
+            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
    
             plt.close(fig)
 
@@ -541,10 +542,10 @@ class Common_Calculations_Plotters:
 
         plt.close(fig)
 
-    # --------------------------------------
-    # plot inverseSignificance vs ClosureErr
-    # -------------------------------------- 
-    def plot_inverseSignificance_vsClosureErr(self, finalSignificance, finalClosureErr, significances, closureErrs, edges, finalDiscEdges, Njets = -1, name=""):
+    # ---------------------------------------
+    # plot inverseSignificance vs Non-Closure
+    # --------------------------------------- 
+    def plot_inverseSignificance_vsNonClosure(self, finalSignificance, finalNonClosure, significances, closureErrs, edges, finalDiscEdges, Njets = -1, name=""):
 
         fig = plt.figure(figsize=(5, 5))
         ax = plt.gca()
@@ -556,7 +557,7 @@ class Common_Calculations_Plotters:
         plt.scatter(np.reciprocal(significances), closureErrs, color='grey', marker='o', label='1 - Pred./Obs. vs 1 / Significance')
 
         if finalSignificance != 0.0:
-            plt.scatter([1.0 / finalSignificance[0]], [finalClosureErr[0]], color='red', marker='o', label='Chosen Solution')
+            plt.scatter([1.0 / finalSignificance[0]], [finalNonClosure[0]], color='red', marker='o', label='Chosen Solution')
         plt.xlabel('1 / Significance', fontsize=14)
         plt.xlim(left=0)
         plt.ylabel('|1 - Pred./Obs.|', fontsize=14)
@@ -566,7 +567,7 @@ class Common_Calculations_Plotters:
         plt.text(0.4, 0.85, '$%.2f < \\bf{Disc.\\;1\\;Edge}$ = %s < %.2f' % (edges[0][0], finalDiscEdges[0], edges[-1][0]), transform=ax.transAxes, fontsize=8)
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0][1],  finalDiscEdges[1], edges[-1][1]), transform=ax.transAxes, fontsize=8)
 
-        fig.savefig('%s/%s_InvSign_vs_ClosureErr_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_InvSign_vs_NonClosure_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -682,7 +683,7 @@ class Common_Calculations_Plotters:
     # plot variable vs disc as 1D
     #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
     # ----------------------------------------------------------------------
-    def plot_VarVsBoundary(self, var, xWidth, yMin = 0.0, yMax = 1.0, ylabel = "", tag = "", Njets = -1):
+    def plot_VarVsBoundary(self, var, xWidth, yMin = 0.0, yMax = 1.0, ylabel = "", tag = "", Njets = -1, color=None):
 
         regions = var.keys()
 
@@ -690,8 +691,6 @@ class Common_Calculations_Plotters:
         y    = {region : [] for region in regions}
         yUnc = {region : [] for region in regions} 
         xUnc = {region : [] for region in regions}
-
-        colors = ["red", "blue", "green"] 
 
         fig = plt.figure(figsize=(5, 5))
         ax = plt.gca()
@@ -703,9 +702,7 @@ class Common_Calculations_Plotters:
                 yUnc[region].append(value[1])
                 xUnc[region].append(xWidth)
 
-            ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=colors[-1], lw=0, elinewidth=2, marker="o", markeredgecolor=colors[-1], markerfacecolor=colors[-1])
-
-            colors.pop()
+            ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
 
             ax.set_ylim((yMin, yMax))
 
