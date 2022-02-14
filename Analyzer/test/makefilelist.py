@@ -39,11 +39,12 @@ def addInfo(d, name, payload):
 treemakerdir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
 prod         = "V20"
+tag          = "UL_v1"
 basedir      = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s/"%(prod)
-filelistsdir = "/eos/uscms/store/user/lpcsusyhad/StealthStop/filelists_Kevin_%s/"%(prod)
+filelistsdir = "/eos/uscms/store/user/lpcsusyhad/StealthStop/filelists_Kevin_%s/"%(tag)
 ttreedir     = "TreeMaker2/PreSelection"
 tempfilename = "tmp.txt"
-fdir         = "filelists_Kevin_%s/"%prod
+fdir         = "filelists_Kevin_%s/"%tag
 
 if not os.path.isdir(fdir):
     os.mkdir(fdir)
@@ -81,11 +82,11 @@ for year in ["16", "16APV", "17", "18"]:
                 auxiliary[name] = {}
 
             if ndiff == -1.0:
-                auxiliary[name]["20%s_npos"%(year)] = float(ntot)
-                auxiliary[name]["20%s_nneg"%(year)] = 0.0
+                auxiliary[name]["20%s_npos"%(year)] = int(ntot)
+                auxiliary[name]["20%s_nneg"%(year)] = 0
             else:
-                auxiliary[name]["20%s_npos"%(year)] = (float(ntot) + float(ndiff))/2.0
-                auxiliary[name]["20%s_nneg"%(year)] = (float(ntot) - float(ndiff))/2.0
+                auxiliary[name]["20%s_npos"%(year)] = int((float(ntot) + float(ndiff))/2.0)
+                auxiliary[name]["20%s_nneg"%(year)] = int((float(ntot) - float(ndiff))/2.0)
 
 # If there is a MCSamplesValues, use it to get info on xsec, kfactor, etc
 if os.path.exists(treemakerdir + "/MCSampleValues.py"):
@@ -160,7 +161,7 @@ with open(tempfilename, 'r') as tempfile:
         newline = "root://cmseos.fnal.gov/" + basedir + line
         samples[era][shortline].append(newline)
 
-sampleSet = open("sampleSets_%s.cfg"%(prod), "w")
+sampleSet = open("sampleSets_%s.cfg"%(tag), "w")
 
 # Write out a "2018_ttHJetTobb.txt" file with the list of corresponding files
 for era, sampleLists in samples.items():
@@ -169,11 +170,11 @@ for era, sampleLists in samples.items():
     theSamples = sampleLists.keys()
     theSamples.sort()
     for sample in theSamples:
-        newfile = open("filelists_Kevin_%s/"%(prod) + sample + ".txt", 'w')
+        newfile = open("filelists_Kevin_%s/"%(tag) + sample + ".txt", 'w')
 
         xsec       = "-1.0,"
-        nposevents = "-1.0,"
-        nnegevents = "-1.0,"
+        nposevents = "-1,"
+        nnegevents = "-1,"
         kfactor    = "-1.0"
 
         # Everything before "TuneCP5" will be included in name
