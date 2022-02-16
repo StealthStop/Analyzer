@@ -16,7 +16,8 @@ class FileLister:
         self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s/"%(production)
         self.ttreeDir     = "TreeMaker2/PreSelection"
         self.tempFileName = "tmp.txt"
-        self.fileListsDir = "filelists_Kevin_%s/"%(tag)
+        self.fileListsDir = "filelists_Kevin_%s/"%(production)
+        self.eosPath      = "/eos/uscms/store/user/lpcsusyhad/StealthStop/"
 
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -255,7 +256,7 @@ class FileLister:
                     continue
         
                 # For the inclusive W + jets and DY + jets samples add "Incl" string to name
-                if ("WJetsToLNu" in name or "DYJetsToLL" in name) and "HT" not in name:
+                if (name.startswith("WJetsToLNu") or name.startswith("DYJetsToLL")) and "HT" not in name:
                     name += "_Incl"
         
                 # For any data set, insert "Data" string into name
@@ -295,7 +296,7 @@ class FileLister:
                 name   += ","
                 sample += ".txt,"
         
-                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + "/" +self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
             self.writeSampleSet(finalDict)
 
