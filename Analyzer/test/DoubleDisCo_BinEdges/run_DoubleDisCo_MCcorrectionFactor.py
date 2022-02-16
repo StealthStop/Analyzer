@@ -7,7 +7,6 @@ from collections import defaultdict
 from DoubleDisCo_Regions     import *
 from DoubleDisCo_Plotter     import *
 from DoubleDisCo_Variances   import *
-from DoubleDisCo_TableWriter import *
 
 # The Aggregator class is fed Regions objects, extracts useful information from them
 # and stores everything in a single dictionary, allowing information to be retreived
@@ -146,7 +145,7 @@ def main():
     samples = [args.tt, args.nontt, ttVar, Sig, args.data]
 
     # Make the output directories if they do not already exist
-    plotsPath = {}; tablesPath = {}
+    plotsPath = {}
 
     for sample in samples:
 
@@ -156,16 +155,9 @@ def main():
         if args.fixedDisc1edge != None or args.fixedDisc2edge != None:
             plotsPath[sample]  = "plots_MCcorrFactor_%s_%s_%s/%s_%s/%s/"%(args.fixedDisc1edge, args.fixedDisc2edge, sample, args.sig, args.mass, args.channel)
             
-            if sample == "TT":
-                tablesPath[sample] = "tables_MCcorrFactor_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
-
-
         # 
         if not os.path.exists(plotsPath[sample]):
             os.makedirs(plotsPath[sample])
-
-        if not os.path.exists(tablesPath["TT"]):
-            os.makedirs(tablesPath["TT"])
 
     # get SYY histogram
     modelDecay = "2t6j"
@@ -385,7 +377,7 @@ def main():
         # Add function to plotter
         plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,    regionGridWidth/2.0, 0.0, 0.3, "Non-Closure",   "NonClosureExt",   njet, color)
         plotter["TT"].plot_VarVsBoundary(mcCorrectionPerBoundaryTT,  regionGridWidth/2.0, 0.7, 1.3, "MC Correction", "MCcorrectionExt", njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'A\'",  "SigFracAExt",     njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.10, "SigFrac\'A\'",  "SigFracAExt",     njet, color) # 0.02 for 0l
         plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'B\'",  "SigFracBExt",     njet, color)
         plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'C\'",  "SigFracCExt",     njet, color)
         plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'D\'",  "SigFracDExt",     njet, color)
