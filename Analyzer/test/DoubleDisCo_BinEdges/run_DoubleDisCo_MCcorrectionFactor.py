@@ -381,10 +381,10 @@ def main():
         # Add function to plotter
         plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,    regionGridWidth/2.0, 0.0, 0.3,  None, "Non-Closure",             "TT_NonClosure_PerBoundary",        njet, color)
         plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,   regionGridWidth/2.0, 0.7, 1.3,  None, "Closure Correction [MC]", "TT_ClosureCorrection_PerBoundary", njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.10, None, "SigFrac\'A\'",            "SigFracA_PerBoundary",             njet, color) # 0.02 for 0l
-        plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'B\'",            "SigFracB_PerBoundary",             njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'C\'",            "SigFracC_PerBoundary",             njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'D\'",            "SigFracD_PerBoundary",             njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.10, None, "SigFrac\'A\'",            "TT_SigFracA_PerBoundary",          njet, color) # 0.02 for 0l
+        plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'B\'",            "TT_SigFracB_PerBoundary",          njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'C\'",            "TT_SigFracC_PerBoundary",          njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'D\'",            "TT_SigFracD_PerBoundary",          njet, color)
 
         if njet == "7":
             plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,      regionGridWidth/2.0, 0.0, 0.3, None, "Non-Closure",                  "TTinData_NonClosure_PerBoundary",        njet, color)
