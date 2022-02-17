@@ -17,7 +17,7 @@ class Aggregator:
     def __init__(self, samples, njets, regions, boundaries):
 
         self.data       = {}
-        self.samples    = samples + ["TTdata"]
+        self.samples    = samples + ["TTinData"]
         self.njets      = njets
         self.boundaries = boundaries
         self.regions    = regions
@@ -82,8 +82,8 @@ class Aggregator:
 
                 self.data[self.makeKey(variable = "closureCorr",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",            sample) # vars with the final choice of bin edges
 
-                if sample == "TTdata":
-                    self.data[self.makeKey(variable = "closureCorrTTdataVsTT",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTdataVsTT", sample)
+                if sample == "TTinData":
+                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTT",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTT", sample)
 
         self.data[self.makeKey(variable = "significances", **kwargs)] = regionObj.get("significance",      None, None, "TT")
         self.data[self.makeKey(variable = "significance",  **kwargs)] = regionObj.getFinal("significance",             "TT")
@@ -361,7 +361,7 @@ def main():
 
         nonClosurePerBoundaryTT     = {}; closureCorrPerBoundaryTT     = {}
         sigFractionA_PerBoundaryTT  = {}; sigFractionB_PerBoundaryTT   = {}; sigFractionC_PerBoundaryTT = {}; sigFractionD_PerBoundaryTT = {}
-        nonClosurePerBoundaryTTdata = {}; closureCorrPerBoundaryTTdata = {}; closureCorrPerBoundaryTTdataVsTT = {}
+        nonClosurePerBoundaryTTinData = {}; closureCorrPerBoundaryTTinData = {}; closureCorrPerBoundaryTTinDataVsTT = {}
 
         for key, region in regions.items():
             if "Val_" not in key:
@@ -374,22 +374,22 @@ def main():
             sigFractionC_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "sigFractionC",  region = key, njet = njet)
             sigFractionD_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "sigFractionD",  region = key, njet = njet)
 
-            nonClosurePerBoundaryTTdata[key]      = theAggy.getPerBoundary(variable = "nonClosure",            sample = "TTdata", region = key, njet = njet)
-            closureCorrPerBoundaryTTdata[key]     = theAggy.getPerBoundary(variable = "closureCorr",           sample = "TTdata", region = key, njet = njet)
-            closureCorrPerBoundaryTTdataVsTT[key] = theAggy.getPerBoundary(variable = "closureCorrTTdataVsTT", sample = "TTdata", region = key, njet = njet)
+            nonClosurePerBoundaryTTinData[key]      = theAggy.getPerBoundary(variable = "nonClosure",              sample = "TTinData", region = key, njet = njet)
+            closureCorrPerBoundaryTTinData[key]     = theAggy.getPerBoundary(variable = "closureCorr",             sample = "TTinData", region = key, njet = njet)
+            closureCorrPerBoundaryTTinDataVsTT[key] = theAggy.getPerBoundary(variable = "closureCorrTTinDataVsTT", sample = "TTinData", region = key, njet = njet)
 
         # Add function to plotter
-        plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,    regionGridWidth/2.0, 0.0, 0.3,  None, "Non-Closure",        "NonClosureExt",   njet, color)
-        plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,   regionGridWidth/2.0, 0.7, 1.3,  None, "Closure Correction", "MCcorrectionExt", njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.10, None, "SigFrac\'A\'",       "SigFracAExt",     njet, color) # 0.02 for 0l
-        plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'B\'",       "SigFracBExt",     njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'C\'",       "SigFracCExt",     njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'D\'",       "SigFracDExt",     njet, color)
+        plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,    regionGridWidth/2.0, 0.0, 0.3,  None, "Non-Closure",             "TT_NonClosure_PerBoundary",        njet, color)
+        plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,   regionGridWidth/2.0, 0.7, 1.3,  None, "Closure Correction [MC]", "TT_ClosureCorrection_PerBoundary", njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.10, None, "SigFrac\'A\'",            "TT_SigFracA_PerBoundary",          njet, color) # 0.02 for 0l
+        plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'B\'",            "TT_SigFracB_PerBoundary",          njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'C\'",            "TT_SigFracC_PerBoundary",          njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, None, "SigFrac\'D\'",            "TT_SigFracD_PerBoundary",          njet, color)
 
         if njet == "7":
-            plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTdata,      regionGridWidth/2.0, 0.0, 0.3, None, "Non-Closure",                          "NonClosureExt",        njet, color)
-            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTdata,     regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction",                   "MCcorrectionExt",      njet, color)
-            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTdataVsTT, regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction Ratio [Data / TT]", "MCcorrectionRatioExt", njet, color)
+            plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,      regionGridWidth/2.0, 0.0, 0.3, None, "Non-Closure",                  "TTinData_NonClosure_PerBoundary",        njet, color)
+            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinData,     regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data]",    "TTinData_ClosureCorrection_PerBoundary", njet, color)
+            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinDataVsTT, regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data/TT]", "DataMC_ClosureCorrection_PerBoundary",   njet, color)
 
 if __name__ == '__main__':
     main()

@@ -207,20 +207,22 @@ class All_Regions:
             nDataEvents_C,  nDataEventsErr_C  = self.get("nEventsC", disc1Key, disc2Key, "Data")
             nDataEvents_D,  nDataEventsErr_D  = self.get("nEventsD", disc1Key, disc2Key, "Data")
 
-            nTTdataEvents_A = nDataEvents_A - nNonTTEvents_A
-            nTTdataEvents_B = nDataEvents_B - nNonTTEvents_B
-            nTTdataEvents_C = nDataEvents_C - nNonTTEvents_C
-            nTTdataEvents_D = nDataEvents_D - nNonTTEvents_D
+            # Compute background subtracted data to give the TT in data for each of the four ABCD bins
+            # To be used for computing the data closure correction
+            nTTinDataEvents_A = nDataEvents_A - nNonTTEvents_A
+            nTTinDataEvents_B = nDataEvents_B - nNonTTEvents_B
+            nTTinDataEvents_C = nDataEvents_C - nNonTTEvents_C
+            nTTinDataEvents_D = nDataEvents_D - nNonTTEvents_D
 
-            nTTdataEventsErr_A = (nDataEventsErr_A**2.0 + nNonTTEventsErr_A**2.0)**0.5
-            nTTdataEventsErr_B = (nDataEventsErr_B**2.0 + nNonTTEventsErr_B**2.0)**0.5
-            nTTdataEventsErr_C = (nDataEventsErr_C**2.0 + nNonTTEventsErr_C**2.0)**0.5
-            nTTdataEventsErr_D = (nDataEventsErr_D**2.0 + nNonTTEventsErr_D**2.0)**0.5
+            nTTinDataEventsErr_A = (nDataEventsErr_A**2.0 + nNonTTEventsErr_A**2.0)**0.5
+            nTTinDataEventsErr_B = (nDataEventsErr_B**2.0 + nNonTTEventsErr_B**2.0)**0.5
+            nTTinDataEventsErr_C = (nDataEventsErr_C**2.0 + nNonTTEventsErr_C**2.0)**0.5
+            nTTinDataEventsErr_D = (nDataEventsErr_D**2.0 + nNonTTEventsErr_D**2.0)**0.5
 
-            self.add("nEventsA", disc1Key, disc2Key, (nTTdataEvents_A, nTTdataEventsErr_A), "TTdata")
-            self.add("nEventsB", disc1Key, disc2Key, (nTTdataEvents_B, nTTdataEventsErr_B), "TTdata")
-            self.add("nEventsC", disc1Key, disc2Key, (nTTdataEvents_C, nTTdataEventsErr_C), "TTdata")
-            self.add("nEventsD", disc1Key, disc2Key, (nTTdataEvents_D, nTTdataEventsErr_D), "TTdata")
+            self.add("nEventsA", disc1Key, disc2Key, (nTTinDataEvents_A, nTTinDataEventsErr_A), "TTinData")
+            self.add("nEventsB", disc1Key, disc2Key, (nTTinDataEvents_B, nTTinDataEventsErr_B), "TTinData")
+            self.add("nEventsC", disc1Key, disc2Key, (nTTinDataEvents_C, nTTinDataEventsErr_C), "TTinData")
+            self.add("nEventsD", disc1Key, disc2Key, (nTTinDataEvents_D, nTTinDataEventsErr_D), "TTinData")
 
             # Region by region signal and bkg fractions for 1D-2D plots / for only TT !!!
             nTot_SigTT_A = nSigEvents_A + nTTEvents_A
@@ -312,61 +314,61 @@ class All_Regions:
 
             # closure for optimization metric for only TT
             # closure error and pull for 2D plots / for TT, NonTT, Data
-            closureErr_TT     = -999.0; closureErrUnc_TT     = -999.0; pull_TT     = -999.0; pullUnc_TT     = -999.0 
-            closureErr_NonTT  = -999.0; closureErrUnc_NonTT  = -999.0; pull_NonTT  = -999.0; pullUnc_NonTT  = -999.0 
-            closureErr_TTvar  = -999.0; closureErrUnc_TTvar  = -999.0; pull_TTvar  = -999.0; pullUnc_TTvar  = -999.0
-            closureErr_Data   = -999.0; closureErrUnc_Data   = -999.0; pull_Data   = -999.0; pullUnc_Data   = -999.0
-            closureErr_TTdata = -999.0; closureErrUnc_TTdata = -999.0; pull_TTdata = -999.0; pullUnc_TTdata = -999.0
+            closureErr_TT       = -999.0; closureErrUnc_TT       = -999.0; pull_TT       = -999.0; pullUnc_TT       = -999.0 
+            closureErr_NonTT    = -999.0; closureErrUnc_NonTT    = -999.0; pull_NonTT    = -999.0; pullUnc_NonTT    = -999.0 
+            closureErr_TTvar    = -999.0; closureErrUnc_TTvar    = -999.0; pull_TTvar    = -999.0; pullUnc_TTvar    = -999.0
+            closureErr_Data     = -999.0; closureErrUnc_Data     = -999.0; pull_Data     = -999.0; pullUnc_Data     = -999.0
+            closureErr_TTinData = -999.0; closureErrUnc_TTinData = -999.0; pull_TTinData = -999.0; pullUnc_TTinData = -999.0
 
-            closureCorr_TT     = -999.0; closureCorrUnc_TT     = -999.0
-            closureCorr_NonTT  = -999.0; closureCorrUnc_NonTT  = -999.0
-            closureCorr_TTvar  = -999.0; closureCorrUnc_TTvar  = -999.0
-            closureCorr_Data   = -999.0; closureCorrUnc_Data   = -999.0
-            closureCorr_TTdata = -999.0; closureCorrUnc_TTdata = -999.0
+            closureCorr_TT       = -999.0; closureCorrUnc_TT       = -999.0
+            closureCorr_NonTT    = -999.0; closureCorrUnc_NonTT    = -999.0
+            closureCorr_TTvar    = -999.0; closureCorrUnc_TTvar    = -999.0
+            closureCorr_Data     = -999.0; closureCorrUnc_Data     = -999.0
+            closureCorr_TTinData = -999.0; closureCorrUnc_TTinData = -999.0
    
-            closureCorr_TTdataVsTT = -999.0; closureCorrUnc_TTdataVsTT = -999.0
+            closureCorr_TTinDataVsTT = -999.0; closureCorrUnc_TTinDataVsTT = -999.0
 
             nonClosure_TT,     nonClosureUnc_TT     = self.cal_NonClosure(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             nonClosure_NonTT,  nonClosureUnc_NonTT  = self.cal_NonClosure(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
             nonClosure_TTvar,  nonClosureUnc_TTvar  = self.cal_NonClosure(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             nonClosure_Data,   nonClosureUnc_Data   = self.cal_NonClosure(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
-            nonClosure_TTdata, nonClosureUnc_TTdata = self.cal_NonClosure(nTTdataEvents_A,  nTTdataEvents_B,  nTTdataEvents_C,  nTTdataEvents_D,  nTTdataEventsErr_A,  nTTdataEventsErr_B,  nTTdataEventsErr_C,  nTTdataEventsErr_D )
+            nonClosure_TTinData, nonClosureUnc_TTinData = self.cal_NonClosure(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
 
             closureCorr_TT,    closureCorrUnc_TT    = self.cal_ClosureCorr(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             closureCorr_Data,  closureCorrUnc_Data  = self.cal_ClosureCorr(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
             closureCorr_NonTT, closureCorrUnc_NonTT = self.cal_ClosureCorr(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D   )
             closureCorr_TTvar, closureCorrUnc_TTvar = self.cal_ClosureCorr(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D )
-            closureCorr_TTdata, closureCorrUnc_TTdata = self.cal_ClosureCorr(nTTdataEvents_A, nTTdataEvents_B, nTTdataEvents_C, nTTdataEvents_D, nTTdataEventsErr_A, nTTdataEventsErr_B, nTTdataEventsErr_C, nTTdataEventsErr_D )
+            closureCorr_TTinData, closureCorrUnc_TTinData = self.cal_ClosureCorr(nTTinDataEvents_A, nTTinDataEvents_B, nTTinDataEvents_C, nTTinDataEvents_D, nTTinDataEventsErr_A, nTTinDataEventsErr_B, nTTinDataEventsErr_C, nTTinDataEventsErr_D )
 
             pull_TT,    pullUnc_TT    = self.cal_Pull(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             pull_NonTT, pullUnc_NonTT = self.cal_Pull(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
             pull_TTvar, pullUnc_TTvar = self.cal_Pull(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             pull_Data,  pullUnc_Data  = self.cal_Pull(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
-            pull_TTdata,  pullUnc_TTdata  = self.cal_Pull(nTTdataEvents_A,  nTTdataEvents_B,  nTTdataEvents_C,  nTTdataEvents_D,  nTTdataEventsErr_A,  nTTdataEventsErr_B,  nTTdataEventsErr_C,  nTTdataEventsErr_D )
+            pull_TTinData,  pullUnc_TTinData  = self.cal_Pull(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
 
-            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TT,     nonClosureUnc_TT) ,     "TT"      )
-            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_NonTT,  nonClosureUnc_NonTT),   "NonTT"   )
-            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TTvar,  nonClosureUnc_TTvar),   self.ttVar)
-            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_Data,   nonClosureUnc_Data ),   "Data"    )
-            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TTdata, nonClosureUnc_TTdata ), "TTdata"  )
+            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TT,       nonClosureUnc_TT) ,       "TT"      )
+            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_NonTT,    nonClosureUnc_NonTT),     "NonTT"   )
+            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TTvar,    nonClosureUnc_TTvar),     self.ttVar)
+            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_Data,     nonClosureUnc_Data ),     "Data"    )
+            self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TTinData, nonClosureUnc_TTinData ), "TTinData")
 
-            self.add("pull",       disc1Key, disc2Key, (pull_TT,     pullUnc_TT),     "TT"      )
-            self.add("pull",       disc1Key, disc2Key, (pull_NonTT,  pullUnc_NonTT),  "NonTT"   )
-            self.add("pull",       disc1Key, disc2Key, (pull_TTvar,  pullUnc_TTvar),  self.ttVar)
-            self.add("pull",       disc1Key, disc2Key, (pull_Data,   pullUnc_Data),   "Data"    )
-            self.add("pull",       disc1Key, disc2Key, (pull_TTdata, pullUnc_TTdata), "TTdata"  )
+            self.add("pull",       disc1Key, disc2Key, (pull_TT,       pullUnc_TT),     "TT"      )
+            self.add("pull",       disc1Key, disc2Key, (pull_NonTT,    pullUnc_NonTT),  "NonTT"   )
+            self.add("pull",       disc1Key, disc2Key, (pull_TTvar,    pullUnc_TTvar),  self.ttVar)
+            self.add("pull",       disc1Key, disc2Key, (pull_Data,     pullUnc_Data),   "Data"    )
+            self.add("pull",       disc1Key, disc2Key, (pull_TTinData, pullUnc_TTinData), "TTinData"  )
       
-            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TT,     closureCorrUnc_TT) ,     "TT"      )
-            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_NonTT,  closureCorrUnc_NonTT) ,  "NonTT"   )
-            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTvar,  closureCorrUnc_TTvar ),  self.ttVar)
-            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_Data,   closureCorrUnc_Data ),   "Data"    )
-            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTdata, closureCorrUnc_TTdata ), "TTdata"  )
+            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TT,       closureCorrUnc_TT) ,       "TT"      )
+            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_NonTT,    closureCorrUnc_NonTT) ,    "NonTT"   )
+            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTvar,    closureCorrUnc_TTvar ),    self.ttVar)
+            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_Data,     closureCorrUnc_Data ),     "Data"    )
+            self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTinData, closureCorrUnc_TTinData ), "TTinData")
 
-            if closureCorr_TTdata != 0.0 and closureCorr_TT != 0.0:
-                closureCorr_TTdataVsTT    = closureCorr_TTdata / closureCorr_TT
-                closureCorrUnc_TTdataVsTT = closureCorr_TTdataVsTT * ((closureCorrUnc_TTdata / closureCorr_TTdata)**2.0 + (closureCorrUnc_TT / closureCorr_TT)**2.0)**0.5
+            if closureCorr_TTinData != 0.0 and closureCorr_TT != 0.0:
+                closureCorr_TTinDataVsTT    = closureCorr_TTinData / closureCorr_TT
+                closureCorrUnc_TTinDataVsTT = closureCorr_TTinDataVsTT * ((closureCorrUnc_TTinData / closureCorr_TTinData)**2.0 + (closureCorrUnc_TT / closureCorr_TT)**2.0)**0.5
 
-            self.add("closureCorrTTdataVsTT", disc1Key, disc2Key, (closureCorr_TTdataVsTT, closureCorrUnc_TTdataVsTT), "TTdata"  )
+            self.add("closureCorrTTinDataVsTT", disc1Key, disc2Key, (closureCorr_TTinDataVsTT, closureCorrUnc_TTinDataVsTT), "TTinData")
 
             # significance for optimization metric for only TT !!! 
             # significance, significanceUnc for 2D plots
