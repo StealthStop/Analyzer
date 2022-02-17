@@ -74,7 +74,7 @@ class Common_Calculations_Plotters:
     
             if bkgObs[i][1] != 0.0:
     
-                x.append(float(Njets[i]))  
+                x.append(float((Njets[i]).replace("incl", "")))  
                 xUnc.append(0.5)
 
                 pull            = (bkgPred[i][0] - bkgObs[i][0]) / ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5
@@ -85,7 +85,7 @@ class Common_Calculations_Plotters:
                 zero            = 0.0
 
                 # for the data closure / blind the 9-10-11 njet bins
-                if isBlind and i >= 2:
+                if isBlind and i >= 1:
                     pred.append(0.0)
                     predUnc.append(0.0)
                     obs.append(0.0)
@@ -119,7 +119,7 @@ class Common_Calculations_Plotters:
         fig.subplots_adjust(hspace=0, left=0.15, right=0.85, top=0.94)
     
         lowerNjets  = float(Njets[0])
-        higherNjets = float(Njets[(-1)])
+        higherNjets = float( (Njets[(-1)]).replace("incl","") )
     
         ax.spines['top'].set_color('none')
         ax.spines['bottom'].set_color('none')
@@ -175,7 +175,7 @@ class Common_Calculations_Plotters:
         #ax4.set_yscale('log')
         plt.show()
 
-        plt.xticks([int(Njet) for Njet in Njets])
+        plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
@@ -220,7 +220,7 @@ class Common_Calculations_Plotters:
 
             if bkgObs[i][1] != 0.0:
 
-                x.append(float(Njets[i]))
+                x.append(float((Njets[i]).replace("incl","")))
                 xUnc.append(0.5)
 
                 # bkg
@@ -336,7 +336,7 @@ class Common_Calculations_Plotters:
             fig.subplots_adjust(hspace=0.4, left=0.15, right=0.95, top=0.94)
     
             lowerNjets  = float(Njets[0])
-            higherNjets = float(Njets[(-1)])
+            higherNjets = float( (Njets[(-1)]).replace("incl","") )
     
             ax.spines['top'].set_color('none')
             ax.spines['bottom'].set_color('none')
@@ -388,7 +388,7 @@ class Common_Calculations_Plotters:
             ax3.set_ylabel('MC Correction', fontsize=20)
             ax3.set_ylim([0.7, 1.3])
 
-            plt.xticks([int(Njet) for Njet in Njets], fontsize=26)
+            plt.xticks([int(Njet.replace("incl","")) for Njet in Njets], fontsize=26)
             plt.xlabel('Number of jets', fontsize=28)    
 
             ax1.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
