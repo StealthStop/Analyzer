@@ -683,7 +683,7 @@ class Common_Calculations_Plotters:
     # plot variable vs disc as 1D
     #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
     # ----------------------------------------------------------------------
-    def plot_VarVsBoundary(self, var, xWidth, yMin = 0.0, yMax = 1.0, lineY = None, ylabel = "", tag = "", Njets = -1, color=None):
+    def plot_VarVsBoundary(self, var, xWidth, yMin = None, yMax = None, lineY = None, ylabel = "", tag = "", Njets = -1, color=None):
 
         regions = var.keys()
 
@@ -704,7 +704,8 @@ class Common_Calculations_Plotters:
 
             ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
 
-            ax.set_ylim((yMin, yMax))
+            if yMin != None and yMax != None:
+                ax.set_ylim((yMin, yMax))
 
         ax.set_xlabel("Boundary Value", fontsize=14)
         ax.set_ylabel(ylabel, fontsize=14)
