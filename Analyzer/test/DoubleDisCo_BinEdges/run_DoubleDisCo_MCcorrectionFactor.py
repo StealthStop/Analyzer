@@ -388,8 +388,8 @@ def main():
 
         if njet == "7":
             plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,      regionGridWidth/2.0, 0.0, 0.3, None, "Non-Closure",                  "TTinDataNonClosureExt",    njet, color)
-            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinData,     regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data]",    "DatacorrectionExt",        njet, color)
-            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinDataVsTT, regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data/MC]", "DataMccorrectionRatioExt", njet, color)
+            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinData,     regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data]",    "TTinDatacorrectionExt",        njet, color)
+            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinDataVsTT, regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data/MC]", "TTinDataMccorrectionRatioExt", njet, color)
 
 if __name__ == '__main__':
     main()
