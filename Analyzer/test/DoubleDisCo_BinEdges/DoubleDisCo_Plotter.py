@@ -385,7 +385,7 @@ class Common_Calculations_Plotters:
             ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
             ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
             #ax3.set_xlabel('Number of jets', fontsize=28)
-            ax3.set_ylabel('MC Correction', fontsize=20)
+            ax3.set_ylabel('Closure Correction [MC]', fontsize=20)
             ax3.set_ylim([0.7, 1.3])
 
             plt.xticks([int(Njet.replace("incl","")) for Njet in Njets], fontsize=26)
