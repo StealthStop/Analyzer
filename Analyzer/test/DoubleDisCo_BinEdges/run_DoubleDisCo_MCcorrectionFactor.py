@@ -193,7 +193,7 @@ def main():
     # get the 2D histograms 
     njets = None
     histNames = "h_DoubleDisCo_disc1_disc2_%s_Njets"%(args.channel)
-    njets = ["7"]#, "8", "9", "10", "11", "12"]
+    njets = ["7", "8", "9", "10", "11", "12incl"]
 
     # ------------------
     # make all tex files
