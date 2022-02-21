@@ -256,7 +256,7 @@ class FileLister:
                     continue
         
                 # For the inclusive W + jets and DY + jets samples add "Incl" string to name
-                if (name.startswith("WJetsToLNu") or name.startswith("DYJetsToLL")) and "HT" not in name:
+                if ("_WJetsToLNu" in name or "_DYJetsToLL" in name or "_TTJets" in name) and "HT" not in name:
                     name += "_Incl"
         
                 # For any data set, insert "Data" string into name
@@ -296,7 +296,7 @@ class FileLister:
                 name   += ","
                 sample += ".txt,"
         
-                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + "/" +self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
             self.writeSampleSet(finalDict)
 
