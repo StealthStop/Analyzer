@@ -17,7 +17,7 @@ class Aggregator:
     def __init__(self, samples, njets, regions, boundaries):
 
         self.data       = {}
-        self.samples    = samples
+        self.samples    = samples + ["TTinData"]
         self.njets      = njets
         self.boundaries = boundaries
         self.regions    = regions
@@ -80,7 +80,10 @@ class Aggregator:
                 self.data[self.makeKey(variable = "nonClosure",   sample = sample, **kwargs)] = regionObj.getFinal("nonClosure",             sample) # vars with the final choice of bin edges
                 self.data[self.makeKey(variable = "pull",         sample = sample, **kwargs)] = regionObj.getFinal("pull",                   sample)
 
-                self.data[self.makeKey(variable = "mcCorrection", sample = sample, **kwargs)] = regionObj.getFinal("mcCorrection",           sample) # vars with the final choice of bin edges
+                self.data[self.makeKey(variable = "closureCorr",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",            sample) # vars with the final choice of bin edges
+
+                if sample == "TTinData":
+                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTT",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTT", sample)
 
         self.data[self.makeKey(variable = "significances", **kwargs)] = regionObj.get("significance",      None, None, "TT")
         self.data[self.makeKey(variable = "significance",  **kwargs)] = regionObj.getFinal("significance",             "TT")
@@ -190,7 +193,7 @@ def main():
     # get the 2D histograms 
     njets = None
     histNames = "h_DoubleDisCo_disc1_disc2_%s_Njets"%(args.channel)
-    njets = ["7", "8", "9", "10", "11", "12"]
+    njets = ["7", "8", "9", "10", "11", "12incl"]
 
     # ------------------
     # make all tex files
@@ -356,35 +359,37 @@ def main():
     # ----------------------------------------
     for njet in njets:
 
-        nonClosurePerBoundaryTT    = {}; mcCorrectionPerBoundaryTT   = {}
-        sigFractionA_PerBoundaryTT = {}; sigFractionB_PerBoundaryTT  = {}; sigFractionC_PerBoundaryTT = {}; sigFractionD_PerBoundaryTT = {}
-        nonClosurePerBoundaryData  = {}; mcCorrectionPerBoundaryData = {}
+        nonClosurePerBoundaryTT     = {}; closureCorrPerBoundaryTT     = {}
+        sigFractionA_PerBoundaryTT  = {}; sigFractionB_PerBoundaryTT   = {}; sigFractionC_PerBoundaryTT = {}; sigFractionD_PerBoundaryTT = {}
+        nonClosurePerBoundaryTTinData = {}; closureCorrPerBoundaryTTinData = {}; closureCorrPerBoundaryTTinDataVsTT = {}
 
         for key, region in regions.items():
             if "Val_" not in key:
                 continue
 
             nonClosurePerBoundaryTT[key]    = theAggy.getPerBoundary(variable = "nonClosure",    sample = "TT", region = key, njet = njet)
-            mcCorrectionPerBoundaryTT[key]  = theAggy.getPerBoundary(variable = "mcCorrection",  sample = "TT", region = key, njet = njet)
+            closureCorrPerBoundaryTT[key]   = theAggy.getPerBoundary(variable = "closureCorr",   sample = "TT", region = key, njet = njet)
             sigFractionA_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "sigFractionA",  region = key, njet = njet)
             sigFractionB_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "sigFractionB",  region = key, njet = njet)
             sigFractionC_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "sigFractionC",  region = key, njet = njet)
             sigFractionD_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "sigFractionD",  region = key, njet = njet)
 
-            nonClosurePerBoundaryData[key]   = theAggy.getPerBoundary(variable = "nonClosure",   sample = "Data", region = key, njet = njet)
-            mcCorrectionPerBoundaryData[key] = theAggy.getPerBoundary(variable = "mcCorrection", sample = "Data", region = key, njet = njet)
+            nonClosurePerBoundaryTTinData[key]      = theAggy.getPerBoundary(variable = "nonClosure",              sample = "TTinData", region = key, njet = njet)
+            closureCorrPerBoundaryTTinData[key]     = theAggy.getPerBoundary(variable = "closureCorr",             sample = "TTinData", region = key, njet = njet)
+            closureCorrPerBoundaryTTinDataVsTT[key] = theAggy.getPerBoundary(variable = "closureCorrTTinDataVsTT", sample = "TTinData", region = key, njet = njet)
 
         # Add function to plotter
-        plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,    regionGridWidth/2.0, 0.0, 0.3, "Non-Closure",   "NonClosureExt",   njet, color)
-        plotter["TT"].plot_VarVsBoundary(mcCorrectionPerBoundaryTT,  regionGridWidth/2.0, 0.7, 1.3, "MC Correction", "MCcorrectionExt", njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.10, "SigFrac\'A\'",  "SigFracAExt",     njet, color) # 0.02 for 0l
-        plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'B\'",  "SigFracBExt",     njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'C\'",  "SigFracCExt",     njet, color)
-        plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, 0.0, 0.02, "SigFrac\'D\'",  "SigFracDExt",     njet, color)
+        plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,    regionGridWidth/2.0, 0.0,  0.3,  None, "Non-Closure [MC]",        "TT_NonClosure_PerBoundary",        njet, color)
+        plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,   regionGridWidth/2.0, 0.7,  1.3,  1.0,  "Closure Correction [MC]", "TT_ClosureCorrection_PerBoundary", njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT, regionGridWidth/2.0, None, None, None, "SigFrac\'A\'",            "TT_SigFracA_PerBoundary",          njet, color) # 0.02 for 0l
+        plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT, regionGridWidth/2.0, None, None, None, "SigFrac\'B\'",            "TT_SigFracB_PerBoundary",          njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT, regionGridWidth/2.0, None, None, None, "SigFrac\'C\'",            "TT_SigFracC_PerBoundary",          njet, color)
+        plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT, regionGridWidth/2.0, None, None, None, "SigFrac\'D\'",            "TT_SigFracD_PerBoundary",          njet, color)
 
         if njet == "7":
-            plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryData,   regionGridWidth/2.0, 0.0, 0.3, "Non-Closure",   "NonClosureExt",   njet, color)
-            plotter["Data"].plot_VarVsBoundary(mcCorrectionPerBoundaryData, regionGridWidth/2.0, 0.7, 1.3, "MC Correction", "MCcorrectionExt", njet, color)
+            plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,      regionGridWidth/2.0, 0.0, 0.3, None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",        njet, color)
+            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinData,     regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data]",    "TTinData_ClosureCorrection_PerBoundary", njet, color)
+            plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinDataVsTT, regionGridWidth/2.0, 0.7, 1.3, 1.0,  "Closure Correction [Data/TT]", "DataMC_ClosureCorrection_PerBoundary",   njet, color)
 
 if __name__ == '__main__':
     main()

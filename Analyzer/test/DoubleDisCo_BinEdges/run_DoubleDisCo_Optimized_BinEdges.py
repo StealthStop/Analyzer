@@ -30,10 +30,11 @@ def get_Optimized_ABCDedges(all_ABCDEdges, significance, nonClosure, nonClosure_
             total_significance += (significance[njet][i_list]**2.0)
 
             # check the non-closure and pull to get the same ABCD edges for all njet bins
-            if not (nonClosure[njet][i_list] < 0.5 or nonClosure_Pull[njet][i_list] < 5): 
+            if not (nonClosure[njet][i_list] < 0.3 or nonClosure_Pull[njet][i_list] < 2): 
                 pass_nonClosure = False
 
-            if not (sigFracB[njet][i_list] < 0.5 and sigFracC[njet][i_list] < 0.5 and sigFracD[njet][i_list] < 0.5): 
+            # based on the sigFracs table, 30% for 0l, 40% for 1l
+            if not (sigFracB[njet][i_list] < 0.4 and sigFracC[njet][i_list] < 0.4 and sigFracD[njet][i_list] < 0.4): 
                 pass_sigFrac = False
         
         # get the current best choice of ABCD edges     
@@ -42,15 +43,15 @@ def get_Optimized_ABCDedges(all_ABCDEdges, significance, nonClosure, nonClosure_
             max_significance = total_significance
             i_bestChoice     = i_list
 
-    print "i_bestChoice:  ", i_bestChoice   
     return all_ABCDEdges[i_bestChoice]
 
 
 def main():
 
     # --------------------------------------------------------------------------------------------------------------------------------------------------
-    # command to run this script
+    # command to run this script:
     #   -- python run_DoubleDisCo_Optimized_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 0l
+    #   -- python run_DoubleDisCo_Optimized_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 1l
     # -------------------------------------------------------------------------------------------------------------------------------------------------- 
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
@@ -73,32 +74,32 @@ def main():
     ttVar   = "%s"%(args.ttVar)
     samples = [args.tt, args.nontt, ttVar, Sig, args.data]
 
-    # Make the output directories if they do not already exist
-    plotsPath = {}; tablesPath = {}
+    ## Make the output directories if they do not already exist
+    #plotsPath = {}; tablesPath = {}
 
-    for sample in samples:
+    #for sample in samples:
 
-        # make directories to save plots and tables        
-        if sample == Sig: continue
+    #    # make directories to save plots and tables        
+    #    if sample == Sig: continue
 
-        if args.fixedDisc1edge != None or args.fixedDisc2edge != None:
-            plotsPath[sample]  = "plots_fixedEdges_%s_%s/%s_%s/%s/"%(args.fixedDisc1edge, sample, args.sig, args.mass, args.channel)
-            
-            if sample == "TT":
-                tablesPath[sample] = "tables_fixedEdges_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
+    #    if args.fixedDisc1edge != None or args.fixedDisc2edge != None:
+    #        plotsPath[sample]  = "plots_fixedEdges_%s_%s/%s_%s/%s/"%(args.fixedDisc1edge, sample, args.sig, args.mass, args.channel)
+    #        
+    #        if sample == "TT":
+    #            tablesPath[sample] = "tables_fixedEdges_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
 
-        else:
-            plotsPath[sample]  = "plots_%s/%s_%s/%s/"%(sample, args.sig, args.mass, args.channel)
+    #    else:
+    #        plotsPath[sample]  = "plots_%s/%s_%s/%s/"%(sample, args.sig, args.mass, args.channel)
 
-            if sample == "TT":
-                tablesPath[sample] = "tables_%s/%s"%(sample, args.channel)
+    #        if sample == "TT":
+    #            tablesPath[sample] = "tables_%s/%s"%(sample, args.channel)
 
-        # 
-        if not os.path.exists(plotsPath[sample]):
-            os.makedirs(plotsPath[sample])
+    #    # 
+    #    if not os.path.exists(plotsPath[sample]):
+    #        os.makedirs(plotsPath[sample])
 
-        if not os.path.exists(tablesPath["TT"]):
-            os.makedirs(tablesPath["TT"])
+    #    if not os.path.exists(tablesPath["TT"]):
+    #        os.makedirs(tablesPath["TT"])
 
     # get SYY histogram
     modelDecay = "2t6j"
@@ -220,22 +221,6 @@ def main():
     opt_ABCDEdges = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"])                
 
     print "ABCD edges: ", opt_ABCDEdges
-
-    opt_disc1 = opt_ABCDEdges[0]; opt_disc2 = opt_ABCDEdges[1]
-
-    # ----------
-    # make plots
-    # ----------
-    for njet in njets:
-
-        
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

@@ -74,7 +74,7 @@ class Common_Calculations_Plotters:
     
             if bkgObs[i][1] != 0.0:
     
-                x.append(float(Njets[i]))  
+                x.append(float((Njets[i]).replace("incl", "")))  
                 xUnc.append(0.5)
 
                 pull            = (bkgPred[i][0] - bkgObs[i][0]) / ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5
@@ -85,7 +85,7 @@ class Common_Calculations_Plotters:
                 zero            = 0.0
 
                 # for the data closure / blind the 9-10-11 njet bins
-                if isBlind and i >= 2:
+                if isBlind and i >= 1:
                     pred.append(0.0)
                     predUnc.append(0.0)
                     obs.append(0.0)
@@ -119,7 +119,7 @@ class Common_Calculations_Plotters:
         fig.subplots_adjust(hspace=0, left=0.15, right=0.85, top=0.94)
     
         lowerNjets  = float(Njets[0])
-        higherNjets = float(Njets[(-1)])
+        higherNjets = float( (Njets[(-1)]).replace("incl","") )
     
         ax.spines['top'].set_color('none')
         ax.spines['bottom'].set_color('none')
@@ -175,7 +175,7 @@ class Common_Calculations_Plotters:
         #ax4.set_yscale('log')
         plt.show()
 
-        plt.xticks([int(Njet) for Njet in Njets])
+        plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
@@ -220,7 +220,7 @@ class Common_Calculations_Plotters:
 
             if bkgObs[i][1] != 0.0:
 
-                x.append(float(Njets[i]))
+                x.append(float((Njets[i]).replace("incl","")))
                 xUnc.append(0.5)
 
                 # bkg
@@ -336,7 +336,7 @@ class Common_Calculations_Plotters:
             fig.subplots_adjust(hspace=0.4, left=0.15, right=0.95, top=0.94)
     
             lowerNjets  = float(Njets[0])
-            higherNjets = float(Njets[(-1)])
+            higherNjets = float( (Njets[(-1)]).replace("incl","") )
     
             ax.spines['top'].set_color('none')
             ax.spines['bottom'].set_color('none')
@@ -385,10 +385,10 @@ class Common_Calculations_Plotters:
             ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
             ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
             #ax3.set_xlabel('Number of jets', fontsize=28)
-            ax3.set_ylabel('MC Correction', fontsize=20)
+            ax3.set_ylabel('Closure Correction [MC]', fontsize=20)
             ax3.set_ylim([0.7, 1.3])
 
-            plt.xticks([int(Njet) for Njet in Njets], fontsize=26)
+            plt.xticks([int(Njet.replace("incl","")) for Njet in Njets], fontsize=26)
             plt.xlabel('Number of jets', fontsize=28)    
 
             ax1.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
@@ -683,7 +683,7 @@ class Common_Calculations_Plotters:
     # plot variable vs disc as 1D
     #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
     # ----------------------------------------------------------------------
-    def plot_VarVsBoundary(self, var, xWidth, yMin = 0.0, yMax = 1.0, ylabel = "", tag = "", Njets = -1, color=None):
+    def plot_VarVsBoundary(self, var, xWidth, yMin = None, yMax = None, lineY = None, ylabel = "", tag = "", Njets = -1, color=None):
 
         regions = var.keys()
 
@@ -704,7 +704,8 @@ class Common_Calculations_Plotters:
 
             ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
 
-            ax.set_ylim((yMin, yMax))
+            if yMin != None and yMax != None:
+                ax.set_ylim((yMin, yMax))
 
         ax.set_xlabel("Boundary Value", fontsize=14)
         ax.set_ylabel(ylabel, fontsize=14)
@@ -714,8 +715,8 @@ class Common_Calculations_Plotters:
         ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
 
-        if ylabel == "MC Correction":
-            l1 = ml.Line2D([0.0, 1.05], [1.0, 1.0], color="black", linewidth=2, linestyle="dashed")
+        if lineY != None:
+            l1 = ml.Line2D([0.0, 1.05], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
             ax.add_line(l1); 
 
         fig.tight_layout()
