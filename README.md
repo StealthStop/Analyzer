@@ -154,14 +154,18 @@ The `sampleSet_UL_v1.cfg` file contains a mapping between "friendly" sample name
 This config file should be placed in the `cfg` area of `Framework`.
 In order to pick up this new `cfg` in the `Analyzer` area automatically, the appropriate lines in the `getSamplesCfg.sh` script in `Framework/scripts` need to be modified and `source setup.sh` rerun.
 
-Additionally, a new `sampleCollection_UL_v1.cfg` needs to be constructed (easiest by hand), which creates groups of samples.
+Additionally, a new `sampleCollection_UL_v1.cfg` needs to be constructed (easiest by hand), which creates groups of samples that are to be referenced when running analyzers.
+
+Note, when running `makefilelist.py` it is most effective to have an up-to-date `TreeMaker` to reference in the script.
+This allows population of each sample line with total event numbers, cross sections, k factors.
+These additional pieces of information are not technically necessary, but maintained in case of needing to use them.
 
 ### Checking Positive and Negative Events
 
-With a new `sampleSet.cfg` symlink in `Analyzer/test` pointing to `sampleSet_UL_v1.cfg` in `Framework`, the number of events in each sample can be calculated.
-This is useful for verifying that all reported MINIAOD files in a sample were run on successfully and that the event weight reflects the correct number of events.
+With a new `sampleSet.cfg` symlink in `Analyzer/test` pointing to `sampleSet_UL_v1.cfg` in `Framework`, the number of events in each sample can be measured.
+This is useful for verifying that all reported MINIAOD files in a sample were run on successfully by `TreeMaker` and hence that the event weight reflects the correct number of events.
 
-nEvt jobs can be submitted with `nEvtsCondorSubmit.py`, which will read in `sampleSet.cfg` and spawn a job for each sample and loop through all its files.
+`nEvt.py` jobs can be submitted with `nEvtsCondorSubmit.py`, which will read in `sampleSet.cfg` and spawn a job for each sample and loop through all its files.
 An output text file is generated in the end and returned to the user which reads total positive and negative events counts for the sample.
 
 ```
@@ -174,7 +178,7 @@ Options:
   -s SAMPLESETSFILE  Sample sets config file
 ```
 
-A helper script `checkNevents.py` is available to compare the numbers reported in the nEvt job output and the original `sampleSet.cfg`, 
+A helper script `checkNevents.py` is available to compare the numbers reported in the `nEvt.py` job output and the original `sampleSet.cfg`, 
 whose numbers were sourced directly from the `TreeMaker` repository.
 Discrepancies are printed to screen for investigation.
 
