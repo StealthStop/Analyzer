@@ -127,7 +127,9 @@ python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --ou
 
 ## Generating Filelists, Checking Ntuples, and Checking Event Numbers
 
-The main script for generating file lists and sample sets is `makefilelist.py`.
+### Produce the Filelist and sampleSet.cfg
+
+The main script for generating file lists and the corresponding sample set is `makefilelist.py`.
 
 ```
 usage: makefilelist.py [-h] [--prod PROD] [--tag TAG]
@@ -151,6 +153,10 @@ This folder is intended to be placed in the `StealthStop` area of the `lpcsusyha
 The `sampleSet_UL_v1.cfg` file contains a mapping between "friendly" sample names and the corresponding text file listing all ntuple ROOT files for the sample.
 This config file should be placed in the `cfg` area of `Framework`.
 In order to pick up this new `cfg` in the `Analyzer` area automatically, the appropriate lines in the `getSamplesCfg.sh` script in `Framework/scripts` need to be modified and `source setup.sh` rerun.
+
+Additionally, a new `sampleCollection_UL_v1.cfg` needs to be constructed (easiest by hand), which creates groups of samples.
+
+### Checking Positive and Negative Events
 
 With a new `sampleSet.cfg` symlink in `Analyzer/test` pointing to `sampleSet_UL_v1.cfg` in `Framework`, the number of events in each sample can be calculated.
 This is useful for verifying that all reported MINIAOD files in a sample were run on successfully and that the event weight reflects the correct number of events.
