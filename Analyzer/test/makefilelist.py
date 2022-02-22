@@ -32,6 +32,8 @@ class FileLister:
         self.samples["2017"]    = defaultdict(list)
         self.samples["2018"]    = defaultdict(list)
 
+        self.wroteHeader = False
+
         if not os.path.isdir(self.fileListsDir):
             os.mkdir(self.fileListsDir)
 
@@ -56,15 +58,19 @@ class FileLister:
     def makeNiceName(self, oldname):
         chunks = oldname.split("_")
         endpoint = 0
+        extra = ""
         for chunk in chunks:
             if "TuneCP5" in chunk:
                 if chunk != "TuneCP5":
                     endpoint += 1
                 break
+
+            if "erdON" in oldname:
+                extra = "_erdON" 
         
             endpoint += 1
     
-        return "_".join(chunks[0:endpoint]).replace("_NLO", "")
+        return "_".join(chunks[0:endpoint]).replace("_NLO", "") + extra
     
     # Search dictionary self.auxInfo for all entries with keys containing
     # "name" and add "payload" subdictionary with matching key. 
@@ -241,18 +247,18 @@ class FileLister:
             for sample in theSamples:
                 newfile = open("filelists_Kevin_%s/"%(self.tag) + sample + ".txt", 'w')
         
-                xsec       = "-1.0,"
-                nposevents = "0,"
-                nnegevents = "0,"
+                xsec       = "-1,"
+                nposevents = "-1,"
+                nnegevents = "-1,"
                 kfactor    = "1.0"
         
                 # Everything before "TuneCP5" will be included in name
                 # "ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8" ==> "ttHJetTobb_M125"
                 name    = self.makeNiceName(sample)
                 auxName = name.partition("_")[-1]
-        
+
                 # Do not care about these data sets
-                if "SinglePhoton" in name or "MET" in name or "MHT" in name:
+                if "SinglePhoton" in name or "MET" in name or "MHT" in name or "TTZToNuNu" in name:
                     continue
         
                 # For the inclusive W + jets and DY + jets samples add "Incl" string to name
@@ -264,11 +270,11 @@ class FileLister:
                            .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
         
                 # Special case to get "erdON" into name
-                if "erdON" in sample:
-                    name += "_erdON"
+                #if "erdON" in sample:
+                #    name += "_erdON"
 
                 # Restrict to madgraph DY sample
-                if "DYJetsToLL" in name in "NLO" in name:
+                if "DYJetsToLL" in name and "NLO" in name:
                     continue
         
                 # Special case in some boson samples to remove extra string
@@ -296,6 +302,7 @@ class FileLister:
                 name   += ","
                 sample += ".txt,"
         
+
                 finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
             self.writeSampleSet(finalDict)
@@ -305,6 +312,10 @@ class FileLister:
     def writeSampleSet(self, dictionary):
 
         sampleSet = open("sampleSets_%s.cfg"%(self.tag), "a")
+
+        if not self.wroteHeader:
+            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(40), "/eos/path/to/filelists/,".rjust(len(self.eosPath+self.fileListsDir)+1), "Sample_file_list.txt,".ljust(85), "TTree Name,".rjust(len(self.ttreeDir)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
+            self.wroteHeader = True
 
         sortedGroups = dictionary.keys()
         sortedGroups.sort()
