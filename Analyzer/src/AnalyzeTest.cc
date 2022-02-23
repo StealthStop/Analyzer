@@ -1,7 +1,7 @@
 #define AnalyzeTest_cxx
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Framework/Framework/include/Utility.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -53,7 +53,7 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );
         
         const auto& runtype             = tr.getVar<std::string>("runtype");     
-        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
 
         const auto& JetID               = tr.getVar<bool>("JetID");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
@@ -84,7 +84,7 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<double>("Weight");
+            const auto& Weight  = tr.getVar<float>("Weight");
             const auto& lumi = tr.getVar<double>("Lumi");
             eventweight = lumi*Weight;
             
@@ -96,7 +96,7 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
             
-            //PileupWeight = tr.getVar<double>("_PUweightFactor");
+            //PileupWeight = tr.getVar<float>("_PUweightFactor");
             bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");

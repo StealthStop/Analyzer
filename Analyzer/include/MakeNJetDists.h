@@ -4,7 +4,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeBase.h"
 #include "Analyzer/Analyzer/include/Histo.h"
 
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include "Framework/Framework/include/RunTopTagger.h"
 #include "Framework/Framework/include/Muon.h"
@@ -14,8 +14,8 @@
 #include "Framework/Framework/include/BJet.h"
 #include "Framework/Framework/include/CommonVariables.h"
 #include "Framework/Framework/include/FatJetCombine.h"
-#include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/Baseline.h"
+#include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/DeepEventShape.h"
 #include "Framework/Framework/include/BTagCorrector.h"
 #include "Framework/Framework/include/ScaleFactors.h"
@@ -176,8 +176,8 @@ public:
         const auto& bjetFileName = tr.getVar<std::string>("bjetFileName");
         const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
         const auto& leptonFileName = tr.getVar<std::string>("leptonFileName");
-        const auto& puFileName = tr.getVar<std::string>("puFileName");
         const auto& meanFileName = tr.getVar<std::string>("meanFileName");
+        const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
 
         //-------------------------------------
         //-- Initialize histograms to be filled
@@ -188,32 +188,37 @@ public:
         {
             const std::string& myVarSuffix = pair.first;
             if(myVarSuffix == "") continue;
-            Muon muon(myVarSuffix);
-            Electron electron(myVarSuffix);
-            Photon photon(myVarSuffix);
-            Jet jet(myVarSuffix);
-            BJet bjet(myVarSuffix);
-            CommonVariables commonVariables(myVarSuffix);
-            FatJetCombine fatJetCombine(myVarSuffix);
-            MakeMVAVariables makeMVAVariables(false, myVarSuffix);
-            Baseline baseline(myVarSuffix);
-            DeepEventShape deepEventShape(DeepESMCfg, ModelFile, "Info", true, myVarSuffix);
-            BTagCorrector bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
+            Jet                 jet(myVarSuffix);
+            BJet                bjet(myVarSuffix);
+            Muon                muon(myVarSuffix);
+            Photon              photon(myVarSuffix);
+            Baseline            baseline(myVarSuffix);
+            Electron            electron(myVarSuffix);
+            ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
+            RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
+            BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
+            DeepEventShape      deepEventShape(DeepESMCfg, ModelFile, "Info", true, myVarSuffix);
+            CommonVariables     commonVariables(myVarSuffix);
+            MakeMVAVariables    makeMVAVariables(false, myVarSuffix);
+            FatJetCombine       fatJetCombine(myVarSuffix);
             bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
-            ScaleFactors scaleFactors( runYear, leptonFileName, puFileName, meanFileName, myVarSuffix);
-        
+  
+            // Remember, order matters here !
+            // Follow what is done in Config.h
             tr.registerFunction(muon);
             tr.registerFunction(electron);
             tr.registerFunction(photon);
             tr.registerFunction(jet);
             tr.registerFunction(bjet);
+            tr.registerFunction(topTagger);
             tr.registerFunction(commonVariables);
             tr.registerFunction(fatJetCombine);
-            tr.registerFunction(makeMVAVariables);
             tr.registerFunction(baseline);
+            tr.registerFunction(makeMVAVariables);
             tr.registerFunction(deepEventShape);
             tr.registerFunction(bTagCorrector);
             tr.registerFunction(scaleFactors);
+
         }
 
         while( tr.getNextEvent() )

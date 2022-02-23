@@ -1,7 +1,7 @@
 #define AnalyzeLepTrigger_cxx
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
 #include "Framework/Framework/include/Utility.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -72,13 +72,13 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& runtype             = tr.getVar<std::string>("runtype");
         const auto& filetag             = tr.getVar<std::string>("filetag");
         const auto& etaCut              = tr.getVar<double>("etaCut");
-        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
 
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
         const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
 
-        const auto& Muons               = tr.getVec<TLorentzVector>("Muons");
-        const auto& Electrons           = tr.getVec<TLorentzVector>("Electrons");
+        const auto& Muons               = tr.getVec<utility::LorentzVector>("Muons");
+        const auto& Electrons           = tr.getVec<utility::LorentzVector>("Electrons");
 
         const auto& NGoodMuons          = tr.getVar<int>("NGoodMuons");
         const auto& NGoodElectrons      = tr.getVar<int>("NGoodElectrons");
@@ -110,7 +110,7 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<double>("Weight");
+            const auto& Weight  = tr.getVar<float>("Weight");
             const auto& lumi = tr.getVar<double>("Lumi");
             const auto& puWeight = tr.getVar<double>("puWeightCorr");
 
@@ -244,12 +244,12 @@ void AnalyzeLepTrigger::WriteHistos(TFile* outfile)
     
 }
 
-bool AnalyzeLepTrigger::containsGoodLepton( const std::vector<TLorentzVector>& leptons, const std::vector<bool>& goodLeptons, double ptThreshold, double etaSelection) { 
+bool AnalyzeLepTrigger::containsGoodLepton( const std::vector<utility::LorentzVector>& leptons, const std::vector<bool>& goodLeptons, double ptThreshold, double etaSelection) { 
     //Require a good muon in the single muon dataset
     for( unsigned int iLep = 0; iLep < leptons.size(); ++iLep ) {
         if( !goodLeptons.at( iLep ) ) continue; 
     
-        TLorentzVector myLepton = leptons.at( iLep );
+        utility::LorentzVector myLepton = leptons.at( iLep );
     
         if( myLepton.Pt() >= ptThreshold && std::fabs( myLepton.Eta() ) < etaSelection ) return true;
     }
@@ -257,7 +257,7 @@ bool AnalyzeLepTrigger::containsGoodLepton( const std::vector<TLorentzVector>& l
     return false;
 }
 
-int AnalyzeLepTrigger::goodLeptonIndex( const std::vector<TLorentzVector>& leptons, const std::vector<bool>& goodLeptons) {
+int AnalyzeLepTrigger::goodLeptonIndex( const std::vector<utility::LorentzVector>& leptons, const std::vector<bool>& goodLeptons) {
     for( unsigned int iLep = 0; iLep < leptons.size(); ++iLep ) {
         if( !goodLeptons.at( iLep ) ) continue;
 
@@ -267,7 +267,7 @@ int AnalyzeLepTrigger::goodLeptonIndex( const std::vector<TLorentzVector>& lepto
     return -1;
 }
 
-void AnalyzeLepTrigger::fillHistos( const std::map<std::string, bool>& cutMap, bool passLeptonTriggers, const TLorentzVector& lepton, double theWeight ) {
+void AnalyzeLepTrigger::fillHistos( const std::map<std::string, bool>& cutMap, bool passLeptonTriggers, const utility::LorentzVector& lepton, double theWeight ) {
     for( auto& kv : cutMap ) {
         if( kv.second ) {
             my_histos["h_trig_den_"+kv.first+"_wLepPtBin"]->Fill( lepton.Pt(), theWeight );

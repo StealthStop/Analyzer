@@ -1,6 +1,7 @@
 #define Make2LInputTrees_cxx
 #include "Analyzer/Analyzer/include/Make2LInputTrees.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
+#include "NTupleReader/include/NTupleReader.h"
+#include "Framework/Framework/include/MiniTupleMaker.h"
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -9,8 +10,6 @@
 #include <TEfficiency.h>
 #include <TRandom3.h>
 #include <iostream>
-
-#include "SusyAnaTools/Tools/MiniTupleMaker.h"
 
 Make2LInputTrees::Make2LInputTrees()
 {
@@ -31,9 +30,9 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
         my_histos["EventCounter"]->Fill( eventCounter );
 
         const auto& runtype             = tr.getVar<std::string>("runtype");
-//        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, TLorentzVector>>("GoodLeptons");
+//        const auto& GoodLeptons         = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
         const auto& GoodLeptonsCharge   = tr.getVec<int>("GoodLeptonsCharge");
-//        const auto& Jets                = tr.getVec<TLorentzVector>("Jets");
+//        const auto& Jets                = tr.getVec<utility::LorentzVector>("Jets");
         const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
 //        const auto& onZ                 = tr.getVar<bool>("onZ");
         const auto& JetID               = tr.getVar<bool>("JetID");
@@ -41,8 +40,8 @@ void Make2LInputTrees::Loop(NTupleReader& tr, double, int maxevents, bool)
 //        const auto& HT_trigger_pt30     = tr.getVar<double>("HT_trigger_pt30");
 //        const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
 
-        const auto& TwoLep_Mbl1              = tr.getVar<double>("TwoLep_Mbl1");
-        const auto& TwoLep_Mbl2              = tr.getVar<double>("TwoLep_Mbl2");
+        const auto& TwoLep_Mbl1              = tr.getVar<float>("TwoLep_Mbl1");
+        const auto& TwoLep_Mbl2              = tr.getVar<float>("TwoLep_Mbl2");
 //        const auto& GoodBJets_pt30           = tr.getVec<bool>("GoodBJets_pt30");
 
 

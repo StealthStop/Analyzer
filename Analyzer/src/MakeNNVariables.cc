@@ -1,9 +1,9 @@
 #define MakeNNVariables_cxx
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
-#include "SusyAnaTools/Tools/MiniTupleMaker.h"
-#include "Framework/Framework/include/Utility.h" 
+#include "NTupleReader/include/NTupleReader.h"
 
+#include "Framework/Framework/include/MiniTupleMaker.h"
+#include "Framework/Framework/include/Utility.h" 
 #include "Framework/Framework/include/Muon.h"
 #include "Framework/Framework/include/Electron.h"
 #include "Framework/Framework/include/Photon.h"
@@ -25,7 +25,7 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    my_labels     = {"_0l", "_1l", "_2l"};
+    my_labels     = {"_0l", "_1l"};
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
 }
@@ -38,9 +38,9 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
     const auto& bjetFileName    = tr.getVar<std::string>("bjetFileName");
     const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
     const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
-    const auto& puFileName      = tr.getVar<std::string>("puFileName");
     const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
     const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
+    
 
     for(const auto& myVarSuffix : my_var_suffix)
     {
@@ -53,15 +53,15 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        ScaleFactors        scaleFactors( runYear, leptonFileName, puFileName, meanFileName, myVarSuffix);
+        ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
         BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         CommonVariables     commonVariables(myVarSuffix);
-        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt45", false, true, 12, 2, "_0l");
+        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
-        MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
-        MakeStopHemispheres stopHemispheres("Jets", "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
 
         bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
   
@@ -78,9 +78,9 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(fatJetCombine);
         tr.registerFunction(makeMVAVariables0L);
         tr.registerFunction(makeMVAVariables1L);
-        tr.registerFunction(makeMVAVariables2L);
         tr.registerFunction(stopJets);
-        tr.registerFunction(stopHemispheres);
+        tr.registerFunction(stopHemispheres_OldSeed);
+        tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(bTagCorrector);
         tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
@@ -98,9 +98,8 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& filetag      = tr.getVar<std::string>("filetag");
 
             std::map<std::string, bool> baselines;
-            baselines["_0l"] = tr.getVar<bool>("passBaseline0l_proto"+myVarSuffix); 
+            baselines["_0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
-            baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
 
             // Add a branch containing the mass for the stop
             // In the case of signal, use the top mass
@@ -213,18 +212,8 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "mass",   
                     "model",
                     "Weight",  
-                    "totalEventWeight",
                     "stop1_ptrank_mass"+myVarSuffix,
                     "stop2_ptrank_mass"+myVarSuffix,
-                    "stop1_mrank_mass"+myVarSuffix,
-                    "stop2_mrank_mass"+myVarSuffix,
-                    "stop_avemass"+myVarSuffix,
-                };
-
-                std::set<std::string> varHadronic =
-                {
-                    "ntops"+myVarSuffix,
-                    "dR_bjets"+myVarSuffix 
                 };
 
                 std::set<std::string> varLeptonic =
@@ -251,6 +240,34 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "Stop1_scalarPt_cm_OldSeed"+myVarSuffix, "Stop2_scalarPt_cm_OldSeed"+myVarSuffix,
                 };
 
+                std::set<std::string> varTopSeed =
+                {
+                    "dR_Stop1Stop2_cm_TopSeed"+myVarSuffix,
+                    "dPhi_Stop1Stop2_cm_TopSeed"+myVarSuffix,
+                    "Stop1_mass_cm_TopSeed"+myVarSuffix,     "Stop2_mass_cm_TopSeed"+myVarSuffix,
+                    "Stop1_pt_cm_TopSeed"+myVarSuffix,       "Stop2_pt_cm_TopSeed"+myVarSuffix,
+                    "Stop1_phi_cm_TopSeed"+myVarSuffix,      "Stop2_phi_cm_TopSeed"+myVarSuffix,
+                    "Stop1_eta_cm_TopSeed"+myVarSuffix,      "Stop2_eta_cm_TopSeed"+myVarSuffix,
+                    "Stop1_scalarPt_cm_TopSeed"+myVarSuffix, "Stop2_scalarPt_cm_TopSeed"+myVarSuffix,
+                };
+
+                std::set<std::string> varTops = 
+                {
+                    "top1_pt_cm"+myVarSuffix,   "top2_pt_cm"+myVarSuffix,
+                    "top1_eta_cm"+myVarSuffix,  "top2_eta_cm"+myVarSuffix,
+                    "top1_phi_cm"+myVarSuffix,  "top2_phi_cm"+myVarSuffix,
+                    "top1_mass_cm"+myVarSuffix, "top2_mass_cm"+myVarSuffix,
+                };
+
+                std::set<std::string> var7toLastJet =
+                {
+                    "combined7thToLastJet_pt_cm"+myVarSuffix,
+                    "combined7thToLastJet_eta_cm"+myVarSuffix,
+                    "combined7thToLastJet_phi_cm"+myVarSuffix,
+                    "combined7thToLastJet_m_cm"+myVarSuffix,
+                    "combined7thToLastJet_E_cm"+myVarSuffix,
+                };
+
                 // -----------------------------------------------
                 // get the jet variables separately for 0l, 1l, 2l
                 // -----------------------------------------------
@@ -258,9 +275,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 for (std::string label : my_labels)
                 {
                     std::string ptCut = "pt30";
-                    if (label == "_0l")
-                        ptCut = "pt45";
-
+                    
                     std::set<std::string> varChannelSpecific =
                     {
                         "HT_trigger_"+ptCut+myVarSuffix,
@@ -270,69 +285,39 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     std::set<std::string> varEventShape = 
                     {
                         "fwm2_top6"+label+myVarSuffix,    "fwm3_top6"+label+myVarSuffix,    "fwm4_top6"+label+myVarSuffix,   "fwm5_top6"+label+myVarSuffix,
-                        "fwm6_top6"+label+myVarSuffix,    "fwm7_top6"+label+myVarSuffix,    "fwm8_top6"+label+myVarSuffix,   "fwm9_top6"+label+myVarSuffix, "fwm10_top6"+label+myVarSuffix,
                         "jmt_ev0_top6"+label+myVarSuffix, "jmt_ev1_top6"+label+myVarSuffix, "jmt_ev2_top6"+label+myVarSuffix,
 
                     };
 
                     std::set<std::string> varJets = 
                     {
-                        "Jet_m_1"+label+myVarSuffix,            "Jet_m_2"+label+myVarSuffix,            "Jet_m_3"+label+myVarSuffix,            "Jet_m_4"+label+myVarSuffix,             "Jet_m_5"+label+myVarSuffix,             "Jet_m_6"+label+myVarSuffix,
-                        "Jet_m_7"+label+myVarSuffix,            "Jet_m_8"+label+myVarSuffix,            "Jet_m_9"+label+myVarSuffix,            "Jet_m_10"+label+myVarSuffix,            "Jet_m_11"+label+myVarSuffix,            "Jet_m_12"+label+myVarSuffix,
-                        "Jet_eta_1"+label+myVarSuffix,          "Jet_eta_2"+label+myVarSuffix,          "Jet_eta_3"+label+myVarSuffix,          "Jet_eta_4"+label+myVarSuffix,           "Jet_eta_5"+label+myVarSuffix,           "Jet_eta_6"+label+myVarSuffix,  
-                        "Jet_eta_7"+label+myVarSuffix,          "Jet_eta_8"+label+myVarSuffix,          "Jet_eta_9"+label+myVarSuffix,          "Jet_eta_10"+label+myVarSuffix,          "Jet_eta_11"+label+myVarSuffix,          "Jet_eta_12"+label+myVarSuffix,
-                        "Jet_phi_1"+label+myVarSuffix,          "Jet_phi_2"+label+myVarSuffix,          "Jet_phi_3"+label+myVarSuffix,          "Jet_phi_4"+label+myVarSuffix,           "Jet_phi_5"+label+myVarSuffix,           "Jet_phi_6"+label+myVarSuffix,  
-                        "Jet_phi_7"+label+myVarSuffix,          "Jet_phi_8"+label+myVarSuffix,          "Jet_phi_9"+label+myVarSuffix,          "Jet_phi_10"+label+myVarSuffix,          "Jet_phi_11"+label+myVarSuffix,          "Jet_phi_12"+label+myVarSuffix,
-                        "Jet_pt_1"+label+myVarSuffix,           "Jet_pt_2"+label+myVarSuffix,           "Jet_pt_3"+label+myVarSuffix,           "Jet_pt_4"+label+myVarSuffix,            "Jet_pt_5"+label+myVarSuffix,            "Jet_pt_6"+label+myVarSuffix, 
-                        "Jet_pt_7"+label+myVarSuffix,           "Jet_pt_8"+label+myVarSuffix,           "Jet_pt_9"+label+myVarSuffix,           "Jet_pt_10"+label+myVarSuffix,           "Jet_pt_11"+label+myVarSuffix,           "Jet_pt_12"+label+myVarSuffix,
-                        "Jet_flavb_1"+label+myVarSuffix,        "Jet_flavb_2"+label+myVarSuffix,        "Jet_flavb_3"+label+myVarSuffix,        "Jet_flavb_4"+label+myVarSuffix,         "Jet_flavb_5"+label+myVarSuffix,         "Jet_flavb_6"+label+myVarSuffix, 
-                        "Jet_flavb_7"+label+myVarSuffix,        "Jet_flavb_8"+label+myVarSuffix,        "Jet_flavb_9"+label+myVarSuffix,        "Jet_flavb_10"+label+myVarSuffix,        "Jet_flavb_11"+label+myVarSuffix,        "Jet_flavb_12"+label+myVarSuffix,
-                        "Jet_flavg_1"+label+myVarSuffix,        "Jet_flavg_2"+label+myVarSuffix,        "Jet_flavg_3"+label+myVarSuffix,        "Jet_flavg_4"+label+myVarSuffix,         "Jet_flavg_5"+label+myVarSuffix,         "Jet_flavg_6"+label+myVarSuffix, 
-                        "Jet_flavg_7"+label+myVarSuffix,        "Jet_flavg_8"+label+myVarSuffix,        "Jet_flavg_9"+label+myVarSuffix,        "Jet_flavg_10"+label+myVarSuffix,        "Jet_flavg_11"+label+myVarSuffix,        "Jet_flavg_12"+label+myVarSuffix,
-                        "Jet_flavc_1"+label+myVarSuffix,        "Jet_flavc_2"+label+myVarSuffix,        "Jet_flavc_3"+label+myVarSuffix,        "Jet_flavc_4"+label+myVarSuffix,         "Jet_flavc_5"+label+myVarSuffix,         "Jet_flavc_6"+label+myVarSuffix, 
-                        "Jet_flavc_7"+label+myVarSuffix,        "Jet_flavc_8"+label+myVarSuffix,        "Jet_flavc_9"+label+myVarSuffix,        "Jet_flavc_10"+label+myVarSuffix,        "Jet_flavc_11"+label+myVarSuffix,        "Jet_flavc_12"+label+myVarSuffix,
-                        "Jet_flavuds_1"+label+myVarSuffix,      "Jet_flavuds_2"+label+myVarSuffix,      "Jet_flavuds_3"+label+myVarSuffix,      "Jet_flavuds_4"+label+myVarSuffix,       "Jet_flavuds_5"+label+myVarSuffix,       "Jet_flavuds_6"+label+myVarSuffix, 
-                        "Jet_flavuds_7"+label+myVarSuffix,      "Jet_flavuds_8"+label+myVarSuffix,      "Jet_flavuds_9"+label+myVarSuffix,      "Jet_flavuds_10"+label+myVarSuffix,      "Jet_flavuds_11"+label+myVarSuffix,      "Jet_flavuds_12"+label+myVarSuffix,
-                        "Jet_flavq_1"+label+myVarSuffix,        "Jet_flavq_2"+label+myVarSuffix,        "Jet_flavq_3"+label+myVarSuffix,        "Jet_flavq_4"+label+myVarSuffix,         "Jet_flavq_5"+label+myVarSuffix,         "Jet_flavq_6"+label+myVarSuffix, 
-                        "Jet_flavq_7"+label+myVarSuffix,        "Jet_flavq_8"+label+myVarSuffix,        "Jet_flavq_9"+label+myVarSuffix,        "Jet_flavq_10"+label+myVarSuffix,        "Jet_flavq_11"+label+myVarSuffix,        "Jet_flavq_12"+label+myVarSuffix,
-                        "Jet_ptD_1"+label+myVarSuffix,          "Jet_ptD_2"+label+myVarSuffix,          "Jet_ptD_3"+label+myVarSuffix,          "Jet_ptD_4"+label+myVarSuffix,           "Jet_ptD_5"+label+myVarSuffix,           "Jet_ptD_6"+label+myVarSuffix,  
-                        "Jet_ptD_7"+label+myVarSuffix,          "Jet_ptD_8"+label+myVarSuffix,          "Jet_ptD_9"+label+myVarSuffix,          "Jet_ptD_10"+label+myVarSuffix,          "Jet_ptD_11"+label+myVarSuffix,          "Jet_ptD_12"+label+myVarSuffix,
-                        "Jet_axismajor_1"+label+myVarSuffix,    "Jet_axismajor_2"+label+myVarSuffix,    "Jet_axismajor_3"+label+myVarSuffix,    "Jet_axismajor_4"+label+myVarSuffix,     "Jet_axismajor_5"+label+myVarSuffix,     "Jet_axismajor_6"+label+myVarSuffix, 
-                        "Jet_axismajor_7"+label+myVarSuffix,    "Jet_axismajor_8"+label+myVarSuffix,    "Jet_axismajor_9"+label+myVarSuffix,    "Jet_axismajor_10"+label+myVarSuffix,    "Jet_axismajor_11"+label+myVarSuffix,    "Jet_axismajor_12"+label+myVarSuffix,
-                        "Jet_axisminor_1"+label+myVarSuffix,    "Jet_axisminor_2"+label+myVarSuffix,    "Jet_axisminor_3"+label+myVarSuffix,    "Jet_axisminor_4"+label+myVarSuffix,     "Jet_axisminor_5"+label+myVarSuffix,     "Jet_axisminor_6"+label+myVarSuffix, 
-                        "Jet_axisminor_7"+label+myVarSuffix,    "Jet_axisminor_8"+label+myVarSuffix,    "Jet_axisminor_9"+label+myVarSuffix,    "Jet_axisminor_10"+label+myVarSuffix,    "Jet_axisminor_11"+label+myVarSuffix,    "Jet_axisminor_12"+label+myVarSuffix,
+                        "Jet_m_1"+label+myVarSuffix,         "Jet_m_2"+label+myVarSuffix,         "Jet_m_3"+label+myVarSuffix,         "Jet_m_4"+label+myVarSuffix,         "Jet_m_5"+label+myVarSuffix,         "Jet_m_6"+label+myVarSuffix,         "Jet_m_7"+label+myVarSuffix,
+                        "Jet_E_1"+label+myVarSuffix,         "Jet_E_2"+label+myVarSuffix,         "Jet_E_3"+label+myVarSuffix,         "Jet_E_4"+label+myVarSuffix,         "Jet_E_5"+label+myVarSuffix,         "Jet_E_6"+label+myVarSuffix,         "Jet_E_7"+label+myVarSuffix,
+                        "Jet_eta_1"+label+myVarSuffix,       "Jet_eta_2"+label+myVarSuffix,       "Jet_eta_3"+label+myVarSuffix,       "Jet_eta_4"+label+myVarSuffix,       "Jet_eta_5"+label+myVarSuffix,       "Jet_eta_6"+label+myVarSuffix,       "Jet_eta_7"+label+myVarSuffix,
+                        "Jet_phi_1"+label+myVarSuffix,       "Jet_phi_2"+label+myVarSuffix,       "Jet_phi_3"+label+myVarSuffix,       "Jet_phi_4"+label+myVarSuffix,       "Jet_phi_5"+label+myVarSuffix,       "Jet_phi_6"+label+myVarSuffix,       "Jet_phi_7"+label+myVarSuffix,
+                        "Jet_pt_1"+label+myVarSuffix,        "Jet_pt_2"+label+myVarSuffix,        "Jet_pt_3"+label+myVarSuffix,        "Jet_pt_4"+label+myVarSuffix,        "Jet_pt_5"+label+myVarSuffix,        "Jet_pt_6"+label+myVarSuffix,        "Jet_pt_7"+label+myVarSuffix,
+                        "Jet_flavb_1"+label+myVarSuffix,     "Jet_flavb_2"+label+myVarSuffix,     "Jet_flavb_3"+label+myVarSuffix,     "Jet_flavb_4"+label+myVarSuffix,     "Jet_flavb_5"+label+myVarSuffix,     "Jet_flavb_6"+label+myVarSuffix,     "Jet_flavb_7"+label+myVarSuffix,
+                        "Jet_flavg_1"+label+myVarSuffix,     "Jet_flavg_2"+label+myVarSuffix,     "Jet_flavg_3"+label+myVarSuffix,     "Jet_flavg_4"+label+myVarSuffix,     "Jet_flavg_5"+label+myVarSuffix,     "Jet_flavg_6"+label+myVarSuffix,     "Jet_flavg_7"+label+myVarSuffix,
+                        "Jet_flavc_1"+label+myVarSuffix,     "Jet_flavc_2"+label+myVarSuffix,     "Jet_flavc_3"+label+myVarSuffix,     "Jet_flavc_4"+label+myVarSuffix,     "Jet_flavc_5"+label+myVarSuffix,     "Jet_flavc_6"+label+myVarSuffix,     "Jet_flavc_7"+label+myVarSuffix,
+                        "Jet_flavuds_1"+label+myVarSuffix,   "Jet_flavuds_2"+label+myVarSuffix,   "Jet_flavuds_3"+label+myVarSuffix,   "Jet_flavuds_4"+label+myVarSuffix,   "Jet_flavuds_5"+label+myVarSuffix,   "Jet_flavuds_6"+label+myVarSuffix,   "Jet_flavuds_7"+label+myVarSuffix,
+                        "Jet_flavq_1"+label+myVarSuffix,     "Jet_flavq_2"+label+myVarSuffix,     "Jet_flavq_3"+label+myVarSuffix,     "Jet_flavq_4"+label+myVarSuffix,     "Jet_flavq_5"+label+myVarSuffix,     "Jet_flavq_6"+label+myVarSuffix,     "Jet_flavq_7"+label+myVarSuffix,
                     };            
-
-                    std::set<std::string> varJetsAK8 =
-                    {
-                        "JetsAK8_m_1"+label+myVarSuffix,              "JetsAK8_m_2"+label+myVarSuffix,              "JetsAK8_m_3"+label+myVarSuffix,              "JetsAK8_m_4"+label+myVarSuffix,              "JetsAK8_m_5"+label+myVarSuffix,
-                        "JetsAK8_eta_1"+label+myVarSuffix,            "JetsAK8_eta_2"+label+myVarSuffix,            "JetsAK8_eta_3"+label+myVarSuffix,            "JetsAK8_eta_4"+label+myVarSuffix,            "JetsAK8_eta_5"+label+myVarSuffix,
-                        "JetsAK8_phi_1"+label+myVarSuffix,            "JetsAK8_phi_2"+label+myVarSuffix,            "JetsAK8_phi_3"+label+myVarSuffix,            "JetsAK8_phi_4"+label+myVarSuffix,            "JetsAK8_phi_5"+label+myVarSuffix,
-                        "JetsAK8_pt_1"+label+myVarSuffix,             "JetsAK8_pt_2"+label+myVarSuffix,             "JetsAK8_pt_3"+label+myVarSuffix,             "JetsAK8_pt_4"+label+myVarSuffix,             "JetsAK8_pt_5"+label+myVarSuffix,            
-                        "JetsAK8_SDM_1"+label+myVarSuffix,            "JetsAK8_SDM_2"+label+myVarSuffix,            "JetsAK8_SDM_3"+label+myVarSuffix,            "JetsAK8_SDM_4"+label+myVarSuffix,            "JetsAK8_SDM_5"+label+myVarSuffix,
-                        "JetsAK8_Pruned_1"+label+myVarSuffix,         "JetsAK8_Pruned_2"+label+myVarSuffix,         "JetsAK8_Pruned_3"+label+myVarSuffix,         "JetsAK8_Pruned_4"+label+myVarSuffix,         "JetsAK8_Pruned_5"+label+myVarSuffix,
-                        "JetsAK8_Tau1_1"+label+myVarSuffix,           "JetsAK8_Tau1_2"+label+myVarSuffix,           "JetsAK8_Tau1_3"+label+myVarSuffix,           "JetsAK8_Tau1_4"+label+myVarSuffix,           "JetsAK8_Tau1_5"+label+myVarSuffix,
-                        "JetsAK8_Tau2_1"+label+myVarSuffix,           "JetsAK8_Tau2_2"+label+myVarSuffix,           "JetsAK8_Tau2_3"+label+myVarSuffix,           "JetsAK8_Tau2_4"+label+myVarSuffix,           "JetsAK8_Tau2_5"+label+myVarSuffix,
-                        "JetsAK8_Tau3_1"+label+myVarSuffix,           "JetsAK8_Tau3_2"+label+myVarSuffix,           "JetsAK8_Tau3_3"+label+myVarSuffix,           "JetsAK8_Tau3_4"+label+myVarSuffix,           "JetsAK8_Tau3_5"+label+myVarSuffix,
-                        "JetsAK8_axismajor_1"+label+myVarSuffix,      "JetsAK8_axismajor_2"+label+myVarSuffix,      "JetsAK8_axismajor_3"+label+myVarSuffix,      "JetsAK8_axismajor_4"+label+myVarSuffix,      "JetsAK8_axismajor_5"+label+myVarSuffix,
-                        "JetsAK8_axisminor_1"+label+myVarSuffix,      "JetsAK8_axisminor_2"+label+myVarSuffix,      "JetsAK8_axisminor_3"+label+myVarSuffix,      "JetsAK8_axisminor_4"+label+myVarSuffix,      "JetsAK8_axisminor_5"+label+myVarSuffix,
-                        "JetsAK8_tDiscriminator_1"+label+myVarSuffix, "JetsAK8_tDiscriminator_2"+label+myVarSuffix, "JetsAK8_tDiscriminator_3"+label+myVarSuffix, "JetsAK8_tDiscriminator_4"+label+myVarSuffix, "JetsAK8_tDiscriminator_5"+label+myVarSuffix,
-                        "JetsAK8_wDiscriminator_1"+label+myVarSuffix, "JetsAK8_wDiscriminator_2"+label+myVarSuffix, "JetsAK8_wDiscriminator_3"+label+myVarSuffix, "JetsAK8_wDiscriminator_4"+label+myVarSuffix, "JetsAK8_wDiscriminator_5"+label+myVarSuffix,
-                        "JetsAK8_hDiscriminator_1"+label+myVarSuffix, "JetsAK8_hDiscriminator_2"+label+myVarSuffix, "JetsAK8_hDiscriminator_3"+label+myVarSuffix, "JetsAK8_hDiscriminator_4"+label+myVarSuffix, "JetsAK8_hDiscriminator_5"+label+myVarSuffix,
-                    };
 
                     for (const auto& split : myTree)
                     {
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varGeneral);
-
-                        if (label == "_0l")
-                            myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varHadronic);
-
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varEventShape); 
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varChannelSpecific);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varJets);
-                        //myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varJetsAK8);
                         myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varOldSeed);
+                        myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(var7toLastJet);
+                
+                        if (label == "_0l") 
+                        {
+                            myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varTopSeed);
+                            myMiniTuple[split.first][label][myVarSuffix]->setTupleVars(varTops);
+                        }
+
                         myMiniTuple[split.first][label][myVarSuffix]->initBranches(tr);
                     }
                 }

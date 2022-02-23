@@ -1,27 +1,18 @@
-#include "SusyAnaTools/Tools/samples.h"
-#include "SusyAnaTools/Tools/NTupleReader.h"
-#include "SusyAnaTools/Tools/MiniTupleMaker.h"
+#include "NTupleReader/include/NTupleReader.h"
 
+#include "Framework/Framework/include/samples.h"
+#include "Framework/Framework/include/MiniTupleMaker.h"
 #include "Framework/Framework/include/Utility.h"
 
 #include "TopTagger/CfgParser/interface/TTException.h"
 
-#include "Analyzer/Analyzer/include/AnalyzeBackground.h"
-#include "Analyzer/Analyzer/include/AnalyzeWControlRegion.h"
 #include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
-#include "Analyzer/Analyzer/include/AnalyzeEventSelection.h"
-#include "Analyzer/Analyzer/include/AnalyzeEventShape.h"
 #include "Analyzer/Analyzer/include/Analyze0Lep.h"
 #include "Analyzer/Analyzer/include/Analyze1Lep.h"
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
-#include "Analyzer/Analyzer/include/AnalyzeNjetsMinusOneCSFillDijetHists.h"
-#include "Analyzer/Analyzer/include/AnalyzeNjetsMinusOneCSJetReplacement.h"
-#include "Analyzer/Analyzer/include/AnalyzeStealthTopTagger.h"
 #include "Analyzer/Analyzer/include/AnalyzeHEM.h"
-#include "Analyzer/Analyzer/include/AnalyzeSignalModels.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
-#include "Analyzer/Analyzer/include/AnalyzeEENoise.h"
 #include "Analyzer/Analyzer/include/AnalyzeBTagSF.h"
 #include "Analyzer/Analyzer/include/MakeNJetDists.h"
 #include "Analyzer/Analyzer/include/MakeMiniTree.h"
@@ -29,6 +20,8 @@
 #include "Analyzer/Analyzer/include/CalculateSFMean.h"
 #include "Analyzer/Analyzer/include/Config.h"
 #include "Analyzer/Analyzer/include/Semra_Analyzer.h"
+#include "Analyzer/Analyzer/include/TopTagger_Analyzer.h"
+#include "Analyzer/Analyzer/include/TopTaggerSF_Analyzer.h"
 #include "Analyzer/Analyzer/include/ISRJets_Analyzer.h"
 #include "Analyzer/Analyzer/include/HadTriggers_Analyzer.h"
 #include "Analyzer/Analyzer/include/TwoLepAnalyzer.h"
@@ -176,28 +169,21 @@ int main(int argc, char *argv[])
     TFile* outfile = TFile::Open(histFile.c_str(), "RECREATE");
 
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&,const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
-        {"AnalyzeBackground",       run<AnalyzeBackground>},
-        {"AnalyzeWControlRegion",   run<AnalyzeWControlRegion>},
         {"AnalyzeTopTagger",        run<AnalyzeTopTagger>},
-        {"AnalyzeEventSelection",   run<AnalyzeEventSelection>},
-        {"AnalyzeEventShape",       run<AnalyzeEventShape>},
         {"Analyze0Lep",             run<Analyze0Lep>},
         {"Analyze1Lep",             run<Analyze1Lep>},
         {"AnalyzeDoubleDisCo",      run<AnalyzeDoubleDisCo>},
         {"AnalyzeLepTrigger",       run<AnalyzeLepTrigger>},
-        {"AnalyzeStealthTopTagger", run<AnalyzeStealthTopTagger>},
         {"AnalyzeBTagSF",           run<AnalyzeBTagSF>},
         {"AnalyzeHEM",              run<AnalyzeHEM>},
-        {"AnalyzeEENoise",          run<AnalyzeEENoise>},
-        {"AnalyzeSignalModels",     run<AnalyzeSignalModels>},
         {"AnalyzeTest",             run<AnalyzeTest>},
         {"CalculateBTagSF",         run<CalculateBTagSF>},
         {"CalculateSFMean",         run<CalculateSFMean>},
         {"MakeMiniTree",            run<MakeMiniTree>},
         {"MakeNJetDists",           run<MakeNJetDists>},
-        {"AnalyzeNjetsMinusOneCSFillDijetHists", run<AnalyzeNjetsMinusOneCSFillDijetHists>},
-        {"AnalyzeNjetsMinusOneCSJetReplacement", run<AnalyzeNjetsMinusOneCSJetReplacement>},
         {"Semra_Analyzer",          run<Semra_Analyzer>},
+        {"TopTagger_Analyzer",      run<TopTagger_Analyzer>},
+        {"TopTaggerSF_Analyzer",    run<TopTaggerSF_Analyzer>},
         {"ISRJets_Analyzer",        run<ISRJets_Analyzer>},
         {"HadTriggers_Analyzer",    run<HadTriggers_Analyzer>},
         {"TwoLepAnalyzer",          run<TwoLepAnalyzer>},
@@ -238,7 +224,7 @@ int main(int argc, char *argv[])
         std::cout << e << std::endl;
         return 0;
     }
-    catch(const SATException e)
+    catch(const NTRException e)
     {
         std::cout << e << std::endl;
         return 0;

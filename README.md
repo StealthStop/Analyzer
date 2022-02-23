@@ -1,7 +1,7 @@
 # Analyzer
-Runs all of our anaylsis code. 
+Makes input histograms for our combine setup
 
-## Using the tensor-flow based top tagger
+## Setup code
 
 To have easy access to TensorFlow and UpRoot, we need to work in a CMSSW_11_2_0_pre5 release:
 ```
@@ -15,10 +15,6 @@ Then, check out the latest tagged version of the top tagger repository.
 
 ```
 git clone git@github.com:susy2015/TopTagger.git
-```
-
-Then configure and compile the tagger:
-```
 cd TopTagger/TopTagger/test
 ./configure 
 make -j4
@@ -27,10 +23,10 @@ make -j4
 Now also check out our repository if not done already:
 ```
 cd $CMSSW_BASE/src
-git clone git@github.com:StealthStop/Framework.git
+git clone -b Run2_UL git@github.com:StealthStop/Framework.git
 git clone -b Stealth git@github.com:susy2015/TopTaggerTools.git
-git clone git@github.com:susy2015/SusyAnaTools.git
-git clone git@github.com:StealthStop/Analyzer.git
+git clone git@github.com:susy2015/NTupleReader.git
+git clone -b Run2_UL git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
 source setup.sh #.csh if in tcsh
 ./configure
@@ -48,14 +44,14 @@ getDeepESMCfg.sh -t Keras_Tensorflow_2016_v1.2 -o -s 2016
 getDeepESMCfg.sh -t Keras_Tensorflow_2017_v1.2 -o -s 2017
 getDeepESMCfg.sh -t Keras_Tensorflow_2018pre_v1.2 -o -s 2018pre
 getDeepESMCfg.sh -t Keras_Tensorflow_2018post_v1.2 -o -s 2018post
-getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_2016_v1.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_2016
-getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_2016_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_2016
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_RPV_2016_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_2016
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_2016
 ```
 
 Example of running MyAnalysis interactively
 ```
 cd $CMSSW_BASE/src/Analyzer/Analyzer/test/
-./MyAnalysis -A MakeNJetDists -H myoutputfile.root -D 2016_TT -E 1001
+./MyAnalysis -A AnalyzeTest -H myoutputfile.root -D 2018post_TTToSemiLeptonic -E 1001 
 ```
 
 
@@ -90,6 +86,44 @@ The MyAnalysis program has been updated to have these same switches.
 MyAnalysis now also uses the samples code to keep track of datasets, their cross sections, 6nd their names. 
 To see a list of available datasets, you can call the submission script with the `-l` or `-L` options. Pass the list of datasets you want to run over to the script with the option `-d`. 
 Before submitting jobs, make sure to have called `voms-proxy-init`. 
+
+## Making stack plots
+
+A generic plotter is available for making stack plots with or without a data/MC ratio panel.
+Information on which backgrounds and signals to plot in addition to visualization should be specified
+in the `stackPlotter_aux.py` file. There too, one specifies which histograms to extract from the ROOT
+file and plot.
+
+```
+usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
+                                      [--printNEvents] [--normMC2Data]
+                                      [--normalize] [--printSign] --inpath
+                                      INPATH --outpath OUTPATH --year YEAR
+                                      [--options OPTIONS]
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --noRatio          No ratio plot
+  --approved         Plot is approved
+  --printNEvents     Show number of events
+  --normMC2Data      Normalize MC to data
+  --normalize        Normalize all to unity
+  --printSign        Print simple significance
+  --inpath INPATH    Path to root files
+  --outpath OUTPATH  Where to put plots
+  --year YEAR        which year
+  --options OPTIONS  options file
+usage: usage: %stackPlotter [options] [-h] [--noRatio] [--approved]
+                                      [--printNEvents] [--normMC]
+                                      [--printSign] --inpath INPATH --outpath
+                                      OUTPATH --year YEAR
+```
+
+An example call to the stack plotter could be:
+
+```
+python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --outpath plot_histos --normMC2Data
+```
 
 ## Making inputs for the fit
 
