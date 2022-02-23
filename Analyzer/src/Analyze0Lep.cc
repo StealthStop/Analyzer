@@ -14,6 +14,52 @@ Analyze0Lep::Analyze0Lep() : initHistos(false)
 {
 }
 
+void Analyze0Lep::MakeCutFlow(const std::vector<bool>& cuts, const std::string& histName, const double& weight)
+{
+    int i = 0;
+    bool fullCut = true;
+    bool next = true; 
+ 
+    if (histName.find("h_") != std::string::npos)
+    { 
+        for (auto kv : cuts)
+        {
+            fullCut = fullCut && kv;
+            if (fullCut)
+            {
+                my_histos[histName]->Fill(i, weight);
+            }
+            else
+            {
+                break;
+            }
+            i++;
+        }
+    }
+    else if (histName.find("total") != std::string::npos )
+    {        
+        for (auto kv : cuts)
+        {
+            fullCut = fullCut && kv;
+            my_efficiencies[histName]->Fill(fullCut, i);
+            i++;
+        }
+    }
+    else
+    {
+        for (auto kv : cuts)
+        {
+            next = kv;
+            my_efficiencies[histName]->Fill(next, i);
+            if (!next) 
+            {
+                break;
+            }
+            i++;
+        }
+    }   
+}
+
 void Analyze0Lep::InitHistos(const std::map<std::string, bool>& cutMap)
 {
     TH1::SetDefaultSumw2();
@@ -52,9 +98,96 @@ void Analyze0Lep::InitHistos(const std::map<std::string, bool>& cutMap)
     
     }
 
+    my_histos.emplace("h_event_sel_total_ge0top_genjet6",       std::make_shared<TH1D>("h_event_sel_total_ge0top_genjet6","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge1top_genjet6",       std::make_shared<TH1D>("h_event_sel_total_ge1top_genjet6","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge2top_genjet6",       std::make_shared<TH1D>("h_event_sel_total_ge2top_genjet6","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge0top_genjet7",       std::make_shared<TH1D>("h_event_sel_total_ge0top_genjet7","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge1top_genjet7",       std::make_shared<TH1D>("h_event_sel_total_ge1top_genjet7","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge2top_genjet7",       std::make_shared<TH1D>("h_event_sel_total_ge2top_genjet7","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge0top_genjet8",       std::make_shared<TH1D>("h_event_sel_total_ge0top_genjet8","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge1top_genjet8",       std::make_shared<TH1D>("h_event_sel_total_ge1top_genjet8","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge2top_genjet8",       std::make_shared<TH1D>("h_event_sel_total_ge2top_genjet8","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    
+    my_histos.emplace("h_event_sel_total_ge0top_genjet6_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge0top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge1top_genjet6_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge1top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge2top_genjet6_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge2top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge0top_genjet7_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge0top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge1top_genjet7_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge1top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge2top_genjet7_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge2top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge0top_genjet8_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge0top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge1top_genjet8_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge1top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    my_histos.emplace("h_event_sel_total_ge2top_genjet8_ge1b",       std::make_shared<TH1D>("h_event_sel_total_ge2top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",7,0,7));
+    
+    //All top cuts in one
+    my_histos.emplace("h_event_sel_total_genjet6",       std::make_shared<TH1D>("h_event_sel_total_genjet6","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_histos.emplace("h_event_sel_total_genjet7",       std::make_shared<TH1D>("h_event_sel_total_genjet7","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_histos.emplace("h_event_sel_total_genjet8",       std::make_shared<TH1D>("h_event_sel_total_genjet8","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    
+    my_histos.emplace("h_event_sel_total_genjet6_ge1b",       std::make_shared<TH1D>("h_event_sel_total_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_histos.emplace("h_event_sel_total_genjet7_ge1b",       std::make_shared<TH1D>("h_event_sel_total_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_histos.emplace("h_event_sel_total_genjet8_ge1b",       std::make_shared<TH1D>("h_event_sel_total_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    
     // Cut flows
-    my_efficiencies.emplace("event_sel",       std::make_shared<TEfficiency>("event_sel","Event selection efficiency wrt previous cut;Cut;#epsilon",8,0,8));
+    my_efficiencies.emplace("event_sel_ge0top_genjet6",       std::make_shared<TEfficiency>("event_sel_ge0top_genjet6","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge1top_genjet6",       std::make_shared<TEfficiency>("event_sel_ge1top_genjet6","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge2top_genjet6",       std::make_shared<TEfficiency>("event_sel_ge2top_genjet6","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge0top_genjet7",       std::make_shared<TEfficiency>("event_sel_ge0top_genjet7","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge1top_genjet7",       std::make_shared<TEfficiency>("event_sel_ge1top_genjet7","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge2top_genjet7",       std::make_shared<TEfficiency>("event_sel_ge2top_genjet7","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge0top_genjet8",       std::make_shared<TEfficiency>("event_sel_ge0top_genjet8","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge1top_genjet8",       std::make_shared<TEfficiency>("event_sel_ge1top_genjet8","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge2top_genjet8",       std::make_shared<TEfficiency>("event_sel_ge2top_genjet8","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+
+    my_efficiencies.emplace("event_sel_ge0top_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_ge0top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge1top_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_ge1top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge2top_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_ge2top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge0top_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_ge0top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge1top_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_ge1top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge2top_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_ge2top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge0top_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_ge0top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge1top_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_ge1top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_ge2top_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_ge2top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    
+    //All top cuts 
+    my_efficiencies.emplace("event_sel_genjet6",       std::make_shared<TEfficiency>("event_sel_genjet6","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_genjet7",       std::make_shared<TEfficiency>("event_sel_genjet7","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_genjet8",       std::make_shared<TEfficiency>("event_sel_genjet8","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+
+    my_efficiencies.emplace("event_sel_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+
+    my_efficiencies.emplace("event_sel_total_ge0top_genjet6",       std::make_shared<TEfficiency>("event_sel_total_ge0top_genjet6","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge1top_genjet6",       std::make_shared<TEfficiency>("event_sel_total_ge1top_genjet6","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge2top_genjet6",       std::make_shared<TEfficiency>("event_sel_total_ge2top_genjet6","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge0top_genjet7",       std::make_shared<TEfficiency>("event_sel_total_ge0top_genjet7","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge1top_genjet7",       std::make_shared<TEfficiency>("event_sel_total_ge1top_genjet7","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge2top_genjet7",       std::make_shared<TEfficiency>("event_sel_total_ge2top_genjet7","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge0top_genjet8",       std::make_shared<TEfficiency>("event_sel_total_ge0top_genjet8","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge1top_genjet8",       std::make_shared<TEfficiency>("event_sel_total_ge1top_genjet8","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge2top_genjet8",       std::make_shared<TEfficiency>("event_sel_total_ge2top_genjet8","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+
+    my_efficiencies.emplace("event_sel_total_ge0top_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge0top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge1top_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge1top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge2top_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge2top_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge0top_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge0top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge1top_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge1top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge2top_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge2top_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge0top_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge0top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge1top_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge1top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    my_efficiencies.emplace("event_sel_total_ge2top_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_total_ge2top_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;#epsilon",7,0,7));
+    
+    //All top cuts 
+    my_efficiencies.emplace("event_sel_total_genjet6",       std::make_shared<TEfficiency>("event_sel_total_genjet6","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_total_genjet7",       std::make_shared<TEfficiency>("event_sel_total_genjet7","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_total_genjet8",       std::make_shared<TEfficiency>("event_sel_total_genjet8","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    
+    my_efficiencies.emplace("event_sel_total_genjet6_ge1b",       std::make_shared<TEfficiency>("event_sel_total_genjet6_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_total_genjet7_ge1b",       std::make_shared<TEfficiency>("event_sel_total_genjet7_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+    my_efficiencies.emplace("event_sel_total_genjet8_ge1b",       std::make_shared<TEfficiency>("event_sel_total_genjet8_ge1b","Event selection efficiency wrt previous cut;Cut;Num. Events",9,0,9));
+
     my_efficiencies.emplace("event_sel_total", std::make_shared<TEfficiency>("event_sel_total","Total event selection efficiency;Cut;#epsilon",8,0,8));
+    my_efficiencies.emplace("event_sel",       std::make_shared<TEfficiency>("event_sel","0 lepton event selection efficiency wrt previous cut;Cut;#epsilon",8,0,8));
 
     my_efficiencies.emplace("event_sel_0l",       std::make_shared<TEfficiency>("event_sel_0l","0 lepton event selection efficiency wrt previous cut;Cut;#epsilon",8,0,8));
     my_efficiencies.emplace("event_sel_total_0l", std::make_shared<TEfficiency>("event_sel_total_0l","Total 0 lepton event selection efficiency;Cut;#epsilon",8,0,8));
@@ -72,7 +205,7 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
     while( tr.getNextEvent() )
     {
         const auto& MET                = tr.getVar<double>("MET");
-        const auto& HT_trigger         = tr.getVar<double>("HT_trigger");
+        const auto& HT_trigger_pt45    = tr.getVar<double>("HT_trigger_pt45");
         const auto& ntops              = tr.getVar<int>("ntops");
         const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet");
         const auto& ntops_2jet         = tr.getVar<int>("ntops_2jet");
@@ -86,7 +219,15 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passBaseline0l     = tr.getVar<bool>("passBaseline0l_Good");
         const auto& passBlindHad       = tr.getVar<bool>("passBlindHad_Good");
         const auto& passTrigger        = tr.getVar<bool>("passTrigger");
+        const auto& passTriggerHadMC   = tr.getVar<bool>("passTriggerHadMC");
         const auto& passMadHT          = tr.getVar<bool>("passMadHT");
+        const auto& passMETFilters     = tr.getVar<bool>("passMETFilters");
+        const auto& passHEMVeto        = tr.getVar<bool>("passHEMVeto");
+        const auto& correct2018Split   = tr.getVar<bool>("correct2018Split");
+        const auto& dR_bjets           = tr.getVar<double>("dR_bjets"); 
+        const auto& DoubleDisCo_binA_0l    = tr.getVar<bool>("DoubleDisCo_binA_0l");
+        const auto& DoubleDisCo_disc1_0l   = tr.getVar<double>("DoubleDisCo_disc1_0l");
+        const auto& DoubleDisCo_disc2_0l   = tr.getVar<double>("DoubleDisCo_disc2_0l");
 
         // ------------------------
         // -- Print event number
@@ -115,13 +256,15 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------
 
         // Global cuts
-        if ( !(passBlindHad && passTrigger && passMadHT) ) continue;
+        if ( !(passTriggerHadMC && passTrigger && passMadHT && passBlindHad && passMETFilters && passHEMVeto && correct2018Split) ) continue;
         
         bool pass_0l              = NGoodLeptons==0;
         bool pass_njet_pt45       = NJets_pt45>=6;
-        bool pass_HT_trigger      = HT_trigger > 500;
+        bool pass_HT_trigger      = HT_trigger_pt45 > 500;
         bool pass_njet_pt45_1btag = NBJets_pt45 >= 1;
         bool pass_njet_pt45_2btag = NBJets_pt45 >= 2;
+        bool passMin              = pass_0l && HT_trigger_pt45 > 500;
+        bool looseA               = DoubleDisCo_disc1_0l >= 0.6 && DoubleDisCo_disc2_0l >= 0.6;
 
         // ---------------------------
         // --    1 Top selection
@@ -224,6 +367,145 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"ge6j_HT500_ge2b_ge2t23"            , passBaseline0l && pass_ge2t23                                       },
             {"ge6j_HT500_ge2b_ge2t33"            , passBaseline0l && pass_ge2t33                                       },
             {"ge6j_HT500_ge2b_ge2t22or23or33"    , passBaseline0l && pass_ge2t22or23or33                               },
+            {"ge6j_HT500_ge2b_dRbjet"            , pass_0l && pass_HT_trigger && NJets_pt45 >= 6 && NBJets >= 2 && dR_bjets >= 1.0},
+            {"ge7j_HT500_ge2b_dRbjet"            , pass_0l && pass_HT_trigger && NJets_pt45 >= 7 && NBJets >= 2 && dR_bjets >= 1.0},
+            {"ge8j_HT500_ge2b_dRbjet"            , pass_0l && pass_HT_trigger && NJets_pt45 >= 8 && NBJets >= 2 && dR_bjets >= 1.0},
+        
+        };
+
+        const std::vector<bool> ge6j_ge0t = {passMin, NJets_pt45>=6, NBJets_pt45>=2,  ntops>=0, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge0t = {passMin, NJets_pt45>=7, NBJets_pt45>=2,  ntops>=0, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge0t = {passMin, NJets_pt45>=8, NBJets_pt45>=2,  ntops>=0, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        
+        const std::vector<bool> ge6j_ge1t = {passMin, NJets_pt45>=6, NBJets_pt45>=2,  ntops>=1, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge1t = {passMin, NJets_pt45>=7, NBJets_pt45>=2,  ntops>=1, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge1t = {passMin, NJets_pt45>=8, NBJets_pt45>=2,  ntops>=1, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+
+        const std::vector<bool> ge6j_ge2t = {passMin, NJets_pt45>=6, NBJets_pt45>=2,  ntops>=2, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge2t = {passMin, NJets_pt45>=7, NBJets_pt45>=2,  ntops>=2, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge2t = {passMin, NJets_pt45>=8, NBJets_pt45>=2,  ntops>=2, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        
+        const std::vector<bool> ge6j_ge0t_ge1b = {passMin, NJets_pt45>=6, NBJets_pt45>=1,  ntops>=0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge0t_ge1b = {passMin, NJets_pt45>=7, NBJets_pt45>=1,  ntops>=0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge0t_ge1b = {passMin, NJets_pt45>=8, NBJets_pt45>=1,  ntops>=0, looseA, DoubleDisCo_binA_0l};
+        
+        const std::vector<bool> ge6j_ge1t_ge1b = {passMin, NJets_pt45>=6, NBJets_pt45>=1,  ntops>=1, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge1t_ge1b = {passMin, NJets_pt45>=7, NBJets_pt45>=1,  ntops>=1, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge1t_ge1b = {passMin, NJets_pt45>=8, NBJets_pt45>=1,  ntops>=1, looseA, DoubleDisCo_binA_0l};
+
+        const std::vector<bool> ge6j_ge2t_ge1b = {passMin, NJets_pt45>=6, NBJets_pt45>=1,  ntops>=2, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge2t_ge1b = {passMin, NJets_pt45>=7, NBJets_pt45>=1,  ntops>=2, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge2t_ge1b = {passMin, NJets_pt45>=8, NBJets_pt45>=1,  ntops>=2, looseA, DoubleDisCo_binA_0l};
+        
+        const std::vector<bool> ge6j = {passMin, NJets_pt45>=6, NBJets_pt45>=2, ntops>=0, ntops>=1, ntops>=2, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j = {passMin, NJets_pt45>=7, NBJets_pt45>=2, ntops>=0, ntops>=1, ntops>=2, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j = {passMin, NJets_pt45>=8, NBJets_pt45>=2, ntops>=0, ntops>=1, ntops>=2, dR_bjets>=1.0, looseA, DoubleDisCo_binA_0l};
+        
+        const std::vector<bool> ge6j_ge1b = {passMin, NJets_pt45>=6, NBJets_pt45>=1, ntops>=0, ntops>=1, ntops>=2, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge7j_ge1b = {passMin, NJets_pt45>=7, NBJets_pt45>=1, ntops>=0, ntops>=1, ntops>=2, looseA, DoubleDisCo_binA_0l};
+        const std::vector<bool> ge8j_ge1b = {passMin, NJets_pt45>=8, NBJets_pt45>=1, ntops>=0, ntops>=1, ntops>=2, looseA, DoubleDisCo_binA_0l};
+        
+        
+        const std::vector<std::vector<bool>> cuts = {
+            ge6j_ge0t, 
+            ge7j_ge0t, 
+            ge8j_ge0t, 
+            ge6j_ge1t, 
+            ge7j_ge1t, 
+            ge8j_ge1t, 
+            ge6j_ge2t, 
+            ge7j_ge2t, 
+            ge8j_ge2t, 
+            ge6j_ge0t_ge1b, 
+            ge7j_ge0t_ge1b, 
+            ge8j_ge0t_ge1b, 
+            ge6j_ge1t_ge1b, 
+            ge7j_ge1t_ge1b, 
+            ge8j_ge1t_ge1b, 
+            ge6j_ge2t_ge1b, 
+            ge7j_ge2t_ge1b, 
+            ge8j_ge2t_ge1b, 
+            ge6j, 
+            ge7j, 
+            ge8j,
+            ge6j_ge1b, 
+            ge7j_ge1b, 
+            ge8j_ge1b
+        };
+        
+        const std::vector<std::string> names = {
+            "event_sel_total_ge0top_genjet6", 
+            "event_sel_ge0top_genjet6", 
+            "h_event_sel_total_ge0top_genjet6", 
+            "event_sel_total_ge0top_genjet7", 
+            "event_sel_ge0top_genjet7", 
+            "h_event_sel_total_ge0top_genjet7", 
+            "event_sel_total_ge0top_genjet8", 
+            "event_sel_ge0top_genjet8", 
+            "h_event_sel_total_ge0top_genjet8", 
+            "event_sel_total_ge1top_genjet6", 
+            "event_sel_ge1top_genjet6", 
+            "h_event_sel_total_ge1top_genjet6", 
+            "event_sel_total_ge1top_genjet7", 
+            "event_sel_ge1top_genjet7", 
+            "h_event_sel_total_ge1top_genjet7", 
+            "event_sel_total_ge1top_genjet8", 
+            "event_sel_ge1top_genjet8", 
+            "h_event_sel_total_ge1top_genjet8", 
+            "event_sel_total_ge2top_genjet6", 
+            "event_sel_ge2top_genjet6", 
+            "h_event_sel_total_ge2top_genjet6", 
+            "event_sel_total_ge2top_genjet7", 
+            "event_sel_ge2top_genjet7", 
+            "h_event_sel_total_ge2top_genjet7", 
+            "event_sel_total_ge2top_genjet8", 
+            "event_sel_ge2top_genjet8", 
+            "h_event_sel_total_ge2top_genjet8", 
+            "event_sel_total_ge0top_genjet6_ge1b", 
+            "event_sel_ge0top_genjet6_ge1b", 
+            "h_event_sel_total_ge0top_genjet6_ge1b", 
+            "event_sel_total_ge0top_genjet7_ge1b", 
+            "event_sel_ge0top_genjet7_ge1b", 
+            "h_event_sel_total_ge0top_genjet7_ge1b", 
+            "event_sel_total_ge0top_genjet8_ge1b", 
+            "event_sel_ge0top_genjet8_ge1b", 
+            "h_event_sel_total_ge0top_genjet8_ge1b", 
+            "event_sel_total_ge1top_genjet6_ge1b", 
+            "event_sel_ge1top_genjet6_ge1b", 
+            "h_event_sel_total_ge1top_genjet6_ge1b", 
+            "event_sel_total_ge1top_genjet7_ge1b", 
+            "event_sel_ge1top_genjet7_ge1b", 
+            "h_event_sel_total_ge1top_genjet7_ge1b", 
+            "event_sel_total_ge1top_genjet8_ge1b", 
+            "event_sel_ge1top_genjet8_ge1b", 
+            "h_event_sel_total_ge1top_genjet8_ge1b", 
+            "event_sel_total_ge2top_genjet6_ge1b", 
+            "event_sel_ge2top_genjet6_ge1b", 
+            "h_event_sel_total_ge2top_genjet6_ge1b", 
+            "event_sel_total_ge2top_genjet7_ge1b", 
+            "event_sel_ge2top_genjet7_ge1b", 
+            "h_event_sel_total_ge2top_genjet7_ge1b", 
+            "event_sel_total_ge2top_genjet8_ge1b", 
+            "event_sel_ge2top_genjet8_ge1b", 
+            "h_event_sel_total_ge2top_genjet8_ge1b", 
+            "event_sel_total_genjet6", 
+            "event_sel_genjet6", 
+            "h_event_sel_total_genjet6", 
+            "event_sel_total_genjet7", 
+            "event_sel_genjet7", 
+            "h_event_sel_total_genjet7", 
+            "event_sel_total_genjet8", 
+            "event_sel_genjet8", 
+            "h_event_sel_total_genjet8", 
+            "event_sel_total_genjet6_ge1b", 
+            "event_sel_genjet6_ge1b", 
+            "h_event_sel_total_genjet6_ge1b", 
+            "event_sel_total_genjet7_ge1b", 
+            "event_sel_genjet7_ge1b", 
+            "h_event_sel_total_genjet7_ge1b", 
+            "event_sel_total_genjet8_ge1b", 
+            "event_sel_genjet8_ge1b", 
+            "h_event_sel_total_genjet8_ge1b", 
         };
 
         // Initialize Histograms
@@ -240,31 +522,39 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
                 my_histos["h_njets_0l_"   +kv.first]->Fill(NJets_pt30, eventweight);
                 my_histos["h_ntops_0l_"   +kv.first]->Fill(ntops, eventweight);
                 my_histos["h_nb_0l_"      +kv.first]->Fill(NBJets, eventweight);
-                my_histos["h_HT_0l_"      +kv.first]->Fill(HT_trigger, eventweight);
+                my_histos["h_HT_0l_"      +kv.first]->Fill(HT_trigger_pt45, eventweight);
 
                 if ( NJets_pt30 < 9 )
                 {
                     my_histos["blind_njets_0l_"   +kv.first]->Fill(NJets_pt30, eventweight);
                     my_histos["blind_ntops_0l_"   +kv.first]->Fill(ntops, eventweight);
                     my_histos["blind_nb_0l_"      +kv.first]->Fill(NBJets, eventweight);
-                    my_histos["blind_HT_0l_"      +kv.first]->Fill(HT_trigger, eventweight);
+                    my_histos["blind_HT_0l_"      +kv.first]->Fill(HT_trigger_pt45, eventweight);
                 }
             }
         }
 
         // Fill event selection efficiencies
+        for(unsigned int i=0; i < names.size(); i++)
+        {
+            Analyze0Lep::MakeCutFlow(cuts.at(int(i/3)), names.at(i), eventweight);
+        }       
+
+ 
+        // Total Efficiency
         my_efficiencies["event_sel_total"]->Fill(true,0);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500,1);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500 && NJets_pt45>=6 ,2);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500 && NJets_pt45>=6 && NBJets_pt45>0 ,3);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 ,4);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 && NBJets_pt45>1 ,5);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 && NBJets_pt45>1 && ntops>1 ,6);
-        my_efficiencies["event_sel_total"]->Fill(HT_trigger>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 && NBJets_pt45>1 && ntops>1 && NJets_pt30>=8 ,7);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500,1);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500 && NJets_pt45>=6 ,2);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500 && NJets_pt45>=6 && NBJets_pt45>0 ,3);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 ,4);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 && NBJets_pt45>1 ,5);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 && NBJets_pt45>1 && ntops>1 ,6);
+        my_efficiencies["event_sel_total"]->Fill(HT_trigger_pt45>500 && NJets_pt45>=6 && NBJets_pt45>0 && ntops>0 && NBJets_pt45>1 && ntops>1 && NJets_pt30>=8 ,7);
         
+
         my_efficiencies["event_sel"]->Fill(true,0);
-        my_efficiencies["event_sel"]->Fill(HT_trigger>500,1);
-        if(HT_trigger>500)
+        my_efficiencies["event_sel"]->Fill(HT_trigger_pt45>500,1);
+        if(HT_trigger_pt45>500)
         {
             my_efficiencies["event_sel"]->Fill(NJets_pt45>=6,2);
             if (NJets_pt45>=6)
@@ -288,10 +578,10 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
                 }
             }
         }
-        
+
         // No local cuts applied here
         my_histos["h_met"     ]->Fill(MET, eventweight);
-        my_histos["h_ht"      ]->Fill(HT_trigger, eventweight);
+        my_histos["h_ht"      ]->Fill(HT_trigger_pt45, eventweight);
         my_histos["h_njets"   ]->Fill(NJets_pt30, eventweight);
         my_histos["h_nb"      ]->Fill(NBJets, eventweight);
         my_histos["h_ntops"   ]->Fill(ntops, eventweight);        
@@ -303,7 +593,7 @@ void Analyze0Lep::Loop(NTupleReader& tr, double, int maxevents, bool)
         if ( NJets_pt30 < 9 )
         {
             my_histos["blind_met"     ]->Fill(MET, eventweight);
-            my_histos["blind_ht"      ]->Fill(HT_trigger, eventweight);
+            my_histos["blind_ht"      ]->Fill(HT_trigger_pt45, eventweight);
             my_histos["blind_njets"   ]->Fill(NJets_pt30, eventweight);
             my_histos["blind_nb"      ]->Fill(NBJets, eventweight);
             my_histos["blind_ntops"   ]->Fill(ntops, eventweight);        

@@ -3,15 +3,16 @@ import ROOT
 # This file defines various plot routines that are general enough to be useable for many small studies. 
 
 # Define some global colors
-mycolors = [ROOT.kBlue-7, ROOT.kOrange+2, ROOT.kCyan+1, ROOT.kMagenta+1, ROOT.kYellow+1, ROOT.kRed+1, ROOT.kGreen+1]
+mycolors = [ROOT.kMagenta+1, ROOT.kOrange+2, ROOT.kBlue-7, ROOT.kGreen+1, ROOT.kCyan+1, ROOT.kYellow+1, ROOT.kRed+1]
 mysignalcolors = [ROOT.kViolet-6, ROOT.kAzure-6, ROOT.kPink-6, ROOT.kTeal-6]
 deflumi = 35900
 defcolors = [ROOT.kRed+2, ROOT.kBlue+1, ROOT.kGreen+2, ROOT.kMagenta+1, ROOT.kCyan, ROOT.kOrange+1, ROOT.kRed, ROOT.kGreen, ROOT.kBlack, ROOT.kGray+2]
 
+ROOT.gROOT.SetBatch(True)
 
 # Make shape comparison plot
 def makeplot(histos, names, xlabel, plotname, plotdir="./", linear=True, lumi=deflumi, legendColumns=1, colors=mycolors, norm=True, drawstyle="default", 
-             ymin=None, ymax=None, ylabel="A.U.", dropzeroes=True):
+             ymin=0, ymax=None, ylabel="A.U.", dropzeroes=True):
     """
 histos: list of histograms to plot
 names: corresponding histogram name to go in the legend
@@ -101,14 +102,20 @@ xlabel: name of the xaxis title
 plotname: Name of the plot (and the stack)
     """
     histos_bg = [h.Clone() for h in histos_bg_]
-    histos_signal = [h.Clone() for h in histos_signal_]
-    histo_data = histo_data_.Clone()
+    if histos_signal_:
+        histos_signal = [h.Clone() for h in histos_signal_]
+    else:
+        histos_signal = None
+    if histo_data_:
+        histo_data = histo_data_.Clone()
+    else:
+        histo_data = None
     legend = None
     if legendColumns >= 2:
-        legend = ROOT.TLegend(0.35, 0.75, 0.95, 0.89)
+        legend = ROOT.TLegend(0.35, 0.75, 0.95, 0.85)
         legend.SetNColumns(3)
     else:
-        legend = ROOT.TLegend(0.55, 0.7, 0.95, 0.9)
+        legend = ROOT.TLegend(0.55, 0.7, 0.95, 0.85)
         legend.SetNColumns(legendColumns)
     legend.SetBorderSize(0)
 
@@ -130,7 +137,7 @@ plotname: Name of the plot (and the stack)
         
     htotal_bg = None
     for i,h in enumerate(histos_bg):
-        h.Scale(lumi)
+        #h.Scale(lumi)
         h.SetLineColor(colors[i])
         h.SetMarkerColor(colors[i])
         h.SetFillColor(colors[i])
@@ -162,7 +169,7 @@ plotname: Name of the plot (and the stack)
 
     if histos_signal:
         for i,h in enumerate(histos_signal):
-            h.Scale(lumi)
+            #h.Scale(lumi)
             h.SetLineColor(signalcolors[i])
             h.SetLineStyle(7)
             h.SetLineWidth(4)
@@ -225,11 +232,11 @@ def makeplot2d(filename, histoname, variableX, variableY, label, plotname, dotex
     histo = files.Get(histoname)
     histo.GetXaxis().SetTitle(variableX)
     histo.GetYaxis().SetTitle(variableY)
-    histo.GetZaxis().SetTitle("Fraction of events")
+    #histo.GetZaxis().SetTitle("Fraction of events")
     histo.SetTitle("")
     histo.SetMarkerSize(2)
     total = histo.GetEntries()
-    histo.Scale(1./total)
+    #histo.Scale(1./total)
 
     canvas = ROOT.TCanvas("c","c")
     canvas.SetRightMargin(0.15)

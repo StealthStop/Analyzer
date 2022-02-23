@@ -71,10 +71,19 @@ void AnalyzeQCDCR::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& correct2018Split                  = tr.getVar<bool>("correct2018Split");
         const auto& passTrigger                       = tr.getVar<bool>("passTrigger");
         const auto& passTriggerMC                     = tr.getVar<bool>("passTriggerMC");
+        const auto& passTriggerHad                    = tr.getVar<bool>("passTriggerAllHad");
+        const auto& passTriggerHadMC                  = tr.getVar<bool>("passTriggerHadMC");
         const auto& passMETFilters                    = tr.getVar<bool>("passMETFilters");
         const auto& passMadHT                         = tr.getVar<bool>("passMadHT");
         const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_Good");
+        const auto& passBaseline0l_ge1top             = tr.getVar<bool>("passBaseline0l_ge1top");
+        const auto& passBaseline0l_ge0top             = tr.getVar<bool>("passBaseline0l_ge0top");
+        const auto& passBaseline0l_ge1b               = tr.getVar<bool>("passBaseline0l_ge1b");
+        const auto& passBaseline0l_ge1top_ge1b        = tr.getVar<bool>("passBaseline0l_ge1top_ge1b");
+        const auto& passBaseline0l_ge0top_ge1b        = tr.getVar<bool>("passBaseline0l_ge0top_ge1b");
         const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("passBaseline0l_NonIsoMuon");
+        const auto& pass0lQCDCR                       = tr.getVar<bool>("pass0lQCDCR");
         const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon");
         const auto& passHEMVeto                       = tr.getVar<bool>("passHEMVeto");
         const auto& Mbl                               = tr.getVar<double>("Mbl");
@@ -125,38 +134,45 @@ void AnalyzeQCDCR::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------
         // -- Define cuts
         // -------------------------------
-        bool pass_general    = passTriggerMC && passTrigger && passMadHT && passBlind && passMETFilters && passHEMVeto && correct2018Split;
+        bool pass_general_0l    = passTriggerHadMC && passTriggerHad && passMadHT && passBlind && passMETFilters && passHEMVeto && correct2018Split;
+        bool pass_general_1l    = passTriggerMC && passTrigger && passMadHT && passBlind && passMETFilters && passHEMVeto && correct2018Split;
         bool pass_0btag_pt30 = NGoodBJets_pt30 == 0;
         bool pass_0btag_pt45 = NGoodBJets_pt45 == 0;
         bool pass_0tops      = ntops == 0;       
+        bool pass_le1top     = ntops <= 1;
  
         // -------------------
         // --- Fill Histos ---
         // -------------------                        
         const std::map<std::string, bool> cut_map 
         {
-            {"_test"                        , true                                                                                     },
-            {"_0l"                          , pass_general && passBaseline0l_Good                                                      },
-            {"_1l"                          , pass_general && passBaseline1l_Good                                                      },
-            {"_passQCDCR_0tops"             , passBaseline1l_NonIsoMuon && pass_0tops                                                  },
-            {"_passQCDCR_0btag"             , passBaseline1l_NonIsoMuon && pass_0btag_pt45                                             },
-            {"_passQCDCR_0tops_0btag"       , passBaseline1l_NonIsoMuon && pass_0btag_pt45 && pass_0tops                               },
-            {"_passQCDCR_pt30"              , passBaseline1l_NonIsoMuon                                                                },
-            {"_passQCDCR_pt30_0tops"        , passBaseline1l_NonIsoMuon && pass_0tops                                                  },
-            {"_passQCDCR_pt30_0btag"        , passBaseline1l_NonIsoMuon && pass_0btag_pt45                                             },
-            {"_passQCDCR_pt30_0tops_0btag"  , passBaseline1l_NonIsoMuon && pass_0btag_pt45 && pass_0tops                               },
-            {"_passQCDCR_pt45"              , passBaseline1l_NonIsoMuon                                                                },
-            {"_passQCDCR_pt45_0tops"        , passBaseline1l_NonIsoMuon && pass_0tops                                                  },
-            {"_passQCDCR_pt45_0btag"        , passBaseline1l_NonIsoMuon && pass_0btag_pt45                                             },
-            {"_passQCDCR_pt45_0tops_0btag"  , passBaseline1l_NonIsoMuon && pass_0btag_pt45 && pass_0tops                               },
-            {"_passQCDCR_0l"                , pass_general && passBaseline1l_NonIsoMuon && passBaseline0l_Good                                         },
-            {"_passQCDCR_0l_0tops"          , pass_general && passBaseline1l_NonIsoMuon && passBaseline0l_Good && pass_0tops                           },
-            {"_passQCDCR_0l_0btag"          , pass_general && passBaseline1l_NonIsoMuon && passBaseline0l_Good && pass_0btag_pt45                      },
-            {"_passQCDCR_0l_0tops_0btag"    , pass_general && passBaseline1l_NonIsoMuon && passBaseline0l_Good && pass_0btag_pt45 && pass_0tops        },
-            {"_passQCDCR_1l"                , pass_general && passBaseline1l_NonIsoMuon && passBaseline1l_Good                                         },
-            {"_passQCDCR_1l_0tops"          , pass_general && passBaseline1l_NonIsoMuon && passBaseline1l_Good && pass_0tops                           },
-            {"_passQCDCR_1l_0btag"          , pass_general && passBaseline1l_NonIsoMuon && passBaseline1l_Good && pass_0btag_pt30                      },
-            {"_passQCDCR_1l_0tops_0btag"    , pass_general && passBaseline1l_NonIsoMuon && passBaseline1l_Good && pass_0btag_pt30 && pass_0tops        },
+            {"_0l"                          , pass_general_0l && passBaseline0l_Good                                                      },
+            {"_0l_ge1top"                   , pass_general_0l && passBaseline0l_ge1top                                                    },
+            {"_0l_ge0top"                   , pass_general_0l && passBaseline0l_ge0top                                                    },
+            {"_0l_ge1b"                     , pass_general_0l && passBaseline0l_ge1b                                                      },
+            {"_0l_ge1top_ge1b"              , pass_general_0l && passBaseline0l_ge1top_ge1b                                               },
+            {"_0l_ge0top_ge1b"              , pass_general_0l && passBaseline0l_ge0top_ge1b                                               },
+            {"_1l"                          , pass_general_1l && passBaseline1l_Good                                                      },
+            {"_passQCDCR_pt30"              , pass_general_1l && passBaseline1l_NonIsoMuon                                                                },
+            {"_passQCDCR_pt30_0tops"        , pass_general_1l && passBaseline1l_NonIsoMuon && pass_0tops                                                  },
+            {"_passQCDCR_pt30_0btag"        , pass_general_1l && passBaseline1l_NonIsoMuon && pass_0btag_pt30                                             },
+            {"_passQCDCR_pt30_0tops_0btag"  , pass_general_1l && passBaseline1l_NonIsoMuon && pass_0btag_pt30 && pass_0tops                               },
+            {"_passQCDCR_pt45"              , pass_general_0l && passBaseline0l_NonIsoMuon                                                                },
+            {"_passQCDCR_pt45_le1top"       , pass_general_0l && passBaseline0l_NonIsoMuon && pass_le1top                                                 },
+            {"_passQCDCR_pt45_0tops"        , pass_general_0l && passBaseline0l_NonIsoMuon && pass_0tops                                                  },
+            {"_passQCDCR_pt45_0btag"        , pass_general_0l && passBaseline0l_NonIsoMuon && pass_0btag_pt45                                             },
+            {"_passQCDCR_pt45_0tops_0btag"  , pass_general_0l && passBaseline0l_NonIsoMuon && pass_0btag_pt45 && pass_0tops                               },
+            {"_passQCDCR_pt45_0tops_NoIso"  , pass_general_0l && pass0lQCDCR && pass_0tops                                                                },
+            {"_passQCDCR_pt45_0btag_NoIso"        , pass_general_0l && pass0lQCDCR && pass_0btag_pt45                                                           },
+            {"_passQCDCR_pt45_0tops_0btag_NoIso"  , pass_general_0l && pass0lQCDCR && pass_0btag_pt45 && pass_0tops                                             },
+            {"_passQCDCR_0l"                , pass_general_0l && passBaseline0l_NonIsoMuon && passBaseline0l_Good                                         },
+            {"_passQCDCR_0l_0tops"          , pass_general_0l && passBaseline0l_NonIsoMuon && passBaseline0l_Good && pass_0tops                           },
+            {"_passQCDCR_0l_0btag"          , pass_general_0l && passBaseline0l_NonIsoMuon && passBaseline0l_Good && pass_0btag_pt45                      },
+            {"_passQCDCR_0l_0tops_0btag"    , pass_general_0l && passBaseline0l_NonIsoMuon && passBaseline0l_Good && pass_0btag_pt45 && pass_0tops        },
+            {"_passQCDCR_1l"                , pass_general_1l && passBaseline1l_NonIsoMuon && passBaseline1l_Good                                         },
+            {"_passQCDCR_1l_0tops"          , pass_general_1l && passBaseline1l_NonIsoMuon && passBaseline1l_Good && pass_0tops                           },
+            {"_passQCDCR_1l_0btag"          , pass_general_1l && passBaseline1l_NonIsoMuon && passBaseline1l_Good && pass_0btag_pt30                      },
+            {"_passQCDCR_1l_0tops_0btag"    , pass_general_1l && passBaseline1l_NonIsoMuon && passBaseline1l_Good && pass_0btag_pt30 && pass_0tops        },
         };
 
         std::vector<TH1DInfo> histInfos = {

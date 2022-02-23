@@ -23,6 +23,7 @@ public:
     Analyze0Lep();
     ~Analyze0Lep(){};
     
+    void MakeCutFlow(const std::vector<bool>& cuts, const std::string& histName, const double& eventweight);
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
     void InitHistos(const std::map<std::string, bool>& cutMap);
     void WriteHistos(TFile* outfile);
