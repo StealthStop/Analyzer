@@ -22,7 +22,6 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TLorentzVector.h>
 #include <iostream>
 
 AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
@@ -372,21 +371,21 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& NonIsoMuons_jmt_ev1_top6_1l       = tr.getVar<double>("NonIsoMuons_jmt_ev1_top6_1l"+myVarSuffix);
             const auto& NonIsoMuons_jmt_ev2_top6_1l       = tr.getVar<double>("NonIsoMuons_jmt_ev2_top6_1l"+myVarSuffix);
 
-            const auto& Jets_cm_top6_0l                   = tr.getVec<TLorentzVector>("Jets_cm_top6_0l"+myVarSuffix);
-            const auto& Jets_cm_top6_1l                   = tr.getVec<TLorentzVector>("Jets_cm_top6_1l"+myVarSuffix);
-            const auto& NonIsoMuons_Jets_cm_top6_1l       = tr.getVec<TLorentzVector>("NonIsoMuons_Jets_cm_top6_1l"+myVarSuffix);
+            const auto& Jets_cm_top6_0l                   = tr.getVec<utility::LorentzVector>("Jets_cm_top6_0l"+myVarSuffix);
+            const auto& Jets_cm_top6_1l                   = tr.getVec<utility::LorentzVector>("Jets_cm_top6_1l"+myVarSuffix);
+            const auto& NonIsoMuons_Jets_cm_top6_1l       = tr.getVec<utility::LorentzVector>("NonIsoMuons_Jets_cm_top6_1l"+myVarSuffix);
             const auto& nMVAJets_0l                       = tr.getVar<unsigned int>("nMVAJets_0l"+myVarSuffix);
             const auto& nMVAJets_1l                       = tr.getVar<unsigned int>("nMVAJets_1l"+myVarSuffix);
 
             const auto& eventCounter                      = tr.getVar<int>("eventCounter");
-            const auto& Stop1_pt_cm_OldSeed               = tr.getVar<double>("Stop1_pt_cm_TopSeed"+myVarSuffix);
-            const auto& Stop1_eta_cm_OldSeed              = tr.getVar<double>("Stop1_eta_cm_TopSeed"+myVarSuffix);
-            const auto& Stop1_phi_cm_OldSeed              = tr.getVar<double>("Stop1_phi_cm_TopSeed"+myVarSuffix);
-            const auto& Stop1_mass_cm_OldSeed             = tr.getVar<double>("Stop1_mass_cm_TopSeed"+myVarSuffix);
-            const auto& Stop2_pt_cm_OldSeed               = tr.getVar<double>("Stop2_pt_cm_TopSeed"+myVarSuffix);
-            const auto& Stop2_eta_cm_OldSeed              = tr.getVar<double>("Stop2_eta_cm_TopSeed"+myVarSuffix);
-            const auto& Stop2_phi_cm_OldSeed              = tr.getVar<double>("Stop2_phi_cm_TopSeed"+myVarSuffix);
-            const auto& Stop2_mass_cm_OldSeed             = tr.getVar<double>("Stop2_mass_cm_TopSeed"+myVarSuffix);
+            const auto& Stop1_pt_cm_OldSeed               = tr.getVar<double>("Stop1_pt_cm_OldSeed"+myVarSuffix);
+            const auto& Stop1_eta_cm_OldSeed              = tr.getVar<double>("Stop1_eta_cm_OldSeed"+myVarSuffix);
+            const auto& Stop1_phi_cm_OldSeed              = tr.getVar<double>("Stop1_phi_cm_OldSeed"+myVarSuffix);
+            const auto& Stop1_mass_cm_OldSeed             = tr.getVar<double>("Stop1_mass_cm_OldSeed"+myVarSuffix);
+            const auto& Stop2_pt_cm_OldSeed               = tr.getVar<double>("Stop2_pt_cm_OldSeed"+myVarSuffix);
+            const auto& Stop2_eta_cm_OldSeed              = tr.getVar<double>("Stop2_eta_cm_OldSeed"+myVarSuffix);
+            const auto& Stop2_phi_cm_OldSeed              = tr.getVar<double>("Stop2_phi_cm_OldSeed"+myVarSuffix);
+            const auto& Stop2_mass_cm_OldSeed             = tr.getVar<double>("Stop2_mass_cm_OldSeed"+myVarSuffix);
 
             const auto& Stop1_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon"+myVarSuffix);
@@ -400,10 +399,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& regions_0l = tr.getVec<std::string>("regions_0l_RPV");
             const auto& regions_1l = tr.getVec<std::string>("regions_1l_RPV");
 
-            const auto& Stop1_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<double>("stop1_ptrank_mass"+myVarSuffix);
-            const auto& Stop2_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<double>("stop2_ptrank_mass"+myVarSuffix);
-            const auto& Stop1_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<double>("stop1_mrank_mass"+myVarSuffix);
-            const auto& Stop2_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<double>("stop2_mrank_mass"+myVarSuffix);
+            const auto& Stop1_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass"+myVarSuffix);
+            const auto& Stop2_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass"+myVarSuffix);
+            const auto& Stop1_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass"+myVarSuffix);
+            const auto& Stop2_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass"+myVarSuffix);
             const auto& Stop_mass_average_matched         = runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"+myVarSuffix);
 
             std::map<std::string, std::vector<bool> > DoubleDisCo_passRegions_0l;
@@ -493,8 +492,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::vector<std::vector<double> >                       Jets_flavuds_QCDCR            {Jets_flavuds_0l,                       JetNonIsoMuons_flavuds_1l};
             std::vector<std::vector<double> >                       Jets_flavq_QCDCR              {Jets_flavq_0l,                         JetNonIsoMuons_flavq_1l};
             std::vector<std::vector<std::string> >                  regions                       {regions_0l,                            regions_1l};
-            std::vector<std::vector<TLorentzVector> >               Jets_cm_top6                  {Jets_cm_top6_0l,                       Jets_cm_top6_1l};
-            std::vector<std::vector<TLorentzVector> >               Jets_cm_top6_QCDCR            {Jets_cm_top6_0l,                       NonIsoMuons_Jets_cm_top6_1l};
+            std::vector<std::vector<utility::LorentzVector> >               Jets_cm_top6                  {Jets_cm_top6_0l,                       Jets_cm_top6_1l};
+            std::vector<std::vector<utility::LorentzVector> >               Jets_cm_top6_QCDCR            {Jets_cm_top6_0l,                       NonIsoMuons_Jets_cm_top6_1l};
             std::vector<std::map<std::string, std::vector<bool> > > DoubleDisCo_passRegions       {DoubleDisCo_passRegions_0l,            DoubleDisCo_passRegions_1l}; 
             std::vector<std::map<std::string, std::vector<bool> > > DoubleDisCo_passRegions_QCDCR {DoubleDisCo_passRegions_NonIsoMuon_0l, DoubleDisCo_passRegions_NonIsoMuon_1l}; 
 
@@ -507,7 +506,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             if(runtype == "MC")
             {
                 // Define Lumi weight
-                const auto& Weight = tr.getVar<double>("Weight");
+                const auto& Weight = tr.getVar<float>("Weight");
                 const auto& lumi   = tr.getVar<double>("Lumi");
                 eventweight        = lumi * Weight;
                
