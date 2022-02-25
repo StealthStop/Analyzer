@@ -53,7 +53,36 @@ class All_Regions:
     
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 )**0.5
         return significance
-    
+   
+    # -------------------------------------------------
+    # Significance calculation with only TT
+    #   -- added non-closure to optimize the ABCD edges
+    # -------------------------------------------------
+    def cal_Significance_includingNonClosure(self, nSigEvents, nTTEvents, nonClosure=None, sys=0.3):
+        if (nTTEvents == 0.0):
+            return 0.0
+
+        significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 + (nonClosure * nTTEvents)**2.0 )**0.5
+        return significance
+ 
+    # ---------------------------
+    # Significance calculation
+    #   -- non simplified version
+    # ---------------------------
+    def cal_Significance_nonSimplified(self, nSigEvents, nTTEvents, sys=0.3):
+        if (nTTEvents == 0.0):
+            return 0.0
+
+        b = nTTEvents; s     = nSigEvents
+        n = (b + s);   sigma = (b * sys)**2.0
+        
+        significance = (2 * ( 
+                              ( n *  math.log( n * (b + sigma) / (b**2.0 + n * sigma) ) ) - 
+                              ( (b**2.0 / sigma) * math.log( 1 + (sigma * s / (b * (b + sigma)) ) ) )  
+                       ) )**0.5
+
+        return significance
+
     # -----------------------
     # Non-Closure calculation
     # -----------------------
@@ -320,12 +349,11 @@ class All_Regions:
             closureErr_Data     = -999.0; closureErrUnc_Data     = -999.0; pull_Data     = -999.0; pullUnc_Data     = -999.0
             closureErr_TTinData = -999.0; closureErrUnc_TTinData = -999.0; pull_TTinData = -999.0; pullUnc_TTinData = -999.0
 
-            closureCorr_TT       = -999.0; closureCorrUnc_TT       = -999.0
-            closureCorr_NonTT    = -999.0; closureCorrUnc_NonTT    = -999.0
-            closureCorr_TTvar    = -999.0; closureCorrUnc_TTvar    = -999.0
-            closureCorr_Data     = -999.0; closureCorrUnc_Data     = -999.0
-            closureCorr_TTinData = -999.0; closureCorrUnc_TTinData = -999.0
-   
+            closureCorr_TT           = -999.0; closureCorrUnc_TT           = -999.0
+            closureCorr_NonTT        = -999.0; closureCorrUnc_NonTT        = -999.0
+            closureCorr_TTvar        = -999.0; closureCorrUnc_TTvar        = -999.0
+            closureCorr_Data         = -999.0; closureCorrUnc_Data         = -999.0
+            closureCorr_TTinData     = -999.0; closureCorrUnc_TTinData     = -999.0
             closureCorr_TTinDataVsTT = -999.0; closureCorrUnc_TTinDataVsTT = -999.0
 
             nonClosure_TT,     nonClosureUnc_TT     = self.cal_NonClosure(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
@@ -333,18 +361,18 @@ class All_Regions:
             nonClosure_TTvar,  nonClosureUnc_TTvar  = self.cal_NonClosure(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             nonClosure_Data,   nonClosureUnc_Data   = self.cal_NonClosure(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
             nonClosure_TTinData, nonClosureUnc_TTinData = self.cal_NonClosure(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
+            
+            pull_TT,    pullUnc_TT    = self.cal_Pull(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
+            pull_NonTT, pullUnc_NonTT = self.cal_Pull(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
+            pull_TTvar, pullUnc_TTvar = self.cal_Pull(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
+            pull_Data,  pullUnc_Data  = self.cal_Pull(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
+            pull_TTinData,  pullUnc_TTinData  = self.cal_Pull(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
 
             closureCorr_TT,    closureCorrUnc_TT    = self.cal_ClosureCorr(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             closureCorr_Data,  closureCorrUnc_Data  = self.cal_ClosureCorr(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
             closureCorr_NonTT, closureCorrUnc_NonTT = self.cal_ClosureCorr(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D   )
             closureCorr_TTvar, closureCorrUnc_TTvar = self.cal_ClosureCorr(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D )
             closureCorr_TTinData, closureCorrUnc_TTinData = self.cal_ClosureCorr(nTTinDataEvents_A, nTTinDataEvents_B, nTTinDataEvents_C, nTTinDataEvents_D, nTTinDataEventsErr_A, nTTinDataEventsErr_B, nTTinDataEventsErr_C, nTTinDataEventsErr_D )
-
-            pull_TT,    pullUnc_TT    = self.cal_Pull(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
-            pull_NonTT, pullUnc_NonTT = self.cal_Pull(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
-            pull_TTvar, pullUnc_TTvar = self.cal_Pull(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
-            pull_Data,  pullUnc_Data  = self.cal_Pull(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
-            pull_TTinData,  pullUnc_TTinData  = self.cal_Pull(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
 
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TT,       nonClosureUnc_TT) ,       "TT"      )
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_NonTT,    nonClosureUnc_NonTT),     "NonTT"   )
@@ -375,14 +403,33 @@ class All_Regions:
             significance_TT = 0.0; significanceUnc_TT = 0.0; tempOptMetric = 999.0
 
             significance_TT += self.cal_Significance(nSigEvents_A, nTTEvents_A)**2.0
-            significance_TT = significance_TT**0.5
+            significance_TT  = significance_TT**0.5
+
+            D = ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 )**0.5
+            if nTTEvents_A > 0.0:
+                significanceUnc_TT = ( (nSigEventsErr_A / D )**2.0 + ( (nSigEvents_A * nTTEventsErr_A) * (1 + (2.0 * nTTEvents_A * bkgNormUnc**2.) / 2 * D**3.0) ) )**0.5
+ 
+            self.add("significance", disc1Key, disc2Key, (significance_TT, significanceUnc_TT), "TT") 
+
+            # significance for optimizing ABCD edges
+            # this one including also non-closure
+            significance_includingNonClosure = 0.0; significanceUnc_includingNonClosure = 0.0
+            significance_includingNonClosure += self.cal_Significance_includingNonClosure(nSigEvents_A, nTTEvents_A, nonClosure_TT)**2.0
+            significance_includingNonClosure  = significance_includingNonClosure**0.5
 
             if nTTEvents_A > 0.0:
-                significanceUnc_TT = (   ( nSigEventsErr_A / (nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (nonClosure_TT * nTTEvents_A)**2.0)**0.5 )**2.0
-                                     + ( ( nSigEvents_A * nTTEventsErr_A * (2.0 * nTTEvents_A * nonClosure_TT**2.0 + 2.0 * bkgNormUnc**2.0 * nTTEvents_A + 1) ) / ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (nonClosure_TT * nTTEvents_A)**2.0 )**1.5 )**2.0
-                                     + ( ( nTTEvents_A**2.0 * nonClosure_TT * nSigEvents_A * nonClosureUnc_TT) / ( nTTEvents_A * ( nTTEvents_A * (nonClosure_TT**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
+                significanceUnc_includingNonClosure = ( ( nSigEventsErr_A / (nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (nonClosure_TT * nTTEvents_A)**2.0)**0.5 )**2.0
+                                                    + ( ( nSigEvents_A * nTTEventsErr_A * (2.0 * nTTEvents_A * nonClosure_TT**2.0 + 2.0 * bkgNormUnc**2.0 * nTTEvents_A + 1) ) / ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (nonClosure_TT * nTTEvents_A)**2.0 )**1.5 )**2.0
+                                                    + ( ( nTTEvents_A**2.0 * nonClosure_TT * nSigEvents_A * nonClosureUnc_TT) / ( nTTEvents_A * ( nTTEvents_A * (nonClosure_TT**2.0 + bkgNormUnc**2.0) + 1) )**1.5 )**2.0 )**0.5
 
-            self.add("significance", disc1Key, disc2Key, (significance_TT, significanceUnc_TT), "TT") 
+            self.add("significance_includingNonClosure", disc1Key, disc2Key, (significance_includingNonClosure,significanceUnc_includingNonClosure), "TT")
+
+            # this one non-simplified version
+            significance_nonSimplified = 0.0; significanceUnc_nonSimplified = 0.0
+            significance_nonSimplified += self.cal_Significance_nonSimplified(nSigEvents_A, nTTEvents_A)**2.0
+            significance_nonSimplified  = significance_nonSimplified**0.5
+            self.add("significance_nonSimplified", disc1Key, disc2Key, (significance_nonSimplified,significanceUnc_nonSimplified), "TT")
+
 
             # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
             if self.fixedDisc1Edge != None and abs(float(self.fixedDisc1Edge) - float(disc1Key)) > 0.01: continue
