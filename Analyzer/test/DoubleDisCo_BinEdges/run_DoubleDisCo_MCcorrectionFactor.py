@@ -118,7 +118,7 @@ class Aggregator:
             # this statement for data and data/MC closure correction
             sigFracA = self.data[chefKey][0]
             if (sigFracA >= 0.05 and sample == "TTinData"):
-                continue
+                payload[boundary] = (-999.0, 0.0)
 
             else: 
                 payload[boundary] = self.data[masterKey]
@@ -206,7 +206,7 @@ def main():
     # get the 2D histograms 
     njets = None
     histNames = "h_DoubleDisCo_disc1_disc2_%s_Njets"%(args.channel)
-    njets = ["7"]#, "8", "9", "10", "11", "12incl"]
+    njets = ["7", "8", "9", "10", "11", "12incl"]
 
     # ------------------
     # make all tex files
