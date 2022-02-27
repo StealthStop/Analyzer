@@ -48,10 +48,12 @@ class All_Regions:
     # Significance calculation with only TT
     # -------------------------------------
     def cal_Significance(self, nSigEvents, nTTEvents, sys=0.3):
+        
         if (nTTEvents == 0.0):
             return 0.0
     
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 )**0.5
+        
         return significance
    
     # -------------------------------------------------
@@ -59,25 +61,28 @@ class All_Regions:
     #   -- added non-closure to optimize the ABCD edges
     # -------------------------------------------------
     def cal_Significance_includingNonClosure(self, nSigEvents, nTTEvents, nonClosure=None, sys=0.3):
+        
         if (nTTEvents == 0.0):
             return 0.0
 
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 + (nonClosure * nTTEvents)**2.0 )**0.5
+        
         return significance
  
-    # ---------------------------
-    # Significance calculation
+    # -------------------------------------
+    # Significance calculation with only TT
     #   -- non simplified version
-    # ---------------------------
+    # -------------------------------------
     def cal_Significance_nonSimplified(self, nSigEvents, nTTEvents, sys=0.3):
-        if (nTTEvents == 0.0):
+        
+        if (nTTEvents == 0.0 or nSigEvents == 0.0):
             return 0.0
 
-        b = nTTEvents; s     = nSigEvents
-        n = (b + s);   sigma = (b * sys)**2.0
-        
+        b = nTTEvents;     s = nSigEvents
+        n = (s+b);     sigma = (b * sys)**2.0
+       
         significance = (2 * ( 
-                              ( n *  math.log( n * (b + sigma) / (b**2.0 + n * sigma) ) ) - 
+                              ( n *  math.log( n * (b + sigma) / (b**2.0 + (n * sigma)) ) ) - 
                               ( (b**2.0 / sigma) * math.log( 1 + (sigma * s / (b * (b + sigma)) ) ) )  
                        ) )**0.5
 
@@ -100,6 +105,9 @@ class All_Regions:
     
         return nonClosure, nonClosureUnc
 
+    # ------------------------------
+    # Closure Correction calculation
+    # ------------------------------
     def cal_ClosureCorr(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
     
         if nEvents_B == 0.0 or nEvents_C == 0.0:

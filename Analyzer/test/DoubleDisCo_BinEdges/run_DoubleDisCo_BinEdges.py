@@ -19,7 +19,6 @@ def main():
     # get the plots with optimized ABCD edges:
     #   -- first run the "run_DoubleDisCo_Optimized_BinEdges.py" to print the optimized ABCD edges and use them as fixed edges on the commend line
     #   -- python run_DoubleDisCo_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 0l --fixedDisc1edge 0.52 --fixedDisc2edge 0.89
-    #   -- python run_DoubleDisCo_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 1l --fixedDisc1edge 0.52 --fixedDisc2edge 0.89
     #   -- python run_DoubleDisCo_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 1l --fixedDisc1edge 0.65 --fixedDisc2edge 0.63 
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
     usage  = "usage: %prog [options]"

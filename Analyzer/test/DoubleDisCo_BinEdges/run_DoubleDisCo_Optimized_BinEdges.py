@@ -208,21 +208,23 @@ def main():
     # --------------------------------------
     # optimized ABCD edges with significance
     # --------------------------------------
-    opt_ABCDEdges = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)                
-    print "ABCD edges with Significance: ", opt_ABCDEdges   
+    opt_ABCDEdges = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut) 
+
+    print "ABCD edges with Significance                      : ", opt_ABCDEdges   
 
     # ------------------------------------------------------------
     # optimized ABCD edges with significance including non-closure
     # ------------------------------------------------------------
     opt_ABCDEdges_1 = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance_includingNonClosure["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)
+    
     print "ABCD edges with Significance including non-closure: ", opt_ABCDEdges_1
 
     # ---------------------------------------------------------------
     # optimized ABCD edges with significance (non-simplified version)
     # ---------------------------------------------------------------
     opt_ABCDEdges_2 = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance_nonSimplified["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)    
-    print "ABCD edges with Significance nonSimplified: ", opt_ABCDEdges_2
-
+    
+    print "ABCD edges with Significance nonSimplified        : ", opt_ABCDEdges_2
 
 if __name__ == '__main__':
     main()
