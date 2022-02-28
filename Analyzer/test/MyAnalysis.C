@@ -30,6 +30,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
+#include "Analyzer/Analyzer/include/AnalyzeXsec.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -81,6 +82,9 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
         // Define classes/functions that add variables on the fly        
         Config c;
         c.setUp(tr);
+
+        // Registerd event weight computed by FileSummary class, no sign information
+        tr.registerDerivedVar("weightVal", file.getWeight());
 
         // Loop over all of the events and fill histos
         std::cout << "Starting event loop (in run)" << std::endl;
@@ -191,6 +195,8 @@ int main(int argc, char *argv[])
         {"AnalyzeTemplate",         run<AnalyzeTemplate>},
         {"MakeNNVariables",         run<MakeNNVariables>},
         {"AnalyzeGenStop",          run<AnalyzeGenStop>},
+        {"AnalyzeXsec",             run<AnalyzeXsec>}
+
     }; 
 
     try
