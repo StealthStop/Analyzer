@@ -161,23 +161,31 @@ class All_Regions:
         nXBins = range(firstXBin+1, lastXBin)
         nYBins = range(firstYBin+1, lastYBin)
 
-        # loop over the x bins i.e. choice of disc 1 as an edge
-        for xBin in nXBins:
+        # count signal and background events and errors in bin edges
+        for key, h1 in self.hist.items():
 
-            # Store disc 1 edge as string with three digits of accuracy for now
-            xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
-            xBinKey     = "%.3f"%(xLowBinEdge)
-    
-            # loop over the y bins
-            for yBin in nYBins:
-    
-                # Store disc 2 edge as string with three digits of accuracy for now
-                yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
-                yBinKey     = "%.3f"%(yLowBinEdge)
+            # loop over the x bins i.e. choice of disc 1 as an edge
+            for xBin in nXBins:
 
-                # count signal and background events and errors in bin edges
-                for key, h1 in self.hist.items():
-                    
+                # Store disc 1 edge as string with three digits of accuracy for now
+                xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
+                xBinKey     = "%.3f"%(xLowBinEdge)
+
+                # For each choice of xBin (vertical divider in ABCD plane),
+                # initialize counts for the four regions
+                startOfScan = True
+                nEvents_A = 0.0
+                nEvents_B = 0.0
+                nEvents_C = 0.0
+                nEvents_D = 0.0
+
+                # loop over the y bins
+                for yBin in nYBins:
+    
+                    # Store disc 2 edge as string with three digits of accuracy for now
+                    yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
+                    yBinKey     = "%.3f"%(yLowBinEdge)
+
                     nEventsErr_A = ROOT.Double(0.0); nEventsErr_B = ROOT.Double(0.0); nEventsErr_C = ROOT.Double(0.0); nEventsErr_D = ROOT.Double(0.0)
 
                     # last      | 
@@ -188,15 +196,27 @@ class All_Regions:
                     #           |
                     #    
                     # first   xBin   last
-                    nEvents_A = math.ceil(h1.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nEventsErr_A))
-                    nEvents_B = math.ceil(h1.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nEventsErr_B))
-                    nEvents_C = math.ceil(h1.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nEventsErr_C))
-                    nEvents_D = math.ceil(h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D))
+                    if startOfScan:
+                        nEvents_A = h1.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nEventsErr_A)
+                        nEvents_B = h1.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nEventsErr_B)
+                        nEvents_C = h1.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nEventsErr_C)
+                        nEvents_D = h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D)
 
-                    self.add("nEventsA", xBinKey, yBinKey, (nEvents_A, nEvents_A**0.5), key)
-                    self.add("nEventsB", xBinKey, yBinKey, (nEvents_B, nEvents_B**0.5), key)
-                    self.add("nEventsC", xBinKey, yBinKey, (nEvents_C, nEvents_C**0.5), key)
-                    self.add("nEventsD", xBinKey, yBinKey, (nEvents_D, nEvents_D**0.5), key)
+                        startOfScan = False
+
+                    else:
+                        incrementBD = h1.IntegralAndError(firstXBin, xBin-1,   yBin-1, yBin-1, nEventsErr_A)
+                        incrementAC = h1.IntegralAndError(xBin,      lastXBin, yBin-1, yBin-1, nEventsErr_B)
+                   
+                        nEvents_A -= incrementAC
+                        nEvents_B -= incrementBD
+                        nEvents_C += incrementAC
+                        nEvents_D += incrementBD
+
+                    self.add("nEventsA", xBinKey, yBinKey, (math.ceil(round(nEvents_A, 10)), math.ceil(round(nEvents_A, 10))**0.5), key)
+                    self.add("nEventsB", xBinKey, yBinKey, (math.ceil(round(nEvents_B, 10)), math.ceil(round(nEvents_B, 10))**0.5), key)
+                    self.add("nEventsC", xBinKey, yBinKey, (math.ceil(round(nEvents_C, 10)), math.ceil(round(nEvents_C, 10))**0.5), key)
+                    self.add("nEventsD", xBinKey, yBinKey, (math.ceil(round(nEvents_D, 10)), math.ceil(round(nEvents_D, 10))**0.5), key)
 
     # -------------------------------------------------------------------------------
     # Region by region calculation of signal fraction, closure Err, significance, etc
