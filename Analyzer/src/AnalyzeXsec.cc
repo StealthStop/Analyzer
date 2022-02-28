@@ -29,8 +29,7 @@ void AnalyzeXsec::Loop(NTupleReader& tr, double, int maxevents, bool)
         if (tr.getEvtNum() % 1000 == 0)
             printf("  Event %i\n", tr.getEvtNum() );
 
-
-        if (tr.getEvtNum() == maxevents-1)
-            std::cout << filetag << ", " << TreeMakerWeight << ", " << SampleSetWeight << std::endl;
+        std::cout << "XSEC INFO: " << filetag << ", TM:" << TreeMakerWeight << ", SS:" << SampleSetWeight << std::endl;
+        break;
     }
 }
