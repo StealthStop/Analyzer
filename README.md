@@ -162,10 +162,10 @@ These additional pieces of information are not technically necessary, but mainta
 
 ### Checking Positive and Negative Events
 
-With a new `sampleSet.cfg` symlink in `Analyzer/test` pointing to `sampleSet_UL_v1.cfg` in `Framework`, the number of events in each sample can be measured.
+With a new `sampleSets.cfg` symlink in `Analyzer/test` pointing to `sampleSets_UL_v1.cfg` in `Framework`, the number of events in each sample can be measured.
 This is useful for verifying that all reported MINIAOD files in a sample were run on successfully by `TreeMaker` and hence that the event weight reflects the correct number of events.
 
-`nEvt.py` jobs can be submitted with `nEvtsCondorSubmit.py`, which will read in `sampleSet.cfg` and spawn a job for each sample and loop through all its files.
+`nEvt.py` jobs can be submitted with `nEvtsCondorSubmit.py`, which will read in `sampleSets.cfg` and spawn a job for each sample and loop through all its files.
 An output text file is generated in the end and returned to the user which reads total positive and negative events counts for the sample.
 
 ```
@@ -178,9 +178,10 @@ Options:
   -s SAMPLESETSFILE  Sample sets config file
 ```
 
-A helper script `checkNevents.py` is available to compare the numbers reported in the `nEvt.py` job output and the original `sampleSet.cfg`, 
+A helper script `checkNevents.py` is available to compare the numbers reported in the `nEvt.py` job output and the original `sampleSets.cfg`, 
 whose numbers were sourced directly from the `TreeMaker` repository.
 Discrepancies are printed to screen for investigation.
+Additionally, a new `sampleSets_new.cfg` is written with the numbers measured by `nEvt.py` inserted into the original `sampleSets.cfg`.
 
 ```
 usage: checkNevents.py [-h] [--sampleSet SAMPLESET] [--nEvtDir NEVTDIR]

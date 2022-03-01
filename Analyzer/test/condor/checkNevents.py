@@ -42,7 +42,7 @@ if __name__ == '__main__':
     tmp.close()
 
     # Also, prepare a new sampleSet file with any corrections needed
-    newSampleSet = open(args.sampleSet + ".new", "w")
+    newSampleSet = open(args.sampleSet.replace(".cfg", "_new.cfg"), "w")
 
     # From the original sampleSet file, get the expected
     # number of positive and negative event counts for each sample
