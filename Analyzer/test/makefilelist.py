@@ -81,6 +81,9 @@ class FileLister:
             if name in sample:
                 if ("_HT" in sample or "_Pt" in sample) and name != sample:
                     continue 
+
+                if ("_4F" in sample or "_4f" in sample) and name != sample:
+                    continue
     
                 self.auxInfo[sample].update(payload) 
     
@@ -269,10 +272,6 @@ class FileLister:
                 name = name.replace("SingleMuon", "Data_SingleMuon").replace("SingleElectron", "Data_SingleElectron") \
                            .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
         
-                # Special case to get "erdON" into name
-                #if "erdON" in sample:
-                #    name += "_erdON"
-
                 # Restrict to madgraph DY sample
                 if "DYJetsToLL" in name and "NLO" in name:
                     continue
@@ -301,7 +300,6 @@ class FileLister:
 
                 name   += ","
                 sample += ".txt,"
-        
 
                 finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
