@@ -15,7 +15,7 @@ if __name__ == '__main__':
     for sampleFile in sampleOutputs:
 
         # Text filenames in form: "MyAnalysis_2018_TTToHadronic.stdout"
-        sampleName = sampleFile.split("/")[-1].split(".stdout")[0].split("MyAnalysis_")[-1]
+        sampleName = sampleFile.split("/")[-1].split(".stdout")[0].split("MyAnalysis_")[-1].rpartition("_")[0]
 
         tmp = open(sampleFile, "r")
         lines = tmp.readlines()
