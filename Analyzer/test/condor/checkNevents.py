@@ -31,10 +31,10 @@ if __name__ == '__main__':
         for line in lines:
             chunks = line.split(",") 
    
-            npos = chunks[-2].split(": ")[-1]
-            nneg = chunks[-1].split(": ")[-1]
+            npos = chunks[-2].split(": ")[-1].rstrip()
+            nneg = chunks[-1].split(": ")[-1].rstrip()
     
-            obsCounts[sampleName] = {"npos" : int(npos), "nneg" : int(nneg)}
+            obsCounts[sampleName] = {"npos" : npos, "nneg" : nneg}
          
     # Read in the sampleSets.cfg file
     tmp = open(args.sampleSet, "r")
@@ -55,8 +55,8 @@ if __name__ == '__main__':
     
         chunks = (line.replace(" ", "")).split(",")
         sampleName = chunks[0]
-        predPos    = chunks[-3]
-        predNeg    = chunks[-2]
+        predPos    = chunks[-3].rstrip()
+        predNeg    = chunks[-2].rstrip()
 
         # If sample was not run over with nEvts.py
         # just put back the line in the new sampleSet file
@@ -67,25 +67,25 @@ if __name__ == '__main__':
         obsPos = obsCounts[sampleName]["npos"]
         obsNeg = obsCounts[sampleName]["nneg"]
 
-        posDiffLen = len(predPos) - len(str(obsPos))
-        negDiffLen = len(predNeg) - len(str(obsNeg))
+        posDiffLen = len(predPos) - len(obsPos)
+        negDiffLen = len(predNeg) - len(obsNeg)
 
         # Make corrections to the line if the nEvts do not match up
         # Do some fancy string stuff to preserve the nice formatting in sampleSet.cfg
         newLine = line
-        if obsPos != int(predPos):
-            print("%s: Expected %s positive weight events but measured %d"%(sampleName.ljust(40), npos, obsCounts[sampleName]["npos"]))
+        if int(obsPos) != int(predPos):
+            print("%s: Expected %s positive weight events but measured %s"%(sampleName.ljust(40), predPos, obsPos))
             if posDiffLen >= 0:
-                newLine = newLine.replace(" "+str(predPos)+",", " "*(posDiffLen+1)+str(obsPos)+",")
+                newLine = newLine.replace(" "+predPos+",", " "*(posDiffLen+1)+obsPos+",")
             else:
-                newLine = newLine.replace(" "*abs(posDiffLen)+str(predPos)+",", str(obsPos)+",")
+                newLine = newLine.replace(" "*abs(posDiffLen)+predPos+",", obsPos+",")
 
-        if obsNeg != int(nneg):
-            print("%s: Expected %s negative weight events but measured %d"%(sampleName.ljust(40), nneg, obsCounts[sampleName]["nneg"]))
+        if int(obsNeg) != int(predNeg):
+            print("%s: Expected %s negative weight events but measured %s"%(sampleName.ljust(40), predNeg, obsNeg))
             if negDiffLen >= 0:
-                newLine = newLine.replace(" "+str(predNeg)+",", " "*(negDiffLen+1)+str(obsNeg)+",")
+                newLine = newLine.replace(" "+predNeg+",", " "*(negDiffLen+1)+obsNeg+",")
             else:
-                newLine = newLine.replace(" "*abs(negDiffLen)+str(predNeg)+",", str(obsNeg)+",")
+                newLine = newLine.replace(" "*abs(negDiffLen)+predNeg+",", obsNeg+",")
        
         newSampleSet.write(newLine)
     newSampleSet.close()
