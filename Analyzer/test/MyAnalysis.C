@@ -84,7 +84,7 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
         c.setUp(tr);
 
         // Registerd event weight computed by FileSummary class, no sign information
-        tr.registerDerivedVar("weightVal", file.getWeight());
+        tr.registerDerivedVar("weightAbsVal", file.getWeight());
 
         // Loop over all of the events and fill histos
         std::cout << "Starting event loop (in run)" << std::endl;
