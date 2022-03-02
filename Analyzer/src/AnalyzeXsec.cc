@@ -23,8 +23,8 @@ void AnalyzeXsec::Loop(NTupleReader& tr, double, int maxevents, bool)
             break;        
 
         const auto& filetag         = tr.getVar<std::string>("filetag");     
-        const auto& TreeMakerWeight = tr.getVar<float>("Weight");
-        const auto& SampleSetWeight = tr.getVar<double>("weight");
+        const auto& TreeMakerWeight = tr.getVar<float>("WeightTM");
+        const auto& SampleSetWeight = tr.getVar<float>("Weight");
 
         if (tr.getEvtNum() % 1000 == 0)
             printf("  Event %i\n", tr.getEvtNum() );
