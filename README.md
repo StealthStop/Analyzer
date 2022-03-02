@@ -129,10 +129,10 @@ python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --ou
 
 ### Produce the Filelist and sampleSet.cfg
 
-The main script for generating file lists and the corresponding sample set is `makefilelist.py`.
+The main script for generating file lists and the corresponding sample set is `makeFilelist.py`.
 
 ```
-usage: makefilelist.py [-h] [--prod PROD] [--tag TAG]
+usage: makeFilelist.py [-h] [--prod PROD] [--tag TAG]
 
 optional arguments:
   -h, --help   show this help message and exit
@@ -156,7 +156,7 @@ In order to pick up this new `cfg` in the `Analyzer` area automatically, the app
 
 Additionally, a new `sampleCollection_UL_v1.cfg` needs to be constructed (easiest by hand), which creates groups of samples that are to be referenced when running analyzers.
 
-Note, when running `makefilelist.py` it is most effective to have an up-to-date `TreeMaker` to reference in the script.
+Note, when running `makeFilelist.py` it is most effective to have an up-to-date `TreeMaker` to reference in the script.
 This allows population of each sample line with total event numbers, cross sections, k factors.
 These additional pieces of information are not technically necessary, but maintained in case of needing to use them.
 
