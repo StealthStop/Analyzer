@@ -74,7 +74,7 @@ class Common_Calculations_Plotters:
     
             if bkgObs[i][1] != 0.0:
     
-                x.append(float(Njets[i]))  
+                x.append(float((Njets[i]).replace("incl", "")))  
                 xUnc.append(0.5)
 
                 pull            = (bkgPred[i][0] - bkgObs[i][0]) / ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5
@@ -85,7 +85,7 @@ class Common_Calculations_Plotters:
                 zero            = 0.0
 
                 # for the data closure / blind the 9-10-11 njet bins
-                if isBlind and i >= 2:
+                if isBlind and i >= 1:
                     pred.append(0.0)
                     predUnc.append(0.0)
                     obs.append(0.0)
@@ -119,7 +119,7 @@ class Common_Calculations_Plotters:
         fig.subplots_adjust(hspace=0, left=0.15, right=0.85, top=0.94)
     
         lowerNjets  = float(Njets[0])
-        higherNjets = float(Njets[(-1)])
+        higherNjets = float( (Njets[(-1)]).replace("incl","") )
     
         ax.spines['top'].set_color('none')
         ax.spines['bottom'].set_color('none')
@@ -175,11 +175,11 @@ class Common_Calculations_Plotters:
         #ax4.set_yscale('log')
         plt.show()
 
-        plt.xticks([int(Njet) for Njet in Njets])
+        plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
-        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag, bkgTag))
+        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
    
         plt.close(fig)
 
@@ -220,7 +220,7 @@ class Common_Calculations_Plotters:
 
             if bkgObs[i][1] != 0.0:
 
-                x.append(float(Njets[i]))
+                x.append(float((Njets[i]).replace("incl","")))
                 xUnc.append(0.5)
 
                 # bkg
@@ -266,7 +266,8 @@ class Common_Calculations_Plotters:
                 # -------------------------------------------- 
                 # append the information of 7th, 8th Njet bins
                 # -------------------------------------------- 
-                if i <= 1:
+                #if i <= 1: # for 7th, 8th Njet bins
+                if i < 1:   # for 7th Njet bin to get NonTT subtracted TT in data
                     # data
                     data_pred.append(dataPred[i][0])
                     data_predUnc.append(dataPred[i][1])
@@ -335,7 +336,7 @@ class Common_Calculations_Plotters:
             fig.subplots_adjust(hspace=0.4, left=0.15, right=0.95, top=0.94)
     
             lowerNjets  = float(Njets[0])
-            higherNjets = float(Njets[(-1)])
+            higherNjets = float( (Njets[(-1)]).replace("incl","") )
     
             ax.spines['top'].set_color('none')
             ax.spines['bottom'].set_color('none')
@@ -384,17 +385,17 @@ class Common_Calculations_Plotters:
             ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
             ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
             #ax3.set_xlabel('Number of jets', fontsize=28)
-            ax3.set_ylabel('MC Correction', fontsize=20)
+            ax3.set_ylabel('Closure Correction [MC]', fontsize=20)
             ax3.set_ylim([0.7, 1.3])
 
-            plt.xticks([int(Njet) for Njet in Njets], fontsize=26)
+            plt.xticks([int(Njet.replace("incl","")) for Njet in Njets], fontsize=26)
             plt.xlabel('Number of jets', fontsize=28)    
 
             ax1.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
             ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
             ax3.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
     
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, self.channel, self.metric, closureTag, bkgTag))
+            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
    
             plt.close(fig)
 
@@ -541,10 +542,10 @@ class Common_Calculations_Plotters:
 
         plt.close(fig)
 
-    # --------------------------------------
-    # plot inverseSignificance vs ClosureErr
-    # -------------------------------------- 
-    def plot_inverseSignificance_vsClosureErr(self, finalSignificance, finalClosureErr, significances, closureErrs, edges, finalDiscEdges, Njets = -1, name=""):
+    # ---------------------------------------
+    # plot inverseSignificance vs Non-Closure
+    # --------------------------------------- 
+    def plot_inverseSignificance_vsNonClosure(self, finalSignificance, finalNonClosure, significances, closureErrs, edges, finalDiscEdges, Njets = -1, name=""):
 
         fig = plt.figure(figsize=(5, 5))
         ax = plt.gca()
@@ -556,7 +557,7 @@ class Common_Calculations_Plotters:
         plt.scatter(np.reciprocal(significances), closureErrs, color='grey', marker='o', label='1 - Pred./Obs. vs 1 / Significance')
 
         if finalSignificance != 0.0:
-            plt.scatter([1.0 / finalSignificance[0]], [finalClosureErr[0]], color='red', marker='o', label='Chosen Solution')
+            plt.scatter([1.0 / finalSignificance[0]], [finalNonClosure[0]], color='red', marker='o', label='Chosen Solution')
         plt.xlabel('1 / Significance', fontsize=14)
         plt.xlim(left=0)
         plt.ylabel('|1 - Pred./Obs.|', fontsize=14)
@@ -566,7 +567,7 @@ class Common_Calculations_Plotters:
         plt.text(0.4, 0.85, '$%.2f < \\bf{Disc.\\;1\\;Edge}$ = %s < %.2f' % (edges[0][0], finalDiscEdges[0], edges[-1][0]), transform=ax.transAxes, fontsize=8)
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0][1],  finalDiscEdges[1], edges[-1][1]), transform=ax.transAxes, fontsize=8)
 
-        fig.savefig('%s/%s_InvSign_vs_ClosureErr_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_InvSign_vs_NonClosure_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -675,5 +676,50 @@ class Common_Calculations_Plotters:
 
         fig.tight_layout()
         fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+
+        plt.close(fig)
+
+    # ----------------------------------------------------------------------
+    # plot variable vs disc as 1D
+    #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
+    # ----------------------------------------------------------------------
+    def plot_VarVsBoundary(self, var, xWidth, yMin = None, yMax = None, lineY = None, ylabel = "", tag = "", Njets = -1, color=None):
+
+        regions = var.keys()
+
+        x    = {region : [] for region in regions}
+        y    = {region : [] for region in regions}
+        yUnc = {region : [] for region in regions} 
+        xUnc = {region : [] for region in regions}
+
+        fig = plt.figure(figsize=(5, 5))
+        ax = plt.gca()
+
+        for region in regions:
+            for boundary, value in var[region].items():
+                x[region].append(boundary)
+                y[region].append(value[0])
+                yUnc[region].append(value[1])
+                xUnc[region].append(xWidth)
+
+            ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
+
+            if yMin != None and yMax != None:
+                ax.set_ylim((yMin, yMax))
+
+        ax.set_xlabel("Boundary Value", fontsize=14)
+        ax.set_ylabel(ylabel, fontsize=14)
+        plt.legend(loc='best', numpoints=1)
+
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+
+        if lineY != None:
+            l1 = ml.Line2D([0.0, 1.05], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
+            ax.add_line(l1); 
+
+        fig.tight_layout()
+        fig.savefig('%s/%s_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)

@@ -7,8 +7,6 @@
 #include "TopTagger/CfgParser/interface/TTException.h"
 
 #include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
-#include "Analyzer/Analyzer/include/Analyze0Lep.h"
-#include "Analyzer/Analyzer/include/Analyze1Lep.h"
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
 #include "Analyzer/Analyzer/include/AnalyzeHEM.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
@@ -30,6 +28,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
+#include "Analyzer/Analyzer/include/AnalyzeXsec.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -81,6 +80,9 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
         // Define classes/functions that add variables on the fly        
         Config c;
         c.setUp(tr);
+
+        // Registerd event weight computed by FileSummary class, no sign information
+        tr.registerDerivedVar("weightAbsVal", file.getWeight());
 
         // Loop over all of the events and fill histos
         std::cout << "Starting event loop (in run)" << std::endl;
@@ -169,8 +171,6 @@ int main(int argc, char *argv[])
 
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&,const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
         {"AnalyzeTopTagger",        run<AnalyzeTopTagger>},
-        {"Analyze0Lep",             run<Analyze0Lep>},
-        {"Analyze1Lep",             run<Analyze1Lep>},
         {"AnalyzeDoubleDisCo",      run<AnalyzeDoubleDisCo>},
         {"AnalyzeLepTrigger",       run<AnalyzeLepTrigger>},
         {"AnalyzeBTagSF",           run<AnalyzeBTagSF>},
@@ -191,6 +191,8 @@ int main(int argc, char *argv[])
         {"AnalyzeTemplate",         run<AnalyzeTemplate>},
         {"MakeNNVariables",         run<MakeNNVariables>},
         {"AnalyzeGenStop",          run<AnalyzeGenStop>},
+        {"AnalyzeXsec",             run<AnalyzeXsec>}
+
     }; 
 
     try

@@ -25,7 +25,7 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    my_labels     = {"_0l", "_1l"};//, "_2l"};
+    my_labels     = {"_0l", "_1l"};
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
 }
@@ -40,6 +40,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
     const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
     const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
     const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
+    
 
     for(const auto& myVarSuffix : my_var_suffix)
     {
@@ -59,7 +60,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         CommonVariables     commonVariables(myVarSuffix);
         MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
-        //MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30_GoodLeptons_pt20", false, true, 12, 2, "_2l");
         MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
 
@@ -78,7 +78,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(fatJetCombine);
         tr.registerFunction(makeMVAVariables0L);
         tr.registerFunction(makeMVAVariables1L);
-        //tr.registerFunction(makeMVAVariables2L);
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
@@ -101,7 +100,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::map<std::string, bool> baselines;
             baselines["_0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
             baselines["_1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
-            //baselines["_2l"] = tr.getVar<bool>("passBaseline2l_pt20"+myVarSuffix);
 
             // Add a branch containing the mass for the stop
             // In the case of signal, use the top mass

@@ -10,6 +10,7 @@
 #include <string>
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <getopt.h>
 
@@ -93,7 +94,7 @@ public:
 
             //Get number of events and save it as a member variable
             nEvents  = h->Integral();
-            //legEntry = legName + " ("+std::to_string(nEvents)+") ";     
+            //legEntry = legName + " ("+std::to_string(nEvents)+") ";  // sort and put nEvents 
             legEntry = legName; // sort but, not put the nEvents 
 
             // rebin the histogram if desired
@@ -201,6 +202,7 @@ public:
         leg->SetLineWidth(1);
         leg->SetNColumns(1);
         leg->SetTextFont(42); 
+        leg->SetTextSize(0.022);
 
         // get maximum from histos and fill TLegend
         double min  = 0.0;
@@ -366,10 +368,10 @@ public:
         mark.SetTextAlign(31);
         mark.DrawLatex(1 - gPad->GetRightMargin(), 1 - (gPad->GetTopMargin() - 0.017), (year + " (13 TeV)").c_str());//lumistamp);
 
-        //mark.SetTextAlign(11);
-        //mark.SetTextFont(42);
-        //mark.SetTextSize(0.030);
-        //mark.DrawLatex(0.51, 0.89, cutlabel.c_str()); 
+        mark.SetTextAlign(11);
+        mark.SetTextFont(42);
+        mark.SetTextSize(0.030);
+        mark.DrawLatex(0.51, 0.89, cutlabel.c_str()); 
 
         // calculate significance bin by bin
         double sig = 0.0;
@@ -387,7 +389,7 @@ public:
         significance.SetNDC(true);
         significance.SetTextAlign(11);
         significance.SetTextFont(52);
-        significance.SetTextSize(0.025);
+        significance.SetTextSize(0.03); // 0.025
         significance.DrawLatex(0.15, 0.89, ("Significance = "+std::to_string(sig)).c_str());
 
         // -----------------
@@ -429,42 +431,48 @@ int main(int argc, char *argv[])
     }
 
     std::string path;
-    if      (year == "2016" && wp == "0.92")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.92.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.95")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.95.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.96")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.96.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.97")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.97.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.98")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.98.28.01.2021/" ;
-    else if (year == "2016" && wp == "0.99")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.99.28.01.2021/" ;
+   
+    // for new baseline
+    if      (year == "2016" && wp == "0.92")    path = "condor/6_2016_Baseline0L_qcdCRs_WPs_29.10.2021/hadd_2016_Baseline0L_WP_0.92_StackPlots.12.10.2021" ;
+    else if (year == "2016" && wp == "0.95")    path = "condor/6_2016_Baseline0L_qcdCRs_WPs_29.10.2021/hadd_2016_Baseline0L_WP_0.95_StackPlots.12.10.2021" ;
 
-    else if (year == "2017" && wp == "0.92")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.92.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.95")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.95.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.96")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.96.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.97")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.97.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.98")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.98.28.01.2021/" ;
-    else if (year == "2017" && wp == "0.99")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.99.28.01.2021/" ;
+    // for old baseline 
+    //if      (year == "2016" && wp == "0.92")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    //else if (year == "2016" && wp == "0.95")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    //else if (year == "2016" && wp == "0.96")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    //else if (year == "2016" && wp == "0.97")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    //else if (year == "2016" && wp == "0.98")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    //else if (year == "2016" && wp == "0.99")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2016_AN_StackPlots_WP_0.99.28.01.2021/" ;
 
-    else if (year == "2018pre" && wp == "0.92") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.92.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.95") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.95.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.96") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.96.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.97") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.97.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.98") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.98.28.01.2021/" ;
-    else if (year == "2018pre" && wp == "0.99") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.99.28.01.2021/" ;
+    //else if (year == "2017" && wp == "0.92")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    //else if (year == "2017" && wp == "0.95")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    //else if (year == "2017" && wp == "0.96")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    //else if (year == "2017" && wp == "0.97")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    //else if (year == "2017" && wp == "0.98")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    //else if (year == "2017" && wp == "0.99")    path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2017_AN_StackPlots_WP_0.99.28.01.2021/" ;
+
+    //else if (year == "2018pre" && wp == "0.92") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.92.28.01.2021/" ;
+    //else if (year == "2018pre" && wp == "0.95") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.95.28.01.2021/" ;
+    //else if (year == "2018pre" && wp == "0.96") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.96.28.01.2021/" ;
+    //else if (year == "2018pre" && wp == "0.97") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.97.28.01.2021/" ;
+    //else if (year == "2018pre" && wp == "0.98") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.98.28.01.2021/" ;
+    //else if (year == "2018pre" && wp == "0.99") path = "condor/2_AN_0L_2021_AN_StackPlots_WPs/hadd_2018pre_AN_StackPlots_WP_0.99.28.01.2021/" ;
 
 
     // --------------
     // entry for data
     // --------------
     // 'leg entry'  'root file'     'draw options'  'draw color'
-    histInfo data = {"Data", path + "/" + year +"_Other.root", "PEX0", kBlack, false};
+    histInfo data = {"Data", path + "/" + year +"_BG_OTHER.root", "PEX0", kBlack, false};
 
     // ----------------------------------------
     // vector summarizing background histograms 
     // ----------------------------------------
     std::vector<histInfo> bgEntries = {
-        {"t#bar{t}",     path + "/" + year +"_TT.root",    "hist", 40 },
-        {"t#bar{t} + X", path + "/" + year +"_TTX.root",   "hist", 38 },
-        {"QCD multijet", path + "/" + year +"_QCD.root",   "hist", 30 },
-        {"Other",        path + "/" + year +"_Other.root", "hist", 41 },
+        {"t#bar{t}",     path + "/" + year +"_TT.root",       "hist", 40 },
+        {"t#bar{t} + X", path + "/" + year +"_TTX.root",      "hist", 38 },
+        {"QCD",          path + "/" + year +"_QCD.root",      "hist", 30 },
+        {"Other",        path + "/" + year +"_BG_OTHER.root", "hist", 41 },
     };
     
     // ------------------------------------
@@ -473,17 +481,21 @@ int main(int argc, char *argv[])
     std::vector<histInfo> sigEntries = { 
         {"RPV m_{ #tilde{t}} = 350 GeV",         path + "/" + year +"_RPV_2t6j_mStop-350.root",        "hist", 2 }, 
         {"RPV m_{ #tilde{t}} = 550 GeV",         path + "/" + year +"_RPV_2t6j_mStop-550.root",        "hist", 7 }, 
-        {"RPV m_{ #tilde{t}} = 850 GeV",         path + "/" + year +"_RPV_2t6j_mStop-850.root",        "hist", 4 }, 
+        {"RPV m_{ #tilde{t}} = 850 GeV",         path + "/" + year +"_RPV_2t6j_mStop-850.root",        "hist", 4 },
+        //{"RPV m_{ #tilde{t}} = 1050 GeV",        path + "/" + year +"_RPV_2t6j_mStop-1150.root",       "hist", 6 }, 
         {"Stealth SYY m_{ #tilde{t}} = 900 GeV", path + "/" + year +"_StealthSYY_2t6j_mStop-900.root", "hist", 6 }, 
     };
 
     // -------------------
     // make plotter object
     // ------------------- 
-    Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries), "AN_0L_2021/StackPlots_WPs_" + year + "_" + wp + "_");
+    //Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries), "AN_0L_2021/StackPlots_WPs_" + year + "_" + wp + "_");
+    Plotter plt(std::move(data), std::move(bgEntries), std::move(sigEntries), "plots_Baseline_0L_WP95_Talk/ResolvedTagger/StackPlots_WPs_" + year + "_" + wp + "_");
 
     std::vector<std::string> cut {
-        "0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets", 
+
+        //"0l_HT500_ge2b_ge6j_ge2t_ge1dRbjets",
+        "0l_0NonIsoMuon_HT500_ge7j_ge2t_ge1dRbjets", 
     };
 
     for (const auto& cutlabel : cut) 
@@ -494,12 +506,18 @@ int main(int argc, char *argv[])
 
         if (year == "2018pre")
         {
-            plt.plot( "h_njets_"+cutlabel,         "N_{jets}",                "Events", true, "", 999.9, -999.9, -1, "2018" );
+            plt.plot( "h_njets_"+cutlabel,    "N_{jets}",        "Events", true, "", 5.0, 20.0, -1, "2018" );
+            plt.plot( "h_ntops_"+cutlabel,    "N_{tops}",        "Events", true, "", 5.0, 20.0, -1, "2018" );
+            plt.plot( "h_topsMass_"+cutlabel, "Top mass [GeV]",  "Events", true, "", 5.0, 20.0, -1, "2018" );
+            plt.plot( "h_topsPt_"+cutlabel,   "Top p_{T} [GeV]", "Events", true, "", 5.0, 20.0, -1, "2018" );
         }
 
         else
         {
-            plt.plot( "h_njets_"+cutlabel,         "N_{jets}",                "Events", true, "", 999.9, -999.9, -1, year );
+            plt.plot( "h_njets_"+cutlabel,    "N_{jets}",        "Events", true, "", 5.0, 20.0, -1, year );
+            plt.plot( "h_ntops_"+cutlabel,    "N_{tops}",        "Events", true, "", 5.0, 20.0, -1, year );
+            plt.plot( "h_topsMass_"+cutlabel, "Top mass [GeV]",  "Events", true, "", 5.0, 20.0, -1, year );
+            plt.plot( "h_topsPt_"+cutlabel,   "Top p_{T} [GeV]", "Events", true, "", 5.0, 20.0, -1, year );
         }
             
         //plt.plot( "h_ntops_"+cutlabel,         "N_{T}",                "Events", true, cutlabel );
