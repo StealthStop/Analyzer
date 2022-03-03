@@ -225,3 +225,6 @@ PlottersSUS19004
 **plots**
 **condor_submit.txt
 **.bak
+obj/
+filelists_*
+**.pcm

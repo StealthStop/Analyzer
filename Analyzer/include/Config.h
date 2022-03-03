@@ -495,6 +495,14 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="AnalyzeXsec")
+        {   
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+
         else
         {
             const std::vector<std::string> modulesList = {

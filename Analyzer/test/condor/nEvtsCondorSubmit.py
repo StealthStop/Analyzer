@@ -13,9 +13,9 @@ def makeExeAndFriendsTarrball(filestoTransfer, path):
     system("rm -r exestuff")
 
 parser = optparse.OptionParser("usage: %prog [options]\n")
-parser.add_option ('-c',       dest='noSubmit',       action='store_true', default = False,            help="Do not submit jobs. Only create condor_submit.txt.")
-parser.add_option ('--output', dest='outPath',        type='string',       default = '.',              help="Name of directory where output of each condor job goes")
-parser.add_option ('-s',       dest='sampleSetsFile', type='string',       default = "sampleSets.cfg", help="Sample sets config file")
+parser.add_option ('-c',       dest='noSubmit',       action='store_true', default = False,         help="Do not submit jobs. Only create condor_submit.txt")
+parser.add_option ('--output', dest='outPath',        type='string',       default = 'nEvtsOutput', help="Name of directory where output of each condor job goes")
+parser.add_option ('-s',       dest='sampleSetsFile', type='string',       default = "sampleSets",  help="Sample sets config file")
 
 options, args = parser.parse_args()
 sampleSetsFile = options.sampleSetsFile
