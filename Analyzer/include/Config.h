@@ -133,10 +133,43 @@ public:
         double Lumi=0.0, deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
 
-        if(filetag.find("2016") != std::string::npos)
+        if(filetag.find("2016preVFP") != std::string::npos)
         {
-            runYear                           = "2016";
-            Lumi                              = 36330.0;
+            runYear                           = "2016preVFP";
+            Lumi                              = 19520.0;
+            deepCSV_WP_loose                  = 0.2027;
+            deepCSV_WP_medium                 = 0.6001;
+            deepCSV_WP_tight                  = 0.8819;            
+            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            // Use RPV config for now --- switch to SYY with dedicated training
+            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
+            leptonFileName        = "allInOne_leptonSF_2016.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
+        }
+
+        else if(filetag.find("2016postVFP") != std::string::npos)
+        {
+            runYear                           = "2016postVFP";
+            Lumi                              = 16810.0;
             deepCSV_WP_loose                  = 0.1918;
             deepCSV_WP_medium                 = 0.5847;
             deepCSV_WP_tight                  = 0.8767;            
