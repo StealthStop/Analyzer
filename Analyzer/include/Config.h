@@ -140,9 +140,6 @@ public:
             deepCSV_WP_loose                  = 0.2027;
             deepCSV_WP_medium                 = 0.6001;
             deepCSV_WP_tight                  = 0.8819;            
-            DeepESMCfg                        = "DeepEventShape_2016.cfg";
-            DeepESMModel                      = "keras_frozen_2016.pb";
-            DeepESMCfg_NonIsoMuon             = "DeepEventShape_NonIsoMuon_2016.cfg";
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
