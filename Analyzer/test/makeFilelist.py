@@ -271,6 +271,8 @@ class FileLister:
                 # For any data set, insert "Data" string into name
                 name = name.replace("SingleMuon", "Data_SingleMuon").replace("SingleElectron", "Data_SingleElectron") \
                            .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
+
+                name = name.replace("2016_", "2016postVFP_").replace("2016APV_", "2016preVFP_")
         
                 # Restrict to madgraph DY sample
                 if "DYJetsToLL" in name and "NLO" in name:
