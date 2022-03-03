@@ -1,9 +1,6 @@
 #!/bin/bash
 cmsenv
 
-filelists=root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/filelists/
-filelists_Kevin=root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/filelists_Kevin/
-
 SCRIPTSDIR=${CMSSW_BASE}/src/Framework/Framework/scripts
 if [[ $PATH != *"${SCRIPTSDIR}"* ]]
 then

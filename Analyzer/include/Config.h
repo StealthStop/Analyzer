@@ -32,9 +32,6 @@ private:
     {
         const auto& runtype                           = tr.getVar<std::string>("runtype"                          );
         const auto& runYear                           = tr.getVar<std::string>("runYear"                          );
-        const auto& DeepESMCfg                        = tr.getVar<std::string>("DeepESMCfg"                       );
-        const auto& DeepESMModel                      = tr.getVar<std::string>("DeepESMModel"                     );
-        const auto& DeepESMCfg_NonIsoMuon             = tr.getVar<std::string>("DeepESMCfg_NonIsoMuon"            );
         const auto& DoubleDisCo_Cfg_0l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_RPV"           );
         const auto& DoubleDisCo_Model_0l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_0l_RPV"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_0l_RPV");
@@ -90,8 +87,6 @@ private:
             else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR",  "", Hemisphere::TopSeed);
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
             else if(module=="ISRJets")                               tr.emplaceModule<ISRJets>();
-            else if(module=="DeepEventShape")                        tr.emplaceModule<DeepEventShape>(DeepESMCfg, DeepESMModel);
-            else if(module=="DeepEventShape_NonIsoMuon")             tr.emplaceModule<DeepEventShape>(DeepESMCfg_NonIsoMuon, DeepESMModel);
             else if(module=="DoubleDisCo_0l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV);
             else if(module=="DoubleDisCo_NonIsoMuon_0l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV);
             else if(module=="DoubleDisCo_1l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV); 
@@ -127,7 +122,7 @@ public:
         const auto& analyzer = tr.getVar<std::string>("analyzer");
         const bool isSignal  = (filetag.find("_stop") != std::string::npos || filetag.find("_mStop") != std::string::npos || filetag.find("VLQ_2t4b") != std::string::npos) ? true : false;
 
-        std::string runYear, DeepESMCfg_NonIsoMuon, DeepESMCfg, DeepESMModel;
+        std::string runYear;
         std::string DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, DoubleDisCo_Cfg_NonIsoMuon_0l_RPV; 
         std::string DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, DoubleDisCo_Cfg_NonIsoMuon_1l_RPV; 
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
@@ -145,9 +140,6 @@ public:
             deepCSV_WP_loose                  = 0.1918;
             deepCSV_WP_medium                 = 0.5847;
             deepCSV_WP_tight                  = 0.8767;            
-            DeepESMCfg                        = "DeepEventShape_2016.cfg";
-            DeepESMModel                      = "keras_frozen_2016.pb";
-            DeepESMCfg_NonIsoMuon             = "DeepEventShape_NonIsoMuon_2016.cfg";
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
@@ -180,61 +172,8 @@ public:
             deepCSV_WP_loose      = 0.1355;
             deepCSV_WP_medium     = 0.4506;       
             deepCSV_WP_tight      = 0.7738;
-            DeepESMCfg            = "DeepEventShape_2017.cfg";
-            DeepESMModel          = "keras_frozen_2017.pb";
-            DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2017.cfg";
-            //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2017.cfg";    
-            //DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2017.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2017.cfg";
-            //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2017.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2017.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2017.cfg";
-            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2017.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2017.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2017.cfg";
-            leptonFileName        = "allInOne_leptonSF_2017.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_94XSF_WP_V4_B_F.csv";
-            meanFileName          = "allInOne_SFMean.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2017.cfg";
-        }
-        else if(filetag.find("2018pre") != std::string::npos) 
-        {
-            runYear               = "2018pre";
-            Lumi                  = 21071.0;
-            deepCSV_WP_loose      = 0.1208;
-            deepCSV_WP_medium     = 0.4168;       
-            deepCSV_WP_tight      = 0.7665;
-            DeepESMCfg            = "DeepEventShape_2018pre.cfg";
-            DeepESMModel          = "keras_frozen_2018pre.pb";
-            DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018pre.cfg";
-            //DoubleDisCo_Cfg_0l    = "Keras_Tensorflow_DoubleDisCo_Reg_0l_2018pre.cfg";    
-            //DoubleDisCo_Model_0l  = "keras_frozen_DoubleDisCo_Reg_0l_2018pre.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_0l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_2018pre.cfg";
-            //DoubleDisCo_Cfg_1l    = "Keras_Tensorflow_DoubleDisCo_Reg_1l_2018pre.cfg";
-            //DoubleDisCo_Model_1l  = "keras_frozen_DoubleDisCo_Reg_1l_2018pre.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_1l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_2018pre.cfg";
-            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2018pre.cfg";
-            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2018pre.pb";
-            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2018pre.cfg";
-            leptonFileName        = "allInOne_leptonSF_2018.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
-            meanFileName          = "allInOne_SFMean.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
-        }
-        else if(filetag.find("2018post") != std::string::npos) 
-        {
-            runYear               = "2018post";
-            Lumi                  = 38654.0;
-            deepCSV_WP_loose      = 0.1208;
-            deepCSV_WP_medium     = 0.4168;       
-            deepCSV_WP_tight      = 0.7665;
-            DeepESMCfg            = "DeepEventShape_2018post.cfg";
-            DeepESMModel          = "keras_frozen_2018post.pb";
-            DeepESMCfg_NonIsoMuon = "DeepEventShape_NonIsoMuon_2018post.cfg";
+
+            // Switch to proper year's training when done for UL
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
@@ -250,6 +189,77 @@ public:
             DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
 
+            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
+            leptonFileName        = "allInOne_leptonSF_2017.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_94XSF_WP_V4_B_F.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2017.cfg";
+        }
+        else if(filetag.find("2018pre") != std::string::npos) 
+        {
+            runYear               = "2018pre";
+            Lumi                  = 21071.0;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
+
+            // Switch to proper year's training when done for UL
+            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            // Use RPV config for now --- switch to SYY with dedicated training
+            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
+            leptonFileName        = "allInOne_leptonSF_2018.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
+        }
+        else if(filetag.find("2018post") != std::string::npos) 
+        {
+            runYear               = "2018post";
+            Lumi                  = 38654.0;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
+
+            // Switch to proper year's training when done for UL
+            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            // Use RPV config for now --- switch to SYY with dedicated training
+            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
             leptonFileName        = "allInOne_leptonSF_2018.root";
             bjetFileName          = "allInOne_BTagEff.root";
             bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
@@ -258,27 +268,24 @@ public:
             TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }
 
-        tr.registerDerivedVar("runYear",                           runYear              );
-        tr.registerDerivedVar("Lumi",                              Lumi                 );
-        tr.registerDerivedVar("deepCSV_WP_loose",                  deepCSV_WP_loose     );
-        tr.registerDerivedVar("deepCSV_WP_medium",                 deepCSV_WP_medium    );
-        tr.registerDerivedVar("deepCSV_WP_tight",                  deepCSV_WP_tight     );
-        tr.registerDerivedVar("isSignal",                          isSignal             );
-        tr.registerDerivedVar("DeepESMCfg",                        DeepESMCfg           );
-        tr.registerDerivedVar("DeepESMCfg_NonIsoMuon",             DeepESMCfg_NonIsoMuon);
-        tr.registerDerivedVar("DeepESMModel",                      DeepESMModel         );        
-        tr.registerDerivedVar("DoubleDisCo_Cfg_0l_RPV",            DoubleDisCo_Cfg_0l_RPV   );
-        tr.registerDerivedVar("DoubleDisCo_Model_0l_RPV",          DoubleDisCo_Model_0l_RPV );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_0l_RPV", DoubleDisCo_Cfg_NonIsoMuon_0l_RPV   );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_1l_RPV",            DoubleDisCo_Cfg_1l_RPV   );
-        tr.registerDerivedVar("DoubleDisCo_Model_1l_RPV",          DoubleDisCo_Model_1l_RPV );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_1l_RPV", DoubleDisCo_Cfg_NonIsoMuon_1l_RPV   );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_0l_SYY",            DoubleDisCo_Cfg_0l_SYY   );
-        tr.registerDerivedVar("DoubleDisCo_Model_0l_SYY",          DoubleDisCo_Model_0l_SYY );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_0l_SYY", DoubleDisCo_Cfg_NonIsoMuon_0l_SYY   );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_1l_SYY",            DoubleDisCo_Cfg_1l_SYY   );
-        tr.registerDerivedVar("DoubleDisCo_Model_1l_SYY",          DoubleDisCo_Model_1l_SYY );
-        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_1l_SYY", DoubleDisCo_Cfg_NonIsoMuon_1l_SYY   );
+        tr.registerDerivedVar("runYear",                           runYear                          );
+        tr.registerDerivedVar("Lumi",                              Lumi                             );
+        tr.registerDerivedVar("deepCSV_WP_loose",                  deepCSV_WP_loose                 );
+        tr.registerDerivedVar("deepCSV_WP_medium",                 deepCSV_WP_medium                );
+        tr.registerDerivedVar("deepCSV_WP_tight",                  deepCSV_WP_tight                 );
+        tr.registerDerivedVar("isSignal",                          isSignal                         );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_0l_RPV",            DoubleDisCo_Cfg_0l_RPV           );
+        tr.registerDerivedVar("DoubleDisCo_Model_0l_RPV",          DoubleDisCo_Model_0l_RPV         );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_0l_RPV", DoubleDisCo_Cfg_NonIsoMuon_0l_RPV);
+        tr.registerDerivedVar("DoubleDisCo_Cfg_1l_RPV",            DoubleDisCo_Cfg_1l_RPV           );
+        tr.registerDerivedVar("DoubleDisCo_Model_1l_RPV",          DoubleDisCo_Model_1l_RPV         );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_1l_RPV", DoubleDisCo_Cfg_NonIsoMuon_1l_RPV);
+        tr.registerDerivedVar("DoubleDisCo_Cfg_0l_SYY",            DoubleDisCo_Cfg_0l_SYY           );
+        tr.registerDerivedVar("DoubleDisCo_Model_0l_SYY",          DoubleDisCo_Model_0l_SYY         );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_0l_SYY", DoubleDisCo_Cfg_NonIsoMuon_0l_SYY);
+        tr.registerDerivedVar("DoubleDisCo_Cfg_1l_SYY",            DoubleDisCo_Cfg_1l_SYY           );
+        tr.registerDerivedVar("DoubleDisCo_Model_1l_SYY",          DoubleDisCo_Model_1l_SYY         );
+        tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_1l_SYY", DoubleDisCo_Cfg_NonIsoMuon_1l_SYY);
 
         //tr.registerDerivedVar("DoubleDisCo_Cfg_2l",    DoubleDisCo_Cfg_2l   );
         //tr.registerDerivedVar("DoubleDisCo_Model_2l",  DoubleDisCo_Model_2l );
@@ -453,28 +460,6 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="Analyze1Lep")
-        {
-            const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "CommonVariables",
-                "FatJetCombine",
-                "MakeMVAVariables",
-                "MakeMVAVariables_NonIsoMuon",
-                "RunTopTagger",
-                "Baseline",
-                "DeepEventShape",
-                "DeepEventShape_NonIsoMuon",
-                "BTagCorrector",
-                "ScaleFactors",
-            };
-            registerModules(tr, std::move(modulesList));
-        }
         else if(analyzer=="TwoLepAnalyzer" || analyzer=="Make2LInputTrees")
         {   
             const std::vector<std::string> modulesList = {
@@ -495,6 +480,14 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="AnalyzeXsec")
+        {   
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+
         else
         {
             const std::vector<std::string> modulesList = {

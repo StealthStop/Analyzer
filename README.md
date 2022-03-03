@@ -40,10 +40,6 @@ cmsenv
 getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.98_2016_v1 -f TopTaggerCfg_2016.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.98_2017_v1 -f TopTaggerCfg_2017.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.98_2018_v1 -f TopTaggerCfg_2018.cfg -o
-getDeepESMCfg.sh -t Keras_Tensorflow_2016_v1.2 -o -s 2016
-getDeepESMCfg.sh -t Keras_Tensorflow_2017_v1.2 -o -s 2017
-getDeepESMCfg.sh -t Keras_Tensorflow_2018pre_v1.2 -o -s 2018pre
-getDeepESMCfg.sh -t Keras_Tensorflow_2018post_v1.2 -o -s 2018post
 getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_RPV_2016_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_2016
 getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_2016
 ```
@@ -123,6 +119,74 @@ An example call to the stack plotter could be:
 
 ```
 python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --outpath plot_histos --normMC2Data
+```
+
+## Generating Filelists, Checking Ntuples, and Checking Event Numbers
+
+### Produce the Filelist and sampleSet.cfg
+
+The main script for generating file lists and the corresponding sample set is `makeFilelist.py`.
+
+```
+usage: makeFilelist.py [-h] [--prod PROD] [--tag TAG]
+
+optional arguments:
+  -h, --help   show this help message and exit
+  --prod PROD  Unique tag for output
+  --tag TAG    Path to PU file
+```
+
+The `prod` argument refers to the versioning of the folder on EOS that contains ntuple ROOT files for all MC and data samples.
+The latest version is `V20` and can be found at `/eos/uscms/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2ProductionV20/`.
+
+Running the script without any arguments will generate a folder `filelists_Kevin_UL_v1` and 
+`sampleSet_UL_v1.cfg`, where the default `--tag="UL_v1"` has been used.
+
+The filelist folder contains a text file for each MC sample (found in the directory of ntuple files), which lists the full paths to all the ntuple ROOT files
+for the corresponding sample.
+This folder is intended to be placed in the `StealthStop` area of the `lpcsusyhad` group space on EOS.
+
+The `sampleSet_UL_v1.cfg` file contains a mapping between "friendly" sample names and the corresponding text file listing all ntuple ROOT files for the sample.
+This config file should be placed in the `cfg` area of `Framework`.
+In order to pick up this new `cfg` in the `Analyzer` area automatically, the appropriate lines in the `getSamplesCfg.sh` script in `Framework/scripts` need to be modified and `source setup.sh` rerun.
+
+Additionally, a new `sampleCollection_UL_v1.cfg` needs to be constructed (easiest by hand), which creates groups of samples that are to be referenced when running analyzers.
+
+Note, when running `makeFilelist.py` it is most effective to have an up-to-date `TreeMaker` to reference in the script.
+This allows population of each sample line with total event numbers, cross sections, k factors.
+These additional pieces of information are not technically necessary, but maintained in case of needing to use them.
+
+### Checking Positive and Negative Events
+
+With a new `sampleSets.cfg` symlink in `Analyzer/test` pointing to `sampleSets_UL_v1.cfg` in `Framework`, the number of events in each sample can be measured.
+This is useful for verifying that all reported MINIAOD files in a sample were run on successfully by `TreeMaker` and hence that the event weight reflects the correct number of events.
+
+`nEvt.py` jobs can be submitted with `nEvtsCondorSubmit.py`, which will read in `sampleSets.cfg` and spawn a job for each sample and loop through all its files.
+An output text file is generated in the end and returned to the user which reads total positive and negative events counts for the sample.
+
+```
+Usage: nEvtsCondorSubmit.py [options]
+
+Options:
+  -h, --help         show this help message and exit
+  -c                 Do not submit jobs. Only create condor_submit.txt
+  --output=OUTPATH   Name of directory where output of each condor job goes
+  -s SAMPLESETSFILE  Sample sets config file
+```
+
+A helper script `checkNevents.py` is available to compare the numbers reported in the `nEvt.py` job output and the original `sampleSets.cfg`, 
+whose numbers were sourced directly from the `TreeMaker` repository.
+Discrepancies are printed to screen for investigation.
+Additionally, a new `sampleSets_new.cfg` is written with the numbers measured by `nEvt.py` inserted into the original `sampleSets.cfg`.
+
+```
+usage: checkNevents.py [-h] [--sampleSet SAMPLESET] [--nEvtDir NEVTDIR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --sampleSet SAMPLESET
+                        Path to sample set file
+  --nEvtDir NEVTDIR     Directory to nEvt output
 ```
 
 ## Making inputs for the fit
