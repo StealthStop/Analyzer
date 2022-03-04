@@ -180,13 +180,13 @@ Discrepancies are printed to screen for investigation.
 Additionally, a new `sampleSets_new.cfg` is written with the numbers measured by `nEvt.py` inserted into the original `sampleSets.cfg`.
 
 ```
-usage: checkNevents.py [-h] [--sampleSet SAMPLESET] [--nEvtDir NEVTDIR]
+usage: checkNevents.py [-h] [--sampleSet SAMPLESET] [--nEvtsDir NEVTDIR]
 
 optional arguments:
   -h, --help            show this help message and exit
   --sampleSet SAMPLESET
                         Path to sample set file
-  --nEvtDir NEVTDIR     Directory to nEvt output
+  --nEvtsDir NEVTDIR     Directory to nEvt output
 ```
 
 ## Making inputs for the fit

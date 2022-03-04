@@ -4,8 +4,8 @@ import argparse, glob
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sampleSet", dest="sampleSet", help="Path to sample set file",  type=str, default="../sampleSets.cfg")
-    parser.add_argument("--nEvtDir",   dest="nEvtDir",   help="Directory to nEvt output", type=str, default="./nEvtsOutput")
+    parser.add_argument("--sampleSet", dest="sampleSet", help="Path to sample set file",   type=str, default="../sampleSets.cfg")
+    parser.add_argument("--nEvtsDir",  dest="nEvtsDir",  help="Directory to nEvts output", type=str, default="./nEvtsOutput")
 
     args = parser.parse_args()
 
@@ -14,7 +14,7 @@ if __name__ == '__main__':
     obsCounts  = {}
     
     # Get all the text files corresponding to each sample
-    sampleOutputs = glob.glob(args.nEvtDir + "/output-files/*")
+    sampleOutputs = glob.glob(args.nEvtsDir + "/output-files/*")
 
     # From the nEvt job output files, save the observed positive and negative
     # event counts
