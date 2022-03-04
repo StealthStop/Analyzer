@@ -17,7 +17,7 @@ class FileLister:
         self.ttreeDir     = "TreeMaker2/PreSelection"
         self.tempFileName = "tmp.txt"
         self.fileListsDir = "filelists_Kevin_%s/"%(production)
-        self.eosPath      = "/eos/uscms/store/user/lpcsusyhad/StealthStop/"
+        self.eosPath      = "/eos/uscms/store/user/jhiltbra/StealthStop/"
 
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -248,7 +248,7 @@ class FileLister:
             theSamples = sampleLists.keys()
             theSamples.sort()
             for sample in theSamples:
-                newfile = open("filelists_Kevin_%s/"%(self.tag) + sample + ".txt", 'w')
+                newfile = open("filelists_Kevin_%s/"%(self.production) + sample + ".txt", 'w')
         
                 xsec       = "-1,"
                 nposevents = "-1,"
