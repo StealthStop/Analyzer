@@ -19,7 +19,6 @@ def main():
     # get the plots with optimized ABCD edges:
     #   -- first run the "run_DoubleDisCo_Optimized_BinEdges.py" to print the optimized ABCD edges and use them as fixed edges on the commend line
     #   -- python run_DoubleDisCo_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 0l --fixedDisc1edge 0.52 --fixedDisc2edge 0.89
-    #   -- python run_DoubleDisCo_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 1l --fixedDisc1edge 0.52 --fixedDisc2edge 0.89
     #   -- python run_DoubleDisCo_BinEdges.py --year 2016 --tt TT --nontt NonTT --ttVar TT_erdOn --data Data --sig RPV --mass 550 --channel 1l --fixedDisc1edge 0.65 --fixedDisc2edge 0.63 
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
     usage  = "usage: %prog [options]"
@@ -311,15 +310,17 @@ def main():
             allRegionsFinalEdges[key] = theEdgesClass.getFinal("edges", "TT")
 
             # quantities and variables with any combination of bin edges
-            significances              = theEdgesClass.get("significance", None, None, "TT")
-            allRegionsSigFracs_TT[key] = {"A" : theEdgesClass.get("sigFractionA", None, None, Sig),
-                                          "B" : theEdgesClass.get("sigFractionB", None, None, Sig),
-                                          "C" : theEdgesClass.get("sigFractionC", None, None, Sig),
-                                          "D" : theEdgesClass.get("sigFractionD", None, None, Sig)}
-            allRegionsTTFracs[key]     = {"A" : theEdgesClass.get("ttFractionA", None, None, "TT"),
-                                          "B" : theEdgesClass.get("ttFractionB", None, None, "TT"),
-                                          "C" : theEdgesClass.get("ttFractionC", None, None, "TT"),
-                                          "D" : theEdgesClass.get("ttFractionD", None, None, "TT")}
+            significances                     = theEdgesClass.get("significance",                     None, None, "TT")
+            significances_includingNonClosure = theEdgesClass.get("significance_includingNonClosure", None, None, "TT")
+            significances_nonSimplified       = theEdgesClass.get("significance_nonSimplified",       None, None, "TT")
+            allRegionsSigFracs_TT[key]        = {"A" : theEdgesClass.get("sigFractionA", None, None, Sig),
+                                                 "B" : theEdgesClass.get("sigFractionB", None, None, Sig),
+                                                 "C" : theEdgesClass.get("sigFractionC", None, None, Sig),
+                                                 "D" : theEdgesClass.get("sigFractionD", None, None, Sig)}
+            allRegionsTTFracs[key]            = {"A" : theEdgesClass.get("ttFractionA", None, None, "TT"),
+                                                 "B" : theEdgesClass.get("ttFractionB", None, None, "TT"),
+                                                 "C" : theEdgesClass.get("ttFractionC", None, None, "TT"),
+                                                 "D" : theEdgesClass.get("ttFractionD", None, None, "TT")}
 
             # quantities and variables with the final choice of bin edges
             finalSignificance               = theEdgesClass.getFinal("significance", "TT")
@@ -371,19 +372,24 @@ def main():
                 # plot variable vs Disc1Disc2
                 # ---------------------------
                 if hist_key == "TT":
-                    plotter[hist_key].plot_Var_vsDisc1Disc2(significances[:,0],                   edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="Sign"                            )
-                #    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["A"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["A"]))
-                    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["B"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["B"]))
-                    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["C"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["C"]))
-                    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["D"][:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["D"]))
-                #    plotter[hist_key].plot_inverseSignificance_vsNonClosure(finalSignificance, finalNonClosure, significances, nonClosures, edges, allRegionsFinalEdges[key], njet, name=key)
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(significances[:,0],                     edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="Sign"                            )
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(significances[:,1],                     edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="SignUnc"                         )
+                    # significance including non-closure
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="Sign_includingNonClosure"        )
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,1], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="SignUnc_includingNonClosure"     )
+                    # significance, non-simplified version
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(significances_nonSimplified[:,0],       edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=key, variable="Sign_nonSimplified"              )
+                    #plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["A"][:,0],   edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["A"]))
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["B"][:,0],   edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["B"]))
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["C"][:,0],   edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["C"]))
+                    plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[key]["D"][:,0],   edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=key, variable="SigFrac%s"%(translator[key]["D"]))
+                    #plotter[hist_key].plot_inverseSignificance_vsNonClosure(finalSignificance, finalNonClosure, significances, nonClosures, edges, allRegionsFinalEdges[key], njet, name=key)
 
                 if hist_key != Sig:
 
                     plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,0], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=key, variable="NonClosure"   )
                     plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,1], edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=key, variable="NonClosureUnc")
                     plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="Pull"         )
-                    #plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,1],        edges, float(allRegionsFinalEdges[key][0]), float(allRegionsFinalEdges[key][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=key, variable="PullUnc"      )
 
                 EventsPerNjets[hist_key][njet] = allRegionsFinalEvents[hist_key]
             
