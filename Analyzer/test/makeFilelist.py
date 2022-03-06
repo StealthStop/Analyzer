@@ -17,7 +17,7 @@ class FileLister:
         self.ttreeDir     = "TreeMaker2/PreSelection"
         self.tempFileName = "tmp.txt"
         self.fileListsDir = "filelists_Kevin_%s/"%(production)
-        self.eosPath      = "/eos/uscms/store/user/lpcsusyhad/StealthStop/"
+        self.eosPath      = "/eos/uscms/store/user/jhiltbra/StealthStop/"
 
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -248,7 +248,7 @@ class FileLister:
             theSamples = sampleLists.keys()
             theSamples.sort()
             for sample in theSamples:
-                newfile = open("filelists_Kevin_%s/"%(self.tag) + sample + ".txt", 'w')
+                newfile = open("filelists_Kevin_%s/"%(self.production) + sample + ".txt", 'w')
         
                 xsec       = "-1,"
                 nposevents = "-1,"
@@ -271,6 +271,8 @@ class FileLister:
                 # For any data set, insert "Data" string into name
                 name = name.replace("SingleMuon", "Data_SingleMuon").replace("SingleElectron", "Data_SingleElectron") \
                            .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
+
+                name = name.replace("2016_", "2016postVFP_").replace("2016APV_", "2016preVFP_")
         
                 # Restrict to madgraph DY sample
                 if "DYJetsToLL" in name and "NLO" in name:
