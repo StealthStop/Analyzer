@@ -679,10 +679,10 @@ class Common_Calculations_Plotters:
 
         plt.close(fig)
 
-    # ----------------------------------------------------------------------
-    # plot variable vs disc as 1D
-    #   -- Closure, Significance, weightedEventCounts vs disc1, disc2 slices
-    # ----------------------------------------------------------------------
+    # -----------------------------------------------
+    # plot variable as a function of per boundary
+    #   -- as part of closure correction factor study
+    # -----------------------------------------------
     def plot_VarVsBoundary(self, var, xWidth, yMin = None, yMax = None, lineY = None, ylabel = "", tag = "", Njets = -1, color=None):
 
         regions = var.keys()
