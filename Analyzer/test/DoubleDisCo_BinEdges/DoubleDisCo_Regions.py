@@ -22,12 +22,12 @@ class All_Regions:
         self.hist           = hist
         self.Sig            = Sig
         self.ttVar          = ttVar
-        self.fixedDisc1Edge = fixedDisc1Edge
-        self.fixedDisc2Edge = fixedDisc2Edge
-        self.leftBoundary   = leftBoundary
-        self.rightBoundary  = rightBoundary
-        self.topBoundary    = topBoundary
-        self.bottomBoundary = bottomBoundary
+        self.fixedDisc1Edge = round(float(fixedDisc1Edge), 2) if fixedDisc1Edge != None else None
+        self.fixedDisc2Edge = round(float(fixedDisc2Edge), 2) if fixedDisc2Edge != None else None
+        self.leftBoundary   = round(float(leftBoundary), 2)   if leftBoundary   != None else None
+        self.rightBoundary  = round(float(rightBoundary), 2)  if rightBoundary  != None else None
+        self.topBoundary    = round(float(topBoundary), 2)    if topBoundary    != None else None
+        self.bottomBoundary = round(float(bottomBoundary), 2) if bottomBoundary != None else None
         self.metric         = metric
 
         self.extraArgs = kwargs
@@ -154,9 +154,15 @@ class All_Regions:
         # If boundaries are not defined, then assume the edge of the histogram
         firstXBin = 1 if self.leftBoundary   == None else self.hist["TT"].GetXaxis().FindBin(float(self.leftBoundary))
         firstYBin = 1 if self.bottomBoundary == None else self.hist["TT"].GetYaxis().FindBin(float(self.bottomBoundary))
- 
-        lastXBin = self.hist["TT"].GetNbinsX()+1 if self.rightBoundary == None else self.hist["TT"].GetXaxis().FindBin(float(self.rightBoundary)) + 1
-        lastYBin = self.hist["TT"].GetNbinsY()+1 if self.topBoundary   == None else self.hist["TT"].GetYaxis().FindBin(float(self.topBoundary))   + 1
+
+        totalXbins = self.hist["TT"].GetNbinsX()
+        totalYbins = self.hist["TT"].GetNbinsY()
+
+        lastXBin = totalXbins+1 if self.rightBoundary == None else self.hist["TT"].GetXaxis().FindBin(float(self.rightBoundary)) + 1
+        lastYBin = totalYbins+1 if self.topBoundary   == None else self.hist["TT"].GetYaxis().FindBin(float(self.topBoundary))   + 1
+
+        if lastXBin > totalXbins: lastXBin = totalXbins + 1
+        if lastYBin > totalYbins: lastYBin = totalYbins + 1
 
         nXBins = range(firstXBin+1, lastXBin)
         nYBins = range(firstYBin+1, lastYBin)
@@ -460,10 +466,10 @@ class All_Regions:
 
 
             # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
-            if self.fixedDisc1Edge != None and abs(float(self.fixedDisc1Edge) - float(disc1Key)) > 0.01: continue
+            if self.fixedDisc1Edge != None and abs(self.fixedDisc1Edge - float(disc1Key)) > 0.01: continue
 
             # use this statement for bdEF regions if fixed disc2 edge (horizontal edge)
-            if self.fixedDisc2Edge != None and abs(float(self.fixedDisc2Edge) - float(disc2Key)) > 0.01: continue
+            if self.fixedDisc2Edge != None and abs(self.fixedDisc2Edge - float(disc2Key)) > 0.01: continue
 
             self.finalEdges = (disc1Key, disc2Key)
 
