@@ -300,6 +300,40 @@ public:
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }
+        else if(filetag.find("2018") != std::string::npos) 
+        {
+            runYear               = "2018";
+            Lumi                  = 59830.0;
+            deepCSV_WP_loose      = 0.1208;
+            deepCSV_WP_medium     = 0.4168;       
+            deepCSV_WP_tight      = 0.7665;
+
+            // Switch to proper year's training when done for UL
+            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            // Use RPV config for now --- switch to SYY with dedicated training
+            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg";           
+            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg";
+            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_2016.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_2016.cfg";
+
+            //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
+            //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
+            //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
+            leptonFileName        = "allInOne_leptonSF_2018.root";
+            bjetFileName          = "allInOne_BTagEff.root";
+            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
+            meanFileName          = "allInOne_SFMean.root";
+            blind                 = false;
+            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
+        }
 
         tr.registerDerivedVar("runYear",                           runYear                          );
         tr.registerDerivedVar("Lumi",                              Lumi                             );

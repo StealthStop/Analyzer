@@ -236,7 +236,7 @@ class FileLister:
     def writeFileLists(self):
     
         sampleGroups = ["Data", "TTJets", "DYJetsToLL", "TTToSemiLeptonic", "TTTo2L2Nu", "TTToHadronic", 
-                        "WJetsToLNu", "QCD_HT", "QCD_Pt", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH",
+                        "WJetsToLNu|WJetsToQQ", "QCD_HT", "QCD_Pt", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH",
                         "WWW|WWG|WWZ|WZZ|ZZZ|WZG", "WW|WZ|ZZ", "TTZTo", "TTWJets", "WWTo|ZZTo|WZTo", "ttHJet" 
         ]
 
