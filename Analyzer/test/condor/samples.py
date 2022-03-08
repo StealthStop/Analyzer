@@ -17,14 +17,9 @@ class SampleCollection:
         self.lib.SS_samples.restype = POINTER(c_char_p)
         self.lib.SS_samples_names.restype = POINTER(c_char_p)
         self.lib.SC_samplecollection_names.restype = POINTER(c_char_p)
-        self.lib.SC_samplecollection_lumis.restype = POINTER(c_double)
-        self.lib.SC_fixed_lumi.restype = c_double        
 
     def nSamples(self, name):
         return self.lib.SC_samples_size(self.obj, name)
-
-    def getFixedLumi(self):
-        return self.lib.SC_fixed_lumi()
 
     def sampleList(self, name):
         files = self.lib.SC_samples(self.obj, name)
@@ -37,12 +32,6 @@ class SampleCollection:
         names = self.lib.SC_samplecollection_names(self.obj)
         list = [names[i] for i in xrange(self.lib.SC_samplecollection_size(self.obj))]
         return list
-
-    def sampleCollectionLumiList(self):
-        names = self.lib.SC_samplecollection_names(self.obj)
-        lumis = self.lib.SC_samplecollection_lumis(self.obj)
-        list = [(names[i],lumis[i]) for i in xrange(self.lib.SC_samplecollection_size(self.obj))]
-        return dict(list)
 
     def sampleSetList(self):
         names = self.lib.SS_samples_names(self.ss)

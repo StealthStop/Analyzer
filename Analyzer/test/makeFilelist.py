@@ -17,7 +17,7 @@ class FileLister:
         self.ttreeDir     = "TreeMaker2/PreSelection"
         self.tempFileName = "tmp.txt"
         self.fileListsDir = "filelists_Kevin_%s/"%(production)
-        self.eosPath      = "/eos/uscms/store/user/lpcsusyhad/StealthStop/"
+        self.eosPath      = "/eos/uscms/store/user/jhiltbra/StealthStop/"
 
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -81,6 +81,9 @@ class FileLister:
             if name in sample:
                 if ("_HT" in sample or "_Pt" in sample) and name != sample:
                     continue 
+
+                if ("_4F" in sample or "_4f" in sample) and name != sample:
+                    continue
     
                 self.auxInfo[sample].update(payload) 
     
@@ -245,7 +248,7 @@ class FileLister:
             theSamples = sampleLists.keys()
             theSamples.sort()
             for sample in theSamples:
-                newfile = open("filelists_Kevin_%s/"%(self.tag) + sample + ".txt", 'w')
+                newfile = open("filelists_Kevin_%s/"%(self.production) + sample + ".txt", 'w')
         
                 xsec       = "-1,"
                 nposevents = "-1,"
@@ -268,11 +271,9 @@ class FileLister:
                 # For any data set, insert "Data" string into name
                 name = name.replace("SingleMuon", "Data_SingleMuon").replace("SingleElectron", "Data_SingleElectron") \
                            .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
-        
-                # Special case to get "erdON" into name
-                #if "erdON" in sample:
-                #    name += "_erdON"
 
+                name = name.replace("2016_", "2016postVFP_").replace("2016APV_", "2016preVFP_")
+        
                 # Restrict to madgraph DY sample
                 if "DYJetsToLL" in name and "NLO" in name:
                     continue
@@ -301,7 +302,6 @@ class FileLister:
 
                 name   += ","
                 sample += ".txt,"
-        
 
                 finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     

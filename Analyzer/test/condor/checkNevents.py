@@ -1,25 +1,20 @@
-import argparse, glob, re
-
-def naturalSort(unsortedList):
-    convert      = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-    
-    return sorted(unsortedList, key=alphanum_key)
+import argparse, glob
 
 # Run the script
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sampleSet", dest="sampleSet", help="Path to sample set file",  type=str, default="../sampleSets.cfg")
-    parser.add_argument("--nEvtDir",   dest="nEvtDir",   help="Directory to nEvt output", type=str, default="./nEvtsOutput")
+    parser.add_argument("--sampleSet", dest="sampleSet", help="Path to sample set file",   type=str, default="../sampleSets.cfg")
+    parser.add_argument("--nEvtsDir",  dest="nEvtsDir",  help="Directory to nEvts output", type=str, default="./nEvtsOutput")
 
     args = parser.parse_args()
 
+    # Hold positive and negative event counts
+    # measured by nEvts.py
     obsCounts  = {}
-    predCounts = {}
     
     # Get all the text files corresponding to each sample
-    sampleOutputs = glob.glob(args.nEvtDir + "/output-files/*")
+    sampleOutputs = glob.glob(args.nEvtsDir + "/output-files/*")
 
     # From the nEvt job output files, save the observed positive and negative
     # event counts
@@ -27,52 +22,70 @@ if __name__ == '__main__':
 
         # Text filenames in form: "output_2018_TTToHadronic.txt"
         sampleName = sampleFile.split("/")[-1].split(".txt")[0].split("output_")[-1]
-
         tmp = open(sampleFile, "r")
         lines = tmp.readlines()
         tmp.close()
 
+        # Parse nEvts.py output containing the string
+        # Positive weights: 95170542, Negative weights: 0
         for line in lines:
             chunks = line.split(",") 
    
-            npos = chunks[-2].split(": ")[-1]
-            nneg = chunks[-1].split(": ")[-1]
+            npos = chunks[-2].split(": ")[-1].rstrip()
+            nneg = chunks[-1].split(": ")[-1].rstrip()
     
-            obsCounts[sampleName] = {"npos" : int(npos), "nneg" : int(nneg)}
+            obsCounts[sampleName] = {"npos" : npos, "nneg" : nneg}
          
+    # Read in the sampleSets.cfg file
     tmp = open(args.sampleSet, "r")
-    lines = tmp.readlines()
+    sampleSetLines = tmp.readlines()
     tmp.close()
+
+    # Also, prepare a new sampleSet file with any corrections needed
+    newSampleSet = open(args.sampleSet.replace(".cfg", "_new.cfg"), "w")
 
     # From the original sampleSet file, get the expected
     # number of positive and negative event counts for each sample
-    for line in lines:
+    for line in sampleSetLines:
 
+        # Write comment lines and newlines without processing
         if "#" in line or line == "\n":
+            newSampleSet.write(line)
             continue
     
         chunks = (line.replace(" ", "")).split(",")
-
         sampleName = chunks[0]
+        predPos    = chunks[-3].rstrip()
+        predNeg    = chunks[-2].rstrip()
 
-        npos = chunks[-3]
-        nneg = chunks[-2]
+        # If sample was not run over with nEvts.py
+        # just put back the line in the new sampleSet file
+        if sampleName not in obsCounts:
+            newSampleSet.write(line)
+            continue
 
-        predCounts[sampleName] = {"npos" : int(npos), "nneg" : int(nneg)}
+        obsPos = obsCounts[sampleName]["npos"]
+        obsNeg = obsCounts[sampleName]["nneg"]
 
-    # Do the comparison between observed and expected
-    for sample in naturalSort(obsCounts.keys()):
+        posDiffLen = len(predPos) - len(obsPos)
+        negDiffLen = len(predNeg) - len(obsNeg)
 
-        if sample in predCounts:
+        # Make corrections to the line if the nEvts do not match up
+        # Do some fancy string stuff to preserve the nice formatting in sampleSet.cfg
+        newLine = line
+        if int(obsPos) != int(predPos):
+            print("%s: Expected %s positive weight events but measured %s"%(sampleName.ljust(40), predPos, obsPos))
+            if posDiffLen >= 0:
+                newLine = newLine.replace(" "+predPos+",", " "*(posDiffLen+1)+obsPos+",")
+            else:
+                newLine = newLine.replace(" "*abs(posDiffLen)+predPos+",", obsPos+",")
 
-            obsPos = obsCounts[sample]["npos"]
-            obsNeg = obsCounts[sample]["nneg"]
-    
-            predPos = predCounts[sample]["npos"]
-            predNeg = predCounts[sample]["nneg"]
-
-            if obsPos != predPos:
-                print("%s: Expected %d positive weight events but measured %d"%(sample.ljust(40), predCounts[sample]["npos"], obsCounts[sample]["npos"]))
-
-            if obsNeg != predNeg:
-                print("%s: Expected %d negative weight events but measured %d"%(sample.ljust(40), predCounts[sample]["nneg"], obsCounts[sample]["nneg"]))
+        if int(obsNeg) != int(predNeg):
+            print("%s: Expected %s negative weight events but measured %s"%(sampleName.ljust(40), predNeg, obsNeg))
+            if negDiffLen >= 0:
+                newLine = newLine.replace(" "+predNeg+",", " "*(negDiffLen+1)+obsNeg+",")
+            else:
+                newLine = newLine.replace(" "*abs(negDiffLen)+predNeg+",", obsNeg+",")
+       
+        newSampleSet.write(newLine)
+    newSampleSet.close()
