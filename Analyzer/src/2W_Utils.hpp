@@ -2,6 +2,7 @@
 #pragma GCC diagnostic ignored "-Wpedantic"
 #include <TPaveStats.h>
 #pragma GCC diagnostic pop
+
 #include "Analyzer/Analyzer/include/Analyze2W.h"
 
 #include <TCanvas.h>
@@ -103,10 +104,6 @@ void addTextToStats(TH1D *h, TCanvas *c, const std::string& s){
 }
 
 
-std::ostream& operator<<(std::ostream &os, const TLorentzVector &v) {
-    os << "(" << v.P() << ", " << v.Eta() << ", " << v.Phi() << "," << v.E() << ")";
-    return os;
-}
 
 
 
