@@ -14,7 +14,8 @@ class FileLister:
         self.tag          = tag
 
         self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s/"%(production)
-        self.ttreeDir     = "TreeMaker2/PreSelection"
+        self.ttreePath    = "TreeMaker2/PreSelection"
+        self.ttreePathSig = "PreSelection"
         self.tempFileName = "tmp.txt"
         self.fileListsDir = "filelists_Kevin_%s/"%(production)
         self.eosPath      = "/eos/uscms/store/user/jhiltbra/StealthStop/"
@@ -31,6 +32,8 @@ class FileLister:
         self.samples["2016APV"] = defaultdict(list)
         self.samples["2017"]    = defaultdict(list)
         self.samples["2018"]    = defaultdict(list)
+
+        self.sigMasses = list(range(300, 1450, 50))
 
         self.wroteHeader = False
 
@@ -150,16 +153,24 @@ class FileLister:
                         ntot = chunks[-2]
                         ndiff = chunks[-1]
         
-                    name = self.makeNiceName(process)
-                    if name not in self.auxInfo.keys():
-                        self.auxInfo[name] = {}
-        
-                    if ndiff == -1.0:
-                        self.auxInfo[name]["20%s_npos"%(year)] = int(ntot)
-                        self.auxInfo[name]["20%s_nneg"%(year)] = 0
+                    name  = self.makeNiceName(process)
+                    names = []
+
+                    if ("RPV" in name or "SYY" in name or "SHH" in name) and "300to1400" in name:
+                        names = [name.replace("300to1400", str(mass)) for mass in self.sigMasses]
                     else:
-                        self.auxInfo[name]["20%s_npos"%(year)] = int((float(ntot) + float(ndiff))/2.0)
-                        self.auxInfo[name]["20%s_nneg"%(year)] = int((float(ntot) - float(ndiff))/2.0)
+                        names = [name]
+                    
+                    for aName in names:
+                        if aName not in self.auxInfo.keys():
+                            self.auxInfo[aName] = {}
+        
+                        if ndiff == -1.0:
+                            self.auxInfo[aName]["20%s_npos"%(year)] = int(ntot)
+                            self.auxInfo[aName]["20%s_nneg"%(year)] = 0
+                        else:
+                            self.auxInfo[aName]["20%s_npos"%(year)] = int((float(ntot) + float(ndiff))/2.0)
+                            self.auxInfo[aName]["20%s_nneg"%(year)] = int((float(ntot) - float(ndiff))/2.0)
     
     # If there is a MCSamplesValues, use it to get info on xsec, kfactor, etc
     def getXsecInfo(self):
@@ -182,13 +193,14 @@ class FileLister:
                 if not seenDict:
                     continue
             
-                if ":" in line and "{" in line:
+                if (":" in line and "{" in line) or ("}" in line and "," not in line and seenDict):
                     
                     if process != "":
                         self.addInfo(process, {"xsec" : xsec, "brf" : brf, "kfactor" : kfactor})
                         process = ""; xsec = "-1.0"; brf = "1.0"; kfactor = "1.0"
             
-                    process = line.split("\"")[1] 
+                    if "}" not in line:
+                        process = line.split("\"")[1] 
             
                 if "XS_" in line:
                     xsec = line.split("=")[1].split(",")[0]
@@ -237,7 +249,7 @@ class FileLister:
     
         sampleGroups = ["Data", "TTJets", "DYJetsToLL", "TTToSemiLeptonic", "TTTo2L2Nu", "TTToHadronic", 
                         "WJetsToLNu|WJetsToQQ", "QCD_HT", "QCD_Pt", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH",
-                        "WWW|WWG|WWZ|WZZ|ZZZ|WZG", "WW|WZ|ZZ", "TTZTo", "TTWJets", "WWTo|ZZTo|WZTo", "ttHJet" 
+                        "WWW|WWG|WWZ|WZZ|ZZZ|WZG", "WW|WZ|ZZ", "TTZTo", "TTWJets", "WWTo|ZZTo|WZTo", "ttHJet", "RPV|StealthSYY|StealthSHH"
         ]
 
         for era, sampleLists in self.samples.items():
@@ -303,7 +315,15 @@ class FileLister:
                 name   += ","
                 sample += ".txt,"
 
-                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), self.ttreeDir, xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+                isSignal = "mStop" in name
+                ttreePath = self.ttreePath
+                if isSignal:
+                    ttreePath = self.ttreePathSig
+
+                    name = name.replace("_mSo-100", "") \
+                               .replace("_mN1-100", "")
+
+                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
             self.writeSampleSet(finalDict)
 
@@ -314,7 +334,7 @@ class FileLister:
         sampleSet = open("sampleSets_%s.cfg"%(self.tag), "a")
 
         if not self.wroteHeader:
-            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(40), "/eos/path/to/filelists/,".rjust(len(self.eosPath+self.fileListsDir)+1), "Sample_file_list.txt,".ljust(85), "TTree Name,".rjust(len(self.ttreeDir)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
+            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(40), "/eos/path/to/filelists/,".rjust(len(self.eosPath+self.fileListsDir)+1), "Sample_file_list.txt,".ljust(85), "TTree Name,".rjust(len(self.ttreePath)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
             self.wroteHeader = True
 
         sortedGroups = dictionary.keys()
