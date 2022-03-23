@@ -13,8 +13,8 @@
 #include "Framework/Framework/include/FatJetCombine.h"
 #include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/Baseline.h"
-#include "Framework/Framework/include/BTagCorrector.h"
-#include "Framework/Framework/include/ScaleFactors.h"
+//#include "Framework/Framework/include/BTagCorrector.h"
+//#include "Framework/Framework/include/ScaleFactors.h"
 #include "Framework/Framework/include/StopJets.h"
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
@@ -207,7 +207,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
         {
             for (const auto& Njet : njets)
             {
-            
+
                 // For the disc1 vs disc2 plots, no need for njets inclusive one
                 if (Njet == "Incl")
                     continue;
@@ -265,10 +265,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
+        // ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
-        BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
+        //BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         DeepEventShape      neuralNetwork0L(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork1L(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix); 
@@ -282,8 +282,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
         MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
 
-        bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
-  
+        // bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
+
         // Remember, order matters here !
         // Follow what is done in Config.h
         tr.registerFunction(muon);
@@ -303,8 +303,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
-        tr.registerFunction(bTagCorrector);
-        tr.registerFunction(scaleFactors);
+        // tr.registerFunction(bTagCorrector);
+        // tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
         tr.registerFunction(neuralNetwork0L);
         tr.registerFunction(neuralNetwork0L_NonIsoMuon);
@@ -411,12 +411,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::map<std::string, std::vector<bool> > DoubleDisCo_passRegions_NonIsoMuon_1l;
 
             for (const auto region : regions_0l) {
-               DoubleDisCo_passRegions_0l[region]            = tr.getVec<bool>("DoubleDisCo_"+region+"_0l_RPV"+myVarSuffix); 
-               DoubleDisCo_passRegions_NonIsoMuon_0l[region] = tr.getVec<bool>("DoubleDisCo_"+region+"_NonIsoMuon_0l_RPV"+myVarSuffix); 
+                DoubleDisCo_passRegions_0l[region]            = tr.getVec<bool>("DoubleDisCo_"+region+"_0l_RPV"+myVarSuffix); 
+                DoubleDisCo_passRegions_NonIsoMuon_0l[region] = tr.getVec<bool>("DoubleDisCo_"+region+"_NonIsoMuon_0l_RPV"+myVarSuffix); 
             }
             for (const auto region : regions_1l) {
-               DoubleDisCo_passRegions_1l[region]            = tr.getVec<bool>("DoubleDisCo_"+region+"_1l_RPV"+myVarSuffix); 
-               DoubleDisCo_passRegions_NonIsoMuon_1l[region] = tr.getVec<bool>("DoubleDisCo_"+region+"_NonIsoMuon_1l_RPV"+myVarSuffix); 
+                DoubleDisCo_passRegions_1l[region]            = tr.getVec<bool>("DoubleDisCo_"+region+"_1l_RPV"+myVarSuffix); 
+                DoubleDisCo_passRegions_NonIsoMuon_1l[region] = tr.getVec<bool>("DoubleDisCo_"+region+"_NonIsoMuon_1l_RPV"+myVarSuffix); 
             }
 
             std::vector<double> Jets_flavb_0l;   std::vector<double> Jets_flavb_1l;
@@ -424,11 +424,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::vector<double> Jets_flavg_0l;   std::vector<double> Jets_flavg_1l;
             std::vector<double> Jets_flavuds_0l; std::vector<double> Jets_flavuds_1l;
             std::vector<double> Jets_flavq_0l;   std::vector<double> Jets_flavq_1l;
-                                                 std::vector<double> JetNonIsoMuons_flavb_1l;
-                                                 std::vector<double> JetNonIsoMuons_flavc_1l;
-                                                 std::vector<double> JetNonIsoMuons_flavg_1l;
-                                                 std::vector<double> JetNonIsoMuons_flavuds_1l;
-                                                 std::vector<double> JetNonIsoMuons_flavq_1l;
+            std::vector<double> JetNonIsoMuons_flavb_1l;
+            std::vector<double> JetNonIsoMuons_flavc_1l;
+            std::vector<double> JetNonIsoMuons_flavg_1l;
+            std::vector<double> JetNonIsoMuons_flavuds_1l;
+            std::vector<double> JetNonIsoMuons_flavq_1l;
 
             // Here assume number cm jets is same in CR and SR selection
             for (unsigned int iJet = 1; iJet <= nMVAJets_0l; iJet++) {
@@ -503,28 +503,31 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             double eventweight = 1.0, leptonweight = 1.0, bTagWeight = 1.0, prefiringScaleFactor = 1.0, pileupWeight = 1.0, htDerivedweight = 1.0;
             double weight0L            = 1.0, weight1L            = 1.0;
             double weight0L_NonIsoMuon = 1.0, weight1L_NonIsoMuon = 1.0;
-            if(runtype == "MC")
+            if(runtype == "MC" )
             {
                 // Define Lumi weight
                 const auto& Weight = tr.getVar<float>("Weight");
                 const auto& lumi   = tr.getVar<double>("Lumi");
                 eventweight        = lumi * Weight;
-               
-                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
-                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
-                const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
-                leptonweight             = eleLepWeight * muLepWeight;
-              
-                pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
-                bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central"+myVarSuffix);
-                htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
-                prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
-                
-                weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
-                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;
 
-                weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                /*
+                   const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
+                   const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
+                   const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
+                   leptonweight             = eleLepWeight * muLepWeight;
+
+                   pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
+                   bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central"+myVarSuffix);
+                   htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
+                   prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
+
+                 */
+
+                weight1L            *= eventweight * leptonweight * bTagWeight ;// * prefiringScaleFactor * pileupWeight * htDerivedweight;
+                weight0L            *= eventweight *                bTagWeight ;//* prefiringScaleFactor * pileupWeight;
+
+                weight1L_NonIsoMuon *= eventweight ;//* muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight0L_NonIsoMuon *= eventweight ;//* muNonIso                  * prefiringScaleFactor * pileupWeight;
             }
 
             std::vector<double> weight        {weight0L,            weight1L};
@@ -533,9 +536,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const std::map<std::string, bool> cut_map 
             {
                 {"_1l"            , passBaseline1l_Good},                         
-                {"_0l"            , passBaseline0l_Good},                         
-                {"_1l_QCDCR"      , passBaseline1l_NonIsoMuon},                         
-                {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
+                    {"_0l"            , passBaseline0l_Good},                         
+                    {"_1l_QCDCR"      , passBaseline1l_NonIsoMuon},                         
+                    {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
             };
 
             std::map<std::string, bool>               njetsMap;
@@ -563,18 +566,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 // For 0L, we always use the NGoodJets case
                 njetsMap = {{"Incl",     true},
-                            {"7",      (!isQCD or channel==0) ? NGoodJets[channel]==7  : NNonIsoMuonJets[channel]==7},
-                            {"8",      (!isQCD or channel==0) ? NGoodJets[channel]==8  : NNonIsoMuonJets[channel]==8},
-                            {"9",      (!isQCD or channel==0) ? NGoodJets[channel]==9  : NNonIsoMuonJets[channel]==9},
-                            {"10",     (!isQCD or channel==0) ? NGoodJets[channel]==10 : NNonIsoMuonJets[channel]==10},
-                            {"11",     (!isQCD or channel==0) ? NGoodJets[channel]==11 : NNonIsoMuonJets[channel]==11},
-                            {"11incl", (!isQCD or channel==0) ? NGoodJets[channel]>=11 : NNonIsoMuonJets[channel]>=11},
-                            {"12",     (!isQCD or channel==0) ? NGoodJets[channel]==12 : NNonIsoMuonJets[channel]==12},
-                            {"12incl", (!isQCD or channel==0) ? NGoodJets[channel]>=12 : NNonIsoMuonJets[channel]>=12},
-                            {"13",     (!isQCD or channel==0) ? NGoodJets[channel]==13 : NNonIsoMuonJets[channel]==13},
-                            {"13incl", (!isQCD or channel==0) ? NGoodJets[channel]>=13 : NNonIsoMuonJets[channel]>=13},
-                            {"14",     (!isQCD or channel==0) ? NGoodJets[channel]==14 : NNonIsoMuonJets[channel]==14},
-                            {"14incl", (!isQCD or channel==0) ? NGoodJets[channel]>=14 : NNonIsoMuonJets[channel]>=14},
+                    {"7",      (!isQCD or channel==0) ? NGoodJets[channel]==7  : NNonIsoMuonJets[channel]==7},
+                    {"8",      (!isQCD or channel==0) ? NGoodJets[channel]==8  : NNonIsoMuonJets[channel]==8},
+                    {"9",      (!isQCD or channel==0) ? NGoodJets[channel]==9  : NNonIsoMuonJets[channel]==9},
+                    {"10",     (!isQCD or channel==0) ? NGoodJets[channel]==10 : NNonIsoMuonJets[channel]==10},
+                    {"11",     (!isQCD or channel==0) ? NGoodJets[channel]==11 : NNonIsoMuonJets[channel]==11},
+                    {"11incl", (!isQCD or channel==0) ? NGoodJets[channel]>=11 : NNonIsoMuonJets[channel]>=11},
+                    {"12",     (!isQCD or channel==0) ? NGoodJets[channel]==12 : NNonIsoMuonJets[channel]==12},
+                    {"12incl", (!isQCD or channel==0) ? NGoodJets[channel]>=12 : NNonIsoMuonJets[channel]>=12},
+                    {"13",     (!isQCD or channel==0) ? NGoodJets[channel]==13 : NNonIsoMuonJets[channel]==13},
+                    {"13incl", (!isQCD or channel==0) ? NGoodJets[channel]>=13 : NNonIsoMuonJets[channel]>=13},
+                    {"14",     (!isQCD or channel==0) ? NGoodJets[channel]==14 : NNonIsoMuonJets[channel]==14},
+                    {"14incl", (!isQCD or channel==0) ? NGoodJets[channel]>=14 : NNonIsoMuonJets[channel]>=14},
 
                 };
 
@@ -612,6 +615,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                             name = kv.first + njetsStr + regionStr;
                             if (njets == "Incl")
                             {
+
                                 my_histos["h_njets"      + name]->Fill(!isQCD ? NGoodJets[channel]    : NNonIsoMuonJets[channel], w);
                                 my_histos["fwm2_top6"    + name]->Fill(!isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
                                 my_histos["fwm3_top6"    + name]->Fill(!isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
@@ -628,7 +632,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop1_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_OldSeed_NonIsoMuon, w);
-                                
+
                                     my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_OldSeed_NonIsoMuon,   w);
                                     my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_OldSeed_NonIsoMuon,  w);
@@ -639,7 +643,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop1_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_OldSeed_NonIsoMuon, w);
-                                
+
                                     my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_OldSeed   : Stop1_pt_cm_OldSeed_NonIsoMuon,   w);
                                     my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
@@ -672,7 +676,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                         m   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).M());
                                         E   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).E());
                                     } 
-   
+
                                     my_histos["Jet_cm_pt_"  + std::to_string(i) + name]->Fill(pt, w);
                                     my_histos["Jet_cm_eta_" + std::to_string(i) + name]->Fill(eta, w);
                                     my_histos["Jet_cm_phi_" + std::to_string(i) + name]->Fill(phi, w);
@@ -724,7 +728,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_QCDCR_disc1[channel], DoubleDisCo_QCDCR_disc2[channel], w);
                             }
                         }
-    
+
                         for (unsigned int iSubRegion = 0; iSubRegion < inRegionBin.size(); iSubRegion++)
                         {
                             if (kv.second and inNjetsBin and inRegion and inRegionBin[iSubRegion])
@@ -758,6 +762,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                         my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
                                     else
                                         my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_QCDCR_disc1[channel], DoubleDisCo_QCDCR_disc2[channel], w);
+
                                 }
                             }
                         }
@@ -771,10 +776,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 void AnalyzeDoubleDisCo::WriteHistos(TFile* outfile)
 {
     outfile->cd();
-    
+
     for(const auto& p : my_histos) 
         p.second->Write();
-    
+
     for(const auto& p : my_2d_histos) 
         p.second->Write();
 }
