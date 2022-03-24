@@ -13,5 +13,6 @@ python runSplitSignal.py --inputFile $INPUTFILE --ttreePath $TREENAME
 for FILE in *.root
 do
     xrdcp $FILE $OUTPUTDIR
-    rm $FILE
 done
+
+rm *.root
