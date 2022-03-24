@@ -56,6 +56,7 @@ if __name__ == '__main__':
         fout.write("Error     = %s/log-files/sigSplit_%s.stderr\n"%(args.outPath, iFile))
         fout.write("Log       = %s/log-files/sigSplit_%s.log\n"%(args.outPath, iFile))
         fout.write("Queue\n\n")
+        iFile += 1
     fout.close()
 
     if not args.noSubmit: 
