@@ -45,9 +45,11 @@ class SampleSet:
         self.ss = self.lib.SS_new(ssfile)
         self.lib.SS_samples.restype = POINTER(c_char_p)
         self.lib.SS_samples_names.restype = POINTER(c_char_p)
+        self.lib.SS_samples_treePaths.restype = POINTER(c_char_p)
 
     def sampleSetList(self):
         names = self.lib.SS_samples_names(self.ss)
         files = self.lib.SS_samples(self.ss)
-        list = [(names[i],files[i]) for i in xrange(self.lib.SS_samples_size(self.ss))]
+        treePaths = self.lib.SS_samples_treePaths(self.ss)
+        list = [(names[i],files[i],treePaths[i]) for i in xrange(self.lib.SS_samples_size(self.ss))]
         return list
