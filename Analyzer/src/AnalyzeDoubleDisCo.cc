@@ -57,6 +57,24 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop1_mass_MassRank_matched", 360,    0, 1500},
         {"Stop2_mass_MassRank_matched", 360,    0, 1500},
         {"Stop_mass_average_matched",   360,    0, 1500},
+        {"h_lPt" ,   360,    0, 1500},
+        {"h_lIso" ,   360,    0, 1500},
+        {"h_lPhi" ,   200,    -4, 4},
+        {"h_lEta" ,   200,    -6, 6},
+        {"h_lCharge" , 2, -1, 1},
+        {"h_lMiniIso" , 100, -10, 10},
+        {"h_ePt" ,   360,    0, 1500},
+        {"h_eIso" ,   360,    0, 1500},
+        {"h_ePhi" ,   200,    -4, 4},
+        {"h_eEta" ,   200,    -6, 6},
+        {"h_eCharge" , 2, -1, 1},
+        {"h_eMiniIso" , 100, -10, 10},
+        {"h_mPt" ,   360,    0, 1500},
+        {"h_mIso" ,   360,    0, 1500},
+        {"h_mPhi" ,   200,    -4, 4},
+        {"h_mEta" ,   200,    -6, 6},
+        {"h_mCharge" , 2, -1, 1},
+        {"h_mMiniIso" , 100, -10, 10},
     };
 
     hist2DInfos = {
@@ -136,24 +154,6 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets)
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
 
-        histInfos.push_back({"h_lPt_" + std::to_string(i),   360,    0, 1500});
-        histInfos.push_back({"h_lIso_" + std::to_string(i),   360,    0, 1500});
-        histInfos.push_back({"h_lPhi_" + std::to_string(i),   200,    -4, 4});
-        histInfos.push_back({"h_lEta_" + std::to_string(i),   200,    -6, 6});
-        histInfos.push_back({"h_lCharge_" + std::to_string(i), 2, -1, 1});
-        histInfos.push_back({"h_lMiniIso_" + std::to_string(i), 100, -10, 10});
-        histInfos.push_back({"h_ePt_" + std::to_string(i),   360,    0, 1500});
-        histInfos.push_back({"h_eIso_" + std::to_string(i),   360,    0, 1500});
-        histInfos.push_back({"h_ePhi_" + std::to_string(i),   200,    -4, 4});
-        histInfos.push_back({"h_eEta_" + std::to_string(i),   200,    -6, 6});
-        histInfos.push_back({"h_eCharge_" + std::to_string(i), 2, -1, 1});
-        histInfos.push_back({"h_eMiniIso_" + std::to_string(i), 100, -10, 10});
-        histInfos.push_back({"h_mPt_" + std::to_string(i),   360,    0, 1500});
-        histInfos.push_back({"h_mIso_" + std::to_string(i),   360,    0, 1500});
-        histInfos.push_back({"h_mPhi_" + std::to_string(i),   200,    -4, 4});
-        histInfos.push_back({"h_mEta_" + std::to_string(i),   200,    -6, 6});
-        histInfos.push_back({"h_mCharge_" + std::to_string(i), 2, -1, 1});
-        histInfos.push_back({"h_mMiniIso_" + std::to_string(i), 100, -10, 10});
         histInfos.push_back({"Jet_cm_pt_"      + std::to_string(i), 150,  0, 1500});
         histInfos.push_back({"Jet_cm_eta_"     + std::to_string(i), 100, -6,    6});
         histInfos.push_back({"Jet_cm_phi_"     + std::to_string(i),  80, -4,    4});
@@ -712,31 +712,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     // WORKING HERE WITH STUFF
                                     my_histos["Jet_cm_E_"   + std::to_string(i) + name]->Fill(E, w);
                                     
-                                   for(std::size_t j = 0 ; j < std::size(GoodLeptons); ++j){
-                                    auto& type = GoodLeptons[j].first;
-                                    auto& lvec = GoodLeptons[j].second; 
-                                    auto& charge = GoodLeptonsCharge[j];
-                                    auto&  iso = GoodLeptonsMiniIso[j];
-
-                                    my_histos["h_lPt_"  + std::to_string(i) + name]->Fill(  lvec.Pt()  ,w);
-                                    my_histos["h_lPhi_" + std::to_string(i) + name]->Fill(  lvec.Phi() ,w);
-                                    my_histos["h_lEta_" + std::to_string(i) + name]->Fill(  lvec.Eta() ,w);
-                                    my_histos["h_lCharge_" + std::to_string(i) + name]->Fill(  charge ,w);
-                                    my_histos["h_lMiniIso_" + std::to_string(i) + name]->Fill(  iso ,w);
-                                    if(type == 'e'){
-                                    my_histos["h_ePt_"  + std::to_string(i) + name]->Fill(  lvec.Pt()  ,w);
-                                    my_histos["h_ePhi_" + std::to_string(i) + name]->Fill(  lvec.Phi() ,w);
-                                    my_histos["h_eEta_" + std::to_string(i) + name]->Fill(  lvec.Eta() ,w);
-                                    my_histos["h_eCharge_" + std::to_string(i) + name]->Fill(  charge ,w);
-                                    my_histos["h_eMiniIso_" + std::to_string(i) + name]->Fill(  iso ,w);
-                                    } else if (type == 'm') {
-                                    my_histos["h_mPt_"  + std::to_string(i) + name]->Fill(  lvec.Pt()  ,w);
-                                    my_histos["h_mPhi_" + std::to_string(i) + name]->Fill(  lvec.Phi() ,w);
-                                    my_histos["h_mEta_" + std::to_string(i) + name]->Fill(  lvec.Eta() ,w);
-                                    my_histos["h_mCharge_" + std::to_string(i) + name]->Fill(  charge ,w);
-                                    my_histos["h_mMiniIso_" + std::to_string(i) + name]->Fill(  iso ,w);
-                                            }
-                                       }
                                     
 
                                     if (!isQCD)
@@ -757,6 +732,31 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                 }
 
                                 my_histos["h_ht"                  + name]->Fill(!isQCD ? HT_trigger[channel]          : HT_NonIsoMuon[channel],             w);
+                                   for(std::size_t j = 0 ; j < std::size(GoodLeptons); ++j){
+                                    auto& type = GoodLeptons[j].first;
+                                    auto& lvec = GoodLeptons[j].second; 
+                                    auto& charge = GoodLeptonsCharge[j];
+                                    auto&  iso = GoodLeptonsMiniIso[j];
+
+                                    my_histos["h_lPt"  + name]->Fill(  lvec.Pt()  ,w);
+                                    my_histos["h_lPhi" + name]->Fill(  lvec.Phi() ,w);
+                                    my_histos["h_lEta" + name]->Fill(  lvec.Eta() ,w);
+                                    my_histos["h_lCharge" + name]->Fill(  charge ,w);
+                                    my_histos["h_lMiniIso" + name]->Fill(  iso ,w);
+                                    if(type == 'e'){
+                                    my_histos["h_ePt"  + name]->Fill(  lvec.Pt()  ,w);
+                                    my_histos["h_ePhi" + name]->Fill(  lvec.Phi() ,w);
+                                    my_histos["h_eEta" + name]->Fill(  lvec.Eta() ,w);
+                                    my_histos["h_eCharge" + name]->Fill(  charge ,w);
+                                    my_histos["h_eMiniIso" + name]->Fill(  iso ,w);
+                                    } else if (type == 'm') {
+                                    my_histos["h_mPt"  + name]->Fill(  lvec.Pt()  ,w);
+                                    my_histos["h_mPhi" + name]->Fill(  lvec.Phi() ,w);
+                                    my_histos["h_mEta" + name]->Fill(  lvec.Eta() ,w);
+                                    my_histos["h_mCharge" + name]->Fill(  charge ,w);
+                                    my_histos["h_mMiniIso" + name]->Fill(  iso ,w);
+                                            }
+                                       }
                             }
 
                             if (region != "Incl" and njets != "Incl")
