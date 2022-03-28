@@ -23,10 +23,10 @@ make -j4
 Now also check out our repository if not done already:
 ```
 cd $CMSSW_BASE/src
-git clone -b Run2_UL git@github.com:StealthStop/Framework.git
+git clone git@github.com:StealthStop/Framework.git
 git clone -b Stealth git@github.com:susy2015/TopTaggerTools.git
 git clone git@github.com:susy2015/NTupleReader.git
-git clone -b Run2_UL git@github.com:StealthStop/Analyzer.git
+git clone git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
 source setup.sh #.csh if in tcsh
 ./configure
@@ -47,7 +47,7 @@ getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -
 Example of running MyAnalysis interactively
 ```
 cd $CMSSW_BASE/src/Analyzer/Analyzer/test/
-./MyAnalysis -A AnalyzeTest -H myoutputfile.root -D 2018post_TTToSemiLeptonic -E 1001 
+./MyAnalysis -A AnalyzeTest -H myoutputfile.root -D 2017_TTToSemiLeptonic -E 1001 
 ```
 
 
