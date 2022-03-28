@@ -56,7 +56,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop2_mass_PtRank_matched",   360,    0, 1500},
         {"Stop1_mass_MassRank_matched", 360,    0, 1500},
         {"Stop2_mass_MassRank_matched", 360,    0, 1500},
-        {"Stop_mass_average_matched",   360,    0, 1500}               
+        {"Stop_mass_average_matched",   360,    0, 1500},
     };
 
     hist2DInfos = {
@@ -135,6 +135,25 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets)
 {
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
+
+        histInfos.push_back({"h_lPt_" + std::to_string(i),   360,    0, 1500});
+        histInfos.push_back({"h_lIso_" + std::to_string(i),   360,    0, 1500});
+        histInfos.push_back({"h_lPhi_" + std::to_string(i),   200,    -4, 4});
+        histInfos.push_back({"h_lEta_" + std::to_string(i),   200,    -6, 6});
+        histInfos.push_back({"h_lCharge_" + std::to_string(i), 2, -1, 1});
+        histInfos.push_back({"h_lMiniIso_" + std::to_string(i), 100, -10, 10});
+        histInfos.push_back({"h_ePt_" + std::to_string(i),   360,    0, 1500});
+        histInfos.push_back({"h_eIso_" + std::to_string(i),   360,    0, 1500});
+        histInfos.push_back({"h_ePhi_" + std::to_string(i),   200,    -4, 4});
+        histInfos.push_back({"h_eEta_" + std::to_string(i),   200,    -6, 6});
+        histInfos.push_back({"h_eCharge_" + std::to_string(i), 2, -1, 1});
+        histInfos.push_back({"h_eMiniIso_" + std::to_string(i), 100, -10, 10});
+        histInfos.push_back({"h_mPt_" + std::to_string(i),   360,    0, 1500});
+        histInfos.push_back({"h_mIso_" + std::to_string(i),   360,    0, 1500});
+        histInfos.push_back({"h_mPhi_" + std::to_string(i),   200,    -4, 4});
+        histInfos.push_back({"h_mEta_" + std::to_string(i),   200,    -6, 6});
+        histInfos.push_back({"h_mCharge_" + std::to_string(i), 2, -1, 1});
+        histInfos.push_back({"h_mMiniIso_" + std::to_string(i), 100, -10, 10});
         histInfos.push_back({"Jet_cm_pt_"      + std::to_string(i), 150,  0, 1500});
         histInfos.push_back({"Jet_cm_eta_"     + std::to_string(i), 100, -6,    6});
         histInfos.push_back({"Jet_cm_phi_"     + std::to_string(i),  80, -4,    4});
@@ -396,6 +415,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon"+myVarSuffix);
 
+
+            const auto& GoodLeptons  = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons"+myVarSuffix);
+            const auto& GoodLeptonsCharge  = tr.getVec<int>("GoodLeptonsCharge"+myVarSuffix);
+            const auto& GoodLeptonsMiniIso = tr.getVec<double>("GoodLeptonsMiniIso"+myVarSuffix);
+
             const auto& regions_0l = tr.getVec<std::string>("regions_0l_RPV");
             const auto& regions_1l = tr.getVec<std::string>("regions_1l_RPV");
 
@@ -404,6 +428,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& Stop1_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass"+myVarSuffix);
             const auto& Stop2_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass"+myVarSuffix);
             const auto& Stop_mass_average_matched         = runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"+myVarSuffix);
+
+
 
             std::map<std::string, std::vector<bool> > DoubleDisCo_passRegions_0l;
             std::map<std::string, std::vector<bool> > DoubleDisCo_passRegions_1l;
@@ -533,12 +559,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::vector<double> weight        {weight0L,            weight1L};
             std::vector<double> weight_QCDCR  {weight0L_NonIsoMuon, weight1L_NonIsoMuon};
 
-            const std::map<std::string, bool> cut_map 
+            const std::map<std::string, bool> cut_map
             {
                 {"_1l"            , passBaseline1l_Good},                         
-                    {"_0l"            , passBaseline0l_Good},                         
-                    {"_1l_QCDCR"      , passBaseline1l_NonIsoMuon},                         
-                    {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
+                {"_0l"            , passBaseline0l_Good},                         
+                {"_1l_QCDCR"      , passBaseline1l_NonIsoMuon},                         
+                {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
             };
 
             std::map<std::string, bool>               njetsMap;
@@ -682,6 +708,36 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Jet_cm_phi_" + std::to_string(i) + name]->Fill(phi, w);
                                     my_histos["Jet_cm_m_"   + std::to_string(i) + name]->Fill(m, w);
                                     my_histos["Jet_cm_E_"   + std::to_string(i) + name]->Fill(E, w);
+
+                                    // WORKING HERE WITH STUFF
+                                    my_histos["Jet_cm_E_"   + std::to_string(i) + name]->Fill(E, w);
+                                    
+                                   for(std::size_t j = 0 ; j < std::size(GoodLeptons); ++j){
+                                    auto& type = GoodLeptons[j].first;
+                                    auto& lvec = GoodLeptons[j].second; 
+                                    auto& charge = GoodLeptonsCharge[j];
+                                    auto&  iso = GoodLeptonsMiniIso[j];
+
+                                    my_histos["h_lPt_"  + std::to_string(i) + name]->Fill(  lvec.Pt()  ,w);
+                                    my_histos["h_lPhi_" + std::to_string(i) + name]->Fill(  lvec.Phi() ,w);
+                                    my_histos["h_lEta_" + std::to_string(i) + name]->Fill(  lvec.Eta() ,w);
+                                    my_histos["h_lCharge_" + std::to_string(i) + name]->Fill(  charge ,w);
+                                    my_histos["h_lMiniIso_" + std::to_string(i) + name]->Fill(  iso ,w);
+                                    if(type == 'e'){
+                                    my_histos["h_ePt_"  + std::to_string(i) + name]->Fill(  lvec.Pt()  ,w);
+                                    my_histos["h_ePhi_" + std::to_string(i) + name]->Fill(  lvec.Phi() ,w);
+                                    my_histos["h_eEta_" + std::to_string(i) + name]->Fill(  lvec.Eta() ,w);
+                                    my_histos["h_eCharge_" + std::to_string(i) + name]->Fill(  charge ,w);
+                                    my_histos["h_eMiniIso_" + std::to_string(i) + name]->Fill(  iso ,w);
+                                    } else if (type == 'm') {
+                                    my_histos["h_mPt_"  + std::to_string(i) + name]->Fill(  lvec.Pt()  ,w);
+                                    my_histos["h_mPhi_" + std::to_string(i) + name]->Fill(  lvec.Phi() ,w);
+                                    my_histos["h_mEta_" + std::to_string(i) + name]->Fill(  lvec.Eta() ,w);
+                                    my_histos["h_mCharge_" + std::to_string(i) + name]->Fill(  charge ,w);
+                                    my_histos["h_mMiniIso_" + std::to_string(i) + name]->Fill(  iso ,w);
+                                            }
+                                       }
+                                    
 
                                     if (!isQCD)
                                     {
