@@ -21,13 +21,13 @@ executor = concurrent.futures.ThreadPoolExecutor(1)
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True 
 
-def getNEvtsProcess(fileURL):
+def getNEvtsProcess(fileURL, tree):
     try:
         f = ROOT.TFile.Open(fileURL)
     except:
         print "ERROR: unable to open fileURL"
         return None
-    tree = f.Get("TreeMaker2/PreSelection")
+    tree = f.Get(tree)
     isData = not bool(tree.GetBranch("GenHT"))
 
     if not tree:
@@ -44,11 +44,11 @@ def getNEvtsProcess(fileURL):
     f.Close()
     return np.array((totalPos, totalNeg))
 
-def getNEvts(fileList, threads=4):
+def getNEvts(fileList, tree, threads=4):
     files = getFiles(fileList)
 
     if files:
-        results = list(getNEvtsProcess(f) for f in files)
+        results = list(getNEvtsProcess(f, tree) for f in files)
         return sum(results)
     else:
         print "files do not exist: getNEvts() returning None"
@@ -68,12 +68,12 @@ if __name__ == "__main__":
     options, args = parser.parse_args()
 
     ss = SampleSet(options.sampleSetCfg)
-    samples = [(name, f.replace("/eos/uscms", "root://cmseos.fnal.gov/")) for name, f in ss.sampleSetList()]
+    samples = [(name, f.replace("/eos/uscms", "root://cmseos.fnal.gov/"), tree) for name, f, tree in ss.sampleSetList()]
 
-    for name, f in samples:
+    for name, f, tree in samples:
         if re.search(options.dataSetPattern, name):
             try:
-                nPos, nNeg = getNEvts(f, options.threads)
+                nPos, nNeg = getNEvts(f, tree, options.threads)
                 #################################################################################################
                 # WARNING: Do not change print statement unless you also update nEvts.C and updateSamples.py!!! #
                 #################################################################################################
