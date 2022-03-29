@@ -546,11 +546,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L            *= eventweight * leptonweight * bTagWeight ;// * prefiringScaleFactor * pileupWeight * htDerivedweight;
-                weight0L            *= eventweight *                bTagWeight ;//* prefiringScaleFactor * pileupWeight;
+                weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
+                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;
 
-                weight1L_NonIsoMuon *= eventweight ;//* muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon *= eventweight ;//* muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
             }
 
             std::vector<double> weight        {weight0L,            weight1L};
@@ -705,10 +705,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Jet_cm_phi_" + std::to_string(i) + name]->Fill(phi, w);
                                     my_histos["Jet_cm_m_"   + std::to_string(i) + name]->Fill(m, w);
                                     my_histos["Jet_cm_E_"   + std::to_string(i) + name]->Fill(E, w);
-
-                                    // WORKING HERE WITH STUFF
-                                    my_histos["Jet_cm_E_"   + std::to_string(i) + name]->Fill(E, w);
-                                    
                                     
 
                                     if (!isQCD)
