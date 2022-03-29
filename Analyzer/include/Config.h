@@ -462,8 +462,8 @@ public:
                 "CommonVariables",
                 "RunTopTagger",
                 "Baseline",
-                // "BTagCorrector",
-                // "ScaleFactors"
+                "BTagCorrector",
+                "ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
         }
