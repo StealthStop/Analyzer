@@ -1,4 +1,4 @@
-import os, re, argparse
+import os, re, argparse, subprocess
 from collections import defaultdict, OrderedDict
 
 # Usage: Populates a directory "filelists_Kevin_<versioning>" with a text file for each year + sample combination.
@@ -13,7 +13,7 @@ class FileLister:
         self.production   = production
         self.tag          = tag
 
-        self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s/"%(production)
+        self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s"%(production)
         self.ttreePath    = "TreeMaker2/PreSelection"
         self.ttreePathSig = "PreSelection"
         self.tempFileName = "tmp.txt"
@@ -40,10 +40,8 @@ class FileLister:
         if not os.path.isdir(self.fileListsDir):
             os.mkdir(self.fileListsDir)
 
-        # ls the directory containing all TreeMaker ntuple files
-        # and pipe to temp output txt file
-        command = os.system("eos root://cmseos.fnal.gov ls %s > tmp.txt"%(self.filesDir))
-        self.collectFiles("tmp.txt")
+        # Get listing of all available ROOT files
+        self.collectFiles()
 
         # If the TreeMaker area exists, then use it to read in event counts and xsections
         # These functions will populate self.auxInfo
@@ -53,6 +51,14 @@ class FileLister:
         # Write out the txt file with corresponding list of files for a sample
         # Also writes the sample set file
         self.writeFileLists()
+
+    # Wrapper to list things in an EOS path
+    def listEOS(self, path):
+        proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", path], stdout=subprocess.PIPE)
+        lines = proc.stdout.readlines()
+        lines = [line.decode("utf8").strip() for line in lines]
+
+        return lines
 
     # Take a sample name e.g. "2016_QCD_Pt_120to170_TuneCP5_13TeV_pythia8"
     # and return everything before the "TuneCP5" => "2016_QCD_Pt_120to170."
@@ -213,42 +219,49 @@ class FileLister:
    
     # Determine the common sample names amongst the files and 
     # group all these files under the common name 
-    def collectFiles(self, tempFilePath):
-        with open(tempFilePath, 'r') as tempfile:
-            for line in tempfile:
-        
-                # Each line will be simple ROOT file name e.g. Summer20UL18.ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8_9_RA2AnalysisTree.root
-                if ".root" not in line or "Fast" in line:
-                    continue
-        
-                era = ""
-                if   ("UL2016" in line and "HIPM" in line) or "UL16APV" in line: 
-                    era = "2016APV"
-                elif "UL2016" in line or "UL16" in line: 
-                    era = "2016"
-                elif "UL2017" in line or "UL17" in line: 
-                    era = "2017"
-                elif "UL2018" in line or "UL18" in line: 
-                    era = "2018"
-                else:
-                    continue
-        
-                # With example above, drop the "Summer20UL18" and ".root", 
-                # grab string before the last two "_" i.e. "ttHJetTobb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8"
-                shortline = line.split(".")[1].rpartition("_")[0].rpartition("_")[0]
-        
-                # Now we construct shortline as "2018_ttHJetTobb" and remove extra things
-                shortline = era + "_" + shortline.replace("_ext1", "").replace("_ext2", "").replace("_ext3", "").replace("_backup", "")
+    def collectFiles(self):
+
+        allFileList = []
+
+        # Will get a list of folders corresponding to data and MC eras
+        # i.e. Summer20UL16 or Run2017D-UL2017-v2
+        eraDirs = self.listEOS("%s/*UL*"%(self.filesDir))
+        for eraDir in eraDirs:
+
+            # Within each eraDir, get the list of folders, each corresponding
+            # to a single unique sample i.e. ZZZ_TuneCP5_13TeV-amcatnlo-pythia8
+            sampleDirs = self.listEOS("%s/%s"%(self.filesDir, eraDir))
+            for sampleDir in sampleDirs:
+
+                fileList = self.listEOS("%s/%s/%s"%(self.filesDir, eraDir, sampleDir))
                 
-                # Use "2018_ttHJetTobb" as key to list of all ttHJetTobb files for 2018
-                newline = "root://cmseos.fnal.gov/" + self.filesDir + line
-                self.samples[era][shortline].append(newline)
+                # Finally within each sampleDir is a set of ROOT files
+                for aFile in fileList:
+        
+                    if ".root" not in aFile or "Fast" in aFile:
+                        continue
+        
+                    era = ""
+                    if   ("UL2016" in eraDir and "HIPM" in eraDir) or "UL16APV" in eraDir: 
+                        era = "2016APV"
+                    elif "UL2016" in eraDir or "UL16" in eraDir: 
+                        era = "2016"
+                    elif "UL2017" in eraDir or "UL17" in eraDir: 
+                        era = "2017"
+                    elif "UL2018" in eraDir or "UL18" in eraDir: 
+                        era = "2018"
+                    else:
+                        continue
+        
+                    newName = sampleDir.replace("_ext1", "").replace("_ext2", "").replace("_ext3", "").replace("_backup", "")
+                    newline = "root://cmseos.fnal.gov/" + self.filesDir + "/" + eraDir + "/" + sampleDir + "/" + aFile + "\n"
+                    self.samples[era][era + "_" + newName].append(newline)
     
     # Write out a txt file for each sample with the list of corresponding files
     def writeFileLists(self):
     
         sampleGroups = ["Data", "TTJets", "DYJetsToLL", "TTToSemiLeptonic", "TTTo2L2Nu", "TTToHadronic", 
-                        "WJetsToLNu|WJetsToQQ", "QCD_HT", "QCD_Pt", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH",
+                        "WJetsToLNu|WJetsToQQ", "QCD_HT", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH",
                         "WWW|WWG|WWZ|WZZ|ZZZ|WZG", "WW|WZ|ZZ", "TTZTo", "TTWJets", "WWTo|ZZTo|WZTo", "ttHJet", "RPV|StealthSYY|StealthSHH"
         ]
 
@@ -260,6 +273,11 @@ class FileLister:
             theSamples = sampleLists.keys()
             theSamples.sort()
             for sample in theSamples:
+
+                # Some samples we do not care about at this time
+                if "GJets" in sample or "TGamma" in sample or "QCD_Pt" in sample or "ZJetsToNuNu" in sample:
+                    continue
+
                 newfile = open("filelists_Kevin_%s/"%(self.production) + sample + ".txt", 'w')
         
                 xsec       = "-1,"
