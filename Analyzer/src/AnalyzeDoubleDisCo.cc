@@ -13,8 +13,8 @@
 #include "Framework/Framework/include/FatJetCombine.h"
 #include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/Baseline.h"
-//#include "Framework/Framework/include/BTagCorrector.h"
-//#include "Framework/Framework/include/ScaleFactors.h"
+#include "Framework/Framework/include/BTagCorrector.h"
+#include "Framework/Framework/include/ScaleFactors.h"
 #include "Framework/Framework/include/StopJets.h"
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
@@ -284,10 +284,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        //ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
+        ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
-        //BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
+        BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         DeepEventShape      neuralNetwork0L(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork1L(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix); 
@@ -321,8 +321,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
-        //tr.registerFunction(bTagCorrector);
-        //tr.registerFunction(scaleFactors);
+        tr.registerFunction(bTagCorrector);
+        tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
         tr.registerFunction(neuralNetwork0L);
         tr.registerFunction(neuralNetwork0L_NonIsoMuon);
@@ -535,21 +535,21 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 const auto& lumi   = tr.getVar<double>("Lumi");
                 eventweight        = lumi * Weight;
 
-                //const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
-                //const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
-                //const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
-                //leptonweight             = eleLepWeight * muLepWeight;
+                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
+                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
+                const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
+                leptonweight             = eleLepWeight * muLepWeight;
               
-                //pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
-                //bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central"+myVarSuffix);
-                //htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
-                //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
+                pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
+                bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central"+myVarSuffix);
+                htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
+                prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
                 
-                weight1L            *= eventweight; //* leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
-                weight0L            *= eventweight; //*                bTagWeight * prefiringScaleFactor * pileupWeight;
+                weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
+                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;
 
-                weight1L_NonIsoMuon *= eventweight; //* muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon *= eventweight; //* muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
             }
 
             std::vector<double> weight        {weight0L,            weight1L};
