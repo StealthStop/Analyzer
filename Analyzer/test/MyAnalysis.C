@@ -28,6 +28,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
+#include "Analyzer/Analyzer/include/AnalyzeXsec.h"
 
 #include "TH1D.h"
 #include "TFile.h"
