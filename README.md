@@ -23,10 +23,10 @@ make -j4
 Now also check out our repository if not done already:
 ```
 cd $CMSSW_BASE/src
-git clone -b Run2_UL git@github.com:StealthStop/Framework.git
+git clone git@github.com:StealthStop/Framework.git
 git clone -b Stealth git@github.com:susy2015/TopTaggerTools.git
 git clone git@github.com:susy2015/NTupleReader.git
-git clone -b Run2_UL git@github.com:StealthStop/Analyzer.git
+git clone git@github.com:StealthStop/Analyzer.git
 cd Analyzer/Analyzer/test
 source setup.sh #.csh if in tcsh
 ./configure
@@ -47,7 +47,7 @@ getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -
 Example of running MyAnalysis interactively
 ```
 cd $CMSSW_BASE/src/Analyzer/Analyzer/test/
-./MyAnalysis -A AnalyzeTest -H myoutputfile.root -D 2018post_TTToSemiLeptonic -E 1001 
+./MyAnalysis -A AnalyzeTest -H myoutputfile.root -D 2017_TTToSemiLeptonic -E 1001 
 ```
 
 
@@ -188,6 +188,32 @@ optional arguments:
                         Path to sample set file
   --nEvtsDir NEVTDIR     Directory to nEvt output
 ```
+
+## Splitting Signal Files
+
+The UL signal samples are produced where all mass points from 300 to 1400 can appear in a single ROOT file.
+To restore the behavior from the legacy analysis, where a given ROOT file only contains events for a single mass point
+some code infrastructure is provided to disentangle the mass points.
+
+Jobs can be submitted to condor to run over ROOT files in a user-specified directory on EOS.
+The output ROOT files are sent to a user-specified area in their own EOS area.
+
+```
+usage: submitSplitSignal.py [-h] --eosPath EOSPATH [--outPath OUTPATH]
+                            [--ttreePath TTREEPATH] [--wildcard WILDCARD]
+                            [--noSubmit]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --eosPath EOSPATH     Path to files on EOS
+  --outPath OUTPATH     Output path for jobs
+  --ttreePath TTREEPATH
+                        TTree name to read
+  --wildcard WILDCARD   Wildcards for picking
+  --noSubmit            Do not submit to condor
+```
+
+Companion `runSplitSignal.py` and `runSplitSignal.sh` are provided to process each file.
 
 ## Making inputs for the fit
 
