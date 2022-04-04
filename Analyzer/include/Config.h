@@ -406,8 +406,8 @@ public:
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
                 "MakeStopHemispheres_OldSeed_NonIsoMuon",
-                "BTagCorrector",
-                "ScaleFactors",
+                //"BTagCorrector",
+                //"ScaleFactors",
                 "StopGenMatch",
                 "DoubleDisCo_0l_RPV",
                 "DoubleDisCo_1l_RPV",
@@ -553,10 +553,33 @@ public:
                 "PrepNTupleVars"
             };
             registerModules(tr, std::move(modulesList));
-        }
-
-        else
-        {
+        } else if (analyzer == "Analyze2W"){
+                const std::vector<std::string> modulesList = {
+                    "PrepNTupleVars",
+                    "PartialUnBlinding",
+                    "PrepNTupleVars",
+                    "PartialUnBlinding",
+                    "PrepNTupleVars",
+                    "Muon",
+                    "Electron",
+                    "Photon",
+                    "Jet",
+                    "BJet",
+                    "CommonVariables",
+                    "FatJetCombine",
+                    "RunTopTagger",
+                    "Baseline",
+                    "FatJetCombine",
+                    "MakeMVAVariables_2l",
+                    "StopGenMatch",
+                    "ScaleFactors",
+                    "TrainingNTupleVars",
+                    //   "BTagCorrector",
+                    //   "ScaleFactors",
+                    //    "TrainingNTupleVars",
+                };
+            registerModules(tr, std::move(modulesList));
+        } else {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
                 "Muon",
