@@ -1,7 +1,6 @@
 import sys, os
 from os import system, environ
 import subprocess
-sys.path = [environ["CMSSW_BASE"] + "/src/SusyAnaTools/Tools/condor/",] + sys.path
 
 from samples import SampleCollection
 import optparse
@@ -140,11 +139,11 @@ def main():
     if options.haddOther:
         # Hack to make the BG_OTHER.root file
         sigNttbar_old = ["AllSignal", "TT", "TTJets", "Data_SingleMuon", "Data_SingleElectron"]
-        sigNttbar_2016 = ["2016_AllSignal", "2016_TT", "2016_TTJets", "2016_Data_JetHT", "2016_Data_SingleMuon", "2016_Data_SingleElectron","2016_TT_isrUp", "2016_TT_isrDown", "2016_TT_fsrUp", "2016_TT_fsrDown", "2016_TTX" , "2016_QCD", "2016_TT_erdOn", "2016_TT_hdampUp", "2016_TT_hdampDown", "2016_TT_underlyingEvtUp", "2016_TT_underlyingEvtDown"]
+        sigNttbar_2016preVFP = ["2016preVFP_AllSignal", "2016preVFP_TT", "2016preVFP_TTJets", "2016preVFP_Data_JetHT", "2016preVFP_Data_SingleMuon", "2016preVFP_Data_SingleElectron","2016preVFP_TT_isrUp", "2016preVFP_TT_isrDown", "2016preVFP_TT_fsrUp", "2016preVFP_TT_fsrDown", "2016preVFP_TTX" , "2016preVFP_QCD", "2016preVFP_TT_erdOn", "2016preVFP_TT_hdampUp", "2016preVFP_TT_hdampDown", "2016preVFP_TT_underlyingEvtUp", "2016preVFP_TT_underlyingEvtDown"]
+        sigNttbar_2016postVFP = ["2016postVFP_AllSignal", "2016postVFP_TT", "2016postVFP_TTJets", "2016postVFP_Data_JetHT", "2016postVFP_Data_SingleMuon", "2016postVFP_Data_SingleElectron","2016postVFP_TT_isrUp", "2016postVFP_TT_isrDown", "2016postVFP_TT_fsrUp", "2016postVFP_TT_fsrDown", "2016postVFP_TTX" , "2016postVFP_QCD", "2016postVFP_TT_erdOn", "2016postVFP_TT_hdampUp", "2016postVFP_TT_hdampDown", "2016postVFP_TT_underlyingEvtUp", "2016postVFP_TT_underlyingEvtDown"]
         sigNttbar_2017 = ["2017_AllSignal", "2017_AllSignal_CP5", "2017_TT", "2017_TTJets", "2017_Data_JetHT", "2017_Data_SingleMuon", "2017_Data_SingleElectron", "2017_TTX", "2017_QCD", "2017_TT_erdOn", "2017_TT_hdampUp", "2017_TT_hdampDown", "2017_TT_underlyingEvtUp", "2017_TT_underlyingEvtDown"]
-        sigNttbar_2018pre  = ["2018pre_AllSignal", "2018pre_TT", "2018pre_TTJets", "2018pre_Data_JetHT", "2018pre_Data_SingleMuon", "2018pre_Data_SingleElectron", "2018pre_TTX", "2018pre_QCD", "2018pre_TT_erdOn", "2018pre_TT_hdampUp", "2018pre_TT_hdampDown", "2018pre_TT_underlyingEvtUp", "2018pre_TT_underlyingEvtDown"]
-        sigNttbar_2018post = ["2018post_AllSignal", "2018post_TT", "2018post_TTJets", "2018post_Data_JetHT", "2018post_Data_SingleMuon", "2018post_Data_SingleElectron", "2018post_TTX", "2018post_QCD",  "2018post_TT_erdOn", "2018post_TT_hdampUp", "2018post_TT_hdampDown", "2018post_TT_underlyingEvtUp", "2018post_TT_underlyingEvtDown"]
-        sigNttbar = sigNttbar_old+sigNttbar_2016+sigNttbar_2017+sigNttbar_2018pre+sigNttbar_2018post
+        sigNttbar_2018 = ["2018_AllSignal", "2018_TT", "2018_TTJets", "2018_Data_JetHT", "2018_Data_SingleMuon", "2018_Data_SingleElectron", "2018_TTX", "2018_QCD",  "2018_TT_erdOn", "2018_TT_hdampUp", "2018_TT_hdampDown", "2018_TT_underlyingEvtUp", "2018_TT_underlyingEvtDown"]
+        sigNttbar = sigNttbar_old+sigNttbar_2016preVFP+sigNttbar_2016postVFP+sigNttbar_2017+sigNttbar_2018
         files = ""
         for sampleCollection in scl:
             sl = sc.sampleList(sampleCollection)
@@ -164,10 +163,10 @@ def main():
     if options.haddData:
         # Hack to make the Data.root file (hadd all the data together)
         dataFiles = ["Data_SingleMuon.root", "Data_SingleElectron.root", 
-                     "2016_Data_SingleMuon.root", "2016_Data_SingleElectron.root", 
+                     "2016preVFP_Data_SingleMuon.root", "2016preVFP_Data_SingleElectron.root", 
+                     "2016postVFP_Data_SingleMuon.root", "2016postVFP_Data_SingleElectron.root", 
                      "2017_Data_SingleMuon.root", "2017_Data_SingleElectron.root",
-                     "2018pre_Data_SingleMuon.root", "2018pre_Data_SingleElectron.root",
-                     "2018post_Data_SingleMuon.root", "2018post_Data_SingleElectron.root"]
+                     "2018_Data_SingleMuon.root", "2018_Data_SingleElectron.root"]
         if options.year:
             command = "hadd %s/%s_Data.root " % (outDir,options.year)
         else:
