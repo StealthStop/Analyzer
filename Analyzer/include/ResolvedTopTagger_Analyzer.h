@@ -1,5 +1,5 @@
-#ifndef AnalyzeTopTagger_h
-#define AnalyzeTopTagger_h
+#ifndef ResolvedTopTagger_Analyzer_h
+#define ResolvedTopTagger_Analyzer_h
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -12,7 +12,7 @@
 
 class NTupleReader;
 
-class AnalyzeTopTagger
+class ResolvedTopTagger_Analyzer
 {
 private:
    HistoContainer<NTupleReader> hists_old, histNjet6_old, histNjet7_old, histNjet8_old, histNjet9_old,  histNjet10_old, histNjet11_old, histNjet12_old, histNjet12inc_old, 
@@ -22,8 +22,8 @@ public:
    std::map<std::string, std::shared_ptr<TH2D>>  my_2d_histos;
    std::map<std::string, std::shared_ptr<TEfficiency>>  my_efficiencies;
     
-   AnalyzeTopTagger();
-   ~AnalyzeTopTagger(){};
+   ResolvedTopTagger_Analyzer();
+   ~ResolvedTopTagger_Analyzer(){};
 
    void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
    void InitHistos();

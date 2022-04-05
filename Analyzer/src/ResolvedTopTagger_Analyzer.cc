@@ -1,5 +1,5 @@
-#define AnalyzeTopTagger_cxx
-#include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
+#define ResolvedTopTagger_Analyzer_cxx
+#include "Analyzer/Analyzer/include/ResolvedTopTagger_Analyzer.h"
 #include "Framework/Framework/include/SetUpTopTagger.h"
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
@@ -12,7 +12,7 @@
 #include <TRandom3.h>
 #include <iostream>
 
-AnalyzeTopTagger::AnalyzeTopTagger() : hists_old("histos_old"), histNjet6_old("Njet6_old"), histNjet7_old("Njet7_old"), histNjet8_old("Njet8_old"), histNjet9_old("Njet9_old"), 
+ResolvedTopTagger_Analyzer::ResolvedTopTagger_Analyzer() : hists_old("histos_old"), histNjet6_old("Njet6_old"), histNjet7_old("Njet7_old"), histNjet8_old("Njet8_old"), histNjet9_old("Njet9_old"), 
                                        histNjet10_old("Njet10_old"), histNjet11_old("Njet11_old"), histNjet12_old("Njet12_old"), histNjet12inc_old("Njet12inc_old"), 
                                        hists_new("histos_new"), histNjet7_new("Njet7_new"), histNjet8_new("Njet8_new"), histNjet9_new("Njet9_new"), 
                                        histNjet10_new("Njet10_new"), histNjet11_new("Njet11_new"), histNjet12_new("Njet12_new"), histNjet12inc_new("Njet12inc_new")
@@ -20,13 +20,13 @@ AnalyzeTopTagger::AnalyzeTopTagger() : hists_old("histos_old"), histNjet6_old("N
     InitHistos();
 }
 
-void AnalyzeTopTagger::InitHistos()
+void ResolvedTopTagger_Analyzer::InitHistos()
 {
     TH1::SetDefaultSumw2();
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
 }
 
-void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
+void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
     TRandom3 rand(123);
    
@@ -251,7 +251,7 @@ void AnalyzeTopTagger::Loop(NTupleReader& tr, double, int maxevents, bool)
     }
 }
 
-void AnalyzeTopTagger::WriteHistos(TFile* outfile)
+void ResolvedTopTagger_Analyzer::WriteHistos(TFile* outfile)
 {
     outfile->cd();
 

@@ -467,7 +467,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="Semra_Analyzer" || analyzer=="TopTagger_Analyzer" || analyzer=="AnalyzeTopTagger")
+        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
