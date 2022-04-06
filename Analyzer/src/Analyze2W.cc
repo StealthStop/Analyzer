@@ -17,6 +17,7 @@
 #include "Framework/Framework/include/Utility.h"
 
 #include "fastjet/ClusterSequence.hh"
+#include "Framework/Framework/include/Jet.h"
 
 #include <TCanvas.h>
 #include <TEfficiency.h>
@@ -187,7 +188,7 @@ struct SliceData {
     double genHt;
     int NJets;
     int n_gen_leps;
-    const std::vector<TLorentzVector> &Jets;
+    const std::vector<utility::LorentzVector> &Jets;
     const std::vector<double> &nsr21;
     const std::vector<double> &nsr42;
     const std::vector<double> &nsr43;
@@ -196,7 +197,7 @@ struct SliceData {
     bool has_2_jets=false;
 };
 
-std::ostream& operator<<(std::ostream &os, const TLorentzVector &v) {
+std::ostream& operator<<(std::ostream &os, const utility::LorentzVector &v) {
     os << "(" << v.Pt() << ", " << v.Eta() << ", " << v.Phi() << "," << v.E() << ")";
     return os;
 }
@@ -307,7 +308,7 @@ class SelectionCut : public Cut {
 
             auto& firstLargestPt = Jets[j1_index];
             auto& secondLargestPt = Jets[j2_index];
-            auto jetpass = [](const TLorentzVector &j, double t21) {
+            auto jetpass = [](const utility::LorentzVector &j, double t21) {
                 return j.Pt() > 400 && std::abs(j.Eta()) < 2.0 && t21 < 0.75;
             };
             double largestTau21 = nsr21[j1_index];
@@ -526,16 +527,16 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 
         makeVar(runtype, std::string);
         makeVar(NJets, int);
-        makeVec(Jets, TLorentzVector);
-        makeVec(JetsAK8Clean, TLorentzVector);
+        makeVec(Jets, utility::LorentzVector);
+        //makeVec(JetsAK8Clean, utility::LorentzVector);
 
-        makeVec(JetsAK8, TLorentzVector);
+        makeVec(JetsAK8, utility::LorentzVector);
 
-        makeVec(GenJetsAK8, TLorentzVector);
+        makeVec(GenJetsAK8, utility::LorentzVector);
         makeVec(GoodJets_pt20, bool);
         makeVar(NGoodBJets_pt30, int);
 
-        makeVec(JetsCA12, TLorentzVector);
+        makeVec(JetsCA12, utility::LorentzVector);
         makeVec(JetsCA12_NsubjettinessTau4, double);
         makeVec(JetsCA12_NsubjettinessTau3, double);
         makeVec(JetsCA12_NsubjettinessTau2, double);
@@ -553,16 +554,16 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         makeVar(HT_trigger_pt30, double);
         makeVar(GenHT, double);
 
-        makeVec(GenParticles, TLorentzVector);
+        makeVec(GenParticles, utility::LorentzVector);
         makeVec(GenParticles_PdgId, int);
         makeVec(GenParticles_ParentId, int);
         makeVec(GenParticles_ParentIdx, int);
         makeVec(GenParticles_Status, int);
         makeVec(JetsAK8_wDiscriminatorDeep, double);
 
-        makeVec(GoodLeptons, (std::pair<std::string, TLorentzVector>));
+        makeVec(GoodLeptons, (std::pair<std::string, utility::LorentzVector>));
 
-        std::vector<TLorentzVector> Ws, Leps, Stops, Quarks;
+        std::vector<utility::LorentzVector> Ws, Leps, Stops, Quarks;
         auto isHard = [](int x) {
             return x == 1 || (std::abs(x) < 60 && std::abs(x) > 20);
         };
@@ -653,7 +654,8 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("StopPt", v.Pt());
         }
         auto computeAngle = [](const auto &pair) {
-            return pair[0].Vect().Angle(pair[1].Vect());
+            return ROOT::Math::VectorUtil::Angle(pair[0].Vect(), pair[1].Vect());
+            //return pair[0].Vect().Angle(pair[1].Vect());
         };
         for (std::size_t i = 0; i < std::size(JetsCA12); ++i) {
             Fill("NSubJettiness3", JetsCA12_NsubjettinessTau3[i]);

@@ -572,7 +572,6 @@ public:
                     "FatJetCombine",
                     "MakeMVAVariables_2l",
                     "StopGenMatch",
-                    "ScaleFactors",
                     "TrainingNTupleVars",
                     //   "BTagCorrector",
                     //   "ScaleFactors",
