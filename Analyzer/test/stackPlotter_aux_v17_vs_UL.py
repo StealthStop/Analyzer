@@ -52,10 +52,9 @@ histograms = {
 }
 
 backgrounds = {
-    "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0}
+        "2016preVFP_TT"       : {"name" : "t#bar{t} + jets Pre", "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0, "fstyle": 10},
+    "2016preVFP_QCD"       : {"name" : "QCD Multijet Pre", "color" : 50,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0, "fstyle": 10},
+    "2016preVFP_TTX"       : {"name" : "t#bar{t} + X Pre", "color" : 60,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0, "fstyle": 10},
 }
 
 signals = OrderedDict({
@@ -67,6 +66,12 @@ signals = OrderedDict({
 })
 
 data = {
-    "Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
+    #"Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
+    "2016postVFP_TT"       : {"name" : "t#bar{t} + jets Post", "color" : 30,  "lstyle" : 0, "mstyle" : 8, "lsize" : 1, "msize" : 0},
+    "2016postVFP_QCD"       : {"name" : "QCD Multijet Post", "color" : 50,  "lstyle" : 0, "mstyle" : 8, "lsize" : 1, "msize" : 0},
+    "2016postVFP_TTX"       : {"name" : "t#bar{t} + X Post", "color" : 60,  "lstyle" : 0, "mstyle" : 8, "lsize" : 1, "msize" : 0},
+    #"QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    #"TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    #"BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0}
     #"pseudoDataS" : {"name" : "pseudoDataS", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
 }

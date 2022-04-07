@@ -386,8 +386,12 @@ class StackPlotter:
 
                     # Preemptively get data counts to be used for normalzing the histograms later
                     for dname, dinfo in self.data.items():
+                        if self.year:
+                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+                        else:
+                            rootFile = "%s/%s.root"%(self.inpath, dname)
 
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+                        #rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
                         if Hobj.IsGood():
@@ -407,7 +411,11 @@ class StackPlotter:
 
                     for bname, binfo in self.backgrounds.items(): 
 
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+                        #rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+                        if self.year:
+                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+                        else:
+                            rootFile = "%s/%s.root"%(self.inpath, bname)
     
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
@@ -440,8 +448,12 @@ class StackPlotter:
                     unWegRPV350 = 0.0; unWegRPV550 = 0.0; unWegRPV850 = 0.0;
 
                     for sname, sinfo in self.signals.items():
+                        if self.year:
+                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+                        else:
+                            rootFile = "%s/%s.root"%(self.inpath, sname)
 
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+                        #rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
                         if Hobj.IsGood():
@@ -482,8 +494,10 @@ class StackPlotter:
                     # Loop over each background and get their respective histo, scale if necessary
                     option = "HIST"; loption = "F"
                     for bname, binfo in self.backgrounds.items(): 
-
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+                        if self.year:
+                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
+                        else:
+                            rootFile = "%s/%s.root"%(self.inpath, bname)
     
                         if "option"  not in binfo: binfo["option"]  = option
                         if "loption" not in binfo: binfo["loption"] = loption
@@ -538,7 +552,10 @@ class StackPlotter:
                     option = "HIST"; loption = "L"
                     for sname, sinfo in self.signals.items(): 
 
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+                        if self.year:
+                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+                        else:
+                            rootFile = "%s/%s.root"%(self.inpath, sname)
 
                         if "option"  not in sinfo: sinfo["option"]  = option 
                         if "loption" not in sinfo: sinfo["loption"] = loption
@@ -568,8 +585,12 @@ class StackPlotter:
                     # Loop over the data and get their respective histo
                     option = "E0P"; loption = "ELP"
                     for dname, dinfo in self.data.items():
+                        if self.year:
+                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+                        else:
+                            rootFile = "%s/%s.root"%(self.inpath, dname)
 
-                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+                        #rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
 
                         if "option"  not in dinfo: dinfo["option"]  = option 
                         if "loption" not in dinfo: dinfo["loption"] = loption
@@ -606,7 +627,7 @@ class StackPlotter:
 
                         rinfo = {"name" : "ratio", "color" : ROOT.kBlack,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1 / self.upperSplit}
                         rnewInfo = copy.deepcopy(newInfo)
-                        rnewInfo["Y"]["title"] = "#frac{Data}{Pred.}"
+                        rnewInfo["Y"]["title"] = "#frac{Pre}{Post}"
                         rnewInfo["X"]["rebin"] = 1
 
                         canvas.cd(2)
@@ -618,7 +639,12 @@ class StackPlotter:
 
                         ratio.Draw("E0P")
 
-                    canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
+                    if self.year:
+                        outpdf = "%s/%s_%s.pdf"%(self.outpath, self.year, newName)
+                    else:
+                        outpdf = "%s/%s.pdf"%(self.outpath, newName)
+
+                    canvas.SaveAs(outpdf)
 
 
     # function to put the raw nEvents significance and njet bin by njet bin bkg & sig fractions for baseline selection
