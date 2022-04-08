@@ -12,10 +12,8 @@
 #include <TRandom3.h>
 #include <iostream>
 
-ResolvedTopTagger_Analyzer::ResolvedTopTagger_Analyzer() : hists_old("histos_old"), histNjet6_old("Njet6_old"), histNjet7_old("Njet7_old"), histNjet8_old("Njet8_old"), histNjet9_old("Njet9_old"), 
-                                       histNjet10_old("Njet10_old"), histNjet11_old("Njet11_old"), histNjet12_old("Njet12_old"), histNjet12inc_old("Njet12inc_old"), 
-                                       hists_new("histos_new"), histNjet7_new("Njet7_new"), histNjet8_new("Njet8_new"), histNjet9_new("Njet9_new"), 
-                                       histNjet10_new("Njet10_new"), histNjet11_new("Njet11_new"), histNjet12_new("Njet12_new"), histNjet12inc_new("Njet12inc_new")
+ResolvedTopTagger_Analyzer::ResolvedTopTagger_Analyzer() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), 
+                                                           histNjet10("Njet10"), histNjet11("Njet11"), histNjet12("Njet12"), histNjet12inc("Njet12inc")
 {
     InitHistos();
 }
@@ -49,12 +47,13 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         const auto& HT_trigger_pt45  = tr.getVar<double>("HT_trigger_pt45");
         const auto& NGoodBJets_pt45  = tr.getVar<int>("NGoodBJets_pt45");
         const auto& NGoodJets_pt45   = tr.getVar<int>("NGoodJets_pt45");
-        const auto& dR_bjets         = tr.getVar<float>("dR_bjets");
+        const auto& dR_bjets_old     = tr.getVar<double>("dR_bjets_old");
+        const auto& dR_bjets         = tr.getVar<double>("dR_bjets");
         const auto& GoodJets_pt45    = tr.getVec<bool>("GoodJets_pt45");
         const bool pass_oldResolved  = JetID && passMETFilters && passMadHT && passTriggerHadMC 
                                       && NGoodLeptons==0       && HT_trigger_pt45 > 500 
                                       && NGoodBJets_pt45 >= 2  && NGoodJets_pt45 >= 6
-                                      && dR_bjets >= 1.0;
+                                      && dR_bjets_old >= 1.0;
         // new resolved selection based on new baseline
         const bool passBaseline0l_pre = tr.getVar<bool>("passBaseline0l_pre");
         const auto& NNonIsoMuons      = tr.getVar<int>("NNonIsoMuons");
@@ -79,23 +78,25 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
             const auto& lumi   = tr.getVar<double>("Lumi");
             eventweight        = lumi*Weight;
 
-            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            //bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            //puScaleFactor        = tr.getVar<double>("puWeightCorr");
 
             //weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
-            weight *= eventweight * puScaleFactor;
+            //weight *= eventweight * puScaleFactor;
+            weight *= eventweight;
         }
 
         // ---------------------------------------------------------------
         // -- Create variables for setStealthStopVar() in HistoContainer.h
         // ---------------------------------------------------------------
-        auto& goodjets_pt45 = tr.createDerivedVec<utility::LorentzVector>("GoodJets_pt45_tlv");
+        auto& goodjets_pt45 = tr.createDerivedVec<TLorentzVector>("GoodJets_pt45_tlv");
         
         for (unsigned int i = 0; i < Jets.size(); ++i )
         {
             if (!GoodJets_pt45[i]) continue;
-            goodjets_pt45.emplace_back(Jets.at(i));            
+            //goodjets_pt45.emplace_back(Jets.at(i));            
+            goodjets_pt45.emplace_back(utility::convertLV<TLorentzVector, utility::LorentzVector>(Jets.at(i)));
         }
 
         // -----------------------------------------
@@ -104,149 +105,85 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         // ----------------
         // -- baseline cuts
         // ----------------
-        std::vector<std::pair<std::string, bool>> old_resolved =
-        {   
-            {"pass_oldResolved", pass_oldResolved},
-        };
-        hists_old.fillWithCutFlow(old_resolved, tr, weight, &rand);
-
         std::vector<std::pair<std::string, bool>> new_resolved =
         {
             {"pass_newResolved", pass_newResolved},
         };
-        hists_new.fillWithCutFlow(new_resolved, tr, weight, &rand);
+        hists.fillWithCutFlow(new_resolved, tr, weight, &rand);
 
         // -------------------------------------------------
         // for MVA score distribution as a function of Njets
         // -------------------------------------------------
         // --------------------------
-        // baseline cuts + Njets == 6
-        // --------------------------        
-        std::vector<std::pair<std::string, bool>> Njets6_old =
-        {
-            {"pass_oldResolved", pass_oldResolved   },
-            {"Njet6_old"       , NGoodJets_pt45 == 6},
-        };
-        histNjet6_old.fillWithCutFlow(Njets6_old, tr, weight, &rand);
-
-        // --------------------------
         // baseline cuts + Njets == 7
         // --------------------------
-        std::vector<std::pair<std::string, bool>> Njets7_old =
-        {
-            {"pass_oldResolved", pass_oldResolved   },
-            {"Njet7_old"       , NGoodJets_pt45 == 7},
-        };
-        histNjet7_old.fillWithCutFlow(Njets7_old, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> Njets7_new =
+        std::vector<std::pair<std::string, bool>> Njets7 =
         {
             {"pass_newResolved", pass_newResolved   },
-            {"Njet7_new"       , NGoodJets_pt30 == 7},
+            {"Njet7"           , NGoodJets_pt30 == 7},
         };
-        histNjet7_new.fillWithCutFlow(Njets7_new, tr, weight, &rand);
+        histNjet7.fillWithCutFlow(Njets7, tr, weight, &rand);
 
         // --------------------------
         // baseline cuts + Njets == 8
         // --------------------------
-        std::vector<std::pair<std::string, bool>> Njets8_old =
-        {
-            {"pass_oldResolved", pass_oldResolved   },
-            {"Njet8_old"       , NGoodJets_pt45 == 8},
-        };
-        histNjet8_old.fillWithCutFlow(Njets8_old, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> Njets8_new =
+        std::vector<std::pair<std::string, bool>> Njets8 =
         {
             {"pass_newResolved", pass_newResolved   },
-            {"Njet8_new"       , NGoodJets_pt30 == 8},
+            {"Njet8"           , NGoodJets_pt30 == 8},
         };
-        histNjet8_new.fillWithCutFlow(Njets8_new, tr, weight, &rand);
+        histNjet8.fillWithCutFlow(Njets8, tr, weight, &rand);
 
         // --------------------------
         // baseline cuts + Njets == 9
         // --------------------------
-        std::vector<std::pair<std::string, bool>> Njets9_old =
-        {
-            {"pass_oldResolved", pass_oldResolved   },
-            {"Njet9_old"    ,    NGoodJets_pt45 == 9},
-        };
-        histNjet9_old.fillWithCutFlow(Njets9_old, tr, weight, &rand);        
-       
-        std::vector<std::pair<std::string, bool>> Njets9_new =
+        std::vector<std::pair<std::string, bool>> Njets9 =
         {
             {"pass_newResolved", pass_newResolved   },
-            {"Njet9_new"       , NGoodJets_pt30 == 9},
+            {"Njet9"           , NGoodJets_pt30 == 9},
         };
-        histNjet9_new.fillWithCutFlow(Njets9_new, tr, weight, &rand);
+        histNjet9.fillWithCutFlow(Njets9, tr, weight, &rand);
  
         // ---------------------------
         // baseline cuts + Njets == 10
         // ---------------------------
-        std::vector<std::pair<std::string, bool>> Njets10_old =
-        {   
-            {"pass_oldResolved", pass_oldResolved    },
-            {"Njet10_old"      , NGoodJets_pt45 == 10},
-        };
-        histNjet10_old.fillWithCutFlow(Njets10_old, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> Njets10_new =
+        std::vector<std::pair<std::string, bool>> Njets10 =
         {
             {"pass_newResolved" , pass_newResolved    },
-            {"Njet10_new"       , NGoodJets_pt30 == 10},
+            {"Njet10"           , NGoodJets_pt30 == 10},
         };
-        histNjet10_new.fillWithCutFlow(Njets10_new, tr, weight, &rand);
+        histNjet10.fillWithCutFlow(Njets10, tr, weight, &rand);
 
         // ---------------------------
         // baseline cuts + Njets == 11
         // ---------------------------
-        std::vector<std::pair<std::string, bool>> Njets11_old =
-        {
-            {"pass_oldResolved", pass_oldResolved    },
-            {"Njet11_old"      , NGoodJets_pt45 == 11},
-        };
-        histNjet11_old.fillWithCutFlow(Njets11_old, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> Njets11_new =
+        std::vector<std::pair<std::string, bool>> Njets11 =
         {
             {"pass_newResolved" , pass_newResolved    },
-            {"Njet11_new"       , NGoodJets_pt30 == 11},
+            {"Njet11"           , NGoodJets_pt30 == 11},
         };
-        histNjet11_new.fillWithCutFlow(Njets11_new, tr, weight, &rand);
+        histNjet11.fillWithCutFlow(Njets11, tr, weight, &rand);
 
         // ---------------------------
         // baseline cuts + Njets == 12
         // ---------------------------
-        std::vector<std::pair<std::string, bool>> Njets12_old =
-        {
-            {"pass_oldResolved", pass_oldResolved    },
-            {"Njet12_old"      , NGoodJets_pt45 == 12},
-        };
-        histNjet12_old.fillWithCutFlow(Njets12_old, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> Njets12_new =
+        std::vector<std::pair<std::string, bool>> Njets12 =
         {
             {"pass_newResolved" , pass_newResolved    },
-            {"Njet12_new"       , NGoodJets_pt30 == 12},
+            {"Njet12"           , NGoodJets_pt30 == 12},
         };
-        histNjet12_new.fillWithCutFlow(Njets12_new, tr, weight, &rand);        
+        histNjet12.fillWithCutFlow(Njets12, tr, weight, &rand);        
 
         // ---------------------------
         // baseline cuts + Njets >= 12
         // ---------------------------
-        std::vector<std::pair<std::string, bool>> Njets12inc_old =
-        {
-            {"pass_oldResolved", pass_oldResolved    },
-            {"Njet12inc_old"   , NGoodJets_pt45 >= 12},
-        };
-        histNjet12inc_old.fillWithCutFlow(Njets12inc_old, tr, weight, &rand);
 
-        std::vector<std::pair<std::string, bool>> Njets12inc_new =
+        std::vector<std::pair<std::string, bool>> Njets12inc =
         {
             {"pass_newResolved" , pass_newResolved    },
-            {"Njet12inc_new"    , NGoodJets_pt30 >= 12},
+            {"Njet12inc"        , NGoodJets_pt30 >= 12},
         };
-        histNjet12inc_new.fillWithCutFlow(Njets12inc_new, tr, weight, &rand);
+        histNjet12inc.fillWithCutFlow(Njets12inc, tr, weight, &rand);
 
     }
 }
@@ -266,25 +203,15 @@ void ResolvedTopTagger_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_efficiencies) {
         p.second->Write();
     }
-   
-    hists_old.save(outfile);
-    histNjet6_old.save(outfile);
-    histNjet7_old.save(outfile);
-    histNjet8_old.save(outfile);
-    histNjet9_old.save(outfile);
-    histNjet10_old.save(outfile);
-    histNjet11_old.save(outfile);
-    histNjet12_old.save(outfile);
-    histNjet12inc_old.save(outfile);
 
-    hists_new.save(outfile);
-    histNjet7_new.save(outfile);
-    histNjet8_new.save(outfile);
-    histNjet9_new.save(outfile);
-    histNjet10_new.save(outfile);
-    histNjet11_new.save(outfile);
-    histNjet12_new.save(outfile);
-    histNjet12inc_new.save(outfile); 
+    hists.save(outfile);
+    histNjet7.save(outfile);
+    histNjet8.save(outfile);
+    histNjet9.save(outfile);
+    histNjet10.save(outfile);
+    histNjet11.save(outfile);
+    histNjet12.save(outfile);
+    histNjet12inc.save(outfile); 
     //outfile->Write();
     outfile->Close();
 }
