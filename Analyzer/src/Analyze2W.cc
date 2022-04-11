@@ -1,8 +1,4 @@
 #define Analyze2W_cxx 
-#define SHOW_PROGRESS 0
-#define PER_EVENT_LOG 0
-#define IMAGE_PRODUCTION 0
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #include <TPaveStats.h>
@@ -150,38 +146,6 @@ void createNewHistograms(T &myhistos, const std::string &name, int v1, int v2,
         createNewHistogram(myhistos, name, v1, v2, v3, xlabel, ylabel, logaxis);
 }
 
-template <typename T> class ProgressBar {
-    private:
-        float barWidth = 40;
-
-    public:
-        T max_items = 1, current_items = 0;
-        std::string text = "";
-        ProgressBar(T m, std::string s) : max_items{m}, text{std::move(s)} {}
-        ProgressBar<T> &operator++() {
-            T next = current_items + 1;
-            current_items = (next <= max_items) ? next : max_items;
-            return *this;
-        }
-        void display(const std::string& item = "") {
-            std::cout << "[";
-            float progress = float(current_items) / float(max_items);
-            int pos = barWidth * progress;
-            for (int i = 0; i < barWidth; ++i) {
-                if (i < pos)
-                    std::cout << "=";
-                else if (i == pos)
-                    std::cout << ">";
-                else
-                    std::cout << " ";
-            }
-            std::cout << "] "
-                << int(progress * 100.0) << "% "
-                << text << ((item == "" ) ? std::to_string(current_items) : item)
-                << "\r";
-            std::cout.flush();
-        }
-};
 
 struct SliceData {
     double Ht;
@@ -223,18 +187,6 @@ class LeadingJetGen : public Generator {
         LeadingJetGen() : Generator("LeadingJetGen"){}
         void calculate(SliceData &data) override {
             auto &Jets = data.Jets;
-            /*
-               DEBUG("Jets: " << data.Jets);
-               auto firstLargestPt =
-               std::max_element(Jets.begin(), Jets.end(),
-               [](auto &x, auto &y) { return x.Pt() < y.Pt(); });
-               auto secondLargestPt = max_element_second(
-               Jets.begin(), Jets.end(), [&firstLargestPt](auto &x, auto &y) {
-               return  (x.Pt() < y.Pt());
-               }, firstLargestPt);
-               data.j1_index = std::distance(Jets.begin(), firstLargestPt);
-               data.j2_index = std::distance(Jets.begin(), secondLargestPt);
-             */
             data.has_2_jets = std::size(Jets) > 1;
         }
 };
@@ -486,27 +438,15 @@ void Analyze2W::InitHistos() {
 
 void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
     filetag = tr.getVar<std::string>("filetag");
-#if SHOW_PROGRESS
-    ProgressBar prog(maxevents, "Processing Event ");
-#endif
     while (tr.getNextEvent()) {
-#if SHOW_PROGRESS
-        (++prog).display();
-#endif
-#if PER_EVENT_LOG
-        std::cout << "--------------------------------------------\n";
-        std::cout << "Event: " << tr.getEvtNum() << "\n";
-#endif
         if (maxevents != -1 && tr.getEvtNum() >= maxevents) {
             std::cout << std::endl;
             break;
         }
         const auto &eventCounter = tr.getVar<int>("eventCounter");
 
-#if !SHOW_PROGRESS && !PER_EVENT_LOG
         if (tr.getEvtNum() & (10000 == 0))
             printf(" Event %i\n", tr.getEvtNum());
-#endif
 
 #define makeVec(name, t)                                                       \
         const std::vector<argument_type<void(t)>::type> &name =                      \
@@ -568,10 +508,6 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             return x == 1 || (std::abs(x) < 60 && std::abs(x) > 20);
         };
         for (std::size_t i = 0; i < GenParticles.size(); ++i) { // clang-format off
-#if 0
-            std::cout << "      "<< i << ": " << GenParticles_PdgId[i]  << "(" << GenParticles_Status[i] << ") "
-                << " -- " << GenParticles_ParentIdx[i] << "(" << GenParticles_ParentId[i] << ")" << std::endl;
-#endif
             switch (GenParticles_PdgId[i]) {
                 case W_PDGID: case -W_PDGID:
                     if (!isHard(GenParticles_Status[i])) continue;
@@ -585,10 +521,6 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
                 case -E_PDGID: case -M_PDGID: case -T_PDGID:
                     Leps.push_back(GenParticles[i]);
                     if( std::abs(GenParticles_PdgId[i]) == 15)
-#if PER_EVENT_LOG
-                        std::cout << "      "<< i << ": " << GenParticles_PdgId[i]  << "(" << GenParticles_Status[i] << ") " 
-                            << " -- " << GenParticles_ParentIdx[i] << "(" << GenParticles_ParentId[i] << ")" << std::endl;
-#endif
                     break;
                 case STOP_PDGID: case -STOP_PDGID:
                     if(std::abs(GenParticles_Status[i])==22)
@@ -657,6 +589,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             return ROOT::Math::VectorUtil::Angle(pair[0].Vect(), pair[1].Vect());
             //return pair[0].Vect().Angle(pair[1].Vect());
         };
+
         for (std::size_t i = 0; i < std::size(JetsCA12); ++i) {
             Fill("NSubJettiness3", JetsCA12_NsubjettinessTau3[i]);
             Fill("NSubJettiness2", JetsCA12_NsubjettinessTau2[i]);
@@ -672,9 +605,6 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("CA12Pt", JetsCA12[i].Pt());
         }
 
-#if PER_EVENT_LOG
-        std::cout << "\n";
-#endif
     }
 }
 
@@ -684,6 +614,7 @@ void Analyze2W::WriteHistos(TFile *outfile) {
     if( stat( outputDir.c_str(), &info ) != 0 ) system((std::string("mkdir -p ")+outputDir).c_str());
     outfile = TFile::Open((outputDir+"/histos.root").c_str(), "RECREATE");
     outfile->cd();
+
     for (auto &h : my_histos) {
         if (h.first.find("WPt") == std::string::npos)
             continue;
@@ -694,28 +625,12 @@ void Analyze2W::WriteHistos(TFile *outfile) {
                 });
     }
 
-#if SHOW_PROGRESS
-    ProgressBar prog(std::size(my_histos), "Producing Histogram: ");
-#endif
+    for (const auto &p : my_histos) p.second.Write();
+    for (const auto &p : my_2d_histos) p.second.Write();
 
-    for (const auto &p : my_histos) {
-#if SHOW_PROGRESS
-        (++prog).display(p.first);
-#endif
-        p.second.Write();
-
-#if IMAGE_PRODUCTION
-        if (p.second.GetEntries())
-            p.second.DrawImage("Output"+filetag);
-#endif
-    }
-    for (const auto &p : my_2d_histos)
-        p.second.Write();
-    //   for (const auto &p : my_efficiencies)
     std::ofstream cutfile;
     cutfile.open("Output/cutflow_out.txt", std::ios_base::app);
     cutfile << filetag << "    ";
     cutfile << my_histos.makeCutflow("EventCounter",true)<< '\n';
-    //     p.second.Write();
 }
 
