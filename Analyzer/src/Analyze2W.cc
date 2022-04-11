@@ -153,9 +153,9 @@ struct SliceData {
     int NJets;
     int n_gen_leps;
     const std::vector<utility::LorentzVector> &Jets;
-    const std::vector<double> &nsr21;
-    const std::vector<double> &nsr42;
-    const std::vector<double> &nsr43;
+    const std::vector<float> &nsr21;
+    const std::vector<float> &nsr42;
+    const std::vector<float> &nsr43;
     std::size_t j1_index=0;
     std::size_t j2_index=1;
     bool has_2_jets=false;
@@ -379,8 +379,8 @@ Analyze2W::Analyze2W() {
     my_histos.printHistos();
 }
 
-std::vector<double> computeRatio(std::vector<double> v1,
-        const std::vector<double> &v2) {
+std::vector<float> computeRatio(std::vector<float> v1,
+        const std::vector<float> &v2) {
     for (int i = 0; i < std::size(v1); ++i) {
         v1[i] /= v2[i];
     }
@@ -399,7 +399,7 @@ void Analyze2W::InitHistos() {
 
     my_histos.createNewHistogram("nbjets", 5, 0, 5, "NBJets");
     my_histos.createNewHistogram("nwjets", 5, 0, 5, "NWJets_Reco");
-    my_histos.createNewHistogram("MT2", 100, 0, 1000, "MT2_All", "Events", true);
+    //my_histos.createNewHistogram("MT2", 100, 0, 1000, "MT2_All", "Events", true);
     my_histos.createNewHistogram("met", 200, 0, 2000, "MET");
 
     my_histos.createNewHistogram("NSubJettiness4", 100, 0, 1, "NSJ 4");
@@ -477,10 +477,10 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         makeVar(NGoodBJets_pt30, int);
 
         makeVec(JetsCA12, utility::LorentzVector);
-        makeVec(JetsCA12_NsubjettinessTau4, double);
-        makeVec(JetsCA12_NsubjettinessTau3, double);
-        makeVec(JetsCA12_NsubjettinessTau2, double);
-        makeVec(JetsCA12_NsubjettinessTau1, double);
+        makeVec(JetsCA12_NsubjettinessTau4, float);
+        makeVec(JetsCA12_NsubjettinessTau3, float);
+        makeVec(JetsCA12_NsubjettinessTau2, float);
+        makeVec(JetsCA12_NsubjettinessTau1, float);
 
 #define MAKE_RATIO(x, y)                                                       \
         auto nsr##x##y =                                                             \
@@ -489,17 +489,17 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         MAKE_RATIO(4, 2);
         MAKE_RATIO(2, 1);
 
-        makeVar(MET, double);
-        makeVar(MT2, double);
+        makeVar(MET, float);
+         // makeVar(MT2, double);
         makeVar(HT_trigger_pt30, double);
-        makeVar(GenHT, double);
+        makeVar(GenHT, float);
 
         makeVec(GenParticles, utility::LorentzVector);
         makeVec(GenParticles_PdgId, int);
         makeVec(GenParticles_ParentId, int);
         makeVec(GenParticles_ParentIdx, int);
         makeVec(GenParticles_Status, int);
-        makeVec(JetsAK8_wDiscriminatorDeep, double);
+        // makeVec(JetsAK8_wDiscriminatorDeep, double);
 
         makeVec(GoodLeptons, (std::pair<std::string, utility::LorentzVector>));
 
@@ -544,7 +544,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
                prefiringScaleFactor = 1.0, puScaleFactor = 1.0;
 
         if (runtype == "MC") {
-            const auto &Weight = tr.getVar<double>("Weight");
+            const auto &Weight = tr.getVar<float>("Weight");
             const auto &lumi = tr.getVar<double>("Lumi");
             eventweight = lumi * Weight;
             weight *= eventweight * leptonScaleFactor * bTagScaleFactor *
@@ -563,7 +563,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         // Fill("nwjets", nwjets);
         Fill("HT_pt30", HT_trigger_pt30);
         Fill("met", MET);
-        Fill("MT2", MT2);
+        //Fill("MT2", MT2);
         for (const auto &v : Ws) {
             Fill("WEta", v.Eta());
             Fill("WE", v.E());
