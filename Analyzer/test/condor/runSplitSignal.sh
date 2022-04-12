@@ -14,8 +14,8 @@ for FOLDER in *mStop*
 do
     for FILE in $FOLDER/*
     do
-        xrdcp $FOLDER/$FILE $OUTPUTDIR/$FOLDER
+        xrdcp $FILE $OUTPUTDIR/$FOLDER
     done
 done
 
-rm *.root
+rm -rf *mStop*

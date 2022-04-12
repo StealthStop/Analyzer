@@ -36,9 +36,9 @@ if __name__ == '__main__':
     fullInputPath = "%s/%s/%s/"%(args.eosPath, args.era, model)
 
     USER = os.getenv("USER")
-    outputDir = "/eos/uscms/store/user/%s/%s/"%(USER, args.outPath)
+    outputDir = "/eos/uscms/store/user/%s/%s/%s"%(USER, args.outPath, args.era)
     for mass in masses:
-        temp = ("%s/%s/%s/"%(outputDir, args.era, model)).replace("300to1400", str(mass))
+        temp = ("%s/%s/"%(outputDir, model)).replace("300to1400", str(mass))
         if not os.path.isdir(temp):
             os.makedirs(temp)
 
