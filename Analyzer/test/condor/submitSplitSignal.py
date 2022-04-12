@@ -46,9 +46,6 @@ if __name__ == '__main__':
     if not os.path.isdir("%s/log-files" % (args.outPath)):
         os.makedirs("%s/log-files" % (args.outPath))
     
-    if not os.path.isdir("/eos/uscms/store/user/%s/%s"%(USER, args.outPath)):
-        os.makedirs("/eos/uscms/store/user/%s/%s"%(USER, args.outPath))
-
     outputDir = outputDir.replace("/eos/uscms/", "root://cmseos.fnal.gov///")
 
     # Write out condor submit file
