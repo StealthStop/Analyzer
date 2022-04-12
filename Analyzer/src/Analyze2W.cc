@@ -376,7 +376,7 @@ Analyze2W::Analyze2W() {
             {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
             });
     InitHistos();
-    my_histos.printHistos();
+    //my_histos.printHistos();
 }
 
 std::vector<float> computeRatio(std::vector<float> v1,
@@ -445,7 +445,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         }
         const auto &eventCounter = tr.getVar<int>("eventCounter");
 
-        if (tr.getEvtNum() & (10000 == 0))
+        if (tr.getEvtNum() & (1000 == 0))
             printf(" Event %i\n", tr.getEvtNum());
 
 #define makeVec(name, t)                                                       \
@@ -609,10 +609,10 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 }
 
 void Analyze2W::WriteHistos(TFile *outfile) {
-    std::string outputDir = std::string("Output/")+filetag;
-    struct stat info;
-    if( stat( outputDir.c_str(), &info ) != 0 ) system((std::string("mkdir -p ")+outputDir).c_str());
-    outfile = TFile::Open((outputDir+"/histos.root").c_str(), "RECREATE");
+    // std::string outputDir = std::string("Output/")+filetag;
+    // struct stat info;
+    // if( stat( outputDir.c_str(), &info ) != 0 ) system((std::string("mkdir -p ")+outputDir).c_str());
+    // outfile = TFile::Open((outputDir+"/histos.root").c_str(), "RECREATE");
     outfile->cd();
 
     for (auto &h : my_histos) {
@@ -624,8 +624,9 @@ void Analyze2W::WriteHistos(TFile *outfile) {
                         h, c, (std::string("Wpt200/W = ") + std::to_string(frac)).c_str());
                 });
     }
-
-    for (const auto &p : my_histos) p.second.Write();
+    for (const auto &p : my_histos) {
+        p.second.Write();
+    }
     for (const auto &p : my_2d_histos) p.second.Write();
 
     std::ofstream cutfile;
