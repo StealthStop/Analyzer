@@ -14,7 +14,7 @@ for FOLDER in *mStop*
 do
     for FILE in $FOLDER/*
     do
-        xrdcp $FILE $OUTPUTDIR/$FOLDER
+        xrdcp $FILE $OUTPUTDIR/$FOLDER/
     done
 done
 
