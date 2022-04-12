@@ -29,7 +29,9 @@ class Splitter:
         f = ROOT.TFile.Open(self.inputFile, "READ")
         t = f.Get(self.ttreePath)
 
-        oldName = self.inputFile.rpartition("/")[-1]
+        chunks   = self.inputFile.split("/")
+        oldName  = chunks[-2]
+        fileStub = chunks[-1]
 
         # "Dumb" loop over all possible masses each time
         # Not every mass will be found in a given input file
@@ -37,8 +39,10 @@ class Splitter:
         for mass in self.masses:
 
             newName = oldName.replace("300to1400", str(mass))
+
+            os.makedirs(newName)
         
-            outFile = ROOT.TFile(newName, "RECREATE")
+            outFile = ROOT.TFile("%s/%s"%(newName,fileStub), "RECREATE")
             newTree = t.CopyTree("SignalParameters[0]==%d"%(mass))
 
             if newTree.GetEntries() != 0:

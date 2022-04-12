@@ -10,19 +10,37 @@ import subprocess, os, argparse
 # Example call:
 # python submitSplitSignal.py --eosPath  /eos/uscms/store/user/semrat/SusyRA2Analysis2015/Run2ProductionV20/
 #                             --outPath  NewSignal
-#                             --wildcard "*300to1400*"
+#                             --era      Summer20UL18
+#                             --model    StealthSYY
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--eosPath"  , dest="eosPath"  , help="Path to files on EOS"   , type=str, required=True                     )
     parser.add_argument("--outPath"  , dest="outPath"  , help="Output path for jobs"   , type=str, default="SplitJobs"               )
+    parser.add_argument("--era"      , dest="era"      , help="Era for signal samples" , type=str, default="Summer20UL16"            )
+    parser.add_argument("--model"    , dest="model"    , help="Signal model to split"  , type=str, default="RPV"                     )
     parser.add_argument("--ttreePath", dest="ttreePath", help="TTree name to read"     , type=str, default="TreeMaker2/PreSelection" )
-    parser.add_argument("--wildcard" , dest="wildcard" , help="Wildcards for picking"  , type=str, default="*300to1400*"             )
     parser.add_argument("--noSubmit" , dest="noSubmit" , help="Do not submit to condor",           default=False, action="store_true")
     args = parser.parse_args()
 
+    masses = list(range(300, 1450, 50))
+
+    model = ""
+    if "RPV" in args.model:
+        model = "RPV_2t6j_mStop-300to1400_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8"
+    elif "SYY" in args.model:
+        model = "StealthSYY_2t6j_mStop-300to1400_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8"
+    elif "SHH" in args.model:
+        model = "StealthSHH_2t4b_mStop-300to1400_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8"
+
+    fullInputPath = "%s/%s/%s/"%(args.eosPath, args.era, model)
+
     USER = os.getenv("USER")
-    outputDir = "/eos/uscms/store/user/%s/%s"%(USER, args.outPath)
+    outputDir = "/eos/uscms/store/user/%s/%s/"%(USER, args.outPath)
+    for mass in masses:
+        temp = ("%s/%s/%s/"%(outputDir, args.era, model)).replace("300to1400", str(mass))
+        if not os.path.isdir(temp):
+            os.makedirs(temp)
 
     # Make directory for condor submission logs and output
     if not os.path.isdir("%s/log-files" % (args.outPath)):
@@ -44,14 +62,14 @@ if __name__ == '__main__':
     fout.write("x509userproxy         = $ENV(X509_USER_PROXY)\n\n")
 
     # Use EOS commands to get the list of files at the eosPath that satisfy the wildcard phrase
-    proc     = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", "%s/%s.root"%(args.eosPath, args.wildcard)], stdout=subprocess.PIPE)
+    proc     = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", "%s/*.root"%(fullInputPath)], stdout=subprocess.PIPE)
     eosls    = proc.stdout.readlines()
     fileList = [line.decode("utf8").strip() for line in eosls]
 
     # Give one input ROOT file to each job
     iFile = 0
     for file in fileList:
-        fout.write("Arguments = %s/%s %s %s\n"%(args.eosPath.replace("/eos/uscms/", "root://cmseos.fnal.gov///"), file, outputDir, args.ttreePath))
+        fout.write("Arguments = %s/%s %s %s\n"%(fullInputPath.replace("/eos/uscms/", "root://cmseos.fnal.gov///"), file, outputDir, args.ttreePath))
         fout.write("Output    = %s/log-files/sigSplit_%s.stdout\n"%(args.outPath, iFile))
         fout.write("Error     = %s/log-files/sigSplit_%s.stderr\n"%(args.outPath, iFile))
         fout.write("Log       = %s/log-files/sigSplit_%s.log\n"%(args.outPath, iFile))

@@ -10,9 +10,12 @@ source /cvmfs/sft.cern.ch/lcg/views/LCG_99/x86_64-centos7-gcc10-opt/setup.sh
 python runSplitSignal.py --inputFile $INPUTFILE --ttreePath $TREENAME
 
 # Copy output files to EOS and remove from job node
-for FILE in *.root
+for FOLDER in *mStop* 
 do
-    xrdcp $FILE $OUTPUTDIR
+    for FILE in $FOLDER/*
+    do
+        xrdcp $FOLDER/$FILE $OUTPUTDIR/$FOLDER
+    done
 done
 
 rm *.root
