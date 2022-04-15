@@ -1,5 +1,5 @@
-#ifndef TopTagger_Analyzer_h
-#define TopTagger_Analyzer_h
+#ifndef WholeTopTagger_Analyzer_h
+#define WholeTopTagger_Analyzer_h
 
 #include <TH1D.h>
 #include <TH2D.h>
@@ -12,7 +12,7 @@
 
 class NTupleReader;
 
-class TopTagger_Analyzer 
+class WholeTopTagger_Analyzer 
 {
 public:
     std::map<std::string, std::shared_ptr<TH1D>>  my_histos;
@@ -20,8 +20,8 @@ public:
     std::map<std::string, std::shared_ptr<TEfficiency>>  my_efficiencies;
     bool inithisto;
  
-    TopTagger_Analyzer();
-    ~TopTagger_Analyzer(){};
+    WholeTopTagger_Analyzer();
+    ~WholeTopTagger_Analyzer(){};
     
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
     void InitHistos(const std::map<std::string, bool>& cutmap);

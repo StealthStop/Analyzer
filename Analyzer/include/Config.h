@@ -467,7 +467,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="Semra_Analyzer" || analyzer=="TopTagger_Analyzer" || analyzer=="AnalyzeTopTagger")
+        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -480,8 +480,8 @@ public:
                 "CommonVariables",
                 "FatJetCombine",
                 "Baseline",
-                "BTagCorrector",
-                "ScaleFactors",
+                //"BTagCorrector",
+                //"ScaleFactors",
                 "MakeMVAVariables_0l",
                 "MakeMVAVariables_1l",
                 "MakeMVAVariables_2l",
