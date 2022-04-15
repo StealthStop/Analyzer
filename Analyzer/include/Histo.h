@@ -51,7 +51,9 @@ protected:
         double weight = 1.0;
         for(const auto& wName : weights_)
         {
-            const auto& w = tr.getVar<double>(wName);
+            double w = 1.0;
+            if(wName == "Weight") w = tr.getVar<float>(wName);
+            else                  w = tr.getVar<double>(wName);
             weight *= w;
         }        
         return weight;
