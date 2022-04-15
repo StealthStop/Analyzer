@@ -33,15 +33,7 @@ MakeNNVariables::MakeNNVariables()
 void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
 
-    const auto& filetag         = tr.getVar<std::string>("filetag");
-    const auto& runYear         = tr.getVar<std::string>("runYear");
-    const auto& bjetFileName    = tr.getVar<std::string>("bjetFileName");
-    const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
-    const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
-    const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
     const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
-    
-
     for(const auto& myVarSuffix : my_var_suffix)
     {
         if (myVarSuffix == "") continue;
@@ -53,18 +45,14 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
-        BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         CommonVariables     commonVariables(myVarSuffix);
         MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_0l");
         MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 12, 2, "_1l");
         MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
 
-        bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
-  
         // Remember, order matters here !
         // Follow what is done in Config.h
         tr.registerFunction(muon);
@@ -81,8 +69,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
-        tr.registerFunction(bTagCorrector);
-        tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
     }
 
@@ -198,6 +184,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                         if (split != "count")
                         {
                             myTree[split][label][myVarSuffix]      = new TTree( (myTreeName).c_str() , (myTreeName).c_str() );
+                            myTree[split][label][myVarSuffix]->SetDirectory(0);
                             myMiniTuple[split][label][myVarSuffix] = new MiniTupleMaker( myTree[split][label][myVarSuffix] );
                         }
                     }
@@ -372,7 +359,6 @@ void MakeNNVariables::WriteHistos( TFile* outfile )
 
     for (const auto& split : myTree)
     {
-
         TFile* theOutfile = TFile::Open((name+"_"+split.first+".root").c_str(), "RECREATE");
         theOutfile->cd();
 
