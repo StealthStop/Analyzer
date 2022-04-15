@@ -120,6 +120,7 @@ class Histogram:
         return 0
 
     def setupHisto(self, upperSplit, lowerSplit, aux):
+
         code = self.getHisto()
 
         if code != -1:
@@ -145,12 +146,6 @@ class Histogram:
                 self.histogram.SetFillStyle(self.info["fstyle"])
 
             self.histogram.RebinX(self.info["X"]["rebin"])
-            #if "loption" in self.info and self.info["X"]['v17name'].find("Jet_cm_m") != -1 and self.histoName.find("ge1b") != -1:
-                #self.histogram.RebinX(2)
-            #if "h_lEta" in self.histoName and "_1l" == self.histoName[-3:]:
-            #    self.histogram.RebinX(2)
-            #if "h_lPt" in self.histoName and "_1l" == self.histoName[-3:]:
-            #    self.histogram.RebinX(1)
             self.histogram.GetXaxis().SetRangeUser(self.info["X"]["min"], self.info["X"]["max"])
 
             self.histogram.SetTitle("")
@@ -174,19 +169,16 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, noRatio, printNEvents, printInfo, year, outpath, inpath, inpath2, normMC2Data, normalize, histograms, selections, backgrounds, signals, data, backgrounds_2, year2, norm_mc_mc):
+    def __init__(self, approved, noRatio, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
 
-        self.histograms      = histograms
-        self.selections      = selections
-        self.backgrounds     = backgrounds
-        self.signals         = signals
-        self.data            = data
-        self.backgrounds_2   = backgrounds_2
+        self.histograms  = histograms
+        self.selections  = selections
+        self.backgrounds = backgrounds
+        self.signals     = signals
+        self.data        = data
 
         self.year        = year
-        self.year2        = year2
         self.inpath      = inpath
-        self.inpath2     = inpath2
         self.outpath     = outpath
         
         self.njetsTableDictionary = {}
@@ -198,7 +190,6 @@ class StackPlotter:
         self.noRatio      = noRatio
         self.normMC2Data  = normMC2Data
         self.normalize    = normalize
-        self.normalize_mc_to_mc = norm_mc_mc
         self.printNEvents = printNEvents
         self.printInfo    = printInfo
 
@@ -273,6 +264,7 @@ class StackPlotter:
     # Some customized sizes and distances but scaled
     # when going between ratio plot and pure stack with no ratio
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
+
         textSize = 0.025 / self.upperSplit
         space    = 0.015
 
@@ -351,6 +343,7 @@ class StackPlotter:
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
+
         # Top loop begins going over each histo-to-be-plotted
         for hname, hinfo in self.histograms.items():
 
@@ -364,6 +357,7 @@ class StackPlotter:
             newName = hname
             for order in orders:
                 for selection in self.selections:
+         
                     newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
                     newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
@@ -375,15 +369,10 @@ class StackPlotter:
                         canvas.cd(1)
 
                     firstDraw = False
-                    firstDraw2 = False
                     bstack = ROOT.THStack("stack%s"%(newName), "stack%s"%(newName))
-                    if backgrounds_2 is not {}:
-                        bstack2 = ROOT.THStack("stack2%s"%(newName), "stack2%s"%(newName))
                     dummy = None
                     totalMC = None
-                    totalMC2 = None
                     bhistos = {}
-                    bhistos2 = {}
     
                     nBkgLegend = 0
                     nSigLegend = 0
@@ -393,7 +382,6 @@ class StackPlotter:
 
                     dataScale = 0.0
                     mcScale = 0.0
-                    mcScale2 = 0.0
                     theMax = 0.0
 
                     # Preemptively get data counts to be used for normalzing the histograms later
@@ -423,27 +411,18 @@ class StackPlotter:
     
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
-                        if Hobj.IsGood(): 
-                            mcScale += Hobj.Integral()
+                        if Hobj.IsGood(): mcScale += Hobj.Integral()
 
-                            # get fractions and unweighted events for TT and QCD
-                            totalWegBkg += Hobj.Integral()
-                
-                            if bname == "TT":
-                                wegTT   = Hobj.Integral()
-                                unWegTT = Hobj.histogram.GetEntries()                        
+                        # get fractions and unweighted events for TT and QCD
+                        totalWegBkg += Hobj.Integral()
+            
+                        if bname == "TT":
+                            wegTT   = Hobj.Integral()
+                            unWegTT = Hobj.histogram.GetEntries()                        
 
-                            if bname == "QCD":
-                                wegQCD   = Hobj.Integral()
-                                unWegQCD = Hobj.histogram.GetEntries()
-
-                    if self.backgrounds_2:
-                        for bname, binfo in self.backgrounds_2.items(): 
-                            rootFile = "%s/%s_%s.root"%(self.inpath2, self.year2, bname)
-                            Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
-                            if Hobj.IsGood(): 
-                                mcScale2 += Hobj.Integral()
-
+                        if bname == "QCD":
+                            wegQCD   = Hobj.Integral()
+                            unWegQCD = Hobj.histogram.GetEntries()
 
                     if totalWegBkg != 0.0:
                         ttFrac  = wegTT / totalWegBkg
@@ -515,7 +494,7 @@ class StackPlotter:
                             if mcScale != 0.0:
                                 if self.normMC2Data:
                                     Hobj.Scale(dataScale / mcScale)
-                                elif self.normalize and not self.normalize_mc_to_mc:
+                                elif self.normalize:
                                     Hobj.Scale(1.0 / mcScale)
                             if not firstDraw:
                                 totalMC = Hobj.Clone("totalMC%s"%(newName))
@@ -525,49 +504,11 @@ class StackPlotter:
 
                             bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
                             dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
-                        else:
-                            print("Hobj is not good", Hobj)
-
-                    if backgrounds_2 is not {}:
-                        for bname, binfo in self.backgrounds_2.items(): 
-
-                            rootFile = "%s/%s_%s.root"%(self.inpath2, self.year2, bname)
-        
-                            if "option"  not in binfo: binfo["option"]  = option
-                            if "loption" not in binfo: binfo["loption"] = loption
-
-                            Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
-
-                            if Hobj.IsGood(): 
-                                if mcScale != 0.0:
-                                    if self.normMC2Data:
-                                        Hobj.Scale(dataScale / mcScale)
-                                    elif self.normalize or self.normalize_mc_to_mc:
-                                        Hobj.Scale( mcScale/ mcScale2)
-                                        print(mcScale/ mcScale2)
-                                if not firstDraw2:
-                                    totalMC2 = Hobj.Clone("totalMC2%s"%(newName))
-                                    firstDraw2 = True
-                                else:
-                                    totalMC2.Add(Hobj.histogram)
-
-                                bhistos2[Hobj.Integral()] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
-                                dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
-                            else:
-                                print("Hobj is not good", Hobj)
- 
 
                     # Add each background histo to the stack in order based on number of entries
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=False): 
                         bstack.Add(h[1], h[2])
                         nBkgLegend += 1
-
-                    if self.backgrounds_2 is not {}:
-                        sorted_list = sorted(bhistos2.items(), key=lambda x: x[0], reverse=False)
-                        for count, h in sorted_list: 
-                            bstack2.Add(h[1], h[2])
-                            nBkgLegend += 1
-                        
 
                     tempMax = bstack.GetMaximum()
                     if tempMax > theMax:
@@ -579,7 +520,7 @@ class StackPlotter:
                         theMin /= mcScale
 
                     # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
-                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds)+len(self.backgrounds_2), len(self.signals), newInfo["logY"], theMin, theMax)
+                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], theMin, theMax)
 
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=True):
                         lname = h[0]
@@ -588,19 +529,11 @@ class StackPlotter:
 
                         bkgLegend.AddEntry(h[1], lname, h[3])
 
-                    if self.backgrounds_2 != {}:
-                        sorted_list = sorted(bhistos2.items(), key=lambda x: x[0], reverse=True)
-                        for count, h in sorted_list: 
-                            lname = h[0]
-                            if self.printNEvents:
-                                lname += " (%.1f)"%(h[1].Integral())
-                            bkgLegend.AddEntry(h[1], lname, "ELP")
-
                     dummy.SetMaximum(yMax)
                     dummy.SetMinimum(theMin)
                     dummy.Draw()
                     bstack.Draw("SAME")
-                    bstack2.Draw("SAME ELP")
+
                     # Loop over each signal and get their respective histo
                     option = "HIST"; loption = "L"
                     for sname, sinfo in self.signals.items(): 
@@ -634,34 +567,29 @@ class StackPlotter:
 
                     # Loop over the data and get their respective histo
                     option = "E0P"; loption = "ELP"
-                    if not self.backgrounds_2:
-                        for dname, dinfo in self.data.items():
+                    for dname, dinfo in self.data.items():
 
-                            rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
+                        rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
 
-                            if "option"  not in dinfo: dinfo["option"]  = option 
-                            if "loption" not in dinfo: dinfo["loption"] = loption
+                        if "option"  not in dinfo: dinfo["option"]  = option 
+                        if "loption" not in dinfo: dinfo["loption"] = loption
 
-                            Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
+                        Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
 
-                            scale = Hobj.Integral()
-                            if self.normalize and scale != 0.0:
-                                Hobj.Scale(1.0 / scale)
+                        scale = Hobj.Integral()
+                        if self.normalize and scale != 0.0:
+                            Hobj.Scale(1.0 / scale)
 
-                            nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend)
+                        nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend)
 
-                            if Hobj.IsGood():
+                        if Hobj.IsGood():
 
-                                ratio = Hobj.Clone("ratio")
-                                ratio.Divide(totalMC)
+                            ratio = Hobj.Clone("ratio")
+                            ratio.Divide(totalMC)
 
-                                for xbin in range(1, ratio.GetNbinsX()+1):
-                                    if totalMC.GetBinContent(xbin) == 0.0 or Hobj.histogram.GetBinContent(xbin) == 0.0:
-                                        ratio.SetBinContent(xbin, -999.0)
-                    else:
-                        ratio = totalMC.Clone("ratio")
-                        ratio.Divide(totalMC2)
-
+                            for xbin in range(1, ratio.GetNbinsX()+1):
+                                if totalMC.GetBinContent(xbin) == 0.0 or Hobj.histogram.GetBinContent(xbin) == 0.0:
+                                    ratio.SetBinContent(xbin, -999.0)
 
 
                     if nBkgLegend != 0: bkgLegend.Draw("SAME")
@@ -739,21 +667,17 @@ if __name__ == "__main__":
 
     usage = "usage: %stackPlotter [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",                   default=False,  action="store_true") 
-    parser.add_argument("--approved",     dest="approved",     help="Plot is approved",                default=False,  action="store_true") 
-    parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",           default=False,  action="store_true") 
-    parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",            default=False,  action="store_true") 
-    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",          default=False,  action="store_true") 
-    parser.add_argument("--normalizeMCMC",    dest="normalize_mcmc",    help="Normalize MC to MC",          default=False,  action="store_true") 
-    parser.add_argument("--plotMCvsMC",   dest="plotMCvsMC",   help="Make comparison of MC to MC",     default=False,  action="store_true") 
-    parser.add_argument("--printInfo",    dest="printInfo",    help="Print significance and cuts",     default=False,  action="store_true")
-    parser.add_argument("--makeTable",    dest="makeTable",    help="Make the table of fracs",         default=False,  action="store_true")
-    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",              default="NULL", required=True)
-    parser.add_argument("--inpath2",      dest="inpath2",      help="Second path to MC root files",    default="NULL")
-    parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",              default="NULL", required=True)
-    parser.add_argument("--year",         dest="year",         help="which year",                                      required=True)
-    parser.add_argument("--year2",         dest="year2",         help="which year",                                      required=True)
-    parser.add_argument("--options",      dest="options",      help="options file",                    default="stackPlotter_aux", type=str)
+    parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",               default=False,  action="store_true") 
+    parser.add_argument("--approved",     dest="approved",     help="Plot is approved",            default=False,  action="store_true") 
+    parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",       default=False,  action="store_true") 
+    parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
+    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",      default=False,  action="store_true") 
+    parser.add_argument("--printInfo",    dest="printInfo",    help="Print significance and cuts", default=False,  action="store_true")
+    parser.add_argument("--makeTable",    dest="makeTable",    help="Make the table of fracs",     default=False,  action="store_true")
+    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="NULL", required=True)
+    parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="NULL", required=True)
+    parser.add_argument("--year",         dest="year",         help="which year",                                  required=True)
+    parser.add_argument("--options",      dest="options",      help="options file",                default="stackPlotter_aux", type=str)
     args = parser.parse_args()
 
     # The auxiliary file contains many "hardcoded" items
@@ -768,14 +692,10 @@ if __name__ == "__main__":
     # Background/signal/data categories to plot, and plotting options
     selections  = importedGoods.selections
     backgrounds = importedGoods.backgrounds
-    if args.plotMCvsMC:
-        backgrounds_2 = importedGoods.backgrounds_2
-    else:
-        backgrounds_2 = {}
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.inpath2, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data, backgrounds_2, args.year2, args.normalize_mcmc)
+    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
 
     if args.makeTable:
