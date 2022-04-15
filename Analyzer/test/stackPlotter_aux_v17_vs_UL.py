@@ -53,15 +53,15 @@ histograms = {
 
 backgrounds = {
     "TT"       : {"name" : "t#bar{t} + jets", "color" : 46,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "QCD"      : {"name" : "QCD multijet",    "color" : 32,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "TTX"      : {"name" : "t#bar{t} + X",    "color" : 47,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    #"QCD"      : {"name" : "QCD multijet",    "color" : 32,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    #"TTX"      : {"name" : "t#bar{t} + X",    "color" : 47,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
 #    "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0}
 }
 
 backgrounds_2 = {
-     "TT"       : {"name" : "t#bar{t} + jets", "color" : 45,  "lstyle" : 1, "mstyle" : 8, "lsize" : 1, "msize" : 1, "loptions" : "ELP"},
-     "QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 1, "msize" : 1, "loptions" : "ELP"},
-     "TTX"      : {"name" : "t#bar{t} + X",    "color" : 48,  "lstyle" : 1, "mstyle" : 8, "lsize" : 1, "msize" : 1, "loptions" : "ELP"},
+     "TT"       : {"name" : "t#bar{t} + jets", "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 1, "msize" : 1, "loptions" : "ELP"},
+     #"QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 1, "msize" : 1, "loptions" : "ELP"},
+     #"TTX"      : {"name" : "t#bar{t} + X",    "color" : 48,  "lstyle" : 1, "mstyle" : 8, "lsize" : 1, "msize" : 1, "loptions" : "ELP"},
 #    "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0}
 }
 

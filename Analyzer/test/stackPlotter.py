@@ -347,7 +347,7 @@ class StackPlotter:
         if "Run 2" in self.year:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
         else:
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "2016 Pre-Post")
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -586,7 +586,7 @@ class StackPlotter:
                         if self.printNEvents:
                             lname += " (%.1f)"%(h[1].Integral())
 
-                        bkgLegend.AddEntry(h[1], lname, h[3])
+                        bkgLegend.AddEntry(h[1], "Pre_" + lname, h[3])
 
                     if self.backgrounds_2 != {}:
                         sorted_list = sorted(bhistos2.items(), key=lambda x: x[0], reverse=True)
@@ -594,7 +594,7 @@ class StackPlotter:
                             lname = h[0]
                             if self.printNEvents:
                                 lname += " (%.1f)"%(h[1].Integral())
-                            bkgLegend.AddEntry(h[1], lname, "ELP")
+                            bkgLegend.AddEntry(h[1], "Post_" + lname , "ELP")
 
                     dummy.SetMaximum(yMax)
                     dummy.SetMinimum(theMin)
@@ -678,7 +678,7 @@ class StackPlotter:
 
                         rinfo = {"name" : "ratio", "color" : ROOT.kBlack,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1 / self.upperSplit}
                         rnewInfo = copy.deepcopy(newInfo)
-                        rnewInfo["Y"]["title"] = "#frac{Data}{Pred.}"
+                        rnewInfo["Y"]["title"] = "#frac{%s}{%s}" %("Pre" , "Post") #% (self.year, self.year2)
                         rnewInfo["X"]["rebin"] = 1
 
                         canvas.cd(2)
