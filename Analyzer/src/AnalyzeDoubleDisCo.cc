@@ -46,7 +46,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop2_eta_cm_OldSeed",         80,   -6,    6},
         {"Stop2_phi_cm_OldSeed",         64,   -4,    4},
         {"Stop2_mass_cm_OldSeed",        72,    0, 1500},
-        {"h_njets",                      21, -0.5, 20.5},
+        {"h_njets",                      20,    0, 20.0},
         {"h_njets_11incl",               20, -0.5, 19.5},
         {"h_njets_12incl",               24, -0.5, 23.5},
         {"h_njets_13incl",               28, -0.5, 27.5},
@@ -57,13 +57,17 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop1_mass_MassRank_matched", 360,    0, 1500},
         {"Stop2_mass_MassRank_matched", 360,    0, 1500},
         {"Stop_mass_average_matched",   360,    0, 1500},
-        {"h_lPt" ,   360,    0, 1500},
+        {"h_jPt" ,   200,    0, 2000},
+        {"h_jPhi" ,   200,    -4, 4},
+        {"h_jEta" ,   200,    -6, 6},
+        {"h_jM" ,   200,    0, 200},
+        {"h_lPt" ,   200,    0, 2000},
         {"h_lIso" ,   360,    0, 1500},
         {"h_lPhi" ,   200,    -4, 4},
         {"h_lEta" ,   200,    -6, 6},
         {"h_lCharge" , 2, -1, 1},
         {"h_lMiniIso" , 100, -10, 10},
-        {"h_ePt" ,   360,    0, 1500},
+        {"h_ePt" ,   200,    0, 2000},
         {"h_eIso" ,   360,    0, 1500},
         {"h_ePhi" ,   200,    -4, 4},
         {"h_eEta" ,   200,    -6, 6},
@@ -284,10 +288,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        //ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
+        ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
-        //BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
+        BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
         DeepEventShape      neuralNetwork0L(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork1L(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix); 
@@ -300,7 +304,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
         MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
-        //bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
+        bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
   
         // Remember, order matters here !
         // Follow what is done in Config.h
@@ -321,8 +325,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
-        //tr.registerFunction(bTagCorrector);
-        //tr.registerFunction(scaleFactors);
+        tr.registerFunction(bTagCorrector);
+        tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
         tr.registerFunction(neuralNetwork0L);
         tr.registerFunction(neuralNetwork0L_NonIsoMuon);
@@ -344,6 +348,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
 
             const auto& runtype                           = tr.getVar<std::string>("runtype");     
+            const auto& Jets                              = tr.getVec<utility::LorentzVector>("Jets"+myVarSuffix);
+            const auto& GoodJets_pt30                     = tr.getVec<bool>("GoodJets_pt30"+myVarSuffix);
             const auto& NGoodJets_pt30                    = tr.getVar<int>("NGoodJets_pt30"+myVarSuffix);
             const auto& NNonIsoMuonJets_pt30              = tr.getVar<int>("NNonIsoMuonJets_pt30"+myVarSuffix);
             const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30"+myVarSuffix);
@@ -533,25 +539,23 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 // Define Lumi weight
                 const auto& Weight = tr.getVar<float>("Weight");
                 const auto& lumi   = tr.getVar<double>("Lumi");
-                std::cout << "Lumi: " << lumi << std::endl;
-                std::cout << lumi * Weight << std::endl;
                 eventweight        = lumi * Weight;
                 
-                //const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
-                //const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
-                //const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
-                //leptonweight             = eleLepWeight * muLepWeight;
+                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
+                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
+                const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
+                leptonweight             = eleLepWeight * muLepWeight;
 
-                //pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
-                //bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central"+myVarSuffix);
-                //htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
-                //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
+                pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
+                bTagWeight           = tr.getVar<double>("bTagSF_EventWeightSimple_Central"+myVarSuffix);
+                htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
+                prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L            *= eventweight; // * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
-                weight0L            *= eventweight; // *                bTagWeight * prefiringScaleFactor * pileupWeight;
+                weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
+                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
 
-                weight1L_NonIsoMuon *= eventweight; // * muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon *= eventweight; // * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
             }
 
             std::vector<double> weight        {weight0L,            weight1L};
@@ -751,6 +755,16 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_mMiniIso" + name]->Fill(  iso ,w);
                                             }
                                        }
+
+                                for(unsigned int j = 0; j < Jets.size(); j++) 
+                                {
+                                    if(!GoodJets_pt30[j]) continue;
+                                    my_histos["h_jPt" + name]->Fill(Jets.at(j).Pt(), w); 
+                                    my_histos["h_jEta" + name]->Fill(Jets.at(j).Eta(), w); 
+                                    my_histos["h_jPhi" + name]->Fill(Jets.at(j).Phi(), w); 
+                                    my_histos["h_jM" + name]->Fill(Jets.at(j).M(), w); 
+                                    
+                                }
                             }
 
                             if (region != "Incl" and njets != "Incl")
