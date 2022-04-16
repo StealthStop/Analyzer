@@ -14,7 +14,7 @@ class MakeNNVariables{
 public :
 
    std::vector<std::string> my_var_suffix;
-   std::vector<std::string> my_labels;
+   std::vector<std::string> my_channels;
    std::vector<std::string> my_splits;
 
    std::map<std::string, std::map<std::string, std::map<std::string, int> > > my_counts;
