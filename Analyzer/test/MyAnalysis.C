@@ -120,8 +120,8 @@ std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool 
     }
     std::set<AnaSamples::FileSummary> vvf;
     for(auto& fsVec : fileMap) for(auto& fs : fsVec.second) vvf.insert(fs);    
-    if(vvf.size() == 0) std::cout<< utility::color("No samples for \""+std::string(dataSets)+"\" in the sampleSet.cfg","red") <<std::endl;
-
+    if(vvf.size() == 0)             std::cout<< utility::color("No samples for \""+std::string(dataSets)+"\" in the sampleSet.cfg or sampleCollection.cfg","red")  <<std::endl;
+    else if(vvf.begin()->tag == "") std::cout<< utility::color("A filetag is empty, Check if all sampleSet(s) make sense for \""+std::string(dataSets)+"\"","red") <<std::endl;
     return vvf;
 }
 
