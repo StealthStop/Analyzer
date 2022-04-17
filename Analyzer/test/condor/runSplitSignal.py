@@ -1,4 +1,4 @@
-import os, ROOT, argparse
+import os, ROOT, argparse, shutil
 from datetime import datetime
 
 # The Splitter class is designed to split a signal file
@@ -29,7 +29,9 @@ class Splitter:
         f = ROOT.TFile.Open(self.inputFile, "READ")
         t = f.Get(self.ttreePath)
 
-        oldName = self.inputFile.rpartition("/")[-1]
+        chunks   = list(filter(len, self.inputFile.split("/")))
+        oldName  = chunks[-2]
+        fileStub = chunks[-1]
 
         # "Dumb" loop over all possible masses each time
         # Not every mass will be found in a given input file
@@ -37,17 +39,19 @@ class Splitter:
         for mass in self.masses:
 
             newName = oldName.replace("300to1400", str(mass))
+
+            os.makedirs(newName)
         
-            outFile = ROOT.TFile(newName, "RECREATE")
+            outFile = ROOT.TFile("%s/%s"%(newName,fileStub), "RECREATE")
             newTree = t.CopyTree("SignalParameters[0]==%d"%(mass))
 
             if newTree.GetEntries() != 0:
                 outFile.Write()
                 outFile.Close()
-                print("%s [INFO]: Created file: %s"%(self.timeStamp(), newName))
+                print("%s [INFO]: Created file: %s/%s"%(self.timeStamp(), newName, fileStub))
             else:
                 outFile.Close()
-                os.remove(newName)
+                shutil.rmtree(newName)
                 print("%s [INFO]: Removed empty file: %s"%(self.timeStamp(), newName))
 
 # User can choose the path to the input ROOT file and the path to the TTree name from the command line

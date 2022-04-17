@@ -1,5 +1,5 @@
-#define TopTagger_Analyzer_cxx
-#include "Analyzer/Analyzer/include/TopTagger_Analyzer.h"
+#define WholeTopTagger_Analyzer_cxx
+#include "Analyzer/Analyzer/include/WholeTopTagger_Analyzer.h"
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
@@ -14,14 +14,14 @@
 #include <TDirectory.h>
 #include <TH1F.h>
 
-TopTagger_Analyzer::TopTagger_Analyzer() : inithisto(false) 
+WholeTopTagger_Analyzer::WholeTopTagger_Analyzer() : inithisto(false) 
 {
 }
 
 // -------------------
 // -- Define histos
 // -------------------
-void TopTagger_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) 
+void WholeTopTagger_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) 
 {
     TH1::SetDefaultSumw2();
     TH2::SetDefaultSumw2();
@@ -83,7 +83,7 @@ void TopTagger_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap)
 // ---------------------------------------------
 // -- Put everything you want to do per event 
 // ---------------------------------------------
-void TopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
+void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
     while( tr.getNextEvent() )
     {
@@ -271,7 +271,7 @@ void TopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
     } 
 }
 
-void TopTagger_Analyzer::WriteHistos(TFile* outfile)
+void WholeTopTagger_Analyzer::WriteHistos(TFile* outfile)
 {
     outfile->cd();
 

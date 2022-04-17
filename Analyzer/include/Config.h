@@ -66,8 +66,8 @@ private:
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
-            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 12, 2, "");
-            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 12, 2, "");
+            else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7, 2, "");
+            else if(module=="MakeMVAVariables_NonIsoMuon")           tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",            false, true, 7, 2, "");
             else if(module=="MakeMVAVariables_0l_old")               tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt45",                  false, true, 7,  2, "_0l");
             else if(module=="MakeMVAVariables_0l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_0l");
             else if(module=="MakeMVAVariables_NonIsoMuon_0l")        tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",                  false, true, 7,  2, "_0l");
@@ -433,18 +433,10 @@ public:
                 "CommonVariables",
                 "Baseline",
                 "FatJetCombine",
-                "MakeMVAVariables_0l_old",
-                //"MakeMVAVariables_0l",
-                //"MakeMVAVariables_1l",
-                //"MakeMVAVariables_2l",
-                //"MakeMVAVariables_NonIsoMuon_0l",
-                //"MakeMVAVariables_NonIsoMuon_1l",
+                "MakeMVAVariables",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
-                //"MakeStopHemispheres_OldSeed_NonIsoMuon",
                 "MakeStopHemispheres_TopSeed",
-                "BTagCorrector",
-                "ScaleFactors",
                 "StopGenMatch",
             };
             registerModules(tr, std::move(modulesList));
@@ -467,7 +459,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="Semra_Analyzer" || analyzer=="TopTagger_Analyzer" || analyzer=="AnalyzeTopTagger")
+        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -480,8 +472,8 @@ public:
                 "CommonVariables",
                 "FatJetCombine",
                 "Baseline",
-                "BTagCorrector",
-                "ScaleFactors",
+                //"BTagCorrector",
+                //"ScaleFactors",
                 "MakeMVAVariables_0l",
                 "MakeMVAVariables_1l",
                 "MakeMVAVariables_2l",
