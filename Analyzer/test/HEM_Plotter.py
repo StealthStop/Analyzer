@@ -119,16 +119,19 @@ if __name__ == '__main__':
     ROOT.gStyle.SetFrameLineWidth(2)
     ROOT.gStyle.SetErrorX(0)
 
-    # --------------------
-    # command line options
-    # --------------------
+    # ---------------------------------------------------------------------------------------------------
+    # command line options:
+    #   -- python HEM_Plotter.py --inputDir 2018UL_HEMstudy_0l_1l --data JetHT --ratio          // for 0l
+    #   -- python HEM_Plotter.py --inputDir 2018UL_HEMstudy_0l_1l --data SingleElectron --ratio // for 1l
+    #   -- python HEM_Plotter.py --inputDir 2018UL_HEMstudy_0l_1l --data SingleMuon --ratio     // for 1l
+    # ---------------------------------------------------------------------------------------------------
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--tag",   dest="tag",   help="output dir tag",                    default="",     type=str)
-    parser.add_argument("--data",  dest="data",  help="JetHT, SingleElectron, SingleMuon", default="NULL", type=str)
-    parser.add_argument("--ratio", dest="ratio", help="Draw ratio", action="store_true",   default=False           )
+    parser.add_argument("--inputDir", dest="inputDir", help="input directory",                   default="",     type=str)
+    parser.add_argument("--data",     dest="data",     help="JetHT, SingleElectron, SingleMuon", default="NULL", type=str)
+    parser.add_argument("--ratio",    dest="ratio",    help="Draw ratio", action="store_true",   default=False           )
     
-    arg = parser.parse_args()
+    args = parser.parse_args()
 
     # --------------------
     # make histograms list
@@ -169,16 +172,15 @@ if __name__ == '__main__':
     # -----------------------------------
     # grab things for command line option
     # -----------------------------------
-    ratio   = arg.ratio
-    XCANVAS = 2400; YCANVAS = 2400
+    ratio   = args.ratio
+    XCANVAS = 2400
+    YCANVAS = 2400
 
-    if arg.data != "NULL": stub = arg.data.split("condor/")[-1]
-    else: quit()
-
-    tag       = arg.tag
-    inRootDir = arg.data
-    outpath   = "./plots/HEMStudy/%s/%s"%(stub,tag)
-    if not os.path.exists(outpath): os.makedirs(outpath)
+    inRootDir = args.inputDir
+    outpath   = "./2018UL_HEM_Study_0l_1l"
+    
+    if not os.path.exists(outpath): 
+        os.makedirs(outpath)
 
     mapPFAhistos = {}
     fill_Map(inRootDir, mapPFAhistos)
