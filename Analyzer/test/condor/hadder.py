@@ -111,7 +111,9 @@ def main():
             else:
                 nEvents=0.0
                 for sample in sl:
+                    print("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1]))
                     files += " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
+                    print(files)
                     nEvents+=float(sample[2])
     
                 outfile = "%s/%s.root" % (outDir,sampleCollection)

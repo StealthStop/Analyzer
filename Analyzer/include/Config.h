@@ -158,10 +158,10 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_2016.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
-            meanFileName          = "allInOne_SFMean.root";
+            leptonFileName        = "allInOne_leptonSF_UL.root";
+            bjetFileName          = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName       = "wp_deepCSV_106XUL16preVFP_v2.csv";
+            meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
         }
@@ -191,10 +191,10 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_2016.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_2016LegacySF_WP_V1.csv";
-            meanFileName          = "allInOne_SFMean.root";
+            leptonFileName        = "allInOne_leptonSF_UL.root";
+            bjetFileName          = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName       = "wp_deepCSV_106XUL16postVFP_v3.csv";
+            meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
         }
@@ -225,10 +225,10 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_2017.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_94XSF_WP_V4_B_F.csv";
-            meanFileName          = "allInOne_SFMean.root";
+            leptonFileName        = "allInOne_leptonSF_UL.root";
+            bjetFileName          = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName       = "wp_deepCSV_106XUL17_v3.csv";
+            meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2017.cfg";
         }
@@ -259,10 +259,10 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_2018.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
-            meanFileName          = "allInOne_SFMean.root";
+            leptonFileName        = "allInOne_leptonSF_UL.root";
+            bjetFileName          = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName       = "wp_deepCSV_106XUL18_v2.csv";
+            meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }
@@ -293,10 +293,10 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_2018.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
-            meanFileName          = "allInOne_SFMean.root";
+            leptonFileName        = "allInOne_leptonSF_UL.root";
+            bjetFileName          = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName       = "wp_deepCSV_106XUL18_v2.csv";
+            meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }
@@ -327,10 +327,10 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_2018.root";
-            bjetFileName          = "allInOne_BTagEff.root";
-            bjetCSVFileName       = "DeepCSV_102XSF_WP_V1.csv";
-            meanFileName          = "allInOne_SFMean.root";
+            leptonFileName        = "allInOne_leptonSF_UL.root";
+            bjetFileName          = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName       = "wp_deepCSV_106XUL18_v2.csv";
+            meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
             TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
         }

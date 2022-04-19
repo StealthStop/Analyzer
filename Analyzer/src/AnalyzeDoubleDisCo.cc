@@ -46,7 +46,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop2_eta_cm_OldSeed",         80,   -6,    6},
         {"Stop2_phi_cm_OldSeed",         64,   -4,    4},
         {"Stop2_mass_cm_OldSeed",        72,    0, 1500},
-        {"h_njets",                      21, -0.5, 20.5},
+        {"h_njets",                      20,    0, 20.0},
         {"h_njets_11incl",               20, -0.5, 19.5},
         {"h_njets_12incl",               24, -0.5, 23.5},
         {"h_njets_13incl",               28, -0.5, 27.5},
@@ -57,13 +57,17 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop1_mass_MassRank_matched", 360,    0, 1500},
         {"Stop2_mass_MassRank_matched", 360,    0, 1500},
         {"Stop_mass_average_matched",   360,    0, 1500},
-        {"h_lPt" ,   360,    0, 1500},
+        {"h_jPt" ,   200,    0, 2000},
+        {"h_jPhi" ,   200,    -4, 4},
+        {"h_jEta" ,   200,    -6, 6},
+        {"h_jM" ,   200,    0, 200},
+        {"h_lPt" ,   200,    0, 2000},
         {"h_lIso" ,   360,    0, 1500},
         {"h_lPhi" ,   200,    -4, 4},
         {"h_lEta" ,   200,    -6, 6},
         {"h_lCharge" , 2, -1, 1},
         {"h_lMiniIso" , 100, -10, 10},
-        {"h_ePt" ,   360,    0, 1500},
+        {"h_ePt" ,   200,    0, 2000},
         {"h_eIso" ,   360,    0, 1500},
         {"h_ePhi" ,   200,    -4, 4},
         {"h_eEta" ,   200,    -6, 6},
@@ -344,6 +348,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
 
             const auto& runtype                           = tr.getVar<std::string>("runtype");     
+            const auto& Jets                              = tr.getVec<utility::LorentzVector>("Jets"+myVarSuffix);
+            const auto& GoodJets_pt30                     = tr.getVec<bool>("GoodJets_pt30"+myVarSuffix);
             const auto& NGoodJets_pt30                    = tr.getVar<int>("NGoodJets_pt30"+myVarSuffix);
             const auto& NNonIsoMuonJets_pt30              = tr.getVar<int>("NNonIsoMuonJets_pt30"+myVarSuffix);
             const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30"+myVarSuffix);
@@ -546,7 +552,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
                 weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
-                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight;
+                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
 
                 weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
                 weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
@@ -749,6 +755,16 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_mMiniIso" + name]->Fill(  iso ,w);
                                             }
                                        }
+
+                                for(unsigned int j = 0; j < Jets.size(); j++) 
+                                {
+                                    if(!GoodJets_pt30[j]) continue;
+                                    my_histos["h_jPt" + name]->Fill(Jets.at(j).Pt(), w); 
+                                    my_histos["h_jEta" + name]->Fill(Jets.at(j).Eta(), w); 
+                                    my_histos["h_jPhi" + name]->Fill(Jets.at(j).Phi(), w); 
+                                    my_histos["h_jM" + name]->Fill(Jets.at(j).M(), w); 
+                                    
+                                }
                             }
 
                             if (region != "Incl" and njets != "Incl")

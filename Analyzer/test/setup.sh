@@ -27,23 +27,19 @@ then
 fi
 
 # get scale factor root files (Should fix this)
-if [ ! -f allInOne_BTagEff.root ] 
+if [ ! -f allInOne_BTagEff_UL.root ] 
 then
     echo ""
     echo "|--------------------------------------|"
     echo "|  Copying scale factor files          |"
     echo "|--------------------------------------|"
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/SUS-19-004_Final/CSVv2_Moriond17_B_H.csv .
-
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/DeepCSV_102XSF_WP_V1.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/DeepCSV_2016LegacySF_WP_V1.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/DeepCSV_94XSF_WP_V4_B_F.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_leptonSF_2016.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_leptonSF_2017.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_leptonSF_2018.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_BTagEff.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_SFMean.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2/L1prefiring_jetpt_2017BtoF.root .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL16preVFP_v2.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL16postVFP_v3.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL17_v3.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL18_v2.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_leptonSF_UL.root .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_BTagEff_UL.root .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_SFMean_UL.root .
 fi
 
 # Check repos for updates
