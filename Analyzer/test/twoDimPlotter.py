@@ -41,7 +41,7 @@ class Histogram:
         self.histogram = histo
 
         self.setupHisto(aux)
-        
+
     def Integral(self):
         return self.histogram.Integral()
         
@@ -60,6 +60,15 @@ class Histogram:
             lname = self.info["name"]
 
             self.histogram.Draw("%s SAME"%(self.info["option"]))
+            
+    def Write(self, name):
+        n = "{}_{}".format(name,self.histoName)
+        self.histogram.SetName(n)
+        self.histogram.SetTitle(n)
+        self.histogram.Write()
+
+    def Divide(self, hDen):
+        self.histogram.Divide(hDen.histogram)
     
     # Simply get the raw histogram from the input ROOT file
     def getHisto(self):
@@ -125,7 +134,7 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class TwoDimPlotter:
 
-    def __init__(self, approved, year, outpath, inpath, normalize, histograms, selections, backgrounds, signals, data):
+    def __init__(self, approved, year, outpath, inpath, normalize, histograms, selections, backgrounds, signals, data, outrootname):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -136,6 +145,8 @@ class TwoDimPlotter:
         self.year        = year
         self.inpath      = inpath
         self.outpath     = outpath
+        self.outrootname = outrootname
+        self.outrootfile = ROOT.TFile("{}/{}.root".format(self.outpath, self.outrootname),"RECREATE") if self.outrootname else None
         
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
@@ -149,6 +160,15 @@ class TwoDimPlotter:
         self.BottomMargin = 0.12
         self.RightMargin  = 0.12
         self.LeftMargin   = 0.12
+
+    def __del__(self):
+        if self.outrootfile:
+            self.outrootfile.Close()
+
+    def WriteHisto(self, h, name):
+        if self.outrootfile:
+            self.outrootfile.cd()
+            h.Write(name)
 
     # Create a canvas and determine if it should be split for a ratio plot
     # Margins are scaled on-the-fly so that distances are the same in either
@@ -212,7 +232,6 @@ class TwoDimPlotter:
 
             Hobj = Histogram(None, rootFile, hname, hinfo, info)
             if Hobj.IsGood():
-
                 if self.normalize:
                     Hobj.Scale(1.0 / Hobj.Integral())
 
@@ -241,7 +260,13 @@ class TwoDimPlotter:
             Hobj.histogram.SetContour(255)
             Hobj.Draw(canvas)
             self.addCMSlogo(canvas)
-            canvas.SaveAs("%s/%s_%s_%s.pdf"%(self.outpath, self.year, name, hname))
+            saveName = "%s/%s_%s_%s"%(self.outpath, self.year, name, hname)
+            canvas.SaveAs(saveName+".pdf")
+            canvas.SaveAs(saveName+".gif")
+
+            self.WriteHisto(Hobj, name)
+
+            return Hobj, canvas, saveName
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -269,9 +294,32 @@ class TwoDimPlotter:
                     theMax = self.preprocess(self.backgrounds, newName, newInfo, theMax)
                     theMax = self.preprocess(self.signals,     newName, newInfo, theMax)
 
-                    self.plotLoop(self.data,        newName, newInfo, theMax)
-                    self.plotLoop(self.backgrounds, newName, newInfo, theMax)
+                    hDat, canvas, saveName = self.plotLoop(self.data,        newName, newInfo, theMax)
+                    hBac,      _,        _ = self.plotLoop(self.backgrounds, newName, newInfo, theMax)
                     self.plotLoop(self.signals,     newName, newInfo, theMax)
+
+                    hDat.Divide(hBac)
+                    hDat.histogram.SetMinimum(0.0)
+                    hDat.histogram.SetMaximum(2.0)
+                    self.WriteHisto(hDat, "Ratio")
+                    hDat.histogram.SetTitle("")
+                    hDat.Draw(canvas)
+                    canvas.SaveAs(saveName+"_Ratio.pdf")
+                    canvas.SaveAs(saveName+"_Ratio.gif")
+                    
+                    for i in range(0, hDat.histogram.GetYaxis().GetNbins()+1):
+                        h = copy.deepcopy(hDat)
+                        n = "px{}".format(i-1)
+                        h.histogram = hDat.histogram.ProjectionX(n, i, i)
+                        h.histogram.SetMinimum(0.0)
+                        h.histogram.SetMaximum(2.0)
+                        self.WriteHisto(h, n)
+                        canvas = self.makeCanvas(hinfo["logX"], hinfo["logY"], hinfo["logZ"])
+                        canvas.cd()
+                        h.Draw(canvas)
+                        canvas.SaveAs(saveName+n+".pdf")
+                        canvas.SaveAs(saveName+n+".gif")
+                        
 
 if __name__ == "__main__":
 
@@ -283,6 +331,7 @@ if __name__ == "__main__":
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",     default="NULL", required=True)
     parser.add_argument("--year",         dest="year",         help="which year",                             required=True)
     parser.add_argument("--options",      dest="options",      help="options file",           default="twoDimPlotter_aux", type=str)
+    parser.add_argument("--outrootname",  dest="outrootname",  help="outrootname",            default=None)
     args = parser.parse_args()
 
     # The auxiliary file contains many "hardcoded" items
@@ -300,5 +349,5 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = TwoDimPlotter(args.approved, args.year, args.outpath, args.inpath, args.normalize, histograms, selections, backgrounds, signals, data)
+    plotter = TwoDimPlotter(args.approved, args.year, args.outpath, args.inpath, args.normalize, histograms, selections, backgrounds, signals, data, args.outrootname)
     plotter.makePlots()

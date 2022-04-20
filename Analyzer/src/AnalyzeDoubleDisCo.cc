@@ -83,6 +83,8 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 
     hist2DInfos = {
         {"h_DoubleDisCo_disc1_disc2", 100, 0, 1, 100, 0, 1}, 
+        {"h_cm_pt_jetRank", 150, 0, 1500, 10, 0, 10},
+        {"h_cm_ptrHT_jetRank", 150, 0, 1, 10, 0, 10},
     };
 
     njets = {"Incl", "7", "8", "9", "10", "11", "11incl", "12", "12incl", "13", "13incl", "14", "14incl"};
@@ -158,6 +160,7 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets)
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
 
+        histInfos.push_back({"Jet_cm_ptrHT_"   + std::to_string(i), 150,  0,    1});
         histInfos.push_back({"Jet_cm_pt_"      + std::to_string(i), 150,  0, 1500});
         histInfos.push_back({"Jet_cm_eta_"     + std::to_string(i), 100, -6,    6});
         histInfos.push_back({"Jet_cm_phi_"     + std::to_string(i),  80, -4,    4});
@@ -230,12 +233,14 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
         {
             for (const auto& Njet : njets)
             {
-
                 // For the disc1 vs disc2 plots, no need for njets inclusive one
-                if (Njet == "Incl")
+                if (Njet == "Incl" && h2dInfo.name.find("disco") != std::string::npos)
                     continue;
 
-                std::string njetsStr = "_Njets" + Njet;
+                std::string njetStr = "";
+                // For 2D histos, don't make any where we exclude all but one njets bin
+                if (Njet != "Incl")
+                    njetStr = "_Njets" + Njet;
 
                 for (const auto& regionPair : subRegionsMap)
                 {
@@ -248,10 +253,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
 
                     for (const auto& subregion : subregions)
                     {
-                        std::string name = h2dInfo.name + mycut.first + njetsStr + regionStr + "_" + subregion;
+                        std::string name = h2dInfo.name + mycut.first + njetStr + regionStr + "_" + subregion;
                         my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
                     }
-                    std::string name = h2dInfo.name + mycut.first + njetsStr + regionStr;
+                    std::string name = h2dInfo.name + mycut.first + njetStr + regionStr;
                     my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
                 }
             }
@@ -591,6 +596,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                     channel = std::stoi(kv.first.substr(1,1));
 
                 bool isQCD  = kv.first.find("QCDCR")  != std::string::npos;
+                unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
 
                 // For 0L, we always use the NGoodJets case
                 njetsMap = {{"Incl",     true},
@@ -613,9 +619,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 for (const auto& region : regions[channel])
                     ABCDmap[region] = !isQCD ? DoubleDisCo_passRegions[channel][region] : DoubleDisCo_passRegions_QCDCR[channel][region];
 
-                double w = 1.0;
-                w = !isQCD ? weight[channel]        : weight_QCDCR[channel];
-
+                double w  = !isQCD ? weight[channel]        : weight_QCDCR[channel];
+                double ht = !isQCD ? HT_trigger[channel]    : HT_NonIsoMuon[channel];
                 std::string name;
                 for (auto& njetsPass : njetsMap)
                 {
@@ -684,7 +689,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                 my_histos["Stop2_mass_MassRank_matched" + name]->Fill(Stop2_mass_MassRank_matched, w);
                                 my_histos["Stop_mass_average_matched"   + name]->Fill(Stop_mass_average_matched,   w);
 
-                                unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
                                 for(unsigned int i = 1; i <= nJets; i++)
                                 {
                                     double pt = 0.0, eta = 0.0, phi = 0.0, m = 0.0, E = 0.0;
@@ -705,12 +709,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                         E   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).E());
                                     } 
 
-                                    my_histos["Jet_cm_pt_"  + std::to_string(i) + name]->Fill(pt, w);
-                                    my_histos["Jet_cm_eta_" + std::to_string(i) + name]->Fill(eta, w);
-                                    my_histos["Jet_cm_phi_" + std::to_string(i) + name]->Fill(phi, w);
-                                    my_histos["Jet_cm_m_"   + std::to_string(i) + name]->Fill(m, w);
-                                    my_histos["Jet_cm_E_"   + std::to_string(i) + name]->Fill(E, w);
-                                    
+                                    my_histos["Jet_cm_ptrHT_"  + std::to_string(i) + name]->Fill(pt/ht, w);
+                                    my_histos["Jet_cm_pt_"     + std::to_string(i) + name]->Fill(pt, w);
+                                    my_histos["Jet_cm_eta_"    + std::to_string(i) + name]->Fill(eta, w);
+                                    my_histos["Jet_cm_phi_"    + std::to_string(i) + name]->Fill(phi, w);
+                                    my_histos["Jet_cm_m_"      + std::to_string(i) + name]->Fill(m, w);
+                                    my_histos["Jet_cm_E_"      + std::to_string(i) + name]->Fill(E, w);
 
                                     if (!isQCD)
                                     {
@@ -729,7 +733,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     }
                                 }
 
-                                my_histos["h_ht"                  + name]->Fill(!isQCD ? HT_trigger[channel]          : HT_NonIsoMuon[channel],             w);
+                                my_histos["h_ht"                  + name]->Fill(ht, w);
                                    for(std::size_t j = 0 ; j < std::size(GoodLeptons); ++j){
                                     auto& type = GoodLeptons[j].first;
                                     auto& lvec = GoodLeptons[j].second; 
@@ -765,6 +769,30 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_jM" + name]->Fill(Jets.at(j).M(), w); 
                                     
                                 }
+                            }
+
+                            for(unsigned int i = 1; i <= nJets; i++)
+                            {
+                                double pt = 0.0, eta = 0.0, phi = 0.0, m = 0.0, E = 0.0;
+                                
+                                if (!isQCD)
+                                {
+                                    pt  = static_cast<double>(Jets_cm_top6[channel].at(i-1).Pt());
+                                    //eta = static_cast<double>(Jets_cm_top6[channel].at(i-1).Eta());
+                                    //phi = static_cast<double>(Jets_cm_top6[channel].at(i-1).Phi());
+                                    //m   = static_cast<double>(Jets_cm_top6[channel].at(i-1).M());
+                                    //E   = static_cast<double>(Jets_cm_top6[channel].at(i-1).E());
+                                } else
+                                {
+                                    pt  = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Pt());
+                                    //eta = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Eta());
+                                    //phi = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Phi());
+                                    //m   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).M());
+                                    //E   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).E());
+                                } 
+                                
+                                my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt, i, w);
+                                my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
                             }
 
                             if (region != "Incl" and njets != "Incl")
