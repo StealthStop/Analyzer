@@ -278,7 +278,7 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                         { jetPtMax = Jets[goodJet].Pt(); }
                     }
 
-                    if (cutVar.first == "1l")
+                    if (cutVar.first == "passBaseline_1l")
                     {
                         for (unsigned int goodLep = 0; goodLep < GoodLeptons.size(); goodLep++)
                         {
