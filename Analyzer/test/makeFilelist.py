@@ -228,6 +228,9 @@ class FileLister:
         eraDirs = self.listEOS("%s/*UL*"%(self.filesDir))
         for eraDir in eraDirs:
 
+            # Skip any ROOT file at this level
+            if ".root" in eraDir: continue
+
             # Within each eraDir, get the list of folders, each corresponding
             # to a single unique sample i.e. ZZZ_TuneCP5_13TeV-amcatnlo-pythia8
             sampleDirs = self.listEOS("%s/%s"%(self.filesDir, eraDir))
