@@ -159,6 +159,8 @@ struct SliceData {
     std::size_t j1_index=0;
     std::size_t j2_index=1;
     bool has_2_jets=false;
+
+    double mass_ratio = 0;
 };
 
 std::ostream& operator<<(std::ostream &os, const utility::LorentzVector &v) {
@@ -195,7 +197,7 @@ class LeadingJetGen : public Generator {
 class HTCut : public Cut {
     public:
         HTCut() : Cut("HTCut", false, {"HT<=900", "HT>900"}) {}
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             //            DEBUG("Running cut HT");
             if (data.Ht > 900) {
                 passed = true;
@@ -210,7 +212,7 @@ class HTCut : public Cut {
 class GenHTCut : public Cut {
     public:
         GenHTCut() : Cut("GenHTCut", false, {"HT>700", "HT<=700"}) {}
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             if (data.genHt > 700) {
                 passed = true;
                 value = possible_values[0];
@@ -224,7 +226,7 @@ class GenHTCut : public Cut {
 class GenLepCut : public Cut {
     public:
         GenLepCut() : Cut("GenLepCut", false, {"0Lep", "1Lep","2Lep"}) {}
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             switch(data.n_gen_leps){
                 case 0:
                     passed = true;
@@ -247,7 +249,7 @@ class SelectionCut : public Cut {
         SelectionCut()
             : Cut("SelectionCut", false, {"Selection", "NotSelection"}) {
             }
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             if (!data.has_2_jets) {
                 value = possible_values[1];
                 passed = false;
@@ -281,7 +283,7 @@ class SelectionCut : public Cut {
 class TauCut : public Cut {
     public:
         TauCut() : Cut("TauCut", false, {"TauPass", "TauFail"}) {}
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             auto &Jets = data.Jets;
             if (!data.has_2_jets) {
                 value = possible_values[1];
@@ -307,7 +309,7 @@ class TauCut : public Cut {
 class MassRatioCut : public Cut {
     public:
         MassRatioCut() : Cut("MassRatioCut", false, {"APass", "AFail"}) {}
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             auto &Jets = data.Jets;
             if (!data.has_2_jets) {
                 value = possible_values[1];
@@ -320,10 +322,11 @@ class MassRatioCut : public Cut {
             std::size_t j2_index = data.j2_index;
             auto& firstLargestPt = Jets[j1_index];
             auto& secondLargestPt = Jets[j2_index];
+            auto mass_ratio = std::abs(firstLargestPt.M() - secondLargestPt.M()) /
+                    (firstLargestPt.M() + secondLargestPt.M());
+            data.mass_ratio=mass_ratio;
 
-            if ( std::abs(firstLargestPt.M() - secondLargestPt.M()) /
-                    (firstLargestPt.M() + secondLargestPt.M()) <
-                    0.1 ){
+            if (mass_ratio< 0.1){
                 passed = true;
                 value = possible_values[0];
             } else {
@@ -336,7 +339,7 @@ class MassRatioCut : public Cut {
 class EtaCut : public Cut {
     public:
         EtaCut() : Cut("EtaCut", false, {"EtaPass", "NotSig"}) {}
-        void calculate(const SliceData &data) override {
+        void calculate(SliceData &data) override {
             auto &Jets = data.Jets;
             std::size_t j1_index = data.j1_index;
             std::size_t j2_index = data.j2_index;
@@ -369,11 +372,11 @@ Analyze2W::Analyze2W() {
     my_histos.cuts.push_back(std::make_unique<TauCut>());
     my_histos.cuts.push_back(std::make_unique<EtaCut>());
     my_histos.constructChains({
-            {"GenLepCut", "GenHTCut"},
-            {"GenLepCut", "SelectionCut"},
-            {"GenLepCut", "SelectionCut","EtaCut"},
-            {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
-            {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
+            //{"GenLepCut", "GenHTCut"},
+            //{"GenLepCut", "SelectionCut"},
+            //{"GenLepCut", "SelectionCut","EtaCut"},
+            //{"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
+            //{"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
             });
     InitHistos();
     //my_histos.printHistos();
@@ -401,6 +404,9 @@ void Analyze2W::InitHistos() {
     my_histos.createNewHistogram("nwjets", 5, 0, 5, "NWJets_Reco");
     //my_histos.createNewHistogram("MT2", 100, 0, 1000, "MT2_All", "Events", true);
     my_histos.createNewHistogram("met", 200, 0, 2000, "MET");
+
+
+
 
     my_histos.createNewHistogram("NSubJettiness4", 100, 0, 1, "NSJ 4");
     my_histos.createNewHistogram("NSubJettiness3", 100, 0, 1, "NSJ 3");
@@ -434,6 +440,9 @@ void Analyze2W::InitHistos() {
 
     my_histos.createNewHistogram("Gen_Lep_Angle", 100, 0, 4, "Angle");
     my_histos.createNewHistogram("Gen_W_Angle", 100, 0, 4, "Angle");
+
+    my_histos.createNewHistogram("mass_ratio", 100, 0, 1, "Mass Difference Ratio");
+
 }
 
 void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
@@ -490,7 +499,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         MAKE_RATIO(2, 1);
 
         makeVar(MET, float);
-         // makeVar(MT2, double);
+        makeVar(MT2, double);
         makeVar(HT_trigger_pt30, double);
         makeVar(GenHT, float);
 
@@ -507,6 +516,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         auto isHard = [](int x) {
             return x == 1 || (std::abs(x) < 60 && std::abs(x) > 20);
         };
+
         for (std::size_t i = 0; i < GenParticles.size(); ++i) { // clang-format off
             switch (GenParticles_PdgId[i]) {
                 case W_PDGID: case -W_PDGID:
@@ -523,7 +533,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
                     if( std::abs(GenParticles_PdgId[i]) == 15)
                     break;
                 case STOP_PDGID: case -STOP_PDGID:
-                    if(std::abs(GenParticles_Status[i])==22)
+                    if(std::abs(GenParticles_Status[i])==62)
                         Stops.push_back(GenParticles[i]);
                     break;
                 case 1: case -1: case 2: case -2: case 3: case -3:
@@ -549,6 +559,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             eventweight = lumi * Weight;
             weight *= eventweight * leptonScaleFactor * bTagScaleFactor *
                 htDerivedScaleFactor * prefiringScaleFactor * puScaleFactor;
+         //    weight = 1.0;
         }
 
         SliceData data{HT_trigger_pt30, GenHT, NJets, num_leps, JetsCA12, nsr21, nsr42, nsr43};
@@ -563,14 +574,10 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         // Fill("nwjets", nwjets);
         Fill("HT_pt30", HT_trigger_pt30);
         Fill("met", MET);
+
+        Fill("mass_ratio", data.mass_ratio);
+
         //Fill("MT2", MT2);
-        for (const auto &v : Ws) {
-            Fill("WEta", v.Eta());
-            Fill("WE", v.E());
-            Fill("WPhi", v.Phi());
-            Fill("WP", v.P());
-            Fill("WPt", v.Pt());
-        }
         for (const auto &v : Ws) {
             Fill("WEta", v.Eta());
             Fill("WE", v.E());

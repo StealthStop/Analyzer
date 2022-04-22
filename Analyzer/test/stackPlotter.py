@@ -491,6 +491,7 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
                         if Hobj.IsGood(): 
+                            print("Hobj is  good", Hobj)
                             if mcScale != 0.0:
                                 if self.normMC2Data:
                                     Hobj.Scale(dataScale / mcScale)
@@ -504,6 +505,8 @@ class StackPlotter:
 
                             bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
                             dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
+                        else:
+                            print("Hobj is not good", Hobj)
 
                     # Add each background histo to the stack in order based on number of entries
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=False): 
@@ -529,10 +532,12 @@ class StackPlotter:
 
                         bkgLegend.AddEntry(h[1], lname, h[3])
 
-                    dummy.SetMaximum(yMax)
-                    dummy.SetMinimum(theMin)
-                    dummy.Draw()
-                    bstack.Draw("SAME")
+ 
+                    if self.backgrounds:
+                        dummy.SetMaximum(yMax)
+                        dummy.SetMinimum(theMin)
+                        dummy.Draw()
+                        bstack.Draw("SAME")
 
                     # Loop over each signal and get their respective histo
                     option = "HIST"; loption = "L"
@@ -545,22 +550,24 @@ class StackPlotter:
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
-                        if "350" in sname or len(self.signals) == 1:
-                            theSignificance_350 = Hobj.Significance(totalMC)
-                       
-                        elif "550" in sname or len(self.signals) == 1:
-                            theSignificance_550 = Hobj.Significance(totalMC)
-                
-                        elif "850" in sname or len(self.signals) == 1:
-                            theSignificance_850 = Hobj.Significance(totalMC)
- 
+
+                        if self.backgrounds:
+                            if "350" in sname or len(self.signals) == 1:
+                                theSignificance_350 = Hobj.Significance(totalMC)
+                           
+                            elif "550" in sname or len(self.signals) == 1:
+                                theSignificance_550 = Hobj.Significance(totalMC)
+                    
+                            elif "850" in sname or len(self.signals) == 1:
+                                theSignificance_850 = Hobj.Significance(totalMC)
+     
                         scale = Hobj.Integral()
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend)
 
-                        if "njets" in hname:
+                        if "njets" in hname and self.backgrounds:
                             self.njetsTableDictionary[selection]["significance_350"] = theSignificance_350
                             self.njetsTableDictionary[selection]["significance_550"] = theSignificance_550
                             self.njetsTableDictionary[selection]["significance_850"] = theSignificance_850

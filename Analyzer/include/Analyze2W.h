@@ -110,7 +110,7 @@ class Cut {
                 std::move(possible_values)} {}
         std::string name;
         bool destructive = false;
-        virtual void calculate(const SliceData &data) = 0;
+        virtual void calculate(SliceData &data) = 0;
         const std::vector<std::string> possible_values;
 
         bool passed = false;
@@ -339,6 +339,7 @@ template <typename H> class HistogramManager {
             }
             return  to_string(names) + "\n" + to_string(vals);
         };
+
         auto begin() { return my_histos.begin(); }
         auto end() { return my_histos.end(); }
         auto cbegin() const { return my_histos.cbegin(); }
