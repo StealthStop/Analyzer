@@ -4,13 +4,11 @@ import argparse
 import os
 import glob
 
-bkgs = ["TTJets_Incl", "TT", "TT_isrUp", "TT_isrDown", "TT_fsrUp", "TT_fsrDown",
-        "TT_erdOn", "TT_hdampUp", "TT_hdampDown", "TT_underlyingEvtUp", "TT_underlyingEvtDown"
-       ]
+backgrounds = ["TTToHadronic", "TTToSemiLeptonic", "TTTo2L2Nu"]
+variations  = ["", "TuneCP5up", "TuneCP5down", "hdampUP", "hdampDOWN", "erdON"]
 
-sigmods = ["RPV"]#, "StealthSYY"]
-
-sigmasses = list(range(300, 1450, 50))
+models = ["RPV", "StealthSYY"]
+masses = list(range(300, 1450, 50))
 
 splits = ["Train", "Val", "Test"]
 
@@ -34,22 +32,57 @@ if __name__ == "__main__":
         inputdir = args.inputdir
 
     # Hadd the background files together
-    for bkg in bkgs:
-        for split in splits:
-            command = ["hadd", "%s/MyAnalysis_%s_%s_%s.root"%(args.outputdir,args.year,bkg,split)] + glob.glob("%s/%s_%s/*_%s_?_%s.root"%(inputdir,args.year,bkg,bkg,split)) \
-                                                                           + glob.glob("%s/%s_%s/*_%s_??_%s.root"%(inputdir,args.year,bkg,bkg,split)) \
-                                                                           + glob.glob("%s/%s_%s/*_%s_???_%s.root"%(inputdir,args.year,bkg,bkg,split))
-
-            print("Executing command: \"%s\""%(" ".join(command)))
-            if not args.dryrun:
-                p = sb.Popen(command)
-                p.wait()
-
-    for sigmod in sigmods:
-        for sigmass in sigmasses:
+    for background in backgrounds:
+        for variation in variations:
             for split in splits:
 
-                command = ["hadd", "%s/MyAnalysis_%s_%s_2t6j_mStop-%s_%s.root"%(args.outputdir,args.year,sigmod,sigmass,split)] + glob.glob("%s/%s_AllSignal/*_%s_2t6j_mStop-%s_*_%s.root"%(inputdir,args.year,sigmod,sigmass,split))
+                varStr = ""
+                if variation != "":
+                    varStr = "_%s"%(variation)
+
+                files = glob.glob("%s/%s*/*_%s%s_?_%s.root"   %(inputdir,args.year,background,varStr,split)) \
+                      + glob.glob("%s/%s*/*_%s%s_??_%s.root"  %(inputdir,args.year,background,varStr,split)) \
+                      + glob.glob("%s/%s*/*_%s%s_???_%s.root" %(inputdir,args.year,background,varStr,split)) \
+                      + glob.glob("%s/%s*/*_%s%s_????_%s.root"%(inputdir,args.year,background,varStr,split))
+
+                nFilesPerChunk = 20
+                print(len(files))
+                nChunks = len(files) / nFilesPerChunk
+                if nChunks == 0:
+                    nChunks += 1
+
+                for i in range(0, nChunks):
+
+                    filesChunk = []
+                    for j in range(i*nFilesPerChunk, (i+1)*nFilesPerChunk):
+                        if j > len(files):
+                            break
+                        filesChunk.append(files[j])
+
+                    command = ["hadd", "-f", "%s/MyAnalysis_%s_%s%s_%s_%d.root"%(args.outputdir,args.year,background,varStr,split,i)] + filesChunk
+
+                    print("Executing command: \"%s\""%(" ".join(command)))
+                    if not args.dryrun:
+                        p = sb.Popen(command)
+                        p.wait()
+
+                tempFiles = glob.glob("%s/MyAnalysis_%s_%s%s_%s_*.root"%(args.outputdir,args.year,background,varStr,split))
+                command = ["hadd", "-f", "%s/MyAnalysis_%s_%s%s_%s.root"%(args.outputdir,args.year,background,varStr,split)] + tempFiles
+
+                print("Executing command: \"%s\""%(" ".join(command)))
+                if not args.dryrun:
+                    p = sb.Popen(command)
+                    p.wait()
+
+                for tempFile in tempFiles:
+                    os.remove(tempFile) 
+
+    for model in models:
+        for mass in masses:
+            for split in splits:
+
+                command = ["hadd", "-f", "%s/MyAnalysis_%s_%s_2t6j_mStop-%s_%s.root"%(args.outputdir,args.year,model,mass,split)] \
+                        + glob.glob("%s/%s*/*_%s_2t6j_mStop-%s_*_%s.root"%(inputdir,args.year,model,mass,split))
 
                 print("Executing command: \"%s\""%(" ".join(command)))
                 if not args.dryrun:
