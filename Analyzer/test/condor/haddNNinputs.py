@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
                 for tempFile in tempFiles:
                     os.remove(tempFile) 
-    """
+
     for model in models:
         for mass in masses:
             for split in splits:
@@ -88,4 +88,3 @@ if __name__ == "__main__":
                 if not args.dryrun:
                     p = sb.Popen(command)
                     p.wait()
-    """
