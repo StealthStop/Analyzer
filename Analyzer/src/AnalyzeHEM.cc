@@ -110,10 +110,10 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& NGoodJets_pt30      = tr.getVar<int>("NGoodJets_pt30");
         const auto& RunNum              = tr.getVar<unsigned int>("RunNum");
         const auto& met                 = tr.getVar<float>("MET");
-        const auto& lvMET_cm_pt         = tr.getVar<float>("lvMET_cm_pt");
-        const auto& lvMET_cm_eta        = tr.getVar<float>("lvMET_cm_eta");
-        const auto& lvMET_cm_phi        = tr.getVar<float>("lvMET_cm_phi");
-        const auto& lvMET_cm_m          = tr.getVar<float>("lvMET_cm_m");
+        const auto& lvMET_cm_pt         = tr.getVar<double>("lvMET_cm_pt");
+        const auto& lvMET_cm_eta        = tr.getVar<double>("lvMET_cm_eta");
+        const auto& lvMET_cm_phi        = tr.getVar<double>("lvMET_cm_phi");
+        const auto& lvMET_cm_m          = tr.getVar<double>("lvMET_cm_m");
         const auto& fwm2_top6           = tr.getVar<double>("fwm2_top6");
         const auto& fwm3_top6           = tr.getVar<double>("fwm3_top6");
         const auto& fwm4_top6           = tr.getVar<double>("fwm4_top6");
@@ -126,9 +126,10 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& jmt_ev0_top6        = tr.getVar<double>("jmt_ev0_top6");
         const auto& jmt_ev1_top6        = tr.getVar<double>("jmt_ev1_top6");
         const auto& jmt_ev2_top6        = tr.getVar<double>("jmt_ev2_top6");
-        const auto& event_beta_z        = tr.getVar<float>("event_beta_z");
+        const auto& event_beta_z        = tr.getVar<double>("event_beta_z");
         const auto& passMadHT           = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline        = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& passBaseline_1l     = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& passBaseline_0l     = tr.getVar<bool>("passBaseline0l_good");
      
         if(maxevents != -1 && tr.getEvtNum() >= maxevents) break;        
         if ( tr.getEvtNum() % 1000 == 0 ) printf("  Event %i\n", tr.getEvtNum() ) ;
@@ -148,29 +149,30 @@ void AnalyzeHEM::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
-            const auto& Weight  = tr.getVar<float>("Weight");
-            const auto& lumi = tr.getVar<double>("Lumi");
-            eventweight = lumi*Weight;
+            const auto& Weight = tr.getVar<float>("Weight");
+            const auto& lumi   = tr.getVar<double>("Lumi");
+            eventweight        = lumi*Weight;
             
             // Define lepton weight
-            if(NGoodLeptons == 1)
-            {
-                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
-                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
-                leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
-            }
+            //if(NGoodLeptons == 1)
+            //{
+            //    const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
+            //    const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
+            //    leptonScaleFactor        = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
+            //}
             
-            //PileupWeight = tr.getVar<float>("_PUweightFactor");
-            bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor = tr.getVar<double>("puWeightCorr");
+            //PileupWeight         = tr.getVar<float>("_PUweightFactor");
+            //bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            //htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
+            //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            //puScaleFactor        = tr.getVar<double>("puWeightCorr");
             
-            weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
+            //weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
+            weight *= eventweight;
         }
 
         //Make cuts and fill histograms here
-        if( passBaseline ) {
+        if( passBaseline_1l ) {
 
             double jetPtMax = 0.0;
             if ( RunNum < 319077 ) {

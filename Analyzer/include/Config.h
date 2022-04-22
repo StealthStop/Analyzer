@@ -441,7 +441,6 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-
         else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateBTagSF" || analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
@@ -459,6 +458,28 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="HEM_Analyzer" || analyzer=="AnalyzeHEM")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
+                "CommonVariables",
+                "FatJetCombine",
+                "Baseline",
+                //"BTagCorrector",
+                //"ScaleFactors",        
+                "MakeMVAVariables",
+                //"StopJets",
+                //"MakeStopHemispheres_OldSeed",
+                //"MakeStopHemispheres_TopSeed",
+            };
+            registerModules(tr, std::move(modulesList));
+        }       
         else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
