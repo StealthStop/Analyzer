@@ -57,28 +57,28 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop1_mass_MassRank_matched", 360,    0, 1500},
         {"Stop2_mass_MassRank_matched", 360,    0, 1500},
         {"Stop_mass_average_matched",   360,    0, 1500},
-        {"h_jPt" ,   200,    0, 2000},
-        {"h_jPhi" ,   200,    -4, 4},
-        {"h_jEta" ,   200,    -6, 6},
-        {"h_jM" ,   200,    0, 200},
-        {"h_lPt" ,   200,    0, 2000},
-        {"h_lIso" ,   360,    0, 1500},
-        {"h_lPhi" ,   200,    -4, 4},
-        {"h_lEta" ,   200,    -6, 6},
-        {"h_lCharge" , 2, -1, 1},
-        {"h_lMiniIso" , 100, -10, 10},
-        {"h_ePt" ,   200,    0, 2000},
-        {"h_eIso" ,   360,    0, 1500},
-        {"h_ePhi" ,   200,    -4, 4},
-        {"h_eEta" ,   200,    -6, 6},
-        {"h_eCharge" , 2, -1, 1},
-        {"h_eMiniIso" , 100, -10, 10},
-        {"h_mPt" ,   360,    0, 1500},
-        {"h_mIso" ,   360,    0, 1500},
-        {"h_mPhi" ,   200,    -4, 4},
-        {"h_mEta" ,   200,    -6, 6},
-        {"h_mCharge" , 2, -1, 1},
-        {"h_mMiniIso" , 100, -10, 10},
+        {"h_jPt",                       200,    0, 2000},
+        {"h_jPhi",                      200,   -4,    4},
+        {"h_jEta",                      200,   -6,    6},
+        {"h_jM",                        200,    0,  200},
+        {"h_lPt",                       200,    0, 2000},
+        {"h_lIso",                      360,    0, 1500},
+        {"h_lPhi",                      200,   -4,    4},
+        {"h_lEta",                      200,   -6,    6},
+        {"h_lCharge",                     2,   -1,    1},
+        {"h_lMiniIso",                 4000,    0,    5},
+        {"h_ePt",                       200,    0, 2000},
+        {"h_eIso",                      360,    0, 1500},
+        {"h_ePhi",                      200,   -4,    4},
+        {"h_eEta",                      200,   -6,    6},
+        {"h_eCharge",                     2,   -1,    1},
+        {"h_eMiniIso",                  400,    0,    5},
+        {"h_mPt",                       360,    0, 1500},
+        {"h_mIso",                      360,    0, 1500},
+        {"h_mPhi",                      200,   -4,    4},
+        {"h_mEta",                      200,   -6,    6},
+        {"h_mCharge",                     2,   -1,    1},
+        {"h_mMiniIso",                 4000,    0,    5},
     };
 
     hist2DInfos = {
@@ -362,6 +362,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix);
             const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
+            const auto& passBaseline1l_HT500_Good         = tr.getVar<bool>("passBaseline1l_HT500_Good"+myVarSuffix);
+            const auto& passBaseline1l_HT700_Good         = tr.getVar<bool>("passBaseline1l_HT700_Good"+myVarSuffix);
             const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR"+myVarSuffix);
             const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon"+myVarSuffix);
 
@@ -425,21 +427,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon"+myVarSuffix);
 
+            const auto& GoodLeptons                       = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons"+myVarSuffix);
+            const auto& GoodLeptonsCharge                 = tr.getVec<int>("GoodLeptonsCharge"+myVarSuffix);
+            const auto& GoodLeptonsMiniIso                = tr.getVec<double>("GoodLeptonsMiniIso"+myVarSuffix);
 
-            const auto& GoodLeptons  = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons"+myVarSuffix);
-            const auto& GoodLeptonsCharge  = tr.getVec<int>("GoodLeptonsCharge"+myVarSuffix);
-            const auto& GoodLeptonsMiniIso = tr.getVec<double>("GoodLeptonsMiniIso"+myVarSuffix);
-
-            const auto& regions_0l = tr.getVec<std::string>("regions_0l_RPV");
-            const auto& regions_1l = tr.getVec<std::string>("regions_1l_RPV");
+            const auto& regions_0l                        = tr.getVec<std::string>("regions_0l_RPV");
+            const auto& regions_1l                        = tr.getVec<std::string>("regions_1l_RPV");
 
             const auto& Stop1_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass"+myVarSuffix);
             const auto& Stop2_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass"+myVarSuffix);
             const auto& Stop1_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass"+myVarSuffix);
             const auto& Stop2_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass"+myVarSuffix);
             const auto& Stop_mass_average_matched         = runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"+myVarSuffix);
-
-
 
             std::map<std::string, std::vector<bool> > DoubleDisCo_passRegions_0l;
             std::map<std::string, std::vector<bool> > DoubleDisCo_passRegions_1l;
@@ -539,6 +538,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             double eventweight = 1.0, leptonweight = 1.0, bTagWeight = 1.0, prefiringScaleFactor = 1.0, pileupWeight = 1.0, htDerivedweight = 1.0;
             double weight0L            = 1.0, weight1L            = 1.0;
             double weight0L_NonIsoMuon = 1.0, weight1L_NonIsoMuon = 1.0;
+            double weight0L_topReweight = 1.0, weight1L_topReweight = 1.0;
+            double weight0L_NonIsoMuon_topReweight = 1.0, weight1L_NonIsoMuon_topReweight = 1.0;
             if(runtype == "MC" )
             {
                 // Define Lumi weight
@@ -546,9 +547,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 const auto& lumi   = tr.getVar<double>("Lumi");
                 eventweight        = lumi * Weight;
                 
-                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
-                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
-                const auto& muNonIso     = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
+                const auto& eleLepWeight     = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
+                const auto& muLepWeight      = tr.getVar<double>("totGoodMuonSF"+myVarSuffix);
+                const auto& muNonIso         = tr.getVar<double>("totNonIsoMuonSF"+myVarSuffix);
+                const auto& topPtScaleFactor = tr.getVar<double>("topPtScaleFactor"+myVarSuffix);
                 leptonweight             = eleLepWeight * muLepWeight;
 
                 pileupWeight         = tr.getVar<double>("puWeightCorr"+myVarSuffix);
@@ -556,21 +558,34 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L            *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
-                weight0L            *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * htDerivedweight;
+                weight1L             *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight0L             *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
 
-                weight1L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight1L_topReweight *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
+                weight0L_topReweight *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
+
+                weight1L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+                weight0L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
+
+                weight1L_NonIsoMuon_topReweight  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
+                weight0L_NonIsoMuon_topReweight  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
             }
 
-            std::vector<double> weight        {weight0L,            weight1L};
-            std::vector<double> weight_QCDCR  {weight0L_NonIsoMuon, weight1L_NonIsoMuon};
+            std::vector<double> weight             {weight0L,            weight1L};
+            std::vector<double> weight_QCDCR       {weight0L_NonIsoMuon, weight1L_NonIsoMuon};
+            std::vector<double> weight_topReweight {weight0L_topReweight, weight1L_topReweight};
+            std::vector<double> weight_QCDCR_topReweight {weight0L_NonIsoMuon_topReweight, weight1L_NonIsoMuon_topReweight};
 
             const std::map<std::string, bool> cut_map
             {
-                {"_1l"            , passBaseline1l_Good},                         
+                {"_1l"               , passBaseline1l_Good},                         
+                {"_1l_topPtReweight" , passBaseline1l_Good},                         
+                {"_1l_HT500"         , passBaseline1l_HT500_Good},                         
+                {"_1l_HT700"         , passBaseline1l_HT700_Good},                         
                 {"_0l"            , passBaseline0l_Good},                         
-                {"_1l_QCDCR"      , passBaseline1l_NonIsoMuon},                         
+                {"_0l_topPtReweight" , passBaseline0l_Good},                         
+                {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon},                         
+                {"_1l_QCDCR_topPtReweight"         , passBaseline1l_NonIsoMuon},                         
                 {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
             };
 
@@ -596,6 +611,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                     channel = std::stoi(kv.first.substr(1,1));
 
                 bool isQCD  = kv.first.find("QCDCR")  != std::string::npos;
+                bool isTopReweight  = kv.first.find("top")  != std::string::npos;
                 unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
 
                 // For 0L, we always use the NGoodJets case
@@ -621,6 +637,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 double w  = !isQCD ? weight[channel]        : weight_QCDCR[channel];
                 double ht = !isQCD ? HT_trigger[channel]    : HT_NonIsoMuon[channel];
+
+                w  = !isTopReweight ? w                     : weight_topReweight[channel];
+                w  = !(isTopReweight && isQCD) ? w          : weight_QCDCR_topReweight[channel];
+
                 std::string name;
                 for (auto& njetsPass : njetsMap)
                 {
@@ -759,7 +779,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_mMiniIso" + name]->Fill(  iso ,w);
                                             }
                                        }
-
+                                
                                 for(unsigned int j = 0; j < Jets.size(); j++) 
                                 {
                                     if(!GoodJets_pt30[j]) continue;
