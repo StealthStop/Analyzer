@@ -79,7 +79,7 @@ void CalculateBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& GoodJets_pt30  = tr.getVec<bool>("GoodJets_pt30");
             const auto& recoJetsBtag   = tr.getVec<float>("Jets_bJetTagDeepCSVtotb");
             const auto& recoJetsFlavor = tr.getVec<int>("Jets_hadronFlavor");
-            const auto& deepCSV_WP_medium = tr.getVar<float>("deepCSV_WP_medium");
+            const auto& deepCSV_WP_medium = tr.getVar<double>("deepCSV_WP_medium");
 
             const auto& Weight = tr.getVar<float>("Weight");
             const auto& Lumi   = tr.getVar<double>("Lumi");
