@@ -85,6 +85,7 @@ void fillHistos(U &histos, const std::string &name, T val, double weight,
    }
  */
 
+
 template<typename T, typename U>
 T constexpr power(T base, U exponent) {
     return exponent == 0 ? 1 : base * pow(base, exponent - 1);
@@ -244,6 +245,9 @@ class GenLepCut : public Cut {
         }
 };
 
+
+
+
 class SelectionCut : public Cut {
     public:
         SelectionCut()
@@ -323,7 +327,7 @@ class MassRatioCut : public Cut {
             auto& firstLargestPt = Jets[j1_index];
             auto& secondLargestPt = Jets[j2_index];
             auto mass_ratio = std::abs(firstLargestPt.M() - secondLargestPt.M()) /
-                    (firstLargestPt.M() + secondLargestPt.M());
+                (firstLargestPt.M() + secondLargestPt.M());
             data.mass_ratio=mass_ratio;
 
             if (mass_ratio< 0.1){
@@ -361,6 +365,7 @@ const int JETCOUNT = 10;
 const int LEP_COUNT = 10;
 const double W_WP = 0.918;
 const double WTAG_PT = 200.0f;
+const std::size_t MAX_JETS=6;
 
 Analyze2W::Analyze2W() {
     my_histos.generators.push_back(std::make_unique<LeadingJetGen>());
@@ -395,28 +400,37 @@ void Analyze2W::InitHistos() {
     TH2::SetDefaultSumw2();
 
     my_histos.createNewHistogram("EventCounter", 2, -1.1, 1.1, "Event Counter");
-    my_histos.createNewHistogram("njets", 15, 0, 15, "NJets");
-    my_histos.createNewHistogram("nAK8jets", 15, 0, 15, "NAK8Jets");
 
-    my_histos.createNewHistogram("nCA12Jets", 15, 0, 15, "NAK8Jets");
+    my_histos.createNewHistogram("NJets_pt20", 15, 0, 15, "NJets PT20");
+    my_histos.createNewHistogram("NJets_pt30", 15, 0, 15, "NJets PT30");
 
-    my_histos.createNewHistogram("nbjets", 5, 0, 5, "NBJets");
-    my_histos.createNewHistogram("nwjets", 5, 0, 5, "NWJets_Reco");
-    //my_histos.createNewHistogram("MT2", 100, 0, 1000, "MT2_All", "Events", true);
+    my_histos.createNewHistogram("HT_pt30", 200, 0, 2000, "HT_pt30", "Events",
+            true);
+
+    // Number of reco b jets
+    my_histos.createNewHistogram("nbjets", 5, 0, 5, "NBJets_Reco");
+
+    // CA12 jet information
+    my_histos.createNewHistogram("nCA12Jets", 15, 0, 15, "nCA12Jets");
+    my_histos.createNewHistogram("CA12Pt", 50, 0, 500, "CA12Pt ", "Events", true);
+
+    // Number of reco w jets
+    //my_histos.createNewHistogram("nwjets", 5, 0, 5, "NWJets_Reco");
+
+
+    // MET
     my_histos.createNewHistogram("met", 200, 0, 2000, "MET");
 
-
-
-
+    // Nsubjetiness of CA12 jets
     my_histos.createNewHistogram("NSubJettiness4", 100, 0, 1, "NSJ 4");
     my_histos.createNewHistogram("NSubJettiness3", 100, 0, 1, "NSJ 3");
     my_histos.createNewHistogram("NSubJettiness2", 100, 0, 1, "NSJ 2");
     my_histos.createNewHistogram("NSubJettiness1", 100, 0, 1, "NSJ 1");
-
     my_histos.createNewHistogram("NSubRatio43", 100, 0, 2, "NSR 43");
     my_histos.createNewHistogram("NSubRatio42", 100, 0, 2, "NSR 42");
     my_histos.createNewHistogram("NSubRatio21", 100, 0, 2, "NSR 21");
 
+    // Gen W information
     my_histos.createNewHistogram("WE", 200, 0, 2000, "W Energy");
     my_histos.createNewHistogram("WP", 200, 0, 2000, "W P");
     my_histos.createNewHistogram("WPt", 200, 0, 2000, "W PT");
@@ -424,24 +438,38 @@ void Analyze2W::InitHistos() {
     my_histos.createNewHistogram("WEta", 100, -3.2, 3.2, "W Eta");
 
 
+    // Gen Stop information
     my_histos.createNewHistogram("StopE", 200, 0, 2000, "Stop Energy");
     my_histos.createNewHistogram("StopP", 200, 0, 2000, "Stop P");
     my_histos.createNewHistogram("StopPt", 200, 0, 2000, "Stop PT");
     my_histos.createNewHistogram("StopPhi", 100, -3.2, 3.2, "Stop Phi");
     my_histos.createNewHistogram("StopEta", 100, -3.2, 3.2, "Stop Eta");
 
-    my_histos.createNewHistogram("JetPt", 50, 0, 500, "jet pt (goodjets_pt20)",
-            "", true);
+    // Leptons
+    my_histos.createNewHistogram("NGoodLeptons", 100, 0, 10, "N Good Leptons");
+    for(const std::string& s: {"l", "e", "m"}){
+        my_histos.createNewHistogram(s + "_Pt" ,   360,    0, 1500 , s + "_Pt" );
+        my_histos.createNewHistogram(s + "_Phi" ,   200,    -4, 4, s + "_Phi" );
+        my_histos.createNewHistogram(s + "_Eta" ,   200,    -6, 6, s + "_Eta" );
+        my_histos.createNewHistogram(s + "_Charge" , 2, -1, 1, s + "_Charge" );
+        my_histos.createNewHistogram(s + "_MiniIso" , 100, 0, 1, s + "_MiniIso" );
+    }
 
-    my_histos.createNewHistogram("CA12Pt", 50, 0, 500, "CA12Pt ", "Events", true);
-
-    my_histos.createNewHistogram("HT_pt30", 200, 0, 2000, "HT_pt30", "Events",
-            true);
-
-    my_histos.createNewHistogram("Gen_Lep_Angle", 100, 0, 4, "Angle");
+    // Angles between Ws and Leptons
+    //my_histos.createNewHistogram("Gen_Lep_Angle", 100, 0, 4, "Angle");
     my_histos.createNewHistogram("Gen_W_Angle", 100, 0, 4, "Angle");
 
+    // Mass difference of two leading CA12 jets
     my_histos.createNewHistogram("mass_ratio", 100, 0, 1, "Mass Difference Ratio");
+
+    // Jet kinematic information
+    for(std::size_t i = 0; i < 6; ++i){
+        my_histos.createNewHistogram("Jet_" + std::to_string(i) + "_E", 200, 0, 2000,"Jet_" + std::to_string(i) + "_E" );
+        my_histos.createNewHistogram("Jet_" + std::to_string(i) + "_P", 200, 0, 2000, "Jet_" + std::to_string(i) + "_P");
+        my_histos.createNewHistogram("Jet_" + std::to_string(i) + "_Pt", 200, 0, 2000, "Jet_" + std::to_string(i) + "_Pt");
+        my_histos.createNewHistogram("Jet_" + std::to_string(i) + "_Phi", 100, -3.2, 3.2, "Jet_" + std::to_string(i) + "_Phi");
+        my_histos.createNewHistogram("Jet_" + std::to_string(i) + "_Eta", 100, -3.2, 3.2, "Jet_" + std::to_string(i) + "_Eta");
+    }
 
 }
 
@@ -475,21 +503,21 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         GET_MACRO(__VA_ARGS__, makeVarCustom, makeVarIdentical)(__VA_ARGS__)
 
         makeVar(runtype, std::string);
-        makeVar(NJets, int);
-        makeVec(Jets, utility::LorentzVector);
-        //makeVec(JetsAK8Clean, utility::LorentzVector);
 
+        makeVar(NJets_pt20, int);
+        makeVar(NJets_pt30, int);
+        //makeVec(Jets, utility::LorentzVector);
         makeVec(JetsAK8, utility::LorentzVector);
-
         makeVec(GenJetsAK8, utility::LorentzVector);
         makeVec(GoodJets_pt20, bool);
         makeVar(NGoodBJets_pt30, int);
-
         makeVec(JetsCA12, utility::LorentzVector);
         makeVec(JetsCA12_NsubjettinessTau4, float);
         makeVec(JetsCA12_NsubjettinessTau3, float);
         makeVec(JetsCA12_NsubjettinessTau2, float);
         makeVec(JetsCA12_NsubjettinessTau1, float);
+
+        auto& Jets = JetsAK8;
 
 #define MAKE_RATIO(x, y)                                                       \
         auto nsr##x##y =                                                             \
@@ -498,9 +526,8 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         MAKE_RATIO(4, 2);
         MAKE_RATIO(2, 1);
 
-        makeVar(MET, float);
-        makeVar(MT2, double);
         makeVar(HT_trigger_pt30, double);
+        makeVar(MET, float);
         makeVar(GenHT, float);
 
         makeVec(GenParticles, utility::LorentzVector);
@@ -508,9 +535,13 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         makeVec(GenParticles_ParentId, int);
         makeVec(GenParticles_ParentIdx, int);
         makeVec(GenParticles_Status, int);
+
         // makeVec(JetsAK8_wDiscriminatorDeep, double);
 
         makeVec(GoodLeptons, (std::pair<std::string, utility::LorentzVector>));
+        makeVec(GoodLeptonsCharge, int);
+        makeVec(GoodLeptonsMiniIso, double);
+
 
         std::vector<utility::LorentzVector> Ws, Leps, Stops, Quarks;
         auto isHard = [](int x) {
@@ -531,7 +562,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
                 case -E_PDGID: case -M_PDGID: case -T_PDGID:
                     Leps.push_back(GenParticles[i]);
                     if( std::abs(GenParticles_PdgId[i]) == 15)
-                    break;
+                        break;
                 case STOP_PDGID: case -STOP_PDGID:
                     if(std::abs(GenParticles_Status[i])==62)
                         Stops.push_back(GenParticles[i]);
@@ -559,16 +590,18 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             eventweight = lumi * Weight;
             weight *= eventweight * leptonScaleFactor * bTagScaleFactor *
                 htDerivedScaleFactor * prefiringScaleFactor * puScaleFactor;
-         //    weight = 1.0;
+            //    weight = 1.0;
         }
 
-        SliceData data{HT_trigger_pt30, GenHT, NJets, num_leps, JetsCA12, nsr21, nsr42, nsr43};
+        SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsr21, nsr42, nsr43};
         my_histos.processCuts(data);
 
 #define Fill(table, var) my_histos.fill(table, weight, var)
 
         Fill("EventCounter", eventCounter);
-        Fill("njets", NJets);
+
+        Fill("NJets_pt20", NJets_pt20);
+        Fill("NJets_pt30", NJets_pt30);
         Fill("nCA12Jets", std::size(JetsCA12));
         Fill("nbjets", NGoodBJets_pt30);
         // Fill("nwjets", nwjets);
@@ -592,6 +625,8 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("StopP", v.P());
             Fill("StopPt", v.Pt());
         }
+
+
         auto computeAngle = [](const auto &pair) {
             return ROOT::Math::VectorUtil::Angle(pair[0].Vect(), pair[1].Vect());
             //return pair[0].Vect().Angle(pair[1].Vect());
@@ -606,8 +641,43 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("NSubRatio43", nsr43[i]);
             Fill("NSubRatio21", nsr21[i]);
         }
-        if (std::size(Ws) == 2)
-            Fill("Gen_W_Angle", computeAngle(Ws));
+
+        Fill("NGoodLeptons", std::size(GoodLeptons));
+        for(std::size_t i = 0 ; i < std::size(GoodLeptons); ++i){
+            const auto& lepton =  GoodLeptons[i];
+            const auto& v = lepton.second;
+            Fill("l_Pt" , v.Pt() );
+            Fill("l_Phi" , v.Phi());
+            Fill("l_Eta" , v.Eta());
+            Fill("l_Charge" , GoodLeptonsCharge[i]);
+            Fill("l_MiniIso", GoodLeptonsMiniIso[i]);
+            if(lepton.first == "e"){
+                Fill("e_Pt" , v.Pt() );
+                Fill("e_Phi" , v.Phi());
+                Fill("e_Eta" , v.Eta());
+                Fill("e_Charge" , GoodLeptonsCharge[i]);
+                Fill("e_MiniIso", GoodLeptonsMiniIso[i]);
+            } else if (lepton.first == "m") {
+                Fill("m_Pt" , v.Pt() );
+                Fill("m_Phi" , v.Phi());
+                Fill("m_Eta" , v.Eta());
+                Fill("m_Charge" , GoodLeptonsCharge[i]);
+                Fill("m_MiniIso", GoodLeptonsMiniIso[i]);
+
+            }
+        }
+
+        for (std::size_t i = 0; i < std::min(MAX_JETS, std::size(Jets)); ++i) {
+            auto& jet = Jets[i];
+            Fill("Jet_" + std::to_string(i) + "_E", jet.E());
+            Fill("Jet_" + std::to_string(i) + "_P", jet.P());
+            Fill("Jet_" + std::to_string(i) + "_Pt",jet.Pt());
+            Fill("Jet_" + std::to_string(i) + "_Phi",jet.Phi());
+            Fill("Jet_" + std::to_string(i) + "_Eta",jet.Eta());
+        }
+
+        if (std::size(Ws) == 2) Fill("Gen_W_Angle", computeAngle(Ws));
+
         for (std::size_t i = 0; i < std::size(JetsCA12); ++i) {
             Fill("CA12Pt", JetsCA12[i].Pt());
         }
