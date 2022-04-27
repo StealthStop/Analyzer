@@ -33,10 +33,10 @@ then
     echo "|--------------------------------------|"
     echo "|  Copying scale factor files          |"
     echo "|--------------------------------------|"
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL16preVFP_v2.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL16postVFP_v3.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL17_v3.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL18_v2.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/reshaping_deepCSV_106XUL16postVFP_v3.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/reshaping_deepCSV_106XUL16preVFP_v2.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/reshaping_deepCSV_106XUL17_v3.csv .
+    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/reshaping_deepCSV_106XUL18_v2.csv .
     xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_leptonSF_UL.root .
     xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_BTagEff_UL.root .
     xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_SFMean_UL.root .
