@@ -86,7 +86,7 @@ def pretty_Histo(histo,magicFactor=1.0,magicFactor2=1.0):
 #   -- with/without HEM labels
 #   -- with 0l/1l labels
 # --------------------------------------
-def fill_Map(inRootDir, theMap, switch):
+def fill_Map(inRootDir, theMap):
 
     theMap["HEM"]   = {}
     theMap["NOHEM"] = {}
@@ -226,7 +226,7 @@ if __name__ == '__main__':
         os.makedirs(outpath)
 
     mapPFAhistos = {}
-    fill_Map(inRootDir, mapPFAhistos, args.tag)
+    fill_Map(inRootDir, mapPFAhistos)
 
     # -------------------------
     # Save the final histograms
