@@ -112,32 +112,33 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& GoodLeptons           = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
         const auto& GoodJets_pt30         = tr.getVec<bool>("GoodJets_pt30");
         const auto& GoodBJets_pt30        = tr.getVec<bool>("GoodBJets_pt30");
-        const auto& NGoodLeptons          = tr.getVar<int>("NGoodLeptons");
-        const auto& NGoodJets_pt30        = tr.getVar<int>("NGoodJets_pt30");
-        const auto& NGoodBJets_pt30       = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& HT_trigger_pt30       = tr.getVar<double>("HT_trigger_pt30");
-        const auto& met                   = tr.getVar<float>("MET");
-        const auto& lvMET_cm_m            = tr.getVar<double>("lvMET_cm_m");
-        const auto& lvMET_cm_eta          = tr.getVar<double>("lvMET_cm_eta");
-        const auto& lvMET_cm_phi          = tr.getVar<double>("lvMET_cm_phi");
-        const auto& lvMET_cm_pt           = tr.getVar<double>("lvMET_cm_pt");
-        const auto& fwm2_top6             = tr.getVar<double>("fwm2_top6");
-        const auto& fwm3_top6             = tr.getVar<double>("fwm3_top6");
-        const auto& fwm4_top6             = tr.getVar<double>("fwm4_top6");
-        const auto& fwm5_top6             = tr.getVar<double>("fwm5_top6");
-        const auto& fwm6_top6             = tr.getVar<double>("fwm6_top6");
-        const auto& fwm7_top6             = tr.getVar<double>("fwm7_top6");
-        const auto& fwm8_top6             = tr.getVar<double>("fwm8_top6");
-        const auto& fwm9_top6             = tr.getVar<double>("fwm9_top6");
-        const auto& fwm10_top6            = tr.getVar<double>("fwm10_top6");
-        const auto& jmt_ev0_top6          = tr.getVar<double>("jmt_ev0_top6");
-        const auto& jmt_ev1_top6          = tr.getVar<double>("jmt_ev1_top6");
-        const auto& jmt_ev2_top6          = tr.getVar<double>("jmt_ev2_top6");
-        const auto& event_beta_z          = tr.getVar<double>("event_beta_z");
-        const auto& passMadHT             = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline_0l       = tr.getVar<bool>("passBaseline0l_good");
-        const auto& passBaseline_1l       = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passElectronHEMVeto   = tr.getVar<bool>("passElectronHEMVeto");
+        const auto& NGoodLeptons            = tr.getVar<int>("NGoodLeptons");
+        const auto& NGoodJets_pt30          = tr.getVar<int>("NGoodJets_pt30");
+        const auto& NGoodBJets_pt30         = tr.getVar<int>("NGoodBJets_pt30");
+        const auto& HT_trigger_pt30         = tr.getVar<double>("HT_trigger_pt30");
+        const auto& met                     = tr.getVar<float>("MET");
+        const auto& lvMET_cm_m              = tr.getVar<double>("lvMET_cm_m");
+        const auto& lvMET_cm_eta            = tr.getVar<double>("lvMET_cm_eta");
+        const auto& lvMET_cm_phi            = tr.getVar<double>("lvMET_cm_phi");
+        const auto& lvMET_cm_pt             = tr.getVar<double>("lvMET_cm_pt");
+        const auto& fwm2_top6               = tr.getVar<double>("fwm2_top6");
+        const auto& fwm3_top6               = tr.getVar<double>("fwm3_top6");
+        const auto& fwm4_top6               = tr.getVar<double>("fwm4_top6");
+        const auto& fwm5_top6               = tr.getVar<double>("fwm5_top6");
+        const auto& fwm6_top6               = tr.getVar<double>("fwm6_top6");
+        const auto& fwm7_top6               = tr.getVar<double>("fwm7_top6");
+        const auto& fwm8_top6               = tr.getVar<double>("fwm8_top6");
+        const auto& fwm9_top6               = tr.getVar<double>("fwm9_top6");
+        const auto& fwm10_top6              = tr.getVar<double>("fwm10_top6");
+        const auto& jmt_ev0_top6            = tr.getVar<double>("jmt_ev0_top6");
+        const auto& jmt_ev1_top6            = tr.getVar<double>("jmt_ev1_top6");
+        const auto& jmt_ev2_top6            = tr.getVar<double>("jmt_ev2_top6");
+        const auto& event_beta_z            = tr.getVar<double>("event_beta_z");
+        const auto& passMadHT               = tr.getVar<bool>("passMadHT");
+        const auto& passBaseline_0l         = tr.getVar<bool>("passBaseline0l_good");
+        const auto& passBaseline_1l         = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& passBaseline_0l_HEMveto = tr.getVar<bool>("passBaseline0l_good_HEMveto");
+        const auto& passBaseline_1l_HEMveto = tr.getVar<bool>("passBaseline1l_Good_HEMveto");
 
         // -------------------
         // -- Define weight
@@ -153,11 +154,7 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         
         if(runtype == "MC")
         {
-            if( !passMadHT ) continue; // for 1l, Make sure not to double count DY events
-            // Define Lumi weight
-            const auto& lumi     = tr.getVar<double>("Lumi");
-            const auto& Weight   = tr.getVar<float>("Weight");
-            eventweight          = lumi*Weight;
+            eventweight          = tr.getVar<float>("LumiXsec");
             //bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             //puScaleFactor        = tr.getVar<double>("puWeightCorr");
             //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
@@ -183,8 +180,8 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             {"passBaseline_0l",         passBaseline_0l},
             {"passBaseline_1l",         passBaseline_1l}, 
-            {"passBaseline_0l_HEMveto", passBaseline_0l && passElectronHEMVeto},
-            {"passBaseline_1l_HEMveto", passBaseline_1l && passElectronHEMVeto}, 
+            {"passBaseline_0l_HEMveto", passBaseline_0l_HEMveto},
+            {"passBaseline_1l_HEMveto", passBaseline_1l_HEMveto}, 
         };
 
         if (!inithisto) 
