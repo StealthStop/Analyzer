@@ -3,16 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
-#include <TDirectory.h>
-#include <TH1F.h>
 
 HEM_Analyzer::HEM_Analyzer() : inithisto(false) // define inithisto variable
 {
@@ -59,6 +50,7 @@ void HEM_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) // defi
         my_histos.emplace( "h_event_beta_z_" +cutVar.first, std::make_shared<TH1D> ( ("h_event_beta_z_" +cutVar.first).c_str(), ("h_event_beta_z_" +cutVar.first).c_str(), 1440, -1, 1       ) );
         // 2D histograms
         my_2d_histos.emplace( "h_jet_EtaVsPhi_"     +cutVar.first, std::make_shared<TH2D>( ("h_jet_EtaVsPhi_"     +cutVar.first).c_str(), ("h_jet_EtaVsPhi_"     +cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
+        my_2d_histos.emplace( "h_bjet_EtaVsPhi_"    +cutVar.first, std::make_shared<TH2D>( ("h_bjet_EtaVsPhi_"    +cutVar.first).c_str(), ("h_bjet_EtaVsPhi_"    +cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
         my_2d_histos.emplace( "h_electron_EtaVsPhi_"+cutVar.first, std::make_shared<TH2D>( ("h_electron_EtaVsPhi_"+cutVar.first).c_str(), ("h_electron_EtaVsPhi_"+cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
         my_2d_histos.emplace( "h_muon_EtaVsPhi_"    +cutVar.first, std::make_shared<TH2D>( ("h_muon_EtaVsPhi_"    +cutVar.first).c_str(), ("h_muon_EtaVsPhi_"    +cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
 
@@ -91,6 +83,7 @@ void HEM_Analyzer::InitHistos(const std::map<std::string, bool>& cutmap) // defi
         my_histos.emplace( "h_event_beta_z_HEM_" +cutVar.first, std::make_shared<TH1D> ( ("h_event_beta_z_HEM_" +cutVar.first).c_str(), ("h_event_beta_z_HEM_" +cutVar.first).c_str(), 1440, -1, 1       ) ); 
         // 2D histograms
         my_2d_histos.emplace( "h_jet_EtaVsPhi_HEM_"     +cutVar.first, std::make_shared<TH2D>( ("h_jet_EtaVsPhi_HEM_"     +cutVar.first).c_str(), ("h_jet_EtaVsPhi_HEM_"     +cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
+        my_2d_histos.emplace( "h_bjet_EtaVsPhi_HEM_"    +cutVar.first, std::make_shared<TH2D>( ("h_bjet_EtaVsPhi_HEM_"    +cutVar.first).c_str(), ("h_bjet_EtaVsPhi_HEM_"     +cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
         my_2d_histos.emplace( "h_electron_EtaVsPhi_HEM_"+cutVar.first, std::make_shared<TH2D>( ("h_electron_EtaVsPhi_HEM_"+cutVar.first).c_str(), ("h_electron_EtaVsPhi_HEM_"+cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
         my_2d_histos.emplace( "h_muon_EtaVsPhi_HEM_"    +cutVar.first, std::make_shared<TH2D>( ("h_muon_EtaVsPhi_HEM_"    +cutVar.first).c_str(), ("h_muon_EtaVsPhi_HEM_"    +cutVar.first).c_str(), 1440, -2.5, 2.5, 1440, -3.14, 3.14 ) );
 
@@ -111,38 +104,41 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -- Print Event Number 
         // ------------------------
         if( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
-        if( tr.getEvtNum() & (10000 == 0) ) printf( " Event %i\n", tr.getEvtNum() );
+        if( tr.getEvtNum() % 1000 == 0) printf( " Event %i\n", tr.getEvtNum() );
 
-        const auto& runtype         = tr.getVar<std::string>("runtype");     
-        const auto& RunNum          = tr.getVar<unsigned int>("RunNum");
-        const auto& Jets            = tr.getVec<utility::LorentzVector>("Jets");
-        const auto& GoodLeptons     = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
-        const auto& GoodJets_pt30   = tr.getVec<bool>("GoodJets_pt30");
-        const auto& NGoodLeptons    = tr.getVar<int>("NGoodLeptons");
-        const auto& NGoodJets_pt30  = tr.getVar<int>("NGoodJets_pt30");
-        const auto& NGoodBJets_pt30 = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& HT_trigger_pt30 = tr.getVar<double>("HT_trigger_pt30");
-        const auto& met             = tr.getVar<float>("MET");
-        const auto& lvMET_cm_m      = tr.getVar<double>("lvMET_cm_m");
-        const auto& lvMET_cm_eta    = tr.getVar<double>("lvMET_cm_eta");
-        const auto& lvMET_cm_phi    = tr.getVar<double>("lvMET_cm_phi");
-        const auto& lvMET_cm_pt     = tr.getVar<double>("lvMET_cm_pt");
-        const auto& fwm2_top6       = tr.getVar<double>("fwm2_top6");
-        const auto& fwm3_top6       = tr.getVar<double>("fwm3_top6");
-        const auto& fwm4_top6       = tr.getVar<double>("fwm4_top6");
-        const auto& fwm5_top6       = tr.getVar<double>("fwm5_top6");
-        const auto& fwm6_top6       = tr.getVar<double>("fwm6_top6");
-        const auto& fwm7_top6       = tr.getVar<double>("fwm7_top6");
-        const auto& fwm8_top6       = tr.getVar<double>("fwm8_top6");
-        const auto& fwm9_top6       = tr.getVar<double>("fwm9_top6");
-        const auto& fwm10_top6      = tr.getVar<double>("fwm10_top6");
-        const auto& jmt_ev0_top6    = tr.getVar<double>("jmt_ev0_top6");
-        const auto& jmt_ev1_top6    = tr.getVar<double>("jmt_ev1_top6");
-        const auto& jmt_ev2_top6    = tr.getVar<double>("jmt_ev2_top6");
-        const auto& event_beta_z    = tr.getVar<double>("event_beta_z");
-        const auto& passMadHT       = tr.getVar<bool>("passMadHT");
-        const auto& passBaseline_0l = tr.getVar<bool>("passBaseline0l_good");
-        const auto& passBaseline_1l = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& runtype                   = tr.getVar<std::string>("runtype");     
+        const auto& RunNum                    = tr.getVar<unsigned int>("RunNum");
+        const auto& Jets                      = tr.getVec<utility::LorentzVector>("Jets");
+        const auto& GoodLeptons               = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
+        const auto& GoodJets_pt30             = tr.getVec<bool>("GoodJets_pt30");
+        const auto& GoodBJets_pt30            = tr.getVec<bool>("GoodBJets_pt30");
+        const auto& NGoodLeptons              = tr.getVar<int>("NGoodLeptons");
+        const auto& NGoodJets_pt30            = tr.getVar<int>("NGoodJets_pt30");
+        const auto& NGoodBJets_pt30           = tr.getVar<int>("NGoodBJets_pt30");
+        const auto& HT_trigger_pt30           = tr.getVar<double>("HT_trigger_pt30");
+        const auto& met                       = tr.getVar<float>("MET");
+        const auto& lvMET_cm_m                = tr.getVar<double>("lvMET_cm_m");
+        const auto& lvMET_cm_eta              = tr.getVar<double>("lvMET_cm_eta");
+        const auto& lvMET_cm_phi              = tr.getVar<double>("lvMET_cm_phi");
+        const auto& lvMET_cm_pt               = tr.getVar<double>("lvMET_cm_pt");
+        const auto& fwm2_top6                 = tr.getVar<double>("fwm2_top6");
+        const auto& fwm3_top6                 = tr.getVar<double>("fwm3_top6");
+        const auto& fwm4_top6                 = tr.getVar<double>("fwm4_top6");
+        const auto& fwm5_top6                 = tr.getVar<double>("fwm5_top6");
+        const auto& fwm6_top6                 = tr.getVar<double>("fwm6_top6");
+        const auto& fwm7_top6                 = tr.getVar<double>("fwm7_top6");
+        const auto& fwm8_top6                 = tr.getVar<double>("fwm8_top6");
+        const auto& fwm9_top6                 = tr.getVar<double>("fwm9_top6");
+        const auto& fwm10_top6                = tr.getVar<double>("fwm10_top6");
+        const auto& jmt_ev0_top6              = tr.getVar<double>("jmt_ev0_top6");
+        const auto& jmt_ev1_top6              = tr.getVar<double>("jmt_ev1_top6");
+        const auto& jmt_ev2_top6              = tr.getVar<double>("jmt_ev2_top6");
+        const auto& event_beta_z              = tr.getVar<double>("event_beta_z");
+        const auto& passMadHT                 = tr.getVar<bool>("passMadHT");
+        const auto& passBaseline_0l           = tr.getVar<bool>("passBaseline0l_good");
+        const auto& passBaseline_1l           = tr.getVar<bool>("passBaseline1l_Good");
+        const auto& passBaseline_0l_noHEMveto = tr.getVar<bool>("passBaseline0l_good_noHEMveto");
+        const auto& passBaseline_1l_noHEMveto = tr.getVar<bool>("passBaseline1l_Good_noHEMveto");
 
         // -------------------
         // -- Define weight
@@ -158,27 +154,20 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         
         if(runtype == "MC")
         {
-            if( !passMadHT ) continue; // for 1l, Make sure not to double count DY events
-            // Define Lumi weight
-            const auto& lumi     = tr.getVar<double>("Lumi");
-            const auto& Weight   = tr.getVar<float>("Weight");
-            eventweight          = lumi*Weight;
-            //bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            //puScaleFactor        = tr.getVar<double>("puWeightCorr");
-            //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            eventweight          = tr.getVar<float>("LumiXsec");
+            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
 
             // Define lepton weight
-            //if(NGoodLeptons == 1)
-            //{
-            //    const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
-            //    const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
-            //    leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
-            //}
+            if(NGoodLeptons == 1)
+            {
+                const auto& eleLepWeight = tr.getVar<double>("totGoodElectronSF");
+                const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
+                leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
+            }
     
-            //htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
-            //weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
-
-            weight *= eventweight;
+            weight *= eventweight*leptonScaleFactor*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }
 
         // -------------------------------------------------
@@ -186,9 +175,10 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------------------
         const std::map<std::string, bool>& cutmap
         {
-            {"passBaseline_0l", passBaseline_0l},
-            {"passBaseline_1l", passBaseline_1l}, 
-
+            {"passBaseline_0l",           passBaseline_0l},
+            {"passBaseline_1l",           passBaseline_1l}, 
+            {"passBaseline_0l_noHEMveto", passBaseline_0l_noHEMveto},
+            {"passBaseline_1l_noHEMveto", passBaseline_1l_noHEMveto}, 
         };
 
         if (!inithisto) 
@@ -216,24 +206,29 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                     for (unsigned int goodJet = 0; goodJet < Jets.size(); goodJet++) 
                     {
                         if (!GoodJets_pt30[goodJet]) { continue; }
-                            my_histos["h_jetPt_"          +cutVar.first]->Fill( Jets[goodJet].Pt(), weight               );
-                            my_2d_histos["h_jet_EtaVsPhi_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi() ); 
+
+                        my_histos["h_jetPt_"          +cutVar.first]->Fill( Jets[goodJet].Pt(), weight                       );
+                        my_2d_histos["h_jet_EtaVsPhi_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi(), weight ); 
+
+                        if (GoodBJets_pt30[goodJet])
+                            my_2d_histos["h_bjet_EtaVsPhi_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi(), weight ); 
+
 
                         if (Jets[goodJet].Pt() > jetPtMax) 
                         { jetPtMax = Jets[goodJet].Pt(); }
                     }
         
-                    if (cutVar.first == "passBaseline_1l") 
+                    if (cutVar.first.find("passBaseline_1l") != std::string::npos) 
                     {    
                         for (unsigned int goodLep = 0; goodLep < GoodLeptons.size(); goodLep++) 
                         {
                             if (GoodLeptons[goodLep].first == "e") 
                             {
-                                my_2d_histos["h_electron_EtaVsPhi_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi());
+                                my_2d_histos["h_electron_EtaVsPhi_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi(), weight);
                             } 
                             else 
                             {
-                                my_2d_histos["h_muon_EtaVsPhi_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi());
+                                my_2d_histos["h_muon_EtaVsPhi_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi(), weight);
                             }
                         }        
                     }          
@@ -270,25 +265,31 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 {
                     for (unsigned int goodJet = 0; goodJet < Jets.size(); goodJet++)
                     {
+
                         if (!GoodJets_pt30[goodJet]) { continue; }
-                            my_histos["h_jetPt_HEM_"          +cutVar.first]->Fill( Jets[goodJet].Pt(), weight               );
-                            my_2d_histos["h_jet_EtaVsPhi_HEM_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi() );
+
+                        my_histos["h_jetPt_HEM_"          +cutVar.first]->Fill( Jets[goodJet].Pt(), weight               );
+                        my_2d_histos["h_jet_EtaVsPhi_HEM_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi(), weight ); 
+
+                        if (GoodBJets_pt30[goodJet])
+                            my_2d_histos["h_bjet_EtaVsPhi_HEM_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi(), weight ); 
+
 
                         if (Jets[goodJet].Pt() > jetPtMax)
                         { jetPtMax = Jets[goodJet].Pt(); }
                     }
 
-                    if (cutVar.first == "passBaseline_1l")
+                    if (cutVar.first.find("passBaseline_1l") != std::string::npos)
                     {
                         for (unsigned int goodLep = 0; goodLep < GoodLeptons.size(); goodLep++)
                         {
                             if (GoodLeptons[goodLep].first == "e")
                             {
-                                my_2d_histos["h_electron_EtaVsPhi_HEM_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi());
+                                my_2d_histos["h_electron_EtaVsPhi_HEM_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi(), weight);
                             }
                             else
                             {
-                                my_2d_histos["h_muon_EtaVsPhi_HEM_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi());
+                                my_2d_histos["h_muon_EtaVsPhi_HEM_"+cutVar.first]->Fill(GoodLeptons[goodLep].second.Eta(), GoodLeptons[goodLep].second.Phi(), weight);
                             }
                         }
                     }
@@ -318,7 +319,6 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 }
 
             }
-            
         }
     } 
 }
@@ -334,5 +334,4 @@ void HEM_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
 }
