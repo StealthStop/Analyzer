@@ -74,7 +74,7 @@ def main():
                        testDir + "/keras_frozen_DoubleDisCo_Reg_0l_SYY_2016.pb",
                        testDir + "/keras_frozen_DoubleDisCo_Reg_1l_SYY_2016.pb",
                        testDir + "/allInOne_BTagEff_UL.root",
-                       testDir + "/allInOne_SFMean.root",
+                       testDir + "/allInOne_SFMean_UL.root",
                        testDir + "/allInOne_leptonSF_UL.root",
                        testDir + "/PileupHistograms_0121_69p2mb_pm4p6.root",
                        testDir + "/pu_ratio.root",
