@@ -12,7 +12,16 @@ def do_Options(histo, histoName, theMap):
     is1D   = "TH1" in histo.ClassName()
     doLogY = False
 
-    for axis, options in theMap[histoName].iteritems():
+    optDict = None 
+    for key, value in theMap.items():
+        if key in histoName:
+            optDict = value
+            break
+
+    if optDict == None:
+        return False
+
+    for axis, options in optDict.items():
 
         # x-axis
         if axis == "X":
@@ -86,7 +95,7 @@ def fill_Map(inRootDir, theMap):
 
         if ".root" not in histoFile: continue
         
-        histoFile = ROOT.TFile.Open(inRootDir + histoFile, "READ")
+        histoFile = ROOT.TFile.Open(inRootDir + "/" + histoFile, "READ")
         
         for hkey in histoFile.GetListOfKeys():
             if "TH" not in hkey.GetClassName(): continue
@@ -96,11 +105,14 @@ def fill_Map(inRootDir, theMap):
             keyName = ""
             if "HEM" in hkey.GetName(): 
                 keyName = "HEM"
-            else: 
+            elif "HEM" not in hkey.GetName(): 
                 keyName = "NOHEM"
+            else:
+                continue
 
             name  = hkey.GetName()
-            name  = name.replace("_HEM","")
+            name  = name.replace("_HEM","").replace("veto", "")
+
             histo = hkey.ReadObj()
             histo.SetDirectory(0)
             histo.Sumw2()
@@ -162,6 +174,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--inputDir", dest="inputDir", help="input directory",                   default="condor/hadd_2018_HEM_issue_0l_1l_18.04.2022/", type=str)
     parser.add_argument("--data",     dest="data",     help="JetHT, SingleElectron, SingleMuon", default="NULL", type=str)
+    parser.add_argument("--tag",      dest="tag",     help="Tag to put in folder name",          default="NULL", type=str)
     parser.add_argument("--ratio",    dest="ratio",    help="Draw ratio", action="store_true",   default=False)
     
     args = parser.parse_args()
@@ -193,9 +206,10 @@ if __name__ == '__main__':
             "h_jmt_ev1_top6"      : {  "Y" : {"logY" : True, },  "X" : {"rebin" : 30,  "title" : "JMT 1"                                               }  },
             "h_jmt_ev2_top6"      : {  "Y" : {"logY" : True, },  "X" : {"rebin" : 30,  "title" : "JMT 2"                                               }  },
             "h_event_beta_z"      : {  "Y" : {"logY" : False,},  "X" : {"rebin" : 50,  "title" : "#beta_{z}"                                           }  },
-            "h_jet_EtaVsPhi"      : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "Jet #phi"},      "X" : {"rebin" : 360, "title" : "Jet #eta"      }  },
-            "h_electron_EtaVsPhi" : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "Electron #phi"}, "X" : {"rebin" : 360, "title" : "Electron #eta" }  },
-            "h_muon_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "Muon #phi"},     "X" : {"rebin" : 360, "title" : "Muon #eta"     }  },
+            "h_jet_EtaVsPhi"      : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "Jet #phi"},      "X" : {"rebin" : 12, "title" : "Jet #eta"      }  },
+            "h_bjet_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "b Jet #phi"},    "X" : {"rebin" : 12, "title" : "b Jet #eta"    }  },
+            "h_electron_EtaVsPhi" : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "Electron #phi"}, "X" : {"rebin" : 12, "title" : "Electron #eta" }  },
+            "h_muon_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "Muon #phi"},     "X" : {"rebin" : 12, "title" : "Muon #eta"     }  },
     }
 
     # -----------------------------------
@@ -206,7 +220,7 @@ if __name__ == '__main__':
     YCANVAS = 2400
 
     inRootDir = args.inputDir
-    outpath   = "./2018UL_HEM_Study_0l_1l/%s/"%(args.data)
+    outpath   = "./2018UL_HEM_Study_0l_1l_%s/%s/"%(args.tag,args.data)
     
     if not os.path.exists(outpath): 
         os.makedirs(outpath)
@@ -218,7 +232,7 @@ if __name__ == '__main__':
     # Save the final histograms
     # -------------------------
     for name in mapPFAhistos.values()[0].keys():
-
+        
         if "0l" in name and "Single" in args.data: continue 
 
         if "1l" in name and "JetHT" in args.data: continue
@@ -255,16 +269,17 @@ if __name__ == '__main__':
             pretty_Histo(data1,0.875,0.8)
             pretty_Histo(data2,0.875,0.8)
 
-            theName = data1.GetName().replace("_HEM", "").rpartition("_")[0].rpartition("_")[0]
-            if theName in optionsMap:
-                do_Options(data1, theName, optionsMap)
-                do_Options(data2, theName, optionsMap)
+            theName = data1.GetName()
+            do_Options(data1, theName, optionsMap)
+            do_Options(data2, theName, optionsMap)
 
             data1.SetTitle("")
             data2.SetTitle("")
             data1.SetContour(255)
             data2.SetContour(255)
-            data1.Draw("COLZ TEXT E")
+
+            data1.Draw("COLZ")
+
             data1.SetTitle("post HEM")
             #add_CMSlogo(c1)
             c1.SaveAs("%s/%s_HEM.pdf"%(outpath,name))
@@ -280,7 +295,7 @@ if __name__ == '__main__':
             ROOT.gPad.SetLeftMargin(magicMargins_2D["L"])
             ROOT.gPad.SetRightMargin(magicMargins_2D["R"])
 
-            data2.Draw("COLZ TEXT E")
+            data2.Draw("COLZ")
             data2.SetTitle("pre HEM")
             #add_CMSlogo(c2)
             c2.SaveAs("%s/%s_NOHEM.pdf"%(outpath,name))
@@ -302,7 +317,7 @@ if __name__ == '__main__':
                 data2.Scale(1./data2.Integral())
                 data1.Divide(data2)
                 data1.GetZaxis().SetRangeUser(0.5,2.0)
-                data1.Draw("COLZ TEXT E")
+                data1.Draw("COLZ")
                 data1.SetTitle("HEM Ratio")
                 c1.SaveAs("%s/%s_ratio.pdf"%(outpath,name))
 
@@ -342,11 +357,10 @@ if __name__ == '__main__':
                 pretty_Histo(data2)
                 pretty_Histo(ratio,PadFactor)
 
-                theName = data1.GetName().replace("_HEM", "").rpartition("_")[0].rpartition("_")[0]
-                if theName in optionsMap:
-                    do_Options(data1, theName, optionsMap)
-                    do_Options(data2, theName, optionsMap)
-                    do_Options(ratio, theName, optionsMap)
+                theName = data1.GetName()
+                do_Options(data1, theName, optionsMap)
+                do_Options(data2, theName, optionsMap)
+                do_Options(ratio, theName, optionsMap)
 
                 data2.SetMarkerColor(38)
                 data2.SetLineColor(38)

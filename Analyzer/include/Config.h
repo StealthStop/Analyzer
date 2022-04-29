@@ -130,7 +130,8 @@ public:
         //std::string DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l, DoubleDisCo_Cfg_NonIsoMuon_2l;      
         std::string leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
  
-        double Lumi=0.0, deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
+        double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
+        double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
 
         if(filetag.find("2016preVFP") != std::string::npos)
@@ -304,6 +305,8 @@ public:
         {
             runYear               = "2018";
             Lumi                  = 59830.0;
+            Lumi_preHEM           = 21071.0;
+            Lumi_postHEM          = 38654.0;
             deepCSV_WP_loose      = 0.1208;
             deepCSV_WP_medium     = 0.4168;       
             deepCSV_WP_tight      = 0.7665;
@@ -337,6 +340,8 @@ public:
 
         tr.registerDerivedVar("runYear",                           runYear                          );
         tr.registerDerivedVar("Lumi",                              Lumi                             );
+        tr.registerDerivedVar("Lumi_preHEM",                       Lumi_preHEM                      );
+        tr.registerDerivedVar("Lumi_postHEM",                      Lumi_postHEM                     );
         tr.registerDerivedVar("deepCSV_WP_loose",                  deepCSV_WP_loose                 );
         tr.registerDerivedVar("deepCSV_WP_medium",                 deepCSV_WP_medium                );
         tr.registerDerivedVar("deepCSV_WP_tight",                  deepCSV_WP_tight                 );
