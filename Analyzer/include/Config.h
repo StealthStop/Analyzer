@@ -85,6 +85,7 @@ private:
             else if(module=="MakeStopHemispheres_OldSeed_NonIsoMuon")tr.emplaceModule<MakeStopHemispheres>("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_OldSeed_NonIsoMuon", "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_TopSeed")           tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",            "NGoodStopJets",            "_TopSeed",            "", Hemisphere::TopSeed);
             else if(module=="MakeStopHemispheres_TopSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets_maskedISR",  "NGoodStopJets_maskedISR",  "_TopSeed_maskedISR",  "", Hemisphere::TopSeed);
+            else if(module=="MakeStopHemispheres_TopSeed_NonIsoMuon")tr.emplaceModule<MakeStopHemispheres>("StopJets", "GoodStopJets",            "NGoodStopJets",            "_TopSeed_NonIsoMuon", "", Hemisphere::TopSeed);
             else if(module=="StopJets")                              tr.emplaceModule<StopJets>();
             else if(module=="ISRJets")                               tr.emplaceModule<ISRJets>();
             else if(module=="DoubleDisCo_0l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV);
@@ -411,6 +412,8 @@ public:
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
                 "MakeStopHemispheres_OldSeed_NonIsoMuon",
+                "MakeStopHemispheres_TopSeed",
+                "MakeStopHemispheres_TopSeed_NonIsoMuon",
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
@@ -418,10 +421,10 @@ public:
                 "DoubleDisCo_1l_RPV",
                 "DoubleDisCo_NonIsoMuon_0l_RPV",
                 "DoubleDisCo_NonIsoMuon_1l_RPV",
-                "DoubleDisCo_0l_SYY",
-                "DoubleDisCo_1l_SYY",
-                "DoubleDisCo_NonIsoMuon_0l_SYY",
-                "DoubleDisCo_NonIsoMuon_1l_SYY",
+                //"DoubleDisCo_0l_SYY",
+                //"DoubleDisCo_1l_SYY",
+                //"DoubleDisCo_NonIsoMuon_0l_SYY",
+                //"DoubleDisCo_NonIsoMuon_1l_SYY",
             };
             registerModules(tr, std::move(modulesList));
         }
