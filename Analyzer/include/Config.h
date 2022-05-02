@@ -128,7 +128,7 @@ public:
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
         //std::string DoubleDisCo_Cfg_2l, DoubleDisCo_Model_2l, DoubleDisCo_Cfg_NonIsoMuon_2l;      
-        std::string leptonFileName, bjetFileName, bjetCSVFileName, meanFileName, TopTaggerCfg;
+        std::string leptonFileName, bjetFileName, bjetCSVFileName, bjetCSVFileNameReshape, meanFileName, TopTaggerCfg;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
@@ -159,12 +159,13 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_UL.root";
-            bjetFileName          = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName       = "reshaping_deepCSV_106XUL16preVFP_v2.csv";
-            meanFileName          = "allInOne_SFMean_UL.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
+            leptonFileName            = "allInOne_leptonSF_UL.root";
+            bjetFileName              = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName           = "wp_deepJet_106XUL16preVFP_v2.csv";
+            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16preVFP_v2.csv";
+            meanFileName              = "allInOne_SFMean_UL.root";
+            blind                     = false;
+            TopTaggerCfg              = "TopTaggerCfg_2016.cfg";
         }
 
         else if(filetag.find("2016postVFP") != std::string::npos)
@@ -192,12 +193,13 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_UL.root";
-            bjetFileName          = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName       = "reshaping_deepCSV_106XUL16postVFP_v3.csv";
-            meanFileName          = "allInOne_SFMean_UL.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
+            leptonFileName            = "allInOne_leptonSF_UL.root";
+            bjetFileName              = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName           = "wp_deepJet_106XUL16postVFP_v3.csv";
+            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16postVFP_v3.csv";
+            meanFileName              = "allInOne_SFMean_UL.root";
+            blind                     = false;
+            TopTaggerCfg              = "TopTaggerCfg_2016.cfg";
         }
         else if(filetag.find("2017") != std::string::npos)
         { 
@@ -226,12 +228,13 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_UL.root";
-            bjetFileName          = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName       = "reshaping_deepCSV_106XUL17_v3.csv";
-            meanFileName          = "allInOne_SFMean_UL.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2017.cfg";
+            leptonFileName            = "allInOne_leptonSF_UL.root";
+            bjetFileName              = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName           = "wp_deepJet_106XUL17_v3.csv";
+            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL17_v3.csv";
+            meanFileName              = "allInOne_SFMean_UL.root";
+            blind                     = false;
+            TopTaggerCfg              = "TopTaggerCfg_2017.cfg";
         }
         else if(filetag.find("2018pre") != std::string::npos) 
         {
@@ -260,12 +263,13 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_UL.root";
-            bjetFileName          = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName       = "reshaping_deepCSV_106XUL18_v2.csv";
-            meanFileName          = "allInOne_SFMean_UL.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
+            leptonFileName            = "allInOne_leptonSF_UL.root";
+            bjetFileName              = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
+            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
+            meanFileName              = "allInOne_SFMean_UL.root";
+            blind                     = false;
+            TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
         }
         else if(filetag.find("2018post") != std::string::npos) 
         {
@@ -294,12 +298,13 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_UL.root";
-            bjetFileName          = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName       = "reshaping_deepCSV_106XUL18_v2.csv";
-            meanFileName          = "allInOne_SFMean_UL.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
+            leptonFileName            = "allInOne_leptonSF_UL.root";
+            bjetFileName              = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
+            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
+            meanFileName              = "allInOne_SFMean_UL.root";
+            blind                     = false;
+            TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
         }
         else if(filetag.find("2018") != std::string::npos) 
         {
@@ -330,12 +335,13 @@ public:
             //DoubleDisCo_Cfg_2l    = "Keras_Tensorflow_DoubleDisCo_Reg_2l_2016.cfg";
             //DoubleDisCo_Model_2l  = "keras_frozen_DoubleDisCo_Reg_2l_2016.pb";
             //DoubleDisCo_Cfg_NonIsoMuon_2l = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_2016.cfg";
-            leptonFileName        = "allInOne_leptonSF_UL.root";
-            bjetFileName          = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName       = "reshaping_deepCSV_106XUL18_v2.csv";
-            meanFileName          = "allInOne_SFMean_UL.root";
-            blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2018.cfg";
+            leptonFileName            = "allInOne_leptonSF_UL.root";
+            bjetFileName              = "allInOne_BTagEff_UL.root";
+            bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
+            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
+            meanFileName              = "allInOne_SFMean_UL.root";
+            blind                     = false;
+            TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
         }
 
         tr.registerDerivedVar("runYear",                           runYear                          );
@@ -458,7 +464,7 @@ public:
                 "CommonVariables",
                 "RunTopTagger",
                 "Baseline",
-                "BTagCorrector",
+                //"BTagCorrector",
                 "ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
