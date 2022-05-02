@@ -46,6 +46,14 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop2_eta_cm_OldSeed",         80,   -6,    6},
         {"Stop2_phi_cm_OldSeed",         64,   -4,    4},
         {"Stop2_mass_cm_OldSeed",        72,    0, 1500},
+        {"Stop1_pt_cm_TopSeed",          72,    0, 1500},
+        {"Stop1_eta_cm_TopSeed",         80,   -6,    6},
+        {"Stop1_phi_cm_TopSeed",         64,   -4,    4},
+        {"Stop1_mass_cm_TopSeed",        72,    0, 1500},
+        {"Stop2_pt_cm_TopSeed",          72,    0, 1500},
+        {"Stop2_eta_cm_TopSeed",         80,   -6,    6},
+        {"Stop2_phi_cm_TopSeed",         64,   -4,    4},
+        {"Stop2_mass_cm_TopSeed",        72,    0, 1500},
         {"h_njets",                      20,    0, 20.0},
         {"h_njets_11incl",               20, -0.5, 19.5},
         {"h_njets_12incl",               24, -0.5, 23.5},
@@ -309,6 +317,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed);
         MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets",     "NonIsoMuonJets_pt20",     "NNonIsoMuonJets_pt30",     "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets",     "GoodStopJets",     "NGoodStopJets",     "_TopSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
         bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
   
         // Remember, order matters here !
@@ -330,6 +339,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
+        tr.registerFunction(stopHemispheres_TopSeed_NonIsoMuon);
         tr.registerFunction(bTagCorrector);
         tr.registerFunction(scaleFactors);
         tr.registerFunction(stopGenMatch);
@@ -417,6 +427,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& Stop2_eta_cm_OldSeed              = tr.getVar<double>("Stop2_eta_cm_OldSeed"+myVarSuffix);
             const auto& Stop2_phi_cm_OldSeed              = tr.getVar<double>("Stop2_phi_cm_OldSeed"+myVarSuffix);
             const auto& Stop2_mass_cm_OldSeed             = tr.getVar<double>("Stop2_mass_cm_OldSeed"+myVarSuffix);
+            const auto& Stop1_pt_cm_TopSeed               = tr.getVar<double>("Stop1_pt_cm_TopSeed"+myVarSuffix);
+            const auto& Stop1_eta_cm_TopSeed              = tr.getVar<double>("Stop1_eta_cm_TopSeed"+myVarSuffix);
+            const auto& Stop1_phi_cm_TopSeed              = tr.getVar<double>("Stop1_phi_cm_TopSeed"+myVarSuffix);
+            const auto& Stop1_mass_cm_TopSeed             = tr.getVar<double>("Stop1_mass_cm_TopSeed"+myVarSuffix);
+            const auto& Stop2_pt_cm_TopSeed               = tr.getVar<double>("Stop2_pt_cm_TopSeed"+myVarSuffix);
+            const auto& Stop2_eta_cm_TopSeed              = tr.getVar<double>("Stop2_eta_cm_TopSeed"+myVarSuffix);
+            const auto& Stop2_phi_cm_TopSeed              = tr.getVar<double>("Stop2_phi_cm_TopSeed"+myVarSuffix);
+            const auto& Stop2_mass_cm_TopSeed             = tr.getVar<double>("Stop2_mass_cm_TopSeed"+myVarSuffix);
 
             const auto& Stop1_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon"+myVarSuffix);
@@ -426,6 +444,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& Stop2_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_eta_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop1_pt_cm_TopSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop1_eta_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop1_phi_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop1_phi_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop1_mass_cm_TopSeed_NonIsoMuon  = tr.getVar<double>("Stop1_mass_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop2_pt_cm_TopSeed_NonIsoMuon    = tr.getVar<double>("Stop2_pt_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop2_eta_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop2_eta_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop2_phi_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop2_mass_cm_TopSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_TopSeed_NonIsoMuon"+myVarSuffix);
 
             const auto& GoodLeptons                       = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons"+myVarSuffix);
             const auto& GoodLeptonsCharge                 = tr.getVec<int>("GoodLeptonsCharge"+myVarSuffix);
@@ -701,6 +727,30 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
                                     my_histos["Stop2_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_OldSeed_NonIsoMuon, w);
+                                }
+
+                                if (Stop1_pt_cm_TopSeed  > Stop2_pt_cm_TopSeed)
+                                {
+                                    my_histos["Stop1_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_TopSeed   : Stop1_pt_cm_TopSeed_NonIsoMuon,   w);
+                                    my_histos["Stop1_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_TopSeed  : Stop1_eta_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop1_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_TopSeed  : Stop1_phi_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop1_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_TopSeed : Stop1_mass_cm_TopSeed_NonIsoMuon, w);
+
+                                    my_histos["Stop2_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_TopSeed   : Stop2_pt_cm_TopSeed_NonIsoMuon,   w);
+                                    my_histos["Stop2_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_TopSeed  : Stop2_eta_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop2_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_TopSeed  : Stop2_phi_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop2_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_TopSeed : Stop2_mass_cm_TopSeed_NonIsoMuon, w);
+                                } else
+                                {
+                                    my_histos["Stop1_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_TopSeed   : Stop2_pt_cm_TopSeed_NonIsoMuon,   w);
+                                    my_histos["Stop1_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_TopSeed  : Stop2_eta_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop1_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_TopSeed  : Stop2_phi_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop1_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_TopSeed : Stop2_mass_cm_TopSeed_NonIsoMuon, w);
+
+                                    my_histos["Stop2_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_TopSeed   : Stop1_pt_cm_TopSeed_NonIsoMuon,   w);
+                                    my_histos["Stop2_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_TopSeed  : Stop1_eta_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop2_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_TopSeed  : Stop1_phi_cm_TopSeed_NonIsoMuon,  w);
+                                    my_histos["Stop2_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_TopSeed : Stop1_mass_cm_TopSeed_NonIsoMuon, w);
                                 }
 
                                 my_histos["Stop1_mass_PtRank_matched"   + name]->Fill(Stop1_mass_PtRank_matched,   w);
