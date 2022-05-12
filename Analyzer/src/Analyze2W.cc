@@ -160,7 +160,6 @@ struct SliceData {
     std::size_t j1_index=0;
     std::size_t j2_index=1;
     bool has_2_jets=false;
-
     double mass_ratio = 0;
 };
 
@@ -377,6 +376,7 @@ Analyze2W::Analyze2W() {
     my_histos.cuts.push_back(std::make_unique<TauCut>());
     my_histos.cuts.push_back(std::make_unique<EtaCut>());
     my_histos.constructChains({
+            {"GenLepCut"}
             //{"GenLepCut", "GenHTCut"},
             //{"GenLepCut", "SelectionCut"},
             //{"GenLepCut", "SelectionCut","EtaCut"},
@@ -552,15 +552,15 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             switch (GenParticles_PdgId[i]) {
                 case W_PDGID: case -W_PDGID:
                     if (!isHard(GenParticles_Status[i])) continue;
-                    Ws.push_back(GenParticles[i]);
-                    // if(GenParticles_ParentId[i] >= 0) {
-                    // if (std::abs(GenParticles_PdgId[GenParticles_ParentId[i]]) == STOP_PDGID)
-                    //
-                    // }
+                    if(GenParticles_ParentIdx[i] >= 0) {
+                        if (GenParticles_ParentId[i] == STOP_PDGID || 
+                             GenParticles_ParentId[i] == -STOP_PDGID)
+                        Ws.push_back(GenParticles[i]);
+                    }
                     break;
                 case E_PDGID: case M_PDGID: case T_PDGID:
                 case -E_PDGID: case -M_PDGID: case -T_PDGID:
-                    Leps.push_back(GenParticles[i]);
+                    if(std::abs(GenParticles_ParentId[i]) == W_PDGID) Leps.push_back(GenParticles[i]);
                     if( std::abs(GenParticles_PdgId[i]) == 15)
                         break;
                 case STOP_PDGID: case -STOP_PDGID:
@@ -578,6 +578,8 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         }
         int num_leps = std::size(Leps);
         //if(num_leps > 0) continue;
+        std::cout << "Ws = " << std::size(Ws) << std::endl;
+        std::cout << "Leps = " << std::size(Leps) << std::endl;
 
 
         double weight = 1.0, eventweight = 1.0, leptonScaleFactor = 1.0,
@@ -587,11 +589,14 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         if (runtype == "MC") {
             const auto &Weight = tr.getVar<float>("Weight");
             const auto &lumi = tr.getVar<double>("Lumi");
+        std::cout << "Lumi= " << lumi << "\n";
+        std::cout << "Weight = " << Weight << "\n";
             eventweight = lumi * Weight;
             weight *= eventweight * leptonScaleFactor * bTagScaleFactor *
                 htDerivedScaleFactor * prefiringScaleFactor * puScaleFactor;
             //    weight = 1.0;
         }
+        std::cout << "eventweight = " << weight << "\n";
 
         SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsr21, nsr42, nsr43};
         my_histos.processCuts(data);
