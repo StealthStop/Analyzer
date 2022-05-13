@@ -165,7 +165,7 @@ public:
             bjetCSVFileName       = "wp_deepCSV_106XUL16preVFP_v2.csv";
             meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
+            TopTaggerCfg          = "TopTaggerCfg_2016preVFP.cfg";
         }
 
         else if(filetag.find("2016postVFP") != std::string::npos)
@@ -198,7 +198,7 @@ public:
             bjetCSVFileName       = "wp_deepCSV_106XUL16postVFP_v3.csv";
             meanFileName          = "allInOne_SFMean_UL.root";
             blind                 = false;
-            TopTaggerCfg          = "TopTaggerCfg_2016.cfg";
+            TopTaggerCfg          = "TopTaggerCfg_2016postVFP.cfg";
         }
         else if(filetag.find("2017") != std::string::npos)
         { 
