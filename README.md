@@ -39,7 +39,7 @@ Last step is to get the cfg and model files for the top tagger, deepESM, and mas
 cmsenv
 getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.95_2016preVFP_UL -f TopTaggerCfg_2016preVFP.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.95_2016postVFP_UL -f TopTaggerCfg_2016postVFP.cfg -o
-getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.95_2018_UL -f TopTaggerCfg_2017.cfg -o
+getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.95_2017_UL -f TopTaggerCfg_2017.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepCSV_DeepResolved_DeepAK8_wp0.95_2018_UL -f TopTaggerCfg_2018.cfg -o
 getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_RPV_2016_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_2016
 getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_RPV_2016_v4.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_2016
