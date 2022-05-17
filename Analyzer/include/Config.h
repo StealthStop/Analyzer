@@ -48,12 +48,13 @@ private:
         //const auto& DoubleDisCo_Cfg_2l    = tr.getVar<std::string>("DoubleDisCo_Cfg_2l"   ); 
         //const auto& DoubleDisCo_Model_2l  = tr.getVar<std::string>("DoubleDisCo_Model_2l" );
         //const auto& DoubleDisCo_Cfg_NonIsoMuon_2l = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l");
-        const auto& leptonFileName        = tr.getVar<std::string>("leptonFileName"       );
-        const auto& bjetFileName          = tr.getVar<std::string>("bjetFileName"         );
-        const auto& bjetCSVFileName       = tr.getVar<std::string>("bjetCSVFileName"      );
-        const auto& filetag               = tr.getVar<std::string>("filetag"              );
-        const auto& meanFileName          = tr.getVar<std::string>("meanFileName"         );
-        const auto& TopTaggerCfg          = tr.getVar<std::string>("TopTaggerCfg"         );
+        const auto& leptonFileName            = tr.getVar<std::string>("leptonFileName"              );
+        const auto& bjetFileName              = tr.getVar<std::string>("bjetFileName"                );
+        const auto& bjetCSVFileName           = tr.getVar<std::string>("bjetCSVFileName"             );
+        const auto& bjetCSVFileNameReshape    = tr.getVar<std::string>("bjetCSVFileNameReshape"      );
+        const auto& filetag                   = tr.getVar<std::string>("filetag"                     );
+        const auto& meanFileName              = tr.getVar<std::string>("meanFileName"                );
+        const auto& TopTaggerCfg              = tr.getVar<std::string>("TopTaggerCfg"                );
  
         for(const auto& module : modules)
         {
@@ -104,7 +105,7 @@ private:
                 if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, meanFileName);
                 else if(module=="BTagCorrector")
                 {
-                    auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, filetag);
+                    auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, bjetCSVFileNameReshape, filetag);
                     bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
                 }
             }
@@ -369,13 +370,14 @@ public:
         //tr.registerDerivedVar("DoubleDisCo_Cfg_2l",    DoubleDisCo_Cfg_2l   );
         //tr.registerDerivedVar("DoubleDisCo_Model_2l",  DoubleDisCo_Model_2l );
         //tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l",    DoubleDisCo_Cfg_NonIsoMuon_2l   );
-        tr.registerDerivedVar("leptonFileName",        leptonFileName       );        
-        tr.registerDerivedVar("bjetFileName",          bjetFileName         );        
-        tr.registerDerivedVar("bjetCSVFileName",       bjetCSVFileName      );        
-        tr.registerDerivedVar("meanFileName",          meanFileName         );        
-        tr.registerDerivedVar("etaCut",                2.4                  ); 
-        tr.registerDerivedVar("blind",                 blind                );
-        tr.registerDerivedVar("TopTaggerCfg",          TopTaggerCfg         );
+        tr.registerDerivedVar("leptonFileName",             leptonFileName        );        
+        tr.registerDerivedVar("bjetFileName",               bjetFileName          );        
+        tr.registerDerivedVar("bjetCSVFileName",            bjetCSVFileName       );        
+        tr.registerDerivedVar("bjetCSVFileNameReshape",     bjetCSVFileNameReshape);        
+        tr.registerDerivedVar("meanFileName",               meanFileName          );        
+        tr.registerDerivedVar("etaCut",                     2.4                   ); 
+        tr.registerDerivedVar("blind",                      blind                 );
+        tr.registerDerivedVar("TopTaggerCfg",               TopTaggerCfg          );
 
         // Register Modules that are needed for each Analyzer
         if(analyzer=="MakeNJetDists") // for legacy 1l
