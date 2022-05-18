@@ -166,7 +166,7 @@ public:
             bjetCSVFileName           = "wp_deepJet_106XUL16preVFP_v2.csv";
             bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16preVFP_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
-            blind                     = false;
+            blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2016.cfg";
         }
 
@@ -200,7 +200,7 @@ public:
             bjetCSVFileName           = "wp_deepJet_106XUL16postVFP_v3.csv";
             bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16postVFP_v3.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
-            blind                     = false;
+            blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2016.cfg";
         }
         else if(filetag.find("2017") != std::string::npos)
@@ -235,7 +235,7 @@ public:
             bjetCSVFileName           = "wp_deepJet_106XUL17_v3.csv";
             bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL17_v3.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
-            blind                     = false;
+            blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2017.cfg";
         }
         else if(filetag.find("2018pre") != std::string::npos) 
@@ -270,7 +270,7 @@ public:
             bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
             bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
-            blind                     = false;
+            blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
         }
         else if(filetag.find("2018post") != std::string::npos) 
@@ -305,7 +305,7 @@ public:
             bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
             bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
-            blind                     = false;
+            blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
         }
         else if(filetag.find("2018") != std::string::npos) 
@@ -342,7 +342,7 @@ public:
             bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
             bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
-            blind                     = false;
+            blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
         }
 
