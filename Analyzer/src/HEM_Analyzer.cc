@@ -154,7 +154,7 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         
         if(runtype == "MC")
         {
-            eventweight          = tr.getVar<float>("LumiXsec");
+            eventweight          = tr.getVar<double>("LumiXsec");
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");

@@ -26,21 +26,32 @@ then
     getSamplesCfg.sh
 fi
 
-# get scale factor root files (Should fix this)
-if [ ! -f allInOne_BTagEff_UL.root ] 
-then
-    echo ""
-    echo "|--------------------------------------|"
-    echo "|  Copying scale factor files          |"
-    echo "|--------------------------------------|"
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL16preVFP_v2.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL16postVFP_v3.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL17_v3.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/wp_deepCSV_106XUL18_v2.csv .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_leptonSF_UL.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_BTagEff_UL.root .
-    xrdcp -f root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2/allInOne_SFMean_UL.root .
-fi
+# Check needed SF files and ensure local file matches with EOS file
+# Only copy down from EOS if necessary
+sfPath="root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2"
+sfFiles=("wp_deepCSV_106XUL16preVFP_v2.csv" "wp_deepCSV_106XUL16postVFP_v3.csv" "wp_deepCSV_106XUL17_v3.csv" "wp_deepCSV_106XUL18_v2.csv" "allInOne_leptonSF_UL.root" "allInOne_BTagEff_UL.root" "allInOne_SFMean_UL.root")
+for i in ${!sfFiles[@]};
+do
+    sfFile=${sfFiles[$i]}
+
+    if [[ ! -f $sfFile ]]
+    then
+        echo "Copying SF file: $sfFile"
+        xrdcp -f $sfPath/$sfFile .
+    fi
+
+    localChkSum=`xrdadler32 $sfPath/$sfFile`
+    eosChkSum=`xrdadler32 $sfFile` 
+
+    localChkSum=${localChkSum% *}
+    eosChkSum=${eosChkSum% *}
+
+    if [[ $localChkSum != $eosChkSum ]]
+    then
+        echo "Updating SF file: $sfFile"
+        xrdcp -f $sfPath/$sfFile .
+    fi 
+done
 
 # Check repos for updates
 if [[ "$1" == "-s" ]] 
