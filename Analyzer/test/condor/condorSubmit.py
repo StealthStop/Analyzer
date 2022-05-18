@@ -46,21 +46,23 @@ def main():
     testDir = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     
     # Prepare the list of files to transfer
-    mvaFileName2016 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016.cfg" % repo)
-    mvaFileName2017 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2017.cfg" % repo)
-    mvaFileName2018 = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo)
+    mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)
+    mvaFileName2016postVFP = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016postVFP.cfg" % repo)
+    mvaFileName2017        = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2017.cfg" % repo)
+    mvaFileName2018        = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2018.cfg" % repo)
 
     filestoTransfer = [testDir + "/MyAnalysis", 
-                       testDir + "/%s" % (mvaFileName2016),
+                       testDir + "/%s" % (mvaFileName2016preVFP),
+                       testDir + "/%s" % (mvaFileName2016postVFP),
                        testDir + "/%s" % (mvaFileName2017),
                        testDir + "/%s" % (mvaFileName2018),
-                       testDir + "/TopTaggerCfg_2016.cfg",
+                       testDir + "/TopTaggerCfg_2016preVFP.cfg",
+                       testDir + "/TopTaggerCfg_2016postVFP.cfg",
                        testDir + "/TopTaggerCfg_2017.cfg",
                        testDir + "/TopTaggerCfg_2018.cfg",
                        srcDir  + "/TopTagger/TopTagger/test/libTopTagger.so",
                        testDir + "/sampleSets.cfg",
                        testDir + "/sampleCollections.cfg",
-                       testDir + "/Mass_Regression.cfg",
                        testDir + "/Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_2016.cfg",
                        testDir + "/Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_2016.cfg",
                        testDir + "/Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_2016.cfg",
@@ -76,22 +78,10 @@ def main():
                        testDir + "/allInOne_BTagEff_UL.root",
                        testDir + "/allInOne_SFMean_UL.root",
                        testDir + "/allInOne_leptonSF_UL.root",
-                       testDir + "/PileupHistograms_0121_69p2mb_pm4p6.root",
-                       testDir + "/pu_ratio.root",
-                       testDir + "/PileupHistograms_2018_69mb_pm5.root", 
-                       testDir + "/CSVv2_Moriond17_B_H.csv",
                        testDir + "/wp_deepJet_106XUL16postVFP_v3.csv",
                        testDir + "/wp_deepJet_106XUL16preVFP_v2.csv",
                        testDir + "/wp_deepJet_106XUL17_v3.csv",
                        testDir + "/wp_deepJet_106XUL18_v2.csv",
-                       testDir + "/reshaping_deepJet_106XUL16postVFP_v3.csv", 
-                       testDir + "/reshaping_deepJet_106XUL16preVFP_v2.csv",
-                       testDir + "/reshaping_deepJet_106XUL17_v3.csv",
-                       testDir + "/reshaping_deepJet_106XUL18_v2.csv",
-                       testDir + "/DeepCSV_102XSF_WP_V1.csv",
-                       testDir + "/DeepCSV_2016LegacySF_WP_V1.csv",
-                       testDir + "/DeepCSV_94XSF_WP_V4_B_F.csv",
-                       testDir + "/L1prefiring_jetpt_2017BtoF.root",
                        ]
     
     print "--------------Files to Transfer-----------------"
@@ -176,8 +166,9 @@ def main():
         makeExeAndFriendsTarball(filestoTransfer, "exestuff", options.outPath)
         system("tar --exclude-caches-all --exclude-vcs -zcf %s/${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp" % options.outPath)
         
+    system('mkdir -p %s/log-files' % options.outPath)
+
     if not options.noSubmit: 
-        system('mkdir -p %s/log-files' % options.outPath)
         system("echo 'condor_submit condor_submit.txt'")
         system('condor_submit condor_submit.txt')
     else:
