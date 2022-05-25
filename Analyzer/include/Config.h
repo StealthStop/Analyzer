@@ -51,7 +51,7 @@ private:
         const auto& leptonFileName            = tr.getVar<std::string>("leptonFileName"              );
         const auto& bjetFileName              = tr.getVar<std::string>("bjetFileName"                );
         const auto& bjetCSVFileName           = tr.getVar<std::string>("bjetCSVFileName"             );
-        const auto& bjetCSVFileNameReshape    = tr.getVar<std::string>("bjetCSVFileNameReshape"      );
+        //const auto& bjetCSVFileNameReshape    = tr.getVar<std::string>("bjetCSVFileNameReshape"      );
         const auto& filetag                   = tr.getVar<std::string>("filetag"                     );
         const auto& meanFileName              = tr.getVar<std::string>("meanFileName"                );
         const auto& TopTaggerCfg              = tr.getVar<std::string>("TopTaggerCfg"                );
@@ -103,6 +103,7 @@ private:
                 if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, meanFileName);
                 else if(module=="BTagCorrector")
                 {
+                    std::string bjetCSVFileNameReshape = "";
                     auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, bjetCSVFileNameReshape, filetag);
                     bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
                 }
@@ -157,8 +158,8 @@ public:
 
             leptonFileName            = "allInOne_leptonSF_UL.root";
             bjetFileName              = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName           = "wp_deepJet_106XUL16preVFP_v2.csv";
-            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16preVFP_v2.csv";
+            bjetCSVFileName           = "wp_deepCSV_106XUL16preVFP_v2.csv";
+            //bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16preVFP_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
             blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2016preVFP.cfg";
@@ -188,8 +189,8 @@ public:
 
             leptonFileName            = "allInOne_leptonSF_UL.root";
             bjetFileName              = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName           = "wp_deepJet_106XUL16postVFP_v3.csv";
-            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16postVFP_v3.csv";
+            bjetCSVFileName           = "wp_deepCSV_106XUL16postVFP_v3.csv";
+            //bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL16postVFP_v3.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
             blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2016postVFP.cfg";
@@ -220,12 +221,11 @@ public:
 
             leptonFileName            = "allInOne_leptonSF_UL.root";
             bjetFileName              = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName           = "wp_deepJet_106XUL17_v3.csv";
-            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL17_v3.csv";
+            bjetCSVFileName           = "wp_deepCSV_106XUL17_v3.csv";
+            //bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL17_v3.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
             blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2017.cfg";
->>>>>>> a4a716cd58b9ea7d6902a10a869dd02dfad812bf
         }
         else if(filetag.find("2018pre") != std::string::npos) 
         {
@@ -253,8 +253,8 @@ public:
 
             leptonFileName            = "allInOne_leptonSF_UL.root";
             bjetFileName              = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
-            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
+            bjetCSVFileName           = "wp_deepCSV_106XUL18_v2.csv";
+            //bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
             blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
@@ -285,8 +285,8 @@ public:
 
             leptonFileName            = "allInOne_leptonSF_UL.root";
             bjetFileName              = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
-            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
+            bjetCSVFileName           = "wp_deepCSV_106XUL18_v2.csv";
+            //bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
             blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
@@ -319,8 +319,8 @@ public:
 
             leptonFileName            = "allInOne_leptonSF_UL.root";
             bjetFileName              = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName           = "wp_deepJet_106XUL18_v2.csv";
-            bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
+            bjetCSVFileName           = "wp_deepCSV_106XUL18_v2.csv";
+            //bjetCSVFileNameReshape    = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName              = "allInOne_SFMean_UL.root";
             blind                     = true;
             TopTaggerCfg              = "TopTaggerCfg_2018.cfg";
@@ -350,7 +350,7 @@ public:
         tr.registerDerivedVar("leptonFileName",             leptonFileName        );        
         tr.registerDerivedVar("bjetFileName",               bjetFileName          );        
         tr.registerDerivedVar("bjetCSVFileName",            bjetCSVFileName       );        
-        tr.registerDerivedVar("bjetCSVFileNameReshape",     bjetCSVFileNameReshape);        
+        //tr.registerDerivedVar("bjetCSVFileNameReshape",     bjetCSVFileNameReshape);        
         tr.registerDerivedVar("meanFileName",               meanFileName          );        
         tr.registerDerivedVar("etaCut",                     2.4                   ); 
         tr.registerDerivedVar("blind",                      blind                 );

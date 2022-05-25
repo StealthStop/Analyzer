@@ -78,10 +78,15 @@ def main():
                        testDir + "/allInOne_BTagEff_UL.root",
                        testDir + "/allInOne_SFMean_UL.root",
                        testDir + "/allInOne_leptonSF_UL.root",
-                       testDir + "/wp_deepJet_106XUL16postVFP_v3.csv",
-                       testDir + "/wp_deepJet_106XUL16preVFP_v2.csv",
-                       testDir + "/wp_deepJet_106XUL17_v3.csv",
-                       testDir + "/wp_deepJet_106XUL18_v2.csv",
+                       testDir + "/wp_deepCSV_106XUL16postVFP_v3.csv",
+                       testDir + "/wp_deepCSV_106XUL16preVFP_v2.csv",
+                       testDir + "/wp_deepCSV_106XUL17_v3.csv",
+                       testDir + "/wp_deepCSV_106XUL18_v2.csv",
+                       # Holding a place for using the reshaping btag SFs if we need them later
+                       #testDir + "/reshaping_deepJet_106XUL16postVFP_v3.csv",
+                       #testDir + "/reshaping_deepJet_106XUL16preVFP_v2.csv",
+                       #testDir + "/reshaping_deepJet_106XUL17_v3.csv",
+                       #testDir + "/reshaping_deepJet_106XUL18_v2.csv",
                        ]
     
     print "--------------Files to Transfer-----------------"

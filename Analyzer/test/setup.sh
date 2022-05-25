@@ -29,7 +29,7 @@ fi
 # Check needed SF files and ensure local file matches with EOS file
 # Only copy down from EOS if necessary
 sfPath="root://cmseos.fnal.gov//store/user/bcrossma/StealthStop/ScaleFactorHistograms/FullRun2"
-sfFiles=("wp_deepJet_106XUL16preVFP_v2.csv" "wp_deepJet_106XUL16postVFP_v3.csv" "wp_deepJet_106XUL17_v3.csv" "wp_deepJet_106XUL18_v2.csv" "allInOne_leptonSF_UL.root" "allInOne_BTagEff_UL.root" "allInOne_SFMean_UL.root")
+sfFiles=("wp_deepCSV_106XUL16preVFP_v2.csv" "wp_deepCSV_106XUL16postVFP_v3.csv" "wp_deepCSV_106XUL17_v3.csv" "wp_deepCSV_106XUL18_v2.csv" "allInOne_leptonSF_UL.root" "allInOne_BTagEff_UL.root" "allInOne_SFMean_UL.root")
 for i in ${!sfFiles[@]};
 do
     sfFile=${sfFiles[$i]}
