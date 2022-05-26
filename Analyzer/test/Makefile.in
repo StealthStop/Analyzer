@@ -64,7 +64,7 @@ PROGRAMS = $(ODIR)/rootdict.cc plot_1l Stack_plot_0l Stack_plot_1l Stack_plot_2l
 ANALYZERS  = $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/MakeMiniTree.o $(ODIR)/AnalyzeLepTrigger.o $(ODIR)/AnalyzeTest.o 
 ANALYZERS += $(ODIR)/MakeMiniTree.o $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/AnalyzeBTagSF.o $(ODIR)/BTagCalibrationStandalone.o 
 ANALYZERS += $(ODIR)/AnalyzeXsec.o $(ODIR)/AnalyzeHEM.o $(ODIR)/MakeNNVariables.o $(ODIR)/AnalyzeDoubleDisCo.o $(ODIR)/AnalyzeGenStop.o
-ANALYZERS += $(ODIR)/Semra_Analyzer.o $(ODIR)/ResolvedTopTagger_Analyzer.o $(ODIR)/WholeTopTagger_Analyzer.o $(ODIR)/HEM_Analyzer.o $(ODIR)/TopTaggerSF_Analyzer.o $(ODIR)/ISRJets_Analyzer.o $(ODIR)/HadTriggers_Analyzer.o $(ODIR)/TwoLepAnalyzer.o 
+ANALYZERS += $(ODIR)/Semra_Analyzer.o $(ODIR)/ResolvedTopTagger_Analyzer.o $(ODIR)/WholeTopTagger_Analyzer.o $(ODIR)/HEM_Analyzer.o $(ODIR)/TopTaggerSF_Analyzer.o $(ODIR)/ISRJets_Analyzer.o $(ODIR)/HadTriggers_Analyzer.o $(ODIR)/TwoLepAnalyzer.o $(ODIR)/AnalyzeDataMC.o 
 
 HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/NTRException.o $(ODIR)/histio.o 
 HELPERS += $(ODIR)/Make2LInputTrees.o $(ODIR)/Hemispheres.o $(ODIR)/StealthHemispheres.o 
