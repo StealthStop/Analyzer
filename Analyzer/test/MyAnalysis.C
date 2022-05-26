@@ -30,6 +30,7 @@
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 #include "Analyzer/Analyzer/include/AnalyzeXsec.h"
+#include "Analyzer/Analyzer/include/AnalyzeDataMC.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -193,7 +194,8 @@ int main(int argc, char *argv[])
         {"AnalyzeTemplate",            run<AnalyzeTemplate>           },
         {"MakeNNVariables",            run<MakeNNVariables>           },
         {"AnalyzeGenStop",             run<AnalyzeGenStop>            },
-        {"AnalyzeXsec",                run<AnalyzeXsec>               }
+        {"AnalyzeXsec",                run<AnalyzeXsec>               },
+        {"AnalyzeDataMC",              run<AnalyzeDataMC>             }
 
     }; 
 
