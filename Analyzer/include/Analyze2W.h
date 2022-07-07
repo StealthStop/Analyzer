@@ -188,8 +188,8 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &v) {
 }
 
 struct Chain {
-    Chain(auto &&name, auto &&c) : name{name}, chain{c} {}
-    Chain(auto &&x) : Chain("", x) {}
+    Chain(std::string name, const std::vector<Cut*>& c) : name{name}, chain{c} {}
+    Chain(const std::vector<Cut*>& x) : Chain("", x) {}
     std::string name;
     std::vector<Cut *> chain;
     auto begin() { return chain.begin(); }
@@ -220,7 +220,7 @@ std::string to_string (const std::vector<T>& v){
         if(i < len-1) ret += ", ";
     }
     return ret;
-};
+}
 
 template <typename H> class HistogramManager {
     public:
