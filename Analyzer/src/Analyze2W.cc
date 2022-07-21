@@ -97,6 +97,7 @@ namespace detail {
             bool operator()(It, It) { return f_(first_, last_); }
         };
 };  // namespace detail
+
 template <class BidirIter, class Function>
 Function for_each_combination(BidirIter first, BidirIter mid, BidirIter last,
         Function f) {
@@ -105,6 +106,7 @@ Function for_each_combination(BidirIter first, BidirIter mid, BidirIter last,
             last, std::distance(mid, last), wfunc);
     return std::move(f);
 }
+
 template <class It>
 unsigned display(It begin, It end) {
     unsigned r = 0;
@@ -124,6 +126,7 @@ unsigned display(It begin, It end) {
 
 const double WTAG_MEDIUM = 0.960;
 const double W_JET_MATCH_DR = 0.2;
+
 
 
 template< class... >
@@ -159,60 +162,6 @@ void fillHistos(U &histos, const std::string &name, T val, double weight,
         histos[name+append[i]].Fill(val, weight);
     }
 }
-
-
-/*
-   template <typename T> typename T::value_type getAllNames(T vals) {
-   typename T::value_type ret;
-   ret.reserve(std::accumulate(vals.begin(), vals.end(), 1, [](auto x, const auto& y){return x*(std::size(y)+1);}));
-   for(int i = 0 ; i < std::size(vals); ++i){
-   int s = ret.size();
-   for (int j = 0 ; j < s; ++j){
-   for(const auto& y: vals[i]){
-   ret.push_back(ret[j] + "_" +  y);
-   }
-   }
-   for(const auto& y: vals[i]){
-   ret.push_back( y);
-   }
-   }
-   return ret;
-   }
- */
-
-
-template<typename T, typename U>
-T constexpr power(T base, U exponent) {
-    return exponent == 0 ? 1 : base * pow(base, exponent - 1);
-}
-
-template <typename T, std::size_t N>
-auto combine(const std::array<T,N>& vals) {
-    std::array<T, power(static_cast<std::size_t>(2),N)> ret;
-    ret[0] = "";
-    for(int i = 0; i < N; ++i){
-        int cur = power(2,i);
-        for(int j = 0 ; j < cur; ++j){
-            ret[cur + j]=ret[j] + vals[i];
-        }
-    }
-    return ret;
-}
-void addTextToStats(TH1D *h, TCanvas *c, const std::string& s){
-    TPaveStats *st = static_cast<TPaveStats *>(c->GetPrimitive("stats"));
-    st->SetName("mystats");
-    TList *listOfLines = st->GetListOfLines();
-    TLatex *t = new TLatex(0, 0, s.c_str());
-    t->SetTextFont(42);
-    t->SetTextColor(kBlack);
-    t->SetTextSize(0.03);
-    listOfLines->Add(t);
-    h->SetStats(0);
-}
-
-
-
-
 
 template <typename T>
 void createNewHistogram(T &myhistos, std::string name, int v1, int v2, int v3,
@@ -454,7 +403,7 @@ class EtaCut : public Cut {
 };
 
 const int W_PDGID = 24, E_PDGID = 11, M_PDGID = 13, T_PDGID = 15,
-      STOP_PDGID = 1000006;
+      STOP_PDGID = 1000006, SB_PDGID = 1000005;
 const int JETCOUNT = 10;
 const int LEP_COUNT = 10;
 const double W_WP = 0.918;
@@ -494,41 +443,25 @@ void Analyze2W::InitHistos() {
     TH1::SetDefaultSumw2();
     TH2::SetDefaultSumw2();
 
+    // Event level information
     my_histos.createNewHistogram("EventCounter", 2, -1.1, 1.1, "Event Counter");
-
     my_histos.createNewHistogram("NJets_pt20", 15, 0, 15, "NJets PT20");
     my_histos.createNewHistogram("NJets_pt30", 15, 0, 15, "NJets PT30");
-
-    my_histos.createNewHistogram("HT_pt30", 200, 0, 2000, "HT_pt30", "Events",
-            true);
+    my_histos.createNewHistogram("HT_pt30", 200, 0, 2000, "HT_pt30", "Events", true);
+    my_histos.createNewHistogram("met", 200, 0, 2000, "MET");
+    my_histos.createNewHistogram("HasNonOverlappingAk8andAk4", 2, -1, 1, "HasNonOverlappingAk8andAk4");
 
     // Number of reco b jets
     my_histos.createNewHistogram("nbjets_loose", 5, 0, 5, "NBjets_loose");
+
+    // Tagging
     my_histos.createNewHistogram("DeepAK8TagW_medium_wp", 5, 0, 5, "DeepAK8TagW_medium_wp");
     my_histos.createNewHistogram("DeepAK8TagW_HasNearGenW", 5, 0, 5, "DeepAK8TagW_HasNearGenW");
     my_histos.createNewHistogram("DeepAK8TagW_MatchedEnergyRatio", 100,0,3, "DeepAK8TagW_MatchedEnergyRatio");
 
-
-    my_histos.createNewHistogram("RecoStopMass", 150,200,1400, "RecoStopMass");
-    my_histos.createNewHistogram("RecoStopMassImbalance", 100,0, 500 , "RecoStopMassImbalance");
-    my_histos.createNewHistogram("RecoSBottomMass", 120,50,650, "RecoSBottomMass");
-    my_histos.createNewHistogram("RecoSBottomMassImbalance", 100,0, 500 , "RecoSBottomMassImbalance");
-
-
-
-
-        // CA12 jet information
-        my_histos.createNewHistogram("nCA12Jets", 15, 0, 15, "nCA12Jets");
-    my_histos.createNewHistogram("CA12Pt", 50, 0, 500, "CA12Pt ", "Events", true);
-
-    // Number of reco w jets
-    //my_histos.createNewHistogram("nwjets", 5, 0, 5, "NWJets_Reco");
-
-
-    // MET
-    my_histos.createNewHistogram("met", 200, 0, 2000, "MET");
-
     // Nsubjetiness of CA12 jets
+    my_histos.createNewHistogram("nCA12Jets", 15, 0, 15, "nCA12Jets");
+    my_histos.createNewHistogram("CA12Pt", 50, 0, 500, "CA12Pt ", "Events", true);
     my_histos.createNewHistogram("CA12_NSubJettiness4", 100, 0, 1, "CA12_NSJ 4");
     my_histos.createNewHistogram("CA12_NSubJettiness3", 100, 0, 1, "CA12_NSJ 3");
     my_histos.createNewHistogram("CA12_NSubJettiness2", 100, 0, 1, "CA12_NSJ 2");
@@ -559,6 +492,18 @@ void Analyze2W::InitHistos() {
     my_histos.createNewHistogram("StopPhi", 100, -3.2, 3.2, "Stop Phi");
     my_histos.createNewHistogram("StopEta", 100, -3.2, 3.2, "Stop Eta");
 
+    //Other Gen Information
+    my_histos.createNewHistogram("DRGenWSbottom", 100, 0, 10, "DRGenWSbottom");
+    my_histos.createNewHistogram("DRGenSbottomChildren", 100, 0, 10, "DRGenSbottomChildren");
+    my_histos.createNewHistogram("GenWSbottomChildMaxDR", 100, 0,10, "GenWSbottomChildMaxDR");
+
+
+    // Reco Stop Using Hemispheres
+    my_histos.createNewHistogram("RecoStopMass", 150,200,1400, "RecoStopMass");
+    my_histos.createNewHistogram("RecoStopMassImbalance", 100,0, 500 , "RecoStopMassImbalance");
+    my_histos.createNewHistogram("RecoSBottomMass", 120,50,650, "RecoSBottomMass");
+    my_histos.createNewHistogram("RecoSBottomMassImbalance", 100,0, 500 , "RecoSBottomMassImbalance");
+
     // Leptons
     my_histos.createNewHistogram("NGoodLeptons", 100, 0, 10, "N Good Leptons");
     for(const std::string& s: {"l", "e", "m"}){
@@ -569,9 +514,13 @@ void Analyze2W::InitHistos() {
         my_histos.createNewHistogram(s + "_MiniIso" , 100, 0, 1, s + "_MiniIso" );
     }
 
-    // Angles between Ws and Leptons
-    //my_histos.createNewHistogram("Gen_Lep_Angle", 100, 0, 4, "Angle");
-    my_histos.createNewHistogram("Gen_W_Angle", 100, 0, 4, "Angle");
+    // Truth Matching
+    my_histos.createNewHistogram("GenSbottomChildrenDistanceAk4", 20, 0, 4, "GenSbottomChildDistanceAk4");
+    my_histos.createNewHistogram("GenSbottomChildrenTagWDistance", 20, 0, 4, "GenSbottomChildrenTagWDistance");
+    my_histos.createNewHistogram("GenStopNearestRecoStop", 20, 0, 4, "GenStopNearestRecoStop");
+    my_histos.createNewHistogram("Gen_W_Angle", 100,-4,4, "GenWAngle");
+
+
 
     // Mass difference of two leading CA12 jets
     my_histos.createNewHistogram("mass_ratio", 100, 0, 1, "Mass Difference Ratio");
@@ -589,6 +538,8 @@ void Analyze2W::InitHistos() {
 
 void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
     filetag = tr.getVar<std::string>("filetag");
+    std::cout << " FILETAG    " << filetag << "\n";
+    bool is_virtual_sbottom = (filetag.find("mB-0") != std::string::npos);
     while (tr.getNextEvent()) {
         if (maxevents != -1 && tr.getEvtNum() >= maxevents) {
             std::cout << std::endl;
@@ -668,10 +619,24 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         makeVec(GoodLeptonsMiniIso, double);
 
 
-        std::vector<utility::LorentzVector> Ws, Leps, Stops, Quarks;
+
+        struct TruthMatchedParticle{
+            std::vector<utility::LorentzVector>& reco;
+            std::vector<utility::LorentzVector>& mc;
+            int data_i, m_i;
+        };
+
+        std::vector<std::pair<int, utility::LorentzVector>> gen_w_boson, gen_leptons, gen_stops, gen_sbottoms, gen_w_quarks, gen_sbottom_quarks;
+
+        std::array<int, 2> gen_w_idx = {-1,-1};
+        std::array<int, 2> gen_st_idx = {-1,-1};
+        std::array<int, 2> gen_sb_idx = {-1,-1};
+        std::array<std::array<int,2>,2> gen_sb_quark_idx = {{{-1,-1}, {-1,-1}}};
+
         auto isHard = [](int x) {
             return x == 1 || (std::abs(x) < 60 && std::abs(x) > 20);
         };
+
 
         for (std::size_t i = 0; i < GenParticles.size(); ++i) { // clang-format off
             switch (GenParticles_PdgId[i]) {
@@ -680,47 +645,114 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
                     if(GenParticles_ParentIdx[i] >= 0) {
                         if (GenParticles_ParentId[i] == STOP_PDGID || 
                                 GenParticles_ParentId[i] == -STOP_PDGID)
-                            Ws.push_back(GenParticles[i]);
+                            gen_w_boson.emplace_back(i,GenParticles[i]);
+                        if(gen_w_idx[0] == -1){
+                            gen_w_idx[0] = i;
+                            gen_st_idx[0] = GenParticles_ParentIdx[i];
+
+                        } else {
+                            gen_w_idx[1] = i;
+                            gen_st_idx[1] = GenParticles_ParentIdx[i];
+                        }
                     }
                     break;
+                case SB_PDGID: case -SB_PDGID:
+                    is_virtual_sbottom=false;
+                    if (!isHard(GenParticles_Status[i])) continue;
+                    if(GenParticles_ParentIdx[i] >= 0) {
+                        if (GenParticles_ParentId[i] == STOP_PDGID || 
+                                GenParticles_ParentId[i] == -STOP_PDGID){
+                            gen_sbottoms.emplace_back(i , GenParticles[i]);
+                        }
+                    }
+                    break;
+
                 case E_PDGID: case M_PDGID: case T_PDGID:
                 case -E_PDGID: case -M_PDGID: case -T_PDGID:
-                    if(std::abs(GenParticles_ParentId[i]) == W_PDGID) Leps.push_back(GenParticles[i]);
-                    if( std::abs(GenParticles_PdgId[i]) == 15)
-                        break;
+                    if(std::abs(GenParticles_ParentId[i]) == W_PDGID) 
+                        gen_leptons.emplace_back(i,GenParticles[i]);
+                    //if( std::abs(GenParticles_PdgId[i]) == 15){ break; }
+                    break;
                 case STOP_PDGID: case -STOP_PDGID:
                     if(std::abs(GenParticles_Status[i])==62)
-                        Stops.push_back(GenParticles[i]);
+                        gen_stops.emplace_back(i,GenParticles[i]);
                     break;
                 case 1: case -1: case 2: case -2: case 3: case -3:
                 case 4: case -4: case 5: case -5: case 6: case -6:
                 case 7: case -7: case 8: case -8: 
                     if(std::abs(GenParticles_ParentId[i]) == 24){
-                        Quarks.push_back(GenParticles[i]);
+                        gen_w_quarks.emplace_back(i,GenParticles[i]);
+                    } else if(std::abs(GenParticles_ParentId[i]) == ( (is_virtual_sbottom)? STOP_PDGID : SB_PDGID)) {
+                        gen_sbottom_quarks.emplace_back(i, GenParticles[i]);
+                        // std::cout << "GenSbottom: " <<  GenParticles_Status[i] << " " <<  GenParticles_ParentId[i] << "\n";
                     }
                     break;
-            } // clang-format on
+            } 
+            // clang-format on
         }
 
-        int num_leps = std::size(Leps);
+        for(const auto& pair: gen_sbottoms){
+            if(gen_st_idx[0] == GenParticles_ParentIdx[pair.first]){
+                gen_sb_idx[0] = pair.first;
+            }  else if(gen_st_idx[1] == GenParticles_ParentIdx[pair.first]) {
+                gen_sb_idx[1] = pair.first;
+            }   else {
+                throw std::runtime_error("Could not match sbottoms");
+            }
+        }
+
+
+        for(const auto& pair: gen_sbottom_quarks){
+            for(int i = 0 ; i < 2; ++i){
+                if(((is_virtual_sbottom)? gen_st_idx:gen_sb_idx)[i] 
+                        == GenParticles_ParentIdx[pair.first]){
+                    if(gen_sb_quark_idx[i][0] == -1){
+                        gen_sb_quark_idx[i][0] = pair.first;
+                    } else if(gen_sb_quark_idx[i][1] == -1){
+                        gen_sb_quark_idx[i][1] = pair.first;
+                    } else {
+                        throw std::runtime_error("Could not match sbottoms quarks because already full");
+                    }
+                }
+            }
+        }
+
+#if 0
+        std::cout << "-------------------\n";
+        std::cout << "Found Ws: " << gen_w_boson.size() << "\n";
+        for(int i = 0 ; i < 2; ++i){
+            std::cout << "Stop(" << gen_st_idx[i] << ")->" << "(SB(" << gen_sb_idx[i] << ")->(" << "q(" << gen_sb_quark_idx[i][0] << "),q(" << gen_sb_quark_idx[i][1] << ")),W(" << gen_w_idx[i] << "))\n"  ;
+        }
+        std::cout << "-------------------\n";
+#endif
+
+
+        int num_leps = std::size(gen_leptons);
 
         // W tagging
         int nw_deep_tag = 0; //std::count_if(JetsAK8_DeepTagWvsQCD.begin(), JetsAK8_DeepTagWvsQCD.end(),[&](auto&& x){return x>WTAG_MEDIUM});
         int nw_deep_tagjet_has_gen_w = 0; 
+
         std::vector<int> deep_w_jet_tags;
         std::vector<utility::LorentzVector> deep_w_jets;
-        std::vector<std::pair<std::size_t, std::size_t>> matched_w_jets;
+        std::vector<std::pair<std::size_t, std::size_t>> matched_w_jets, matched_w_quarks, matched_sbottom_quarks;
+
         for(std::size_t i = 0 ; i < std::size(JetsAK8); ++i){
             if(JetsAK8_DeepTagWvsQCD[i] > WTAG_MEDIUM) {
                 ++nw_deep_tag;
                 deep_w_jets.push_back(JetsAK8[i]);
-                for(std::size_t j = 0 ; j < std::size(Ws); ++j){
-                    if(ROOT::Math::VectorUtil::DeltaR(Ws[j],JetsAK8[i])<W_JET_MATCH_DR){
+                for(std::size_t j = 0 ; j < std::size(gen_w_boson); ++j){
+                    if(ROOT::Math::VectorUtil::DeltaR(
+                                gen_w_boson[j].second,
+                                JetsAK8[i]) < W_JET_MATCH_DR){
                         matched_w_jets.push_back({i,j});
                     }
                 }
             }
         }
+
+
+        int has_nonoverlapping_ak8_ak4 = 1;
 
         std::vector<utility::LorentzVector> ak4_exclusive;
 
@@ -728,41 +760,60 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             for(const auto& jet : Jets ){
                 bool is_close = false;
                 for(const auto& wjet : deep_w_jets){
-                    if( ROOT::Math::VectorUtil::DeltaR(jet,wjet)<0.8){
+                    if( ROOT::Math::VectorUtil::DeltaR(jet,wjet) < 0.8) {
                         is_close = true;
                     }
                 }
-                if(!is_close){
-                    ak4_exclusive.push_back(jet);
-                }
+                if(!is_close) ak4_exclusive.push_back(jet);
                 if(std::size(ak4_exclusive) > 4) break;
             }
         }
         std::array<int, 4> jets_idx_combos = {1,2,3,4};
-
-
         float imbalance=1000000.0f, reco_stop_mass = 0, reco_sbottom_mass=0, reco_sbottom_imbalance;
+        std::array<float, 2> nearest_reco_stop;
         auto callinner = [&](auto&& start, auto&& end){
-                    float reco_stop_mass_test_1  = (deep_w_jets[0] + ak4_exclusive[jets_idx_combos[0]] + ak4_exclusive[jets_idx_combos[1]]).M();
-                    float reco_stop_mass_test_2  = (deep_w_jets[1] + ak4_exclusive[jets_idx_combos[2]] + ak4_exclusive[jets_idx_combos[3]]).M();
-                    float test_imbalance=std::abs(reco_stop_mass_test_1 - reco_stop_mass_test_2)/2 ;
-                    if(test_imbalance < imbalance){
-                        imbalance = test_imbalance;
-                        reco_stop_mass = (reco_stop_mass_test_1 + reco_stop_mass_test_2)/2;
+            auto reco_stop_1 = deep_w_jets[0] + ak4_exclusive[jets_idx_combos[0]] + ak4_exclusive[jets_idx_combos[1]];
+            auto reco_stop_2 = (deep_w_jets[1] + ak4_exclusive[jets_idx_combos[2]] + ak4_exclusive[jets_idx_combos[3]]);
+            float reco_stop_mass_test_1  = reco_stop_1.M();
+            float reco_stop_mass_test_2  = reco_stop_2.M();
+            float test_imbalance=std::abs(reco_stop_mass_test_1 - reco_stop_mass_test_2)/2 ;
+            if(test_imbalance < imbalance){
+                imbalance = test_imbalance;
+                reco_stop_mass = (reco_stop_mass_test_1 + reco_stop_mass_test_2)/2;
+                if(!is_virtual_sbottom){
                     float reco_sbottom_mass_1  = (ak4_exclusive[jets_idx_combos[0]] + ak4_exclusive[jets_idx_combos[1]]).M();
                     float reco_sbottom_mass_2  = (ak4_exclusive[jets_idx_combos[2]] + ak4_exclusive[jets_idx_combos[3]]).M();
                     reco_sbottom_imbalance = std::abs(reco_sbottom_mass_1 - reco_sbottom_mass_2) / 2.0f;
                     reco_sbottom_mass = (reco_sbottom_mass_1 + reco_sbottom_mass_2) / 2.0f;
-                    }
-                    return false;
+                }
+                nearest_reco_stop[0] = std::min(
+                        ROOT::Math::VectorUtil::DeltaR(reco_stop_1, gen_stops[0].second ),
+                        ROOT::Math::VectorUtil::DeltaR(reco_stop_1, gen_stops[1].second )
+                        );
+                nearest_reco_stop[1] = std::min(
+                        ROOT::Math::VectorUtil::DeltaR(reco_stop_2, gen_stops[0].second ),
+                        ROOT::Math::VectorUtil::DeltaR(reco_stop_2, gen_stops[1].second )
+                        );
+
+            }
+            return false;
         };
 
         auto callouter =// [&deep_w_jets, &ak4_exclusive, &imbalance, &reco_stop_mass]
-            [&](auto&& start, auto&& end){ for_each_combination(jets_idx_combos.begin(), jets_idx_combos.begin()+2, jets_idx_combos.end(), callinner); return false;};
+            [&](auto&&, auto&& ){ for_each_combination(jets_idx_combos.begin(), jets_idx_combos.begin()+2, jets_idx_combos.end(), callinner); return false;};
+
         if(std::size(ak4_exclusive) >= 4 && nw_deep_tag >= 2){
             for_each_combination(deep_w_jets.begin(), deep_w_jets.begin()+2, deep_w_jets.end(), callouter);
         }
 
+
+        std::array<float,2> gen_max_child_angles;
+        for(int i : {0,1}){
+            gen_max_child_angles[i] = std::max(
+                    ROOT::Math::VectorUtil::DeltaR(GenParticles[i],GenParticles[gen_sb_quark_idx[i][0]]),
+                    ROOT::Math::VectorUtil::DeltaR(GenParticles[i],GenParticles[gen_sb_quark_idx[i][1]])
+                    );
+        }
 
         double weight = 1.0, eventweight = 1.0, leptonScaleFactor = 1.0,
                bTagScaleFactor = 1.0, htDerivedScaleFactor = 1.0,
@@ -774,7 +825,6 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             eventweight = lumi * Weight;
             weight *= eventweight * leptonScaleFactor * bTagScaleFactor *
                 htDerivedScaleFactor * prefiringScaleFactor * puScaleFactor;
-             weight = 1.0;
         }
 
         SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsrCA12_21, nsrCA12_42, nsrCA12_43};
@@ -787,8 +837,17 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         if(num_leps==0 && nw_deep_tag >= 2 && reco_stop_mass > 0.0f ){
             Fill("RecoStopMass", reco_stop_mass);
             Fill("RecoStopMassImbalance", imbalance);
-            Fill("RecoSBottomMass", reco_sbottom_mass);
-            Fill("RecoSBottomMassImbalance", reco_sbottom_imbalance);
+
+            if(!is_virtual_sbottom){
+                Fill("RecoSBottomMass", reco_sbottom_mass);
+                Fill("RecoSBottomMassImbalance", reco_sbottom_imbalance);
+            }
+            for(int i: {0,1}){
+                Fill("GenStopNearestRecoStop", nearest_reco_stop[i]);
+            }
+            for(const auto& pair: matched_w_jets){
+                Fill("DeepAK8TagW_MatchedEnergyRatio", gen_w_boson[pair.first].second.E()/JetsAK8[pair.second].E());
+            }
         }
 
 
@@ -800,31 +859,33 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         Fill("HT_pt30", HT_trigger_pt30);
         Fill("met", MET);
         Fill("mass_ratio", data.mass_ratio);
+
         Fill("DeepAK8TagW_medium_wp", nw_deep_tag);
         Fill("DeepAK8TagW_HasNearGenW", std::size(matched_w_jets));
-        for(const auto& pair: matched_w_jets){
-            Fill("DeepAK8TagW_MatchedEnergyRatio", Ws[pair.first].E()/JetsAK8[pair.second].E());
+
+        for(int i: {0,1}){
+            Fill("GenWSbottomChildMaxDR", gen_max_child_angles[i]);
         }
 
         //Fill("MT2", MT2);
-        for (const auto &v : Ws) {
-            Fill("WEta", v.Eta());
-            Fill("WE", v.E());
-            Fill("WPhi", v.Phi());
-            Fill("WP", v.P());
-            Fill("WPt", v.Pt());
+        for (const auto &v : gen_w_boson) {
+            Fill("WEta", v.second.Eta());
+            Fill("WE", v.second.E());
+            Fill("WPhi", v.second.Phi());
+            Fill("WP", v.second.P());
+            Fill("WPt", v.second.Pt());
         }
-        for (const auto &v : Stops) {
-            Fill("StopEta", v.Eta());
-            Fill("StopE", v.E());
-            Fill("StopPhi", v.Phi());
-            Fill("StopP", v.P());
-            Fill("StopPt", v.Pt());
+        for (const auto &v : gen_stops) {
+            Fill("StopEta", v.second.Eta());
+            Fill("StopE", v.second.E());
+            Fill("StopPhi", v.second.Phi());
+            Fill("StopP", v.second.P());
+            Fill("StopPt", v.second.Pt());
         }
 
 
         auto computeAngle = [](const auto &pair) {
-            return ROOT::Math::VectorUtil::Angle(pair[0].Vect(), pair[1].Vect());
+            return ROOT::Math::VectorUtil::Angle(pair[0].second.Vect(), pair[1].second.Vect());
             //return pair[0].Vect().Angle(pair[1].Vect());
         };
 
@@ -848,6 +909,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         }
 
         Fill("NGoodLeptons", std::size(GoodLeptons));
+
         for(std::size_t i = 0 ; i < std::size(GoodLeptons); ++i){
             const auto& lepton =  GoodLeptons[i];
             const auto& v = lepton.second;
@@ -883,7 +945,21 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("Jet_" + std::to_string(i) + "_Eta",jet.Eta());
         }
 
-        if (std::size(Ws) == 2) Fill("Gen_W_Angle", computeAngle(Ws));
+        if (std::size(gen_w_boson) == 2) Fill("Gen_W_Angle", computeAngle(gen_w_boson));
+
+        if(!is_virtual_sbottom){
+            for(int i = 0 ; i < 2; ++i ) {
+                Fill("DRGenWSbottom",
+                        ROOT::Math::VectorUtil::DeltaR(GenParticles[gen_w_idx[i]], GenParticles[gen_sb_idx[i]])
+                    );}
+
+        }
+        for(int i = 0 ; i < 2; ++i ) {
+            Fill("DRGenSbottomChildren",
+                    ROOT::Math::VectorUtil::DeltaR(
+                        GenParticles[gen_sb_quark_idx[i][0]] , GenParticles[gen_sb_quark_idx[i][1]])
+                );
+        }
 
         for (std::size_t i = 0; i < std::size(JetsCA12); ++i) {
             Fill("CA12Pt", JetsCA12[i].Pt());
