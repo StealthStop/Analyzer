@@ -723,3 +723,4 @@ class Common_Calculations_Plotters:
         fig.savefig('%s/%s_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, self.channel, self.metric), dpi=fig.dpi)
 
         plt.close(fig)
+    
