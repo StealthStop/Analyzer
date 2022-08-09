@@ -446,7 +446,7 @@ public:
                 "CommonVariables",
                 "RunTopTagger",
                 "Baseline",
-                //"BTagCorrector",
+                "BTagCorrector",
                 "ScaleFactors"
             };
             registerModules(tr, std::move(modulesList));
@@ -483,11 +483,11 @@ public:
                 "CommonVariables",
                 "FatJetCombine",
                 "Baseline",
-                //"BTagCorrector",
-                //"ScaleFactors",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
-                "MakeMVAVariables_2l",
+                "BTagCorrector",
+                "ScaleFactors",
+                //"MakeMVAVariables_0l",
+                //"MakeMVAVariables_1l",
+                //"MakeMVAVariables_2l",
                 "MakeMVAVariables_NonIsoMuon_0l",
                 "MakeMVAVariables_NonIsoMuon_1l",
                 "StopJets",

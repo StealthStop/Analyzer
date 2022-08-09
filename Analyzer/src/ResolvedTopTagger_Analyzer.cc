@@ -39,21 +39,22 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         const auto& runtype          = tr.getVar<std::string>("runtype");
         const auto& Jets             = tr.getVec<utility::LorentzVector>("Jets");
         // old resolved selection based on old baseline
-        const auto& JetID            = tr.getVar<bool>("JetID");        
-        const auto& passMETFilters   = tr.getVar<bool>("passMETFilters");
-        const auto& passMadHT        = tr.getVar<bool>("passMadHT");
-        const auto& passTriggerHadMC = tr.getVar<bool>("passTriggerHadMC");
-        const auto& NGoodLeptons     = tr.getVar<int>("NGoodLeptons");
-        const auto& HT_trigger_pt45  = tr.getVar<double>("HT_trigger_pt45");
-        const auto& NGoodBJets_pt45  = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& NGoodJets_pt45   = tr.getVar<int>("NGoodJets_pt45");
-        const auto& dR_bjets_old     = tr.getVar<double>("dR_bjets_old");
-        const auto& dR_bjets         = tr.getVar<double>("dR_bjets");
-        const auto& GoodJets_pt45    = tr.getVec<bool>("GoodJets_pt45");
-        const bool pass_oldResolved  = JetID && passMETFilters && passMadHT && passTriggerHadMC 
-                                      && NGoodLeptons==0       && HT_trigger_pt45 > 500 
-                                      && NGoodBJets_pt45 >= 2  && NGoodJets_pt45 >= 6
-                                      && dR_bjets_old >= 1.0;
+        const auto& JetID               = tr.getVar<bool>("JetID");        
+        const auto& passMETFilters      = tr.getVar<bool>("passMETFilters");
+        const auto& passMadHT           = tr.getVar<bool>("passMadHT");
+        const auto& passTriggerHadMC    = tr.getVar<bool>("passTriggerHadMC");
+        const auto& NGoodLeptons        = tr.getVar<int>("NGoodLeptons");
+        const auto& HT_trigger_pt45     = tr.getVar<double>("HT_trigger_pt45");
+        const auto& NGoodBJets_pt45     = tr.getVar<int>("NGoodBJets_pt45");
+        const auto& NGoodJets_pt45      = tr.getVar<int>("NGoodJets_pt45");
+        const auto& dR_bjets_old        = tr.getVar<double>("dR_bjets_old");
+        const auto& dR_bjets            = tr.getVar<double>("dR_bjets");
+        const auto& GoodJets_pt45       = tr.getVec<bool>("GoodJets_pt45");
+        const auto& passElectronHEMveto = tr.getVar<bool>("passElectronHEMveto");
+        const bool pass_oldResolved     = JetID && passMETFilters && passMadHT && passTriggerHadMC 
+                                         && NGoodLeptons==0       && HT_trigger_pt45 > 500 
+                                         && NGoodBJets_pt45 >= 2  && NGoodJets_pt45 >= 6
+                                         && dR_bjets_old >= 1.0;
         // new resolved selection based on new baseline
         const bool passBaseline0l_pre = tr.getVar<bool>("passBaseline0l_pre");
         const auto& NNonIsoMuons      = tr.getVar<int>("NNonIsoMuons");
@@ -61,7 +62,8 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         const auto& NGoodBJets_pt30   = tr.getVar<int>("NGoodBJets_pt30");
         const bool pass_newResolved   = passBaseline0l_pre     
                                        && NNonIsoMuons == 0   && NGoodBJets_pt30 >= 2 
-                                       && NGoodJets_pt30 >= 7 && dR_bjets >= 1.0;
+                                       && NGoodJets_pt30 >= 7 && dR_bjets >= 1.0
+                                       && passElectronHEMveto;
 
         // -------------------
         // -- Define weight
@@ -78,13 +80,11 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
             const auto& lumi   = tr.getVar<double>("Lumi");
             eventweight        = lumi*Weight;
 
-            //bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            //prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            //puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            puScaleFactor        = tr.getVar<double>("puWeightCorr");
 
-            //weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
-            //weight *= eventweight * puScaleFactor;
-            weight *= eventweight;
+            weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }
 
         // ---------------------------------------------------------------
