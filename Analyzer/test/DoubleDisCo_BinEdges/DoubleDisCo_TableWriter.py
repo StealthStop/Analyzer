@@ -82,6 +82,66 @@ class ABCDeventsTable(TableWriter):
         self.f.write("        \hline")
         self.f.write("\n")
 
+# ----------------------------------------------------
+# Derived table writer class for the ABCD fracs table
+# Over ride the writeHeader and writeLine method
+# ----------------------------------------------------
+class ABCDfracsTable(TableWriter):
+
+    def writeHeader(self):
+        self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
+        self.f.write("    \\begin{tabular}{| c | c | c | c | c | c | c | c | c |}")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+        self.f.write("        \\textbf{\\njets} & \\multicolumn{2}{c|}{\\textbf{In Region A}} & \\multicolumn{2}{c|}{\\textbf{In Region B}} & \\multicolumn{2}{c|}{\\textbf{In Region C}} & \\multicolumn{2}{c|}{\\textbf{In Region D}} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+        self.f.write("                          & \\textbf{\\ttjets Frac.} & \\textbf{Sig. Frac.} & \\textbf{\\ttjets Frac.} & \\textbf{Sig. Frac.} & \\textbf{\\ttjets Frac.} & \\textbf{Sig. Frac.} & \\textbf{\\ttjets Frac.} & \\textbf{Sig. Frac.} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
+    def writeLine(self, **kwargs):
+        self.f.write("        %s & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f\\\\" %(kwargs["njet"], kwargs["finalTTfracs"]["A"][0], kwargs["finalSigFracs"]["A"][0], kwargs["finalTTfracs"]["B"][0], kwargs["finalSigFracs"]["B"][0], kwargs["finalTTfracs"]["C"][0], kwargs["finalSigFracs"]["C"][0], kwargs["finalTTfracs"]["D"][0], kwargs["finalSigFracs"]["D"][0]))
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
+# ----------------------------------------------------
+# Derived table writer class for the Val fracs table
+# Over ride the writeHeader and writeLine method
+# ----------------------------------------------------
+class ValFracsTable(TableWriter):
+
+    def writeHeader(self):
+        self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
+        self.f.write("    \\begin{tabular}{| c | c | c | c | c | c | c | c | c | c | c | c | c |}")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+        self.f.write("        \\textbf{\\njets} & \\multicolumn{3}{c|}{\\textbf{In Region A'}} & \\multicolumn{3}{c|}{\\textbf{In Region B'}} & \\multicolumn{3}{c|}{\\textbf{In Region C'}} & \\multicolumn{3}{c|}{\\textbf{In Region D'}} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+        self.f.write("                          & \\textbf{Val I} & \\textbf{Val II} & \\textbf{Val III} & \\textbf{Val I} & \\textbf{Val II} & \\textbf{Val III} & \\textbf{Val I} & \\textbf{Val II} & \\textbf{Val III} & \\textbf{Val I} & \\textbf{Val II} & \\textbf{Val III} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
+    def writeLine(self, **kwargs):
+        self.f.write("        %s & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f & %.3f\\\\" %(kwargs["njet"], kwargs["finalSigFracs"]["Val_bdEF"]["A"][0], kwargs["finalSigFracs"]["Val_cdiGH"]["A"][0], kwargs["finalSigFracs"]["Val_subDivD"]["A"][0], kwargs["finalSigFracs"]["Val_bdEF"]["B"][0], kwargs["finalSigFracs"]["Val_cdiGH"]["B"][0], kwargs["finalSigFracs"]["Val_subDivD"]["B"][0], kwargs["finalSigFracs"]["Val_bdEF"]["C"][0], kwargs["finalSigFracs"]["Val_cdiGH"]["C"][0], kwargs["finalSigFracs"]["Val_subDivD"]["C"][0], kwargs["finalSigFracs"]["Val_bdEF"]["D"][0], kwargs["finalSigFracs"]["Val_cdiGH"]["D"][0], kwargs["finalSigFracs"]["Val_subDivD"]["D"][0]))
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
 
 # ----------------------------------------------------
 # Derived table writer class for the bdEF events table

@@ -81,17 +81,19 @@ class Aggregator:
                 self.data[self.makeKey(variable = "nEvents%s"%(subregion),  sample = sample, **kwargs)] = regionObj.getFinal("nEvents%s"%(subregion), sample)
 
             if not any(s in sample for s in ["RPV", "SYY", "SHH"]):
-                self.data[self.makeKey(variable = "nonClosures",               sample = sample, **kwargs)] = regionObj.get("nonClosure",               None, None, sample) # vars with any combination of bin edges
-                self.data[self.makeKey(variable = "pulls",                     sample = sample, **kwargs)] = regionObj.get("pull",                     None, None, sample)
-                self.data[self.makeKey(variable = "closureCorrs",              sample = sample, **kwargs)] = regionObj.get("closureCorr",              None, None, sample)
-                #self.data[self.makeKey(variable = "MC_corrected_dataClosures", sample = sample, **kwargs)] = regionObj.get("MC_corrected_dataClosure", None, None, sample)
-                self.data[self.makeKey(variable = "nonClosure",                sample = sample, **kwargs)] = regionObj.getFinal("nonClosure",                      sample) # vars with the final choice of bin edges
-                self.data[self.makeKey(variable = "pull",                      sample = sample, **kwargs)] = regionObj.getFinal("pull",                            sample)
-                self.data[self.makeKey(variable = "closureCorr",               sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",                     sample) # vars with the final choice of bin edges
+                self.data[self.makeKey(variable = "nonClosures",  sample = sample, **kwargs)] = regionObj.get("nonClosure",       None, None, sample) # vars with any combination of bin edges
+                self.data[self.makeKey(variable = "pulls",        sample = sample, **kwargs)] = regionObj.get("pull",             None, None, sample)
+                self.data[self.makeKey(variable = "closureCorrs", sample = sample, **kwargs)] = regionObj.get("closureCorr",      None, None, sample)
+                self.data[self.makeKey(variable = "Closure",      sample = sample, **kwargs)] = regionObj.getFinal("Closure",                 sample)
+                self.data[self.makeKey(variable = "nonClosure",   sample = sample, **kwargs)] = regionObj.getFinal("nonClosure",              sample) # vars with the final choice of bin edges
+                self.data[self.makeKey(variable = "pull",         sample = sample, **kwargs)] = regionObj.getFinal("pull",                    sample)
+                self.data[self.makeKey(variable = "closureCorr",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",             sample) # vars with the final choice of bin edges
 
                 if sample == "TTinData":
-                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTT",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTT",  sample)
-                    self.data[self.makeKey(variable = "MC_corrected_dataClosure", sample = sample, **kwargs)] = regionObj.getFinal("MC_corrected_dataClosure", sample)
+                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTT",        sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTT",        sample)
+                    self.data[self.makeKey(variable = "MC_corrected_dataClosure",       sample = sample, **kwargs)] = regionObj.getFinal("MC_corrected_dataClosure",       sample)
+                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTTvar",     sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTTvar",     sample)
+                    self.data[self.makeKey(variable = "MC_ttVar_corrected_dataClosure", sample = sample, **kwargs)] = regionObj.getFinal("MC_ttVar_corrected_dataClosure", sample)
 
         self.data[self.makeKey(variable = "significances", **kwargs)] = regionObj.get("significance",      None, None, "TT")
         self.data[self.makeKey(variable = "significance",  **kwargs)] = regionObj.getFinal("significance",             "TT")
@@ -400,45 +402,62 @@ def main():
     # ----------------------------------------
     for njet in njets:
 
-        weighted_nTTeventsA_PerBoundaryTT = {}; weighted_nTTEventsA_PerBoundaryTTinData = {};
-        nonClosurePerBoundaryTT           = {}; closureCorrPerBoundaryTT       = {}
-        sigFractionA_PerBoundaryTT        = {}; sigFractionB_PerBoundaryTT     = {}; sigFractionC_PerBoundaryTT         = {}; sigFractionD_PerBoundaryTT = {}
-        nonClosurePerBoundaryTTinData     = {}; closureCorrPerBoundaryTTinData = {}; closureCorrPerBoundaryTTinDataVsTT = {}
-        MC_corrected_dataClosure_PerBoundaryTTinData = {}
+        # TT
+        weighted_nTTeventsA_PerBoundaryTT = {}; nonClosurePerBoundaryTT    = {}; 
+        sigFractionA_PerBoundaryTT        = {}; sigFractionB_PerBoundaryTT = {}; sigFractionC_PerBoundaryTT = {}; sigFractionD_PerBoundaryTT = {}
+        closureCorrPerBoundaryTT          = {}
+        closureCorrPerBoundaryTTvar       = {}
+
+        # TTinData = Data - NonTT
+        weighted_nTTEventsA_PerBoundaryTTinData = {}; nonClosurePerBoundaryTTinData = {}; closurePerBoundaryTTinData = {}; MC_corrected_dataClosure_PerBoundaryTTinData = {} 
+        MC_ttVar_corrected_dataClosure_PerBoundaryTTinData = {} 
+
 
         for key, region in regions.items():
             if "Val_" not in key:
                 continue
 
             # TT
-            weighted_nTTeventsA_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "nEventsA",    sample = "TT", region = key, njet = njet)
-            nonClosurePerBoundaryTT[key]           = theAggy.getPerBoundary(variable = "nonClosure",  sample = "TT", region = key, njet = njet)
-            closureCorrPerBoundaryTT[key]          = theAggy.getPerBoundary(variable = "closureCorr", sample = "TT", region = key, njet = njet)
-            sigFractionA_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionA",               region = key, njet = njet)
-            sigFractionB_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionB",               region = key, njet = njet)
-            sigFractionC_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionC",               region = key, njet = njet)
-            sigFractionD_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionD",               region = key, njet = njet)
+            weighted_nTTeventsA_PerBoundaryTT[key] = theAggy.getPerBoundary(variable = "nEventsA",    sample = "TT",  region = key, njet = njet)
+            nonClosurePerBoundaryTT[key]           = theAggy.getPerBoundary(variable = "nonClosure",  sample = "TT",  region = key, njet = njet)
+            sigFractionA_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionA",                region = key, njet = njet)
+            sigFractionB_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionB",                region = key, njet = njet)
+            sigFractionC_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionC",                region = key, njet = njet)
+            sigFractionD_PerBoundaryTT[key]        = theAggy.getPerBoundary(variable = "sigFractionD",                region = key, njet = njet)
+            closureCorrPerBoundaryTT[key]          = theAggy.getPerBoundary(variable = "closureCorr", sample = "TT",  region = key, njet = njet)            
+            closureCorrPerBoundaryTTvar[key]       = theAggy.getPerBoundary(variable = "closureCorr", sample = ttVar, region = key, njet = njet)            
+
             # TTinData = Data - NonTT
-            weighted_nTTEventsA_PerBoundaryTTinData[key]      = theAggy.getPerBoundary(variable = "nEventsA",                 sample = "TTinData", region = key, njet = njet)
-            nonClosurePerBoundaryTTinData[key]                = theAggy.getPerBoundary(variable = "nonClosure",               sample = "TTinData", region = key, njet = njet)
-            closureCorrPerBoundaryTTinData[key]               = theAggy.getPerBoundary(variable = "closureCorr",              sample = "TTinData", region = key, njet = njet)
-            closureCorrPerBoundaryTTinDataVsTT[key]           = theAggy.getPerBoundary(variable = "closureCorrTTinDataVsTT",  sample = "TTinData", region = key, njet = njet)
-            MC_corrected_dataClosure_PerBoundaryTTinData[key] = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure", sample = "TTinData", region = key, njet = njet)
+            weighted_nTTEventsA_PerBoundaryTTinData[key]            = theAggy.getPerBoundary(variable = "nEventsA",                       sample = "TTinData", region = key, njet = njet)
+            nonClosurePerBoundaryTTinData[key]                      = theAggy.getPerBoundary(variable = "nonClosure",                     sample = "TTinData", region = key, njet = njet)
+            closurePerBoundaryTTinData[key]                         = theAggy.getPerBoundary(variable = "Closure",                        sample = "TTinData", region = key, njet = njet)
+            MC_corrected_dataClosure_PerBoundaryTTinData[key]       = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure",       sample = "TTinData", region = key, njet = njet)
+            MC_ttVar_corrected_dataClosure_PerBoundaryTTinData[key] = theAggy.getPerBoundary(variable = "MC_ttVar_corrected_dataClosure", sample = "TTinData", region = key, njet = njet)
+
+        # set y axis for higher njets bins
+        yMin = None; yMax = None
+        if njet > 8:
+            yMin = 0.5; yMax = 1.5
+
+        else:
+            yMin = 0.7; yMax = 1.3
 
         # TT
         #plotter["TT"].plot_VarVsBoundary(weighted_nTTeventsA_PerBoundaryTT, regionGridWidth/2.0, None, None, None, "Weighted Events in A [MC]", "TT_weighted_nTTeventsA_PerBoundary", njet, color)
         #plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,           regionGridWidth/2.0, 0.0,  0.3,  None, "Non-Closure [MC]",          "TT_NonClosure_PerBoundary",          njet, color)
-        plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,          regionGridWidth/2.0, 0.7,  1.3,  1.0,  "Closure Correction [MC]",   "TT_ClosureCorrection_PerBoundary",   njet, color)
         #plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'A\'",              "TT_SigFracA_PerBoundary",            njet, color) 
         #plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'B\'",              "TT_SigFracB_PerBoundary",            njet, color)
         #plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'C\'",              "TT_SigFracC_PerBoundary",            njet, color)
         #plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'D\'",              "TT_SigFracD_PerBoundary",            njet, color)
-        # TTinData & Data
+        plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,          regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [TT]",   "TT_ClosureCorrection_PerBoundary",   njet, color)
+        plotter[ttVar].plot_VarVsBoundary(closureCorrPerBoundaryTTvar,      regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [%s]"%(ttVar),   "%s_ClosureCorrection_PerBoundary"%(ttVar),   njet, color)
+
+        # TTinData = Data - NonTT
         #plotter["Data"].plot_VarVsBoundary(weighted_nTTEventsA_PerBoundaryTTinData,      regionGridWidth/2.0, None, None, None, "Weighted Events in A [Data]",  "TTinData_weighted_nTTeventsA_PerBoundary",     njet, color)
         #plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,                regionGridWidth/2.0, 0.0, 0.3,   None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",              njet, color)
-        #plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinData,               regionGridWidth/2.0, 0.7, 1.3,   1.0,  "Closure Correction [Data]",    "TTinData_ClosureCorrection_PerBoundary",       njet, color)
-        #plotter["Data"].plot_VarVsBoundary(closureCorrPerBoundaryTTinDataVsTT,           regionGridWidth/2.0, 0.7, 1.3,   1.0,  "Closure Correction [Data/TT]", "DataMC_ClosureCorrection_PerBoundary",         njet, color)
-        plotter["Data"].plot_VarVsBoundary(MC_corrected_dataClosure_PerBoundaryTTinData, regionGridWidth/2.0, 0.7, 1.3,   1.0,  "[Closure Corr. * Data Closure]",    "TTinData_MC_corrected_dataClosure_PerBoundary", njet, color)
+        plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                         regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",      "TTinData_DataClosure_PerBoundary",                         njet, color)
+        plotter["Data"].plot_VarVsBoundary(MC_corrected_dataClosure_PerBoundaryTTinData,       regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary",            njet, color)
+        plotter["Data"].plot_VarVsBoundary(MC_ttVar_corrected_dataClosure_PerBoundaryTTinData, regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(ttVar), njet, color)
 
 
 if __name__ == '__main__':
