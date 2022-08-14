@@ -110,7 +110,7 @@ def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKe
     ScaleFactor.GetYaxis().SetTitleOffset(1.6*YTitleOffset/PadFactor)
     ScaleFactor.Draw("E1 P")
     #canvas.SaveAs("plots/plots_latestTriggers_16.04.2021/SingleMuon/" + year + "_SingleMuon_" + dataset + "_" + var + "_TriggerScaleFactor" + ".pdf")
-    canvas.SaveAs("test/latest/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
+    canvas.SaveAs("test/triggerEffSFs_0l/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
 
 
 def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile):
@@ -205,7 +205,13 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
     ScaleFactor.Draw("COLZ E TEXT")
     addCMSlogo(aCanvas, year, TopMargin=0.12, LeftMargin=0.09, RightMargin=0.11, SF=1.0)
     #aCanvas.SaveAs("plots/plots_latestTriggers_16.04.2021/SingleMuon/%s.pdf"%("ScaleFactor_"+theName))
-    aCanvas.SaveAs("test/latest/%s.pdf"%(theName+"_TriggerSF"))
+    aCanvas.SaveAs("test/triggerEffSFS_0l/%s.pdf"%(theName+"_TriggerSF"))
+
+    # make the zoom version of the SF plots
+    #ScaleFactor.GetXaxis().SetRangeUser(500, 1000)
+    #ScaleFactor.GetYaxis().SetRangeUser(45, 90)
+    #ScaleFactor.GetZaxis().SetRangeUser(0.65, 1.05)
+    #aCanvas.SaveAs("test/latest/%s.pdf"%(theName+"_TriggerSF"+"_zoom"))
 
     # write SF histograms to the root file
     if outputFile is not None:
