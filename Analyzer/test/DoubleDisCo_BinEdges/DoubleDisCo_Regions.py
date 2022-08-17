@@ -4,7 +4,6 @@ import math
 import ctypes
 import numpy as np
 
-
 # ----------------------------------------------------------------------------------
 # histBkg        : ROOT TH2 corresponding to background process
 # histSig        : ROOT TH2 corresponding to signal process
@@ -17,7 +16,7 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 class All_Regions:
 
-    def __init__(self, hist=None, Sig=None, ttVar=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
+    def __init__(self, hist=None, Sig=None, ttVar=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=False, **kwargs):
 
         self.hist           = hist
         self.Sig            = Sig
@@ -28,10 +27,18 @@ class All_Regions:
         self.rightBoundary  = round(float(rightBoundary), 2)  if rightBoundary  != None else None
         self.topBoundary    = round(float(topBoundary), 2)    if topBoundary    != None else None
         self.bottomBoundary = round(float(bottomBoundary), 2) if bottomBoundary != None else None
-        self.metric         = metric
+        self.fastMode       = fastMode
 
         self.extraArgs = kwargs
-        self.finalEdges = (fixedDisc1Edge, fixedDisc2Edge)
+
+        fixedDisc1EdgeStr = None
+        fixedDisc2EdgeStr = None
+        if fixedDisc1Edge != None:
+            fixedDisc1EdgeStr = "%0.3f"%(float(fixedDisc1Edge))
+        if fixedDisc2Edge != None:
+            fixedDisc2EdgeStr = "%0.3f"%(float(fixedDisc2Edge))
+
+        self.finalEdges = (fixedDisc1EdgeStr, fixedDisc2EdgeStr)
         self.quantities = {}
 
         for key in hist.keys():
@@ -41,8 +48,10 @@ class All_Regions:
         self.count_Events_inBinEdges()
 
         # Then determine the "final" choice of bin edges for the region
-        # based on the optimization_metric function
         self.get_nEvents_Quantities()
+
+    def get_ttVar_Name(self):
+        return self.ttVar
 
     # -------------------------------------
     # Significance calculation with only TT
@@ -152,12 +161,6 @@ class All_Regions:
 
         return pull, pullUnc
     
-    # --------------------------------------------------------------
-    # Optimization metric function to be overridden by derived class
-    # --------------------------------------------------------------
-    def optimization_metric(self, **kwargs):
-        return 0.0
-
     # -----------------------------------------------------
     # get signal and background histograms' counts
     #   count both signal and background events separately:
@@ -194,6 +197,10 @@ class All_Regions:
                 xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
                 xBinKey     = "%.3f"%(xLowBinEdge)
 
+                # Only care about actual choice of bin edges
+                if self.fastMode and self.fixedDisc1Edge != None and (abs(self.fixedDisc1Edge - xLowBinEdge) >= 10e-3):
+                    continue
+
                 # For each choice of xBin (vertical divider in ABCD plane),
                 # initialize counts for the four regions
                 startOfScan = True
@@ -204,12 +211,17 @@ class All_Regions:
 
                 # loop over the y bins
                 for yBin in nYBins:
-    
+
                     # Store disc 2 edge as string with three digits of accuracy for now
                     yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
                     yBinKey     = "%.3f"%(yLowBinEdge)
 
-                    nEventsErr_A = ROOT.Double(0.0); nEventsErr_B = ROOT.Double(0.0); nEventsErr_C = ROOT.Double(0.0); nEventsErr_D = ROOT.Double(0.0)
+                    # Only care about actual choice of bin edges
+                    if self.fastMode and self.fixedDisc2Edge != None and (abs(self.fixedDisc2Edge - yLowBinEdge) >= 10e-3):
+                        continue
+
+
+                    nEventsErr_A = ctypes.c_double(0.0); nEventsErr_B = ctypes.c_double(0.0); nEventsErr_C = ctypes.c_double(0.0); nEventsErr_D = ctypes.c_double(0.0)
 
                     # last      | 
                     #        B  |  A
@@ -260,7 +272,7 @@ class All_Regions:
 
         # loop over the disc1 and disc2 to get any possible combination of them
         for disc1Key, disc2Key in self.get("edges",None,None,"TT"):
-
+        
             # number of signal and background events in aech A, B, C, D region
             nTTEvents_A,    nTTEventsErr_A    = self.get("nEventsA", disc1Key, disc2Key, "TT")
             nTTEvents_B,    nTTEventsErr_B    = self.get("nEventsB", disc1Key, disc2Key, "TT")
@@ -595,113 +607,6 @@ class All_Regions:
     def getFinal(self, name, hist=""):
         return self.get(name, self.finalEdges[0], self.finalEdges[1], hist)
 
-
-# -------------------------------------------
-# Calculate optimization metric of bin edges
-#   This function use the command line option
-#   -- NN optimization metric
-#   -- New optimization metric
-# ------------------------------------------- 
-class ABCDedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        if (kwargs["nBkgA"] > kwargs["minBkgEvents"] and kwargs["significance"] != 0.0):
-        
-            # NN optimization metric
-            if self.metric == "NN":
-                optimizationMetric  = (kwargs["nonClosure"])**2 + (1.0 / kwargs["significance"])**2
-                   
-            # New optimization metric
-            else: 
-                optimizationMetric  = (5 * kwargs["nonClosure"])**2 + (1.0 / kwargs["significance"])**2
-        
-            return optimizationMetric
-
-        else:
-
-            return 999.0
-
-# ---------------------------------------------------------------------------
-# make the validation regions in BD : bdEF
-#   -- define validation disc1 edge between 0 and the final bin edge of disc1
-#   -- final disc2 edge is constant
-#          *                              
-#      E   *    B'  |    A                
-#   _______*________|________             
-#          *        |                     
-#      F   *    D'  |    C                
-#          *                     
-# Calculate the metric of Validation Regions in BD: bdEF
-# ---------------------------------------------------------------------------
-class bdEFedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        optimizationMetric = None              
-
-        if "nBkgA" in self.extraArgs:
-            optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgC"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgC"]))
-        
-        else:
-            optimizationMetric = 1.0
-
-        return optimizationMetric
-
-
-# ---------------------------------------------------------------------------
-# make the validation regions in CD : cdiGH
-#   -- define validation disc2 edge between 0 and the final bin edge of disc2
-#   -- final disc1 edge is constant
-#
-#          B  |  A   
-#       ______|______
-#             |
-#          D' |  C' 
-#       *************
-#             |
-#          H  |  G
-# Calculate the metric of Validation Regions in CD: cdiGH
-# --------------------------------------------------------------------------- 
-class cdGHedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        optimizationMetric = None
-
-        if "nBkgA" in self.extraArgs:
-            optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgB"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgB"]))
-        
-        else:
-            optimizationMetric = 1.0
-
-        return optimizationMetric
-
-
-# ------------------------------------------------
-# make the validation regions as sub-division of D 
-#               |
-#        B      |   A
-#               |
-#     __________|_______
-#         *     |
-#      dB * dA  | 
-#     ********* |   C
-#      dD * dC  |
-#         *     |
-# Calculate the metric of sub-division of D 
-# ------------------------------------------------
-class subDivDedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        optimizationMetric  = 999.0
-
-        if abs(kwargs["disc1"] - self.extraArgs["ABCDdisc1"]/2.0) < 0.01 and abs(kwargs["disc2"] - self.extraArgs["ABCDdisc2"]/2.0) < 0.01:
-            optimizationMetric = 1.0
-
-        return optimizationMetric
-
 # -----------------------------------------
 # add the all edges to DoubleDisCo Cfg file
 # -----------------------------------------
@@ -713,8 +618,7 @@ class addEdges_toDoubleDisco():
         self.mass      = mass
         self.channel   = channel
         self.regions   = regions
-
-    def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
+def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
 
         cfgVer = ""
         
@@ -764,5 +668,3 @@ class addEdges_toDoubleDisco():
 
         g.write("} \n")
         g.close()
-
-                    
