@@ -666,6 +666,63 @@ class Common_Calculations_Plotters:
         plt.close(fig)
 
 
+    # -------------------------------------------------------------
+    # plot variable as a function of per boundary for all variances
+    #   -- as part of closure correction factor study
+    # -------------------------------------------------------------
+    def plot_VarVsBoundary_Variances(self, var, ttVars, labels, xWidth, yMin = None, yMax = None, lineY = None, region = "", ylabel = "", tag = "", Njets = -1, colors=None, valColor=None):
+
+        x    = {ttVar : [] for ttVar in ttVars}
+        y    = {ttVar : [] for ttVar in ttVars}
+        yUnc = {ttVar : [] for ttVar in ttVars} 
+        xUnc = {ttVar : [] for ttVar in ttVars}
+
+        fig = plt.figure(figsize=(5, 5))
+        ax = plt.gca()
+
+        for ttVar in ttVars:
+            for boundary, value in var[ttVar].items():
+                x[ttVar].append(boundary)
+                y[ttVar].append(value[0])
+                yUnc[ttVar].append(value[1])
+                xUnc[ttVar].append(xWidth)
+
+            marker = "o"
+            if "Up" in ttVar or "UP" in ttVar or "up" in ttVar:
+                marker = "^"
+            elif "Down" in ttVar or "DOWN" in ttVar or "down" in ttVar:
+                marker = "v"
+
+            if ttVar == "TT":
+                ax.errorbar(x[ttVar], y[ttVar], yerr=yUnc[ttVar], xerr=xUnc[ttVar], label=labels[ttVar], fmt='', capsize=0, color=colors[ttVar], lw=0, elinewidth=2, marker=marker, markersize=6.0, markeredgecolor=colors[ttVar], markerfacecolor=colors[ttVar])
+            elif ttVar == "None":
+                ax.errorbar(x[ttVar], y[ttVar], yerr=yUnc[ttVar], label=labels[ttVar], fmt='', capsize=0, color=colors[ttVar], lw=0, elinewidth=2, marker=marker, markersize=6.0, markeredgecolor=colors[ttVar], markerfacecolor="white")
+            else:
+                ax.errorbar(x[ttVar], y[ttVar], yerr=yUnc[ttVar], label=labels[ttVar], fmt='', capsize=0, color=colors[ttVar], lw=0, elinewidth=2, marker=marker, markersize=5.0, markeredgecolor=colors[ttVar], markerfacecolor=colors[ttVar])
+
+            if yMin != None and yMax != None:
+                ax.set_ylim((yMin, yMax))
+
+        ax.set_xlabel("Boundary Value", fontsize=14)
+        ax.set_ylabel(ylabel, fontsize=14)
+
+        iamLegend = plt.legend(ncol=2, loc='upper right', numpoints=1, frameon=False, fontsize=7, markerscale=0.8)
+        ax.text(0.15, 0.97, region, transform=ax.transAxes, color=valColor, fontsize=9, fontweight='bold',   va='center', ha='center')
+
+        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+
+
+        if lineY != None:
+            l1 = ml.Line2D([0.0, 1.05], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
+            ax.add_line(l1); 
+
+        fig.tight_layout()
+        fig.savefig('%s/%s_%s_Njets%s_%s_%s_%s_Variances.pdf' % (self.outputDir, self.year, tag, Njets, region, self.channel, self.metric), dpi=fig.dpi)
+
+        plt.close(fig)
+
     # -------------------------------------------------------
     # plot closure oer njets for MC closure correction factor
     #   -- MC correction factor
