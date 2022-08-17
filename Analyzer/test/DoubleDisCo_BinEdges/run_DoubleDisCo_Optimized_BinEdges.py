@@ -4,7 +4,6 @@ import argparse
 
 from DoubleDisCo_Regions     import *
 from DoubleDisCo_Plotter     import *
-from DoubleDisCo_Variances   import *
 from DoubleDisCo_TableWriter import *
 
 # ---------------------------------------------------
@@ -14,9 +13,10 @@ from DoubleDisCo_TableWriter import *
 # ---------------------------------------------------
 def get_Optimized_ABCDedges(all_ABCDEdges, significance, nonClosure, nonClosure_Pull, sigFracB, sigFracC, sigFracD, sigFracB_Unc, sigFracC_Unc, sigFracD_Unc, sigFracCut):
 
-    njets            = nonClosure.keys()
-    i_bestChoice     = -999
-    max_significance = 0.0
+    njets               = nonClosure.keys()
+    max_significance    = 0.0
+    i_bestChoice        = -999
+    best_choices_params = {}
 
     for i_list in range(0, len(all_ABCDEdges)):
 
@@ -30,20 +30,61 @@ def get_Optimized_ABCDedges(all_ABCDEdges, significance, nonClosure, nonClosure_
             total_significance += (significance[njet][i_list]**2.0)
 
             # check the non-closure and pull to get the same ABCD edges for all njet bins
-            if not (nonClosure[njet][i_list] < 0.3 or nonClosure_Pull[njet][i_list] < 2): 
+            if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2): 
                 pass_nonClosure = False
 
             # based on the sigFracs table, 30% for 0l, 40% for 1l
             if not (sigFracB[njet][i_list] < sigFracCut and sigFracC[njet][i_list] < sigFracCut and sigFracD[njet][i_list] < sigFracCut): 
                 pass_sigFrac = False
+
+        # Add manually the non-optimized edges and associated quantities
+        if all_ABCDEdges[i_list][0] == "0.600" and all_ABCDEdges[i_list][1] == "0.600":
+            best_choices_params[999.0] = {}
         
+            best_choices_params[999.0]["Significance"] = math.sqrt(total_significance)
+            
+            for njet in njets:
+
+                best_choices_params[999.0]["nonClosure_njet%s"%njet]      = nonClosure[njet][i_list]
+                best_choices_params[999.0]["nonCllosurePull_njet%s"%njet] = nonClosure_Pull[njet][i_list]
+                best_choices_params[999.0]["sigFracB_njet%s"%njet]        = sigFracB[njet][i_list]
+                best_choices_params[999.0]["sigFracC_njet%s"%njet]        = sigFracC[njet][i_list]  
+                best_choices_params[999.0]["sigFracD_njet%s"%njet]        = sigFracD[njet][i_list]
+                
+            best_choices_params[999.0]["ABCDedges"] = all_ABCDEdges[i_list]
+       
         # get the current best choice of ABCD edges     
-        if ( pass_nonClosure and pass_sigFrac and (total_significance > max_significance) ):
+        if (pass_nonClosure and pass_sigFrac):
 
-            max_significance = total_significance
-            i_bestChoice     = i_list
+            if (total_significance > max_significance):
 
-    return all_ABCDEdges[i_bestChoice]
+                max_significance = total_significance
+                i_bestChoice     = i_list
+
+            # make the table to compare the significances between 
+            if math.sqrt(total_significance) > 3.5:
+
+                best_choices_params[total_significance] = {}
+        
+                best_choices_params[total_significance]["Significance"] = math.sqrt(total_significance)
+                
+                for njet in njets:
+
+                    best_choices_params[total_significance]["nonClosure_njet%s"%njet]      = nonClosure[njet][i_list]
+                    best_choices_params[total_significance]["nonCllosurePull_njet%s"%njet] = nonClosure_Pull[njet][i_list]
+                    best_choices_params[total_significance]["sigFracB_njet%s"%njet]        = sigFracB[njet][i_list]
+                    best_choices_params[total_significance]["sigFracC_njet%s"%njet]        = sigFracC[njet][i_list]  
+                    best_choices_params[total_significance]["sigFracD_njet%s"%njet]        = sigFracD[njet][i_list]
+                    
+                best_choices_params[total_significance]["ABCDedges"] = all_ABCDEdges[i_list]
+
+    return max_significance, all_ABCDEdges[i_bestChoice], best_choices_params
+
+# ---------------------------------------------------
+# get a table to see how the significance differences 
+# between non-optimized and optimized ABCD bin edges
+#   -- non-closure, pull, sigFracs and bin edges
+# ---------------------------------------------------
 
 
 def main():
@@ -57,7 +98,6 @@ def main():
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",           dest="year",           help="which year",            required=True)
     parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_1L") # Both 0L & 1l with OldSeed
-    #parser.add_argument("--path",           dest="path",           help="Input dir with histos", default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_TopSeed_1L") # 0L with TopSeed
     parser.add_argument("--tt",             dest="tt",             help="TT",                    required=True)
     parser.add_argument("--nontt",          dest="nontt",          help="NonTT",                 required=True)
     parser.add_argument("--ttVar",          dest="ttVar",          help="TT Variances",          required=True)
@@ -68,38 +108,12 @@ def main():
     parser.add_argument("--metric",         dest="metric",         help="NN,New",                required=None, type=str)
     parser.add_argument("--fixedDisc1edge", dest="fixedDisc1edge", help="fixed d1 edge",         default=None, type=float)
     parser.add_argument("--fixedDisc2edge", dest="fixedDisc2edge", help="fixed d2 edge",         default=None, type=float)
+    parser.add_argument("--numChoices",     dest="numChoices",     help="number of edge choices",default=4, type=int)
     args = parser.parse_args()
 
     Sig     = "%s_%s"%(args.sig, args.mass)
     ttVar   = "%s"%(args.ttVar)
     samples = [args.tt, args.nontt, ttVar, Sig, args.data]
-
-    ## Make the output directories if they do not already exist
-    #plotsPath = {}; tablesPath = {}
-
-    #for sample in samples:
-
-    #    # make directories to save plots and tables        
-    #    if sample == Sig: continue
-
-    #    if args.fixedDisc1edge != None or args.fixedDisc2edge != None:
-    #        plotsPath[sample]  = "plots_fixedEdges_%s_%s/%s_%s/%s/"%(args.fixedDisc1edge, sample, args.sig, args.mass, args.channel)
-    #        
-    #        if sample == "TT":
-    #            tablesPath[sample] = "tables_fixedEdges_%s_%s/%s"%(args.fixedDisc1edge, sample, args.channel)
-
-    #    else:
-    #        plotsPath[sample]  = "plots_%s/%s_%s/%s/"%(sample, args.sig, args.mass, args.channel)
-
-    #        if sample == "TT":
-    #            tablesPath[sample] = "tables_%s/%s"%(sample, args.channel)
-
-    #    # 
-    #    if not os.path.exists(plotsPath[sample]):
-    #        os.makedirs(plotsPath[sample])
-
-    #    if not os.path.exists(tablesPath["TT"]):
-    #        os.makedirs(tablesPath["TT"])
 
     # get SYY histogram
     modelDecay = "2t6j"
@@ -132,7 +146,7 @@ def main():
     # get the 2D histograms 
     njets = None
     histNames = "h_DoubleDisCo_disc1_disc2_%s_Njets"%(args.channel)
-    njets = ["7", "8", "9", "10", "11", "12"]
+    njets = ["7", "8", "9", "10", "11", "12incl"]
 
     # make regionis list for adding all edges to DoubleDisCo cfg file
     regions = {"ABCD"        : "ABCD",
@@ -147,6 +161,14 @@ def main():
                   "Val_cdiGH"     : {"A" : "c",  "B" : "di", "C" : "G",  "D" : "H" },
                   "Val_subDivD"   : {"A" : "dA", "B" : "dB", "C" : "dC", "D" : "dD"},
     }
+
+    # initialize table path
+    thePath = "table_optimizing_ABCDedges"
+    
+    if not os.path.exists(thePath):
+        os.makedirs(thePath)
+
+    optimized_ABCDedges    = Optimized_ABCDedges(thePath, args.channel, args.year, "ABCDedges",    args.sig, args.mass)
 
     # ---------------------------------------------------------
     # to optimize the ABCD edges
@@ -183,7 +205,7 @@ def main():
             theEdgesClass = None
             if key == "ABCD":
 
-                theEdgesClass = ABCDedges(hist_lists, Sig=Sig, ttVar=ttVar, fixedDisc1Edge=args.fixedDisc1edge, fixedDisc2Edge=args.fixedDisc2edge, metric=args.metric)    
+                theEdgesClass = All_Regions(hist_lists, Sig=Sig, ttVar=ttVar, fixedDisc1Edge=args.fixedDisc1edge, fixedDisc2Edge=args.fixedDisc2edge, metric=args.metric)    
 
                 # ----------------------------------------------------
                 # fill all the dictionaries to optimize the ABCD edges
@@ -205,26 +227,36 @@ def main():
     if args.channel == "0l": 
         sigFracsCut = 0.3
 
-    # --------------------------------------
-    # optimized ABCD edges with significance
-    # --------------------------------------
-    opt_ABCDEdges = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut) 
-
-    print "ABCD edges with Significance                      : ", opt_ABCDEdges   
+    # --------------------------------------------------
+    # optimized ABCD edges with different significances:
+    #   -- basic version
+    #   -- non-simplified version
+    # --------------------------------------------------
+    #opt_ABCDEdges = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut) 
+    #opt_ABCDEdges_2 = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance_nonSimplified["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)    
+    
+    #print "ABCD edges with Significance                      : ", opt_ABCDEdges
+    #print "ABCD edges with Significance nonSimplified        : ", opt_ABCDEdges_2
 
     # ------------------------------------------------------------
     # optimized ABCD edges with significance including non-closure
     # ------------------------------------------------------------
-    opt_ABCDEdges_1 = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance_includingNonClosure["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)
-    
-    print "ABCD edges with Significance including non-closure: ", opt_ABCDEdges_1
+    significance, opt_ABCDEdges_1, best_choices_parameters = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance_includingNonClosure["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)
 
-    # ---------------------------------------------------------------
-    # optimized ABCD edges with significance (non-simplified version)
-    # ---------------------------------------------------------------
-    opt_ABCDEdges_2 = get_Optimized_ABCDedges(all_ABCDEdges["ABCD"]["7"], significance_nonSimplified["ABCD"], nonClosure["ABCD"], nonClosure_Pull["ABCD"], sigFracB["ABCD"], sigFracC["ABCD"], sigFracD["ABCD"], sigFracB_Unc["ABCD"], sigFracC_Unc["ABCD"], sigFracD_Unc["ABCD"], sigFracsCut)    
-    
-    print "ABCD edges with Significance nonSimplified        : ", opt_ABCDEdges_2
+    optimized_ABCDedges.writeLine(Njets = njets, Best_Parameters = best_choices_parameters, numEdgeChoices = args.numChoices)
+
+    # ----------------
+    # close the tables
+    # ----------------
+    optimized_ABCDedges.writeClose()
+
+    # -------------------------------------
+    # add all edges to DoubleDisCo cfg file
+    # -------------------------------------
+    #if args.updateDisCoCfg:
+    #    addEdges = addEdges_toDoubleDisco(args.year, args.sig, args.mass, args.channel, regions)
+    #    addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
+
 
 if __name__ == '__main__':
     main()
