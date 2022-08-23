@@ -13,8 +13,7 @@ from matplotlib.collections import PatchCollection
 
 class Common_Calculations_Plotters:
 
-    def __init__(self, outputDir, metric, year, model, mass, channel):
-        self.metric  = metric 
+    def __init__(self, outputDir, year, model, mass, channel):
         self.year    = year
         self.model   = model
         self.mass    = mass
@@ -134,7 +133,6 @@ class Common_Calculations_Plotters:
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax1.text(0.05, 0.1, '$\\chi^2$ / ndof = %3.2f' % (totalChi2 / float(ndof)), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=10)
-        #ax1.text(0.05, 0.25,  '%s Metric'%(self.metric),  horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=14, fontweight='bold')
         ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
         ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
         ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
@@ -179,7 +177,7 @@ class Common_Calculations_Plotters:
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
     
-        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
+        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel))
    
         plt.close(fig)
 
@@ -325,7 +323,7 @@ class Common_Calculations_Plotters:
             ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
             ax3.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
     
-            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
+            fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataVsMC_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel))
    
             plt.close(fig)
 
@@ -479,7 +477,7 @@ class Common_Calculations_Plotters:
         ax.add_line(l2)
         #fig.tight_layout()
 
-        fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s_%s.pdf"%(self.year, variable, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s.pdf"%(self.year, variable, Njets, name, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -508,7 +506,7 @@ class Common_Calculations_Plotters:
         plt.text(0.4, 0.85, '$%.2f < \\bf{Disc.\\;1\\;Edge}$ = %s < %.2f' % (edges[0][0], finalDiscEdges[0], edges[-1][0]), transform=ax.transAxes, fontsize=8)
         plt.text(0.4, 0.8, '$%.2f < \\bf{Disc.\\;2\\;Edge}$ = %s < %.2f' % (edges[0][1],  finalDiscEdges[1], edges[-1][1]), transform=ax.transAxes, fontsize=8)
 
-        fig.savefig('%s/%s_InvSign_vs_NonClosure_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_InvSign_vs_NonClosure_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, Njets, name, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -554,7 +552,7 @@ class Common_Calculations_Plotters:
         #ax.add_line(l4)
 
         fig.tight_layout()
-        fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_Disc1VsDisc2_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, name, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -616,7 +614,7 @@ class Common_Calculations_Plotters:
         ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
 
         fig.tight_layout()
-        fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -661,7 +659,7 @@ class Common_Calculations_Plotters:
             ax.add_line(l1); 
 
         fig.tight_layout()
-        fig.savefig('%s/%s_%s_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_%s_Njets%s_%s.pdf' % (self.outputDir, self.year, tag, Njets, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -698,7 +696,7 @@ class Common_Calculations_Plotters:
             elif ttVar == "None":
                 ax.errorbar(x[ttVar], y[ttVar], yerr=yUnc[ttVar], label=labels[ttVar], fmt='', capsize=0, color=colors[ttVar], lw=0, elinewidth=2, marker=marker, markersize=6.0, markeredgecolor=colors[ttVar], markerfacecolor="white")
             else:
-                ax.errorbar(x[ttVar], y[ttVar], yerr=yUnc[ttVar], label=labels[ttVar], fmt='', capsize=0, color=colors[ttVar], lw=0, elinewidth=2, marker=marker, markersize=5.0, markeredgecolor=colors[ttVar], markerfacecolor=colors[ttVar])
+                ax.errorbar(x[ttVar], y[ttVar], label=labels[ttVar], fmt='', capsize=0, color=colors[ttVar], lw=0, elinewidth=2, marker=marker, markersize=5.0, markeredgecolor=colors[ttVar], markerfacecolor=colors[ttVar])
 
             if yMin != None and yMax != None:
                 ax.set_ylim((yMin, yMax))
@@ -719,7 +717,7 @@ class Common_Calculations_Plotters:
             ax.add_line(l1); 
 
         fig.tight_layout()
-        fig.savefig('%s/%s_%s_Njets%s_%s_%s_%s_Variances.pdf' % (self.outputDir, self.year, tag, Njets, region, self.channel, self.metric), dpi=fig.dpi)
+        fig.savefig('%s/%s_%s_Njets%s_%s_%s_Variances.pdf' % (self.outputDir, self.year, tag, Njets, region, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
 
@@ -863,7 +861,7 @@ class Common_Calculations_Plotters:
                 ax1.legend(loc='upper right', numpoints=1, frameon=False, fontsize=20)
                 ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=14)
     
-                fig.savefig('%s/%s_Njets_Region_A_PredVsActual_ClosureCorr_dataVsMC_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
+                fig.savefig('%s/%s_Njets_Region_A_PredVsActual_ClosureCorr_dataVsMC_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel))
    
                 plt.close(fig)
 
@@ -959,7 +957,7 @@ class Common_Calculations_Plotters:
 
         ax.legend(loc='upper right', numpoints=1, frameon=False, fontsize=10)
 
-        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataUnweightedEventCounts_%s_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel, self.metric))
+        fig.savefig('%s/%s_Njets_Region_A_PredVsActual_dataUnweightedEventCounts_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel))
 
         plt.close(fig)
 
