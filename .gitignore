@@ -228,3 +228,5 @@ PlottersSUS19004
 obj/
 filelists_*
 **.pcm
+!**/condor/
+**/condor/*

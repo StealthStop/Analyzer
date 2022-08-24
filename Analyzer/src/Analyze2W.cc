@@ -196,10 +196,11 @@ struct SliceData {
     double genHt;
     int NJets;
     int n_gen_leps;
+    float gen_w_pt;
     const std::vector<utility::LorentzVector> &Jets;
-    const std::vector<float> &nsr21;
-    const std::vector<float> &nsr42;
-    const std::vector<float> &nsr43;
+    // const std::vector<float> &nsr21;
+    // const std::vector<float> &nsr42;
+    // const std::vector<float> &nsr43;
     std::size_t j1_index=0;
     std::size_t j2_index=1;
     bool has_2_jets=false;
@@ -227,6 +228,7 @@ ForwardIt max_element_second(ForwardIt first, ForwardIt last,
     return largest;
 }
 
+
 class LeadingJetGen : public Generator {
     public:
         LeadingJetGen() : Generator("LeadingJetGen"){}
@@ -252,6 +254,21 @@ class HTCut : public Cut {
         }
 };
 
+class GenWPt : public Cut {
+    public:
+        GenWPt() : Cut("GenWPt", false, {"GenWPt<200", "GenWPt<200"}) {}
+        void calculate(SliceData &data) override {
+            //            DEBUG("Running cut HT");
+            if (data.gen_w_pt > 200) {
+                passed = false;
+                value = possible_values[1];
+            } else {
+                passed = true;
+                value = possible_values[0];
+            }
+        }
+};
+
 class GenHTCut : public Cut {
     public:
         GenHTCut() : Cut("GenHTCut", false, {"HT>700", "HT<=700"}) {}
@@ -268,7 +285,7 @@ class GenHTCut : public Cut {
 
 class GenLepCut : public Cut {
     public:
-        GenLepCut() : Cut("GenLepCut", false, {"0Lep", "1Lep","2Lep"}) {}
+        GenLepCut() : Cut("GenLepCut", false, {"0Lep", "1Lep","2Lep","gt2Lep"}) {}
         void calculate(SliceData &data) override {
             switch(data.n_gen_leps){
                 case 0:
@@ -283,6 +300,10 @@ class GenLepCut : public Cut {
                     passed = false;
                     value = possible_values[2];
                     break;
+                default:
+                    passed = false;
+                    value = possible_values[3];
+                    break;
             }
         }
 };
@@ -290,6 +311,7 @@ class GenLepCut : public Cut {
 
 
 
+#if 0
 class SelectionCut : public Cut {
     public:
         SelectionCut()
@@ -351,6 +373,7 @@ class TauCut : public Cut {
             }
         }
 };
+#endif
 
 class MassRatioCut : public Cut {
     public:
@@ -414,13 +437,15 @@ Analyze2W::Analyze2W() {
 
     my_histos.cuts.push_back(std::make_unique<GenHTCut>());
     my_histos.cuts.push_back(std::make_unique<GenLepCut>());
-    my_histos.cuts.push_back(std::make_unique<SelectionCut>());
+    //my_histos.cuts.push_back(std::make_unique<SelectionCut>());
     my_histos.cuts.push_back(std::make_unique<MassRatioCut>());
-    my_histos.cuts.push_back(std::make_unique<TauCut>());
+    //my_histos.cuts.push_back(std::make_unique<TauCut>());
     my_histos.cuts.push_back(std::make_unique<EtaCut>());
+    my_histos.cuts.push_back(std::make_unique<GenWPt>());
     my_histos.constructChains({
-            {"GenLepCut"}
-            //{"GenLepCut", "GenHTCut"},
+            {"GenLepCut"},
+            {"GenLepCut", "GenWPt"},
+            {"GenLepCut", "GenHTCut", "GenWPt"}
             //{"GenLepCut", "SelectionCut"},
             //{"GenLepCut", "SelectionCut","EtaCut"},
             //{"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
@@ -452,6 +477,7 @@ void Analyze2W::InitHistos() {
 
     // Number of reco b jets
     my_histos.createNewHistogram("nbjets_loose", 5, 0, 5, "NBjets_loose");
+    my_histos.createNewHistogram("nbjets_medium", 5, 0, 5, "NBjets_medium");
 
     // Tagging
     my_histos.createNewHistogram("DeepAK8TagW_medium_wp", 5, 0, 5, "DeepAK8TagW_medium_wp");
@@ -581,6 +607,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         makeVec(JetsAK8_DeepTagWvsQCD, float);
 
         makeVar(NBJets_loose, int);
+        makeVar(NBJets, int);
 
         makeVec(JetsAK8_NsubjettinessTau3, float);
         makeVec(JetsAK8_NsubjettinessTau2, float);
@@ -619,6 +646,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         };
 
         std::vector<std::pair<int, utility::LorentzVector>> gen_w_boson, gen_leptons, gen_stops, gen_sbottoms, gen_w_quarks, gen_sbottom_quarks;
+        int num_gen_w = 0;
 
         std::array<int, 2> gen_w_idx = {-1,-1};
         std::array<int, 2> gen_st_idx = {-1,-1};
@@ -630,86 +658,83 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         };
 
 
-        if(is_rpv_mc) {
-            for (std::size_t i = 0; i < GenParticles.size(); ++i) { // clang-format off
-                switch (GenParticles_PdgId[i]) {
-                    case W_PDGID: case -W_PDGID:
-                        if (!isHard(GenParticles_Status[i])) continue;
-                        if(GenParticles_ParentIdx[i] >= 0) {
-                            if (GenParticles_ParentId[i] == STOP_PDGID || 
-                                    GenParticles_ParentId[i] == -STOP_PDGID)
-                                gen_w_boson.emplace_back(i,GenParticles[i]);
-                            if(gen_w_idx[0] == -1){
-                                gen_w_idx[0] = i;
-                                gen_st_idx[0] = GenParticles_ParentIdx[i];
+        for (std::size_t i = 0; i < GenParticles.size(); ++i) { // clang-format off
+            switch (GenParticles_PdgId[i]) {
+                case W_PDGID: case -W_PDGID:
+                    if (!isHard(GenParticles_Status[i])) continue;
+                    if(GenParticles_ParentIdx[i] >= 0) {
+                        if (GenParticles_ParentId[i] == STOP_PDGID || 
+                                GenParticles_ParentId[i] == -STOP_PDGID)
+                            gen_w_boson.emplace_back(i,GenParticles[i]);
+                        if(gen_w_idx[0] == -1){
+                            gen_w_idx[0] = i;
+                            gen_st_idx[0] = GenParticles_ParentIdx[i];
 
-                            } else {
-                                gen_w_idx[1] = i;
-                                gen_st_idx[1] = GenParticles_ParentIdx[i];
-                            }
-                        }
-                        break;
-                    case SB_PDGID: case -SB_PDGID:
-                        is_virtual_sbottom=false;
-                        if (!isHard(GenParticles_Status[i])) continue;
-                        if(GenParticles_ParentIdx[i] >= 0) {
-                            if (GenParticles_ParentId[i] == STOP_PDGID || 
-                                    GenParticles_ParentId[i] == -STOP_PDGID){
-                                gen_sbottoms.emplace_back(i , GenParticles[i]);
-                            }
-                        }
-                        break;
-
-                    case E_PDGID: case M_PDGID: case T_PDGID:
-                    case -E_PDGID: case -M_PDGID: case -T_PDGID:
-                        if(std::abs(GenParticles_ParentId[i]) == W_PDGID) 
-                            gen_leptons.emplace_back(i,GenParticles[i]);
-                        //if( std::abs(GenParticles_PdgId[i]) == 15){ break; }
-                        break;
-                    case STOP_PDGID: case -STOP_PDGID:
-                        if(std::abs(GenParticles_Status[i])==62)
-                            gen_stops.emplace_back(i,GenParticles[i]);
-                        break;
-                    case 1: case -1: case 2: case -2: case 3: case -3:
-                    case 4: case -4: case 5: case -5: case 6: case -6:
-                    case 7: case -7: case 8: case -8: 
-                        if(std::abs(GenParticles_ParentId[i]) == 24){
-                            gen_w_quarks.emplace_back(i,GenParticles[i]);
-                        } else if(std::abs(GenParticles_ParentId[i]) == ( (is_virtual_sbottom)? STOP_PDGID : SB_PDGID)) {
-                            gen_sbottom_quarks.emplace_back(i, GenParticles[i]);
-                            // std::cout << "GenSbottom: " <<  GenParticles_Status[i] << " " <<  GenParticles_ParentId[i] << "\n";
-                        }
-                        break;
-                } 
-                // clang-format on
-            }
-
-            for(const auto& pair: gen_sbottoms){
-                if(gen_st_idx[0] == GenParticles_ParentIdx[pair.first]){
-                    gen_sb_idx[0] = pair.first;
-                }  else if(gen_st_idx[1] == GenParticles_ParentIdx[pair.first]) {
-                    gen_sb_idx[1] = pair.first;
-                }   else {
-                    throw std::runtime_error("Could not match sbottoms");
-                }
-            }
-
-
-            for(const auto& pair: gen_sbottom_quarks){
-                for(int i = 0 ; i < 2; ++i){
-                    if(((is_virtual_sbottom)? gen_st_idx:gen_sb_idx)[i] 
-                            == GenParticles_ParentIdx[pair.first]){
-                        if(gen_sb_quark_idx[i][0] == -1){
-                            gen_sb_quark_idx[i][0] = pair.first;
-                        } else if(gen_sb_quark_idx[i][1] == -1){
-                            gen_sb_quark_idx[i][1] = pair.first;
                         } else {
-                            throw std::runtime_error("Could not match sbottoms quarks because already full");
+                            gen_w_idx[1] = i;
+                            gen_st_idx[1] = GenParticles_ParentIdx[i];
                         }
+                    }
+                    break;
+                case SB_PDGID: case -SB_PDGID:
+                    if (!isHard(GenParticles_Status[i])) continue;
+                    if(GenParticles_ParentIdx[i] >= 0) {
+                        if (GenParticles_ParentId[i] == STOP_PDGID || 
+                                GenParticles_ParentId[i] == -STOP_PDGID){
+                            gen_sbottoms.emplace_back(i , GenParticles[i]);
+                        }
+                    }
+                    break;
+
+                case E_PDGID: case M_PDGID: case T_PDGID:
+                case -E_PDGID: case -M_PDGID: case -T_PDGID:
+                    if(std::abs(GenParticles_ParentId[i]) == W_PDGID) 
+                        gen_leptons.emplace_back(i,GenParticles[i]);
+                    //if( std::abs(GenParticles_PdgId[i]) == 15){ break; }
+                    break;
+                case STOP_PDGID: case -STOP_PDGID:
+                    if(std::abs(GenParticles_Status[i])==62)
+                        gen_stops.emplace_back(i,GenParticles[i]);
+                    break;
+                case 1: case -1: case 2: case -2: case 3: case -3:
+                case 4: case -4: case 5: case -5: case 6: case -6:
+                case 7: case -7: case 8: case -8: 
+                    if(std::abs(GenParticles_ParentId[i]) == 24){
+                        gen_w_quarks.emplace_back(i,GenParticles[i]);
+                    } else if(std::abs(GenParticles_ParentId[i]) == ( (is_virtual_sbottom)? STOP_PDGID : SB_PDGID)) {
+                        gen_sbottom_quarks.emplace_back(i, GenParticles[i]);
+                        // std::cout << "GenSbottom: " <<  GenParticles_Status[i] << " " <<  GenParticles_ParentId[i] << "\n";
+                    }
+                    break;
+                    // clang-format on
+            }
+        }
+
+        for(const auto& pair: gen_sbottoms){
+            if(gen_st_idx[0] == GenParticles_ParentIdx[pair.first]){
+                gen_sb_idx[0] = pair.first;
+            }  else if(gen_st_idx[1] == GenParticles_ParentIdx[pair.first]) {
+                gen_sb_idx[1] = pair.first;
+            }   else {
+                throw std::runtime_error("Could not match sbottoms");
+            }
+        }
+
+        for(const auto& pair: gen_sbottom_quarks){
+            for(int i = 0 ; i < 2; ++i){
+                if(((is_virtual_sbottom)? gen_st_idx:gen_sb_idx)[i] 
+                        == GenParticles_ParentIdx[pair.first]){
+                    if(gen_sb_quark_idx[i][0] == -1){
+                        gen_sb_quark_idx[i][0] = pair.first;
+                    } else if(gen_sb_quark_idx[i][1] == -1){
+                        gen_sb_quark_idx[i][1] = pair.first;
+                    } else {
+                        throw std::runtime_error("Could not match sbottoms quarks because already full");
                     }
                 }
             }
         }
+
 
 #if 0
         std::cout << "-------------------\n";
@@ -720,8 +745,13 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         std::cout << "-------------------\n";
 #endif
 
+        int num_leps;
+        if(is_rpv_mc) {
+            num_leps =  std::size(gen_leptons);
+        } else  {
+            num_leps =  std::size(GoodLeptons);
+        }
 
-        int num_leps = std::size(gen_leptons);
 
         // W tagging
         int nw_deep_tag = 0; //std::count_if(JetsAK8_DeepTagWvsQCD.begin(), JetsAK8_DeepTagWvsQCD.end(),[&](auto&& x){return x>WTAG_MEDIUM});
@@ -810,8 +840,8 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         if(is_rpv_mc){
             for(int i : {0,1}){
                 gen_max_child_angles[i] = std::max(
-                        ROOT::Math::VectorUtil::DeltaR(GenParticles[i],GenParticles[gen_sb_quark_idx[i][0]]),
-                        ROOT::Math::VectorUtil::DeltaR(GenParticles[i],GenParticles[gen_sb_quark_idx[i][1]])
+                        ROOT::Math::VectorUtil::DeltaR(GenParticles[gen_w_idx[i]],GenParticles[gen_sb_quark_idx[i][0]]),
+                        ROOT::Math::VectorUtil::DeltaR(GenParticles[gen_w_idx[i]],GenParticles[gen_sb_quark_idx[i][1]])
                         );
             }
         }
@@ -831,6 +861,12 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 #define Fill(table, var) my_histos.fill(table, weight, var)
 
 
+            //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsrCA12_21, nsrCA12_42, nsrCA12_43};
+        float max_gen_w_pt = 0 ;
+        if(std::size(gen_w_boson)){
+            max_gen_w_pt =  std::max_element(gen_w_boson.begin(), gen_w_boson.end(), [](const auto& x,const auto& y){return x.second.Pt() < y.second.Pt();})->second.Pt();
+        }
+        SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, max_gen_w_pt, JetsAK8};
         if(is_rpv_mc){
             makeVec(JetsCA12, utility::LorentzVector);
             makeVec(JetsCA12_NsubjettinessTau4, float);
@@ -840,7 +876,6 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             MAKE_RATIO(CA12,4, 3);
             MAKE_RATIO(CA12,4, 2);
             MAKE_RATIO(CA12,2, 1);
-            SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsrCA12_21, nsrCA12_42, nsrCA12_43};
             my_histos.processCuts(data);
 
             Fill("nCA12Jets", std::size(JetsCA12));
@@ -856,13 +891,12 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             }
             Fill("mass_ratio", data.mass_ratio);
         } else {
-            SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, {}, {}, {}, {}};
+            //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, {}, {}, {}, {}};
             my_histos.processCuts(data);
         }
 
 
 
-        Fill("EventCounter", eventCounter);
 
         if(num_leps==0 && nw_deep_tag >= 2 && reco_stop_mass > 0.0f ){
             Fill("RecoStopMass", reco_stop_mass);
@@ -888,6 +922,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 
 
         Fill("nbjets_loose", NBJets_loose);
+        Fill("nbjets_medium", NBJets);
         // Fill("nwjets", nwjets);
         Fill("HT_pt30", HT_trigger_pt30);
         Fill("met", MET);
@@ -979,6 +1014,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("Jet_" + std::to_string(i) + "_Phi",jet.Phi());
             Fill("Jet_" + std::to_string(i) + "_Eta",jet.Eta());
         }
+        my_histos.fill("EventCounter", 1, eventCounter);
     }
 }
 

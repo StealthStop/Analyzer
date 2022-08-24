@@ -99,7 +99,7 @@ def main():
             print "-----------------------------------------------------------"
             
             # hadd signal root files
-            sampleSetsToHadd = ["2016_AllSignal", "2017_AllSignal", "2017_AllSignal_CP5", "2018pre_AllSignal", "2018post_AllSignal"]
+            sampleSetsToHadd = ["2018_RPV2W", "2018_RPV2W_mStop-850-mB-0"]
             if sampleCollection in sampleSetsToHadd:
                 for sample in sl:
                     files = " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
@@ -119,6 +119,7 @@ def main():
                 command = "hadd %s %s" % (outfile, files)
                 try:
                     if not options.noHadd: 
+                        print("Launching Hadd command %s" % command)
                         process = subprocess.Popen(command, shell=True)
                         process.wait()
                 except:
