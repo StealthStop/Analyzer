@@ -5,9 +5,9 @@
 # -------------------------------------
 class TableWriter:
 
-    def __init__(self, tablesPath, channel, year, tag, model, mass):
+    def __init__(self, tablesPath, channel, year, tag, model):
 
-        self.f = open("%s/%s_%s_%s_%s_%s.tex" %(tablesPath, year, tag, model, mass, channel), "w")
+        self.f = open("%s/%s_%s_%s_%s.tex" %(tablesPath, year, tag, model, channel), "w")
         self.writeHeader()
 
     def writeHeader(self):
@@ -227,8 +227,8 @@ class Optimized_ABCDedges(TableWriter):
 
             for njet in njets:
                 Njet = njet.replace("incl", "")
-                if Njet == "12":
-                    Njet = "$\geq%s$"%(njet)
+                if "incl" in njet:
+                    Njet = "$\geq%s$"%(Njet)
                 if Njet == "7":
                     self.f.write("        \\multirow{%d}{*}{%s} & \\multirow{%d}{*}{%.3f} & %s & %.3f & %.3f & %.3f & %.3f & %.3f \\\\"%(len(njets), value["ABCDedges"], len(njets), value["Significance"], Njet, value["nonClosure_njet%s"%njet], value["nonCllosurePull_njet%s"%njet], value["sigFracB_njet%s"%njet], value["sigFracC_njet%s"%njet], value["sigFracD_njet%s"%njet]))
                 else:
