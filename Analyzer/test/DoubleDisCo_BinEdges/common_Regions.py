@@ -7,8 +7,8 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 # histBkg        : ROOT TH2 corresponding to background process
 # histSig        : ROOT TH2 corresponding to signal process
-# fixedDisc1Edge : fix the disc 1 edge with provided value 
-# fixedDisc2Edge : fix the disc 2 edge with provided value 
+# disc1Edge : fix the disc 1 edge with provided value 
+# disc2Edge : fix the disc 2 edge with provided value 
 # leftBoundary   : value corresponding to the left edge defining the "ABCD" region
 # rightBoundary  : value corresponding to the right edge defining the "ABCD" region
 # topBoundary    : value corresponding to the top edge defining the "ABCD" region
@@ -16,13 +16,13 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 class All_Regions:
 
-    def __init__(self, hist=None, Sig=None, ttVar=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=False, **kwargs):
+    def __init__(self, hist=None, Sig=None, ttVar=None, disc1Edge=None, disc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=False, **kwargs):
 
         self.hist           = hist
         self.Sig            = Sig
         self.ttVar          = ttVar
-        self.fixedDisc1Edge = round(float(fixedDisc1Edge), 2) if fixedDisc1Edge != None else None
-        self.fixedDisc2Edge = round(float(fixedDisc2Edge), 2) if fixedDisc2Edge != None else None
+        self.disc1Edge      = round(float(disc1Edge), 2) if disc1Edge != None else None
+        self.disc2Edge      = round(float(disc2Edge), 2) if disc2Edge != None else None
         self.leftBoundary   = round(float(leftBoundary), 2)   if leftBoundary   != None else None
         self.rightBoundary  = round(float(rightBoundary), 2)  if rightBoundary  != None else None
         self.topBoundary    = round(float(topBoundary), 2)    if topBoundary    != None else None
@@ -31,14 +31,14 @@ class All_Regions:
 
         self.extraArgs = kwargs
 
-        fixedDisc1EdgeStr = None
-        fixedDisc2EdgeStr = None
-        if fixedDisc1Edge != None:
-            fixedDisc1EdgeStr = "%0.3f"%(float(fixedDisc1Edge))
-        if fixedDisc2Edge != None:
-            fixedDisc2EdgeStr = "%0.3f"%(float(fixedDisc2Edge))
+        disc1EdgeStr = None
+        disc2EdgeStr = None
+        if disc1Edge != None:
+            disc1EdgeStr = "%0.3f"%(float(disc1Edge))
+        if disc2Edge != None:
+            disc2EdgeStr = "%0.3f"%(float(disc2Edge))
 
-        self.finalEdges = (fixedDisc1EdgeStr, fixedDisc2EdgeStr)
+        self.finalEdges = (disc1EdgeStr, disc2EdgeStr)
         self.quantities = {}
 
         for key in hist.keys():
@@ -198,7 +198,7 @@ class All_Regions:
                 xBinKey     = "%.3f"%(xLowBinEdge)
 
                 # Only care about actual choice of bin edges
-                if self.fastMode and self.fixedDisc1Edge != None and (abs(self.fixedDisc1Edge - xLowBinEdge) >= 10e-3):
+                if self.fastMode and self.disc1Edge != None and (abs(self.disc1Edge - xLowBinEdge) >= 10e-3):
                     continue
 
                 # For each choice of xBin (vertical divider in ABCD plane),
@@ -217,7 +217,7 @@ class All_Regions:
                     yBinKey     = "%.3f"%(yLowBinEdge)
 
                     # Only care about actual choice of bin edges
-                    if self.fastMode and self.fixedDisc2Edge != None and (abs(self.fixedDisc2Edge - yLowBinEdge) >= 10e-3):
+                    if self.fastMode and self.disc2Edge != None and (abs(self.disc2Edge - yLowBinEdge) >= 10e-3):
                         continue
 
 
@@ -543,10 +543,10 @@ class All_Regions:
 
 
             # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
-            if self.fixedDisc1Edge != None and abs(self.fixedDisc1Edge - float(disc1Key)) > 0.01: continue
+            if self.disc1Edge != None and abs(self.disc1Edge - float(disc1Key)) > 0.01: continue
 
             # use this statement for bdEF regions if fixed disc2 edge (horizontal edge)
-            if self.fixedDisc2Edge != None and abs(self.fixedDisc2Edge - float(disc2Key)) > 0.01: continue
+            if self.disc2Edge != None and abs(self.disc2Edge - float(disc2Key)) > 0.01: continue
 
             self.finalEdges = (disc1Key, disc2Key)
 
