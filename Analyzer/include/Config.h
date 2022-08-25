@@ -413,6 +413,34 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="AnalyzeDataMC")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
+                "CommonVariables",
+                "Baseline",
+                "FatJetCombine",
+                "MakeMVAVariables_0l",
+                "MakeMVAVariables_1l",
+                "MakeMVAVariables_NonIsoMuon_0l",
+                "MakeMVAVariables_NonIsoMuon_1l",
+                "StopJets",
+                "MakeStopHemispheres_OldSeed",
+                "MakeStopHemispheres_OldSeed_NonIsoMuon",
+                "MakeStopHemispheres_TopSeed",
+                "MakeStopHemispheres_TopSeed_NonIsoMuon",
+                "BTagCorrector",
+                "ScaleFactors",
+                "StopGenMatch",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else if(analyzer=="MakeNNVariables")
         {
             const std::vector<std::string> modulesList = {
