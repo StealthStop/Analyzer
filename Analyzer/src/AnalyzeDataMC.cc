@@ -563,8 +563,8 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L             *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
-                weight0L             *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
+                weight1L             *= eventweight; // *  leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
+                weight0L             *= eventweight; // *                 bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
 
                 weight1L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
                 weight0L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
@@ -577,13 +577,13 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             {
                 {"_1l"               , passBaseline1l_Good},                         
                 {"_1l_blind"         , passBaseline1l_Good_blind},                         
-                {"_1l_loose"         , passBaseline1l_Good_loose},                         
+                //{"_1l_loose"         , passBaseline1l_Good_loose},                         
                 //{"_1l_NoB"           , passBaseline1l_Good},                         
                 //{"_1l_HT500"         , passBaseline1l_HT500_Good},                         
                 //{"_1l_HT700"         , passBaseline1l_HT700_Good},                         
                 {"_0l"               , passBaseline0l_Good},                         
                 {"_0l_blind"         , passBaseline0l_Good_blind},                         
-                {"_0l_loose"         , passBaseline0l_Good_loose},                         
+                //{"_0l_loose"         , passBaseline0l_Good_loose},                         
                 //{"_0l_NoB"           , passBaseline0l_Good},                         
                 {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon},                         
                 //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
