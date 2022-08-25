@@ -4,12 +4,11 @@ import math
 import ctypes
 import numpy as np
 
-
 # ----------------------------------------------------------------------------------
 # histBkg        : ROOT TH2 corresponding to background process
 # histSig        : ROOT TH2 corresponding to signal process
-# fixedDisc1Edge : fix the disc 1 edge with provided value 
-# fixedDisc2Edge : fix the disc 2 edge with provided value 
+# disc1Edge : fix the disc 1 edge with provided value 
+# disc2Edge : fix the disc 2 edge with provided value 
 # leftBoundary   : value corresponding to the left edge defining the "ABCD" region
 # rightBoundary  : value corresponding to the right edge defining the "ABCD" region
 # topBoundary    : value corresponding to the top edge defining the "ABCD" region
@@ -17,21 +16,29 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 class All_Regions:
 
-    def __init__(self, hist=None, Sig=None, ttVar=None, fixedDisc1Edge=None, fixedDisc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, metric=None, **kwargs):
+    def __init__(self, hist=None, Sig=None, ttVar=None, disc1Edge=None, disc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=False, **kwargs):
 
         self.hist           = hist
         self.Sig            = Sig
         self.ttVar          = ttVar
-        self.fixedDisc1Edge = round(float(fixedDisc1Edge), 2) if fixedDisc1Edge != None else None
-        self.fixedDisc2Edge = round(float(fixedDisc2Edge), 2) if fixedDisc2Edge != None else None
+        self.disc1Edge      = round(float(disc1Edge), 2) if disc1Edge != None else None
+        self.disc2Edge      = round(float(disc2Edge), 2) if disc2Edge != None else None
         self.leftBoundary   = round(float(leftBoundary), 2)   if leftBoundary   != None else None
         self.rightBoundary  = round(float(rightBoundary), 2)  if rightBoundary  != None else None
         self.topBoundary    = round(float(topBoundary), 2)    if topBoundary    != None else None
         self.bottomBoundary = round(float(bottomBoundary), 2) if bottomBoundary != None else None
-        self.metric         = metric
+        self.fastMode       = fastMode
 
         self.extraArgs = kwargs
-        self.finalEdges = (fixedDisc1Edge, fixedDisc2Edge)
+
+        disc1EdgeStr = None
+        disc2EdgeStr = None
+        if disc1Edge != None:
+            disc1EdgeStr = "%0.3f"%(float(disc1Edge))
+        if disc2Edge != None:
+            disc2EdgeStr = "%0.3f"%(float(disc2Edge))
+
+        self.finalEdges = (disc1EdgeStr, disc2EdgeStr)
         self.quantities = {}
 
         for key in hist.keys():
@@ -41,8 +48,10 @@ class All_Regions:
         self.count_Events_inBinEdges()
 
         # Then determine the "final" choice of bin edges for the region
-        # based on the optimization_metric function
         self.get_nEvents_Quantities()
+
+    def get_ttVar_Name(self):
+        return self.ttVar
 
     # -------------------------------------
     # Significance calculation with only TT
@@ -87,6 +96,23 @@ class All_Regions:
                        ) )**0.5
 
         return significance
+
+    # -------------------
+    # Closure calculation
+    # -------------------
+    def cal_Closure(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
+    
+        if nEvents_A == 0.0 or nEvents_D == 0.0:
+            return -999.0, -999.0
+        
+        Closure = (nEvents_B * nEvents_C) / (nEvents_A * nEvents_D) 
+        
+        ClosureUnc = ( ( ( nEvents_C * nEventsErr_B ) / ( nEvents_A * nEvents_D) )**2.0 
+                     + ( ( nEvents_B * nEventsErr_C ) / ( nEvents_A * nEvents_D) )**2.0 
+                     + ( ( nEvents_B * nEvents_C * nEventsErr_A ) / ( nEvents_A**2.0 * nEvents_D ) )**2.0 
+                     + ( ( nEvents_B * nEvents_C * nEventsErr_D ) / ( nEvents_A * nEvents_D**2.0 ) )**2.0 )**0.5
+    
+        return Closure, ClosureUnc
 
     # -----------------------
     # Non-Closure calculation
@@ -135,12 +161,6 @@ class All_Regions:
 
         return pull, pullUnc
     
-    # --------------------------------------------------------------
-    # Optimization metric function to be overridden by derived class
-    # --------------------------------------------------------------
-    def optimization_metric(self, **kwargs):
-        return 0.0
-
     # -----------------------------------------------------
     # get signal and background histograms' counts
     #   count both signal and background events separately:
@@ -177,6 +197,10 @@ class All_Regions:
                 xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
                 xBinKey     = "%.3f"%(xLowBinEdge)
 
+                # Only care about actual choice of bin edges
+                if self.fastMode and self.disc1Edge != None and (abs(self.disc1Edge - xLowBinEdge) >= 10e-3):
+                    continue
+
                 # For each choice of xBin (vertical divider in ABCD plane),
                 # initialize counts for the four regions
                 startOfScan = True
@@ -187,12 +211,17 @@ class All_Regions:
 
                 # loop over the y bins
                 for yBin in nYBins:
-    
+
                     # Store disc 2 edge as string with three digits of accuracy for now
                     yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
                     yBinKey     = "%.3f"%(yLowBinEdge)
 
-                    nEventsErr_A = ROOT.Double(0.0); nEventsErr_B = ROOT.Double(0.0); nEventsErr_C = ROOT.Double(0.0); nEventsErr_D = ROOT.Double(0.0)
+                    # Only care about actual choice of bin edges
+                    if self.fastMode and self.disc2Edge != None and (abs(self.disc2Edge - yLowBinEdge) >= 10e-3):
+                        continue
+
+
+                    nEventsErr_A = ctypes.c_double(0.0); nEventsErr_B = ctypes.c_double(0.0); nEventsErr_C = ctypes.c_double(0.0); nEventsErr_D = ctypes.c_double(0.0)
 
                     # last      | 
                     #        B  |  A
@@ -243,7 +272,7 @@ class All_Regions:
 
         # loop over the disc1 and disc2 to get any possible combination of them
         for disc1Key, disc2Key in self.get("edges",None,None,"TT"):
-
+        
             # number of signal and background events in aech A, B, C, D region
             nTTEvents_A,    nTTEventsErr_A    = self.get("nEventsA", disc1Key, disc2Key, "TT")
             nTTEvents_B,    nTTEventsErr_B    = self.get("nEventsB", disc1Key, disc2Key, "TT")
@@ -377,11 +406,23 @@ class All_Regions:
 
             # closure for optimization metric for only TT
             # closure error and pull for 2D plots / for TT, NonTT, Data
-            closureErr_TT       = -999.0; closureErrUnc_TT       = -999.0; pull_TT       = -999.0; pullUnc_TT       = -999.0 
-            closureErr_NonTT    = -999.0; closureErrUnc_NonTT    = -999.0; pull_NonTT    = -999.0; pullUnc_NonTT    = -999.0 
-            closureErr_TTvar    = -999.0; closureErrUnc_TTvar    = -999.0; pull_TTvar    = -999.0; pullUnc_TTvar    = -999.0
-            closureErr_Data     = -999.0; closureErrUnc_Data     = -999.0; pull_Data     = -999.0; pullUnc_Data     = -999.0
-            closureErr_TTinData = -999.0; closureErrUnc_TTinData = -999.0; pull_TTinData = -999.0; pullUnc_TTinData = -999.0
+            Closure_TT               = -999.0; ClosureUnc_TT       = -999.0
+            Closure_NonTT            = -999.0; ClosureUnc_NonTT    = -999.0
+            Closure_TTvar            = -999.0; ClosureUnc_TTvar    = -999.0
+            Closure_Data             = -999.0; ClosureUnc_Data     = -999.0
+            Closure_TTinData         = -999.0; ClosureUnc_TTinData = -999.0
+
+            nonClosure_TT            = -999.0; nonClosureUnc_TT       = -999.0
+            nonClosure_NonTT         = -999.0; nonClosureUnc_NonTT    = -999.0
+            nonClosure_TTvar         = -999.0; nonClosureUnc_TTvar    = -999.0
+            nonClosure_Data          = -999.0; nonClosureUnc_Data     = -999.0
+            nonClosure_TTinData      = -999.0; nonClosureUnc_TTinData = -999.0
+
+            pull_TT                  = -999.0; pullUnc_TT       = -999.0   
+            pull_NonTT               = -999.0; pullUnc_NonTT    = -999.0
+            pull_TTvar               = -999.0; pullUnc_TTvar    = -999.0
+            pull_Data                = -999.0; pullUnc_Data     = -999.0
+            pull_TTinData            = -999.0; pullUnc_TTinData = -999.0
 
             closureCorr_TT           = -999.0; closureCorrUnc_TT           = -999.0
             closureCorr_NonTT        = -999.0; closureCorrUnc_NonTT        = -999.0
@@ -389,6 +430,13 @@ class All_Regions:
             closureCorr_Data         = -999.0; closureCorrUnc_Data         = -999.0
             closureCorr_TTinData     = -999.0; closureCorrUnc_TTinData     = -999.0
             closureCorr_TTinDataVsTT = -999.0; closureCorrUnc_TTinDataVsTT = -999.0
+
+            #
+            Closure_TT,       ClosureUnc_TT       = self.cal_Closure(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
+            Closure_NonTT,    ClosureUnc_NonTT    = self.cal_Closure(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
+            Closure_TTvar,    ClosureUnc_TTvar    = self.cal_Closure(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
+            Closure_Data,     ClosureUnc_Data     = self.cal_Closure(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
+            Closure_TTinData, ClosureUnc_TTinData = self.cal_Closure(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
 
             nonClosure_TT,     nonClosureUnc_TT     = self.cal_NonClosure(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
             nonClosure_NonTT,  nonClosureUnc_NonTT  = self.cal_NonClosure(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
@@ -408,17 +456,24 @@ class All_Regions:
             closureCorr_TTvar, closureCorrUnc_TTvar = self.cal_ClosureCorr(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D )
             closureCorr_TTinData, closureCorrUnc_TTinData = self.cal_ClosureCorr(nTTinDataEvents_A, nTTinDataEvents_B, nTTinDataEvents_C, nTTinDataEvents_D, nTTinDataEventsErr_A, nTTinDataEventsErr_B, nTTinDataEventsErr_C, nTTinDataEventsErr_D )
 
+            #
+            self.add("Closure",    disc1Key, disc2Key, (Closure_TT,       ClosureUnc_TT) ,       "TT"      )
+            self.add("Closure",    disc1Key, disc2Key, (Closure_NonTT,    ClosureUnc_NonTT),     "NonTT"   )
+            self.add("Closure",    disc1Key, disc2Key, (Closure_TTvar,    ClosureUnc_TTvar),     self.ttVar)
+            self.add("Closure",    disc1Key, disc2Key, (Closure_Data,     ClosureUnc_Data ),     "Data"    )
+            self.add("Closure",    disc1Key, disc2Key, (Closure_TTinData, ClosureUnc_TTinData ), "TTinData")
+            
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TT,       nonClosureUnc_TT) ,       "TT"      )
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_NonTT,    nonClosureUnc_NonTT),     "NonTT"   )
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TTvar,    nonClosureUnc_TTvar),     self.ttVar)
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_Data,     nonClosureUnc_Data ),     "Data"    )
             self.add("nonClosure", disc1Key, disc2Key, (nonClosure_TTinData, nonClosureUnc_TTinData ), "TTinData")
 
-            self.add("pull",       disc1Key, disc2Key, (pull_TT,       pullUnc_TT),     "TT"      )
-            self.add("pull",       disc1Key, disc2Key, (pull_NonTT,    pullUnc_NonTT),  "NonTT"   )
-            self.add("pull",       disc1Key, disc2Key, (pull_TTvar,    pullUnc_TTvar),  self.ttVar)
-            self.add("pull",       disc1Key, disc2Key, (pull_Data,     pullUnc_Data),   "Data"    )
-            self.add("pull",       disc1Key, disc2Key, (pull_TTinData, pullUnc_TTinData), "TTinData"  )
+            self.add("pull",       disc1Key, disc2Key, (pull_TT,       pullUnc_TT),       "TT"      )
+            self.add("pull",       disc1Key, disc2Key, (pull_NonTT,    pullUnc_NonTT),    "NonTT"   )
+            self.add("pull",       disc1Key, disc2Key, (pull_TTvar,    pullUnc_TTvar),    self.ttVar)
+            self.add("pull",       disc1Key, disc2Key, (pull_Data,     pullUnc_Data),     "Data"    )
+            self.add("pull",       disc1Key, disc2Key, (pull_TTinData, pullUnc_TTinData), "TTinData")
       
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TT,       closureCorrUnc_TT) ,       "TT"      )
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_NonTT,    closureCorrUnc_NonTT) ,    "NonTT"   )
@@ -426,11 +481,33 @@ class All_Regions:
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_Data,     closureCorrUnc_Data ),     "Data"    )
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTinData, closureCorrUnc_TTinData ), "TTinData")
 
+            # MC corrected Data Closure
+            # using MC correction factor to calculate Data Closure
+            MC_corrected_dataClosure     = Closure_TTinData * closureCorr_TT
+            MC_corrected_dataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TT)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
+            self.add("MC_corrected_dataClosure", disc1Key, disc2Key, (MC_corrected_dataClosure, MC_corrected_dataClosure_Unc), "TTinData")
+
+            # Related with MC correction factor
+            closureCorr_TTinDataVsTT = 999.0; closureCorrUnc_TTinDataVsTT = 0.0
             if closureCorr_TTinData != 0.0 and closureCorr_TT != 0.0:
                 closureCorr_TTinDataVsTT    = closureCorr_TTinData / closureCorr_TT
                 closureCorrUnc_TTinDataVsTT = closureCorr_TTinDataVsTT * ((closureCorrUnc_TTinData / closureCorr_TTinData)**2.0 + (closureCorrUnc_TT / closureCorr_TT)**2.0)**0.5
 
             self.add("closureCorrTTinDataVsTT", disc1Key, disc2Key, (closureCorr_TTinDataVsTT, closureCorrUnc_TTinDataVsTT), "TTinData")
+
+            # MC (ttVar) corrected Data Closure
+            # using MC correction (ttVar) factor to calculate Data Closure
+            MC_ttVar_corrected_dataClosure     = Closure_TTinData * closureCorr_TTvar
+            MC_ttVar_corrected_dataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TTvar)**2.0 + (ClosureUnc_TTinData * closureCorr_TTvar)**2.0)
+            self.add("MC_ttVar_corrected_dataClosure", disc1Key, disc2Key, (MC_ttVar_corrected_dataClosure, MC_ttVar_corrected_dataClosure_Unc), "TTinData")
+
+            # Related with MC correction factor
+            closureCorr_TTinDataVsTTvar = 999.0; closureCorrUnc_TTinDataVsTTvar = 0.0
+            if closureCorr_TTinData != 0.0 and closureCorr_TTvar != 0.0:
+                closureCorr_TTinDataVsTTvar    = closureCorr_TTinData / closureCorr_TTvar
+                closureCorrUnc_TTinDataVsTTvar = closureCorr_TTinDataVsTTvar * ((closureCorrUnc_TTinData / closureCorr_TTinData)**2.0 + (closureCorrUnc_TTvar / closureCorr_TTvar)**2.0)**0.5
+
+            self.add("closureCorrTTinDataVsTTvar", disc1Key, disc2Key, (closureCorr_TTinDataVsTTvar, closureCorrUnc_TTinDataVsTTvar), "TTinData")
 
             # significance for optimization metric for only TT !!! 
             # significance, significanceUnc for 2D plots
@@ -466,10 +543,10 @@ class All_Regions:
 
 
             # use this statement for cdGH regions if  fixed disc1 edge (vertivcal edge)
-            if self.fixedDisc1Edge != None and abs(self.fixedDisc1Edge - float(disc1Key)) > 0.01: continue
+            if self.disc1Edge != None and abs(self.disc1Edge - float(disc1Key)) > 0.01: continue
 
             # use this statement for bdEF regions if fixed disc2 edge (horizontal edge)
-            if self.fixedDisc2Edge != None and abs(self.fixedDisc2Edge - float(disc2Key)) > 0.01: continue
+            if self.disc2Edge != None and abs(self.disc2Edge - float(disc2Key)) > 0.01: continue
 
             self.finalEdges = (disc1Key, disc2Key)
 
@@ -530,113 +607,6 @@ class All_Regions:
     def getFinal(self, name, hist=""):
         return self.get(name, self.finalEdges[0], self.finalEdges[1], hist)
 
-
-# -------------------------------------------
-# Calculate optimization metric of bin edges
-#   This function use the command line option
-#   -- NN optimization metric
-#   -- New optimization metric
-# ------------------------------------------- 
-class ABCDedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        if (kwargs["nBkgA"] > kwargs["minBkgEvents"] and kwargs["significance"] != 0.0):
-        
-            # NN optimization metric
-            if self.metric == "NN":
-                optimizationMetric  = (kwargs["nonClosure"])**2 + (1.0 / kwargs["significance"])**2
-                   
-            # New optimization metric
-            else: 
-                optimizationMetric  = (5 * kwargs["nonClosure"])**2 + (1.0 / kwargs["significance"])**2
-        
-            return optimizationMetric
-
-        else:
-
-            return 999.0
-
-# ---------------------------------------------------------------------------
-# make the validation regions in BD : bdEF
-#   -- define validation disc1 edge between 0 and the final bin edge of disc1
-#   -- final disc2 edge is constant
-#          *                              
-#      E   *    B'  |    A                
-#   _______*________|________             
-#          *        |                     
-#      F   *    D'  |    C                
-#          *                     
-# Calculate the metric of Validation Regions in BD: bdEF
-# ---------------------------------------------------------------------------
-class bdEFedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        optimizationMetric = None              
-
-        if "nBkgA" in self.extraArgs:
-            optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgC"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgC"]))
-        
-        else:
-            optimizationMetric = 1.0
-
-        return optimizationMetric
-
-
-# ---------------------------------------------------------------------------
-# make the validation regions in CD : cdiGH
-#   -- define validation disc2 edge between 0 and the final bin edge of disc2
-#   -- final disc1 edge is constant
-#
-#          B  |  A   
-#       ______|______
-#             |
-#          D' |  C' 
-#       *************
-#             |
-#          H  |  G
-# Calculate the metric of Validation Regions in CD: cdiGH
-# --------------------------------------------------------------------------- 
-class cdGHedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        optimizationMetric = None
-
-        if "nBkgA" in self.extraArgs:
-            optimizationMetric  = abs(1.0 - (kwargs["nBkgA"]+kwargs["nBkgB"])/(self.extraArgs["nBkgA"]+self.extraArgs["nBkgB"]))
-        
-        else:
-            optimizationMetric = 1.0
-
-        return optimizationMetric
-
-
-# ------------------------------------------------
-# make the validation regions as sub-division of D 
-#               |
-#        B      |   A
-#               |
-#     __________|_______
-#         *     |
-#      dB * dA  | 
-#     ********* |   C
-#      dD * dC  |
-#         *     |
-# Calculate the metric of sub-division of D 
-# ------------------------------------------------
-class subDivDedges(All_Regions):
-
-    def optimization_metric(self, **kwargs):
-
-        optimizationMetric  = 999.0
-
-        if abs(kwargs["disc1"] - self.extraArgs["ABCDdisc1"]/2.0) < 0.01 and abs(kwargs["disc2"] - self.extraArgs["ABCDdisc2"]/2.0) < 0.01:
-            optimizationMetric = 1.0
-
-        return optimizationMetric
-
 # -----------------------------------------
 # add the all edges to DoubleDisCo Cfg file
 # -----------------------------------------
@@ -648,8 +618,7 @@ class addEdges_toDoubleDisco():
         self.mass      = mass
         self.channel   = channel
         self.regions   = regions
-
-    def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
+def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
 
         cfgVer = ""
         
@@ -699,5 +668,3 @@ class addEdges_toDoubleDisco():
 
         g.write("} \n")
         g.close()
-
-                    

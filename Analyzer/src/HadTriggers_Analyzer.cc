@@ -31,12 +31,12 @@ void HadTriggers_Analyzer::InitHistos()
     std::vector<std::string> nJetCutTags  { "ge6jetCut", "6jetCut", "7jetCut", "8jetCut", "9jetCut", "ge10jetCut" };
     std::vector<std::string> ptTags       { "pt45"                                                                }; 
 
-    const int htbins   = 9;
-    const int ptbins   = 6;
+    const int htbins   = 8;
+    const int ptbins   = 5;
     const int njetbins = 9;
     const int bjetbins = 3;
-    double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000, 1500, 2000, 2500};
-    double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 70, 120, 200};
+    double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000, 1500, 2500};
+    double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 90, 200};
     double njetbinEdges[njetbins + 1] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     double bjetbinEdges[bjetbins + 1] = {1.5, 2.5, 3.5, 8};
 
