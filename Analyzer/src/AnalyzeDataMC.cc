@@ -27,6 +27,8 @@ AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
 {
 
     histInfos = {
+        // NN Related Variables
+        {"HT_trigger_pt30",             500,    0, 5000},
         {"fwm2_top6",                    50,    0,    1},
         {"fwm3_top6",                    50,    0,    1},
         {"fwm4_top6",                    50,    0,    1},
@@ -34,43 +36,54 @@ AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
         {"jmt_ev0_top6",                 50,    0,    1},
         {"jmt_ev1_top6",                 50,    0,    1},
         {"jmt_ev2_top6",                 50,    0,    1},
+        {"combined7thToLastJet_pt_cm",  200,    0, 2000},
+        {"combined7thToLastJet_eta_cm", 200,   -6,    6},
+        {"combined7thToLastJet_phi_cm", 200,   -4,    4},
+        {"combined7thToLastJet_m_cm",   200,    0,  200},
+        {"combined7thToLastJet_E_cm",   200,    0,  200},
         {"Stop1_pt_cm_OldSeed",          72,    0, 1500},
         {"Stop1_eta_cm_OldSeed",         80,   -6,    6},
         {"Stop1_phi_cm_OldSeed",         64,   -4,    4},
         {"Stop1_mass_cm_OldSeed",        72,    0, 1500},
+        {"Stop1_ptrHT_cm_OldSeed",        72,    0,    1},
         {"Stop2_pt_cm_OldSeed",          72,    0, 1500},
         {"Stop2_eta_cm_OldSeed",         80,   -6,    6},
         {"Stop2_phi_cm_OldSeed",         64,   -4,    4},
         {"Stop2_mass_cm_OldSeed",        72,    0, 1500},
+        {"Stop2_ptrHT_cm_OldSeed",        72,    0,    1},
         {"Stop1_pt_cm_TopSeed",          72,    0, 1500},
         {"Stop1_eta_cm_TopSeed",         80,   -6,    6},
         {"Stop1_phi_cm_TopSeed",         64,   -4,    4},
         {"Stop1_mass_cm_TopSeed",        72,    0, 1500},
+        {"Stop1_ptrHT_cm_TopSeed",        72,    0,    1},
         {"Stop2_pt_cm_TopSeed",          72,    0, 1500},
         {"Stop2_eta_cm_TopSeed",         80,   -6,    6},
         {"Stop2_phi_cm_TopSeed",         64,   -4,    4},
         {"Stop2_mass_cm_TopSeed",        72,    0, 1500},
-        {"h_njets",                      20,    0, 20.0},
-        {"h_njets_11incl",               20, -0.5, 19.5},
-        {"h_njets_12incl",               24, -0.5, 23.5},
-        {"h_njets_13incl",               28, -0.5, 27.5},
-        {"h_njets_14incl",               32, -0.5, 31.5},
-        {"h_ht",                        500,    0, 5000},
-        {"Stop1_mass_PtRank_matched",   360,    0, 1500},
-        {"Stop2_mass_PtRank_matched",   360,    0, 1500},
-        {"Stop1_mass_MassRank_matched", 360,    0, 1500},
-        {"Stop2_mass_MassRank_matched", 360,    0, 1500},
-        {"Stop_mass_average_matched",   360,    0, 1500},
-        {"h_jPt",                       200,    0, 2000},
-        {"h_jPhi",                      200,   -4,    4},
-        {"h_jEta",                      200,   -6,    6},
-        {"h_jM",                        200,    0,  200},
+        {"Stop2_ptrHT_cm_TopSeed",        72,    0,    1},
+        {"dR_Stop1Stop2_cm_OldSeed",    200,    0,    6},
+        {"dR_Stop1Stop2_cm_TopSeed",    200,    0,    6},
+        {"dPhi_Stop1Stop2_cm_OldSeed",  200,    0,    4},
+        {"dPhi_Stop1Stop2_cm_TopSeed",  200,    0,    4},
+        {"h_lvMET_cm_pt",               200,    0, 2000},
+        {"h_lvMET_cm_phi",              200,   -4,    4},
+        {"h_lvMET_cm_eta",              200,   -6,    6},
+        {"h_lvMET_cm_m",                200,    0,  300},
         {"h_lPt",                       200,    0, 2000},
         {"h_lIso",                      360,    0, 1500},
         {"h_lPhi",                      200,   -4,    4},
         {"h_lEta",                      200,   -6,    6},
         {"h_lCharge",                     2,   -1,    1},
         {"h_lMiniIso",                  200,    0,  0.2},
+        {"h_Mbl",                       200,    0,  500},
+
+        // Other variables
+        {"h_njets",                      20,    0, 20.0},
+        {"h_njets_11incl",               20, -0.5, 19.5},
+        {"h_njets_12incl",               24, -0.5, 23.5},
+        {"h_njets_13incl",               28, -0.5, 27.5},
+        {"h_njets_14incl",               32, -0.5, 31.5},
+        {"h_ht",                        500,    0, 5000},
         {"h_ePt",                       200,    0, 2000},
         {"h_ePhi",                      200,   -4,    4},
         {"h_eEta",                      200,   -6,    6},
@@ -81,21 +94,17 @@ AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
         {"h_mEta",                      200,   -6,    6},
         {"h_mCharge",                     2,   -1,    1},
         {"h_mMiniIso",                  200,    0,  0.2},
+        {"h_nb",                         10,    0,   10},
+        {"h_ntops",                      10,    0,   10},
+        {"h_dRbjet",                    200,    0,    6},
     };
 
     hist2DInfos = {
         {"h_cm_ptrHT_jetRank", 100, 0, 1, 10, 0, 10},
         {"h_cm_pt_jetRank", 150, 0, 1500, 10, 0, 10},
-        {"h_cm_ptrHT_fwm2_top6", 100, 0, 1, 50, 0, 1},
-        {"h_cm_ptrHT_fwm3_top6", 100, 0, 1, 50, 0, 1},
-        {"h_cm_ptrHT_fwm4_top6", 100, 0, 1, 50, 0, 1},
-        {"h_cm_ptrHT_fwm5_top6", 100, 0, 1, 50, 0, 1},
-        {"h_cm_ptrHT_jmt_ev0_top6", 100, 0, 1, 50, 0, 1},
-        {"h_cm_ptrHT_jmt_ev1_top6", 100, 0, 1, 50, 0, 1},
-        {"h_cm_ptrHT_jmt_ev2_top6", 100, 0, 1, 50, 0, 1},
     };
 
-    njets = {"Incl", "7", "8", "9", "10", "11Incl"};
+    njets = {"Incl", "5", "6", "7", "8", "9", "10", "11Incl"};
 
     my_var_suffix = {""};
     //my_var_suffix = {"JECup"};
@@ -123,6 +132,21 @@ void AnalyzeDataMC::Preinit(unsigned int nNNJets)
         histInfos.push_back({"Jet_cm_flavg_"   + std::to_string(i),  80,  0,    1});
         histInfos.push_back({"Jet_cm_flavq_"   + std::to_string(i),  80,  0,    1});
         histInfos.push_back({"Jet_cm_flavuds_" + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_CSVudsg_" + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_CSVb_"    + std::to_string(i),  80,  0,    1});
+        histInfos.push_back({"Jet_cm_CSVc_"    + std::to_string(i),  80,  0,    1});
+
+        histInfos.push_back({"Jet_ptD_"         + std::to_string(i), 100,  0,    1});
+        histInfos.push_back({"Jet_axismajor_"   + std::to_string(i), 100,  0,    1});
+        histInfos.push_back({"Jet_axisminor_"   + std::to_string(i), 100,  0,    1});
+
+        hist2DInfos.push_back({"h_cm_ptrHT_fwm2_top6_"       + std::to_string(i), 100, 0, 1, 50, 0, 1});
+        hist2DInfos.push_back({"h_cm_ptrHT_fwm3_top6_"       + std::to_string(i), 100, 0, 1, 50, 0, 1});
+        hist2DInfos.push_back({"h_cm_ptrHT_fwm4_top6_"       + std::to_string(i), 100, 0, 1, 50, 0, 1});
+        hist2DInfos.push_back({"h_cm_ptrHT_fwm5_top6_"       + std::to_string(i), 100, 0, 1, 50, 0, 1});
+        hist2DInfos.push_back({"h_cm_ptrHT_jmt_ev0_top6_"    + std::to_string(i), 100, 0, 1, 50, 0, 1});
+        hist2DInfos.push_back({"h_cm_ptrHT_jmt_ev1_top6_"    + std::to_string(i), 100, 0, 1, 50, 0, 1});
+        hist2DInfos.push_back({"h_cm_ptrHT_jmt_ev2_top6_"    + std::to_string(i), 100, 0, 1, 50, 0, 1});
     }
 }
 
@@ -259,6 +283,8 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
             const auto& passBaseline0l_Good_blind         = tr.getVar<bool>("passBaseline0l_good_blind"+myVarSuffix);
             const auto& passBaseline1l_Good_blind         = tr.getVar<bool>("passBaseline1l_Good_blind"+myVarSuffix);
+            const auto& passBaseline0l_Good_loose         = tr.getVar<bool>("passBaseline0l_good_loose"+myVarSuffix);
+            const auto& passBaseline1l_Good_loose         = tr.getVar<bool>("passBaseline1l_Good_loose"+myVarSuffix);
             const auto& passBaseline1l_HT500_Good         = tr.getVar<bool>("passBaseline1l_HT500_Good"+myVarSuffix);
             const auto& passBaseline1l_HT700_Good         = tr.getVar<bool>("passBaseline1l_HT700_Good"+myVarSuffix);
             const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR"+myVarSuffix);
@@ -292,61 +318,120 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& nMVAJets_0l                       = tr.getVar<unsigned int>("nMVAJets_0l"+myVarSuffix);
             const auto& nMVAJets_1l                       = tr.getVar<unsigned int>("nMVAJets_1l"+myVarSuffix);
 
+            const auto& combined7thToLastJet_pt_0l        = tr.getVar<float>("combined7thToLastJet_pt_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_eta_0l       = tr.getVar<float>("combined7thToLastJet_eta_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_phi_0l       = tr.getVar<float>("combined7thToLastJet_phi_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_m_0l         = tr.getVar<float>("combined7thToLastJet_m_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_E_0l         = tr.getVar<float>("combined7thToLastJet_E_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_pt_1l        = tr.getVar<float>("combined7thToLastJet_pt_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_eta_1l       = tr.getVar<float>("combined7thToLastJet_eta_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_phi_1l       = tr.getVar<float>("combined7thToLastJet_phi_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_m_1l         = tr.getVar<float>("combined7thToLastJet_m_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_E_1l         = tr.getVar<float>("combined7thToLastJet_E_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_pt_1l        = tr.getVar<float>("combined7thToLastJetNonIsoMuons_pt_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_eta_1l       = tr.getVar<float>("combined7thToLastJetNonIsoMuons_eta_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_phi_1l       = tr.getVar<float>("combined7thToLastJetNonIsoMuons_phi_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_m_1l         = tr.getVar<float>("combined7thToLastJetNonIsoMuons_m_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_E_1l         = tr.getVar<float>("combined7thToLastJetNonIsoMuons_E_cm_1l"+myVarSuffix);
+
             const auto& eventCounter                      = tr.getVar<int>("eventCounter");
             const auto& Stop1_pt_cm_OldSeed               = tr.getVar<double>("Stop1_pt_cm_OldSeed"+myVarSuffix);
             const auto& Stop1_eta_cm_OldSeed              = tr.getVar<double>("Stop1_eta_cm_OldSeed"+myVarSuffix);
             const auto& Stop1_phi_cm_OldSeed              = tr.getVar<double>("Stop1_phi_cm_OldSeed"+myVarSuffix);
             const auto& Stop1_mass_cm_OldSeed             = tr.getVar<double>("Stop1_mass_cm_OldSeed"+myVarSuffix);
+            const auto& Stop1_scalarPt_cm_OldSeed             = tr.getVar<double>("Stop1_scalarPt_cm_OldSeed"+myVarSuffix);
             const auto& Stop2_pt_cm_OldSeed               = tr.getVar<double>("Stop2_pt_cm_OldSeed"+myVarSuffix);
             const auto& Stop2_eta_cm_OldSeed              = tr.getVar<double>("Stop2_eta_cm_OldSeed"+myVarSuffix);
             const auto& Stop2_phi_cm_OldSeed              = tr.getVar<double>("Stop2_phi_cm_OldSeed"+myVarSuffix);
             const auto& Stop2_mass_cm_OldSeed             = tr.getVar<double>("Stop2_mass_cm_OldSeed"+myVarSuffix);
+            const auto& Stop2_scalarPt_cm_OldSeed             = tr.getVar<double>("Stop2_scalarPt_cm_OldSeed"+myVarSuffix);
+            const auto& dR_Stop1Stop2_cm_OldSeed          = tr.getVar<double>("dR_Stop1Stop2_cm_OldSeed"+myVarSuffix);
+            const auto& dPhi_Stop1Stop2_cm_OldSeed        = tr.getVar<double>("dPhi_Stop1Stop2_cm_OldSeed"+myVarSuffix);
             const auto& Stop1_pt_cm_TopSeed               = tr.getVar<double>("Stop1_pt_cm_TopSeed"+myVarSuffix);
             const auto& Stop1_eta_cm_TopSeed              = tr.getVar<double>("Stop1_eta_cm_TopSeed"+myVarSuffix);
             const auto& Stop1_phi_cm_TopSeed              = tr.getVar<double>("Stop1_phi_cm_TopSeed"+myVarSuffix);
             const auto& Stop1_mass_cm_TopSeed             = tr.getVar<double>("Stop1_mass_cm_TopSeed"+myVarSuffix);
+            const auto& Stop1_scalarPt_cm_TopSeed             = tr.getVar<double>("Stop1_scalarPt_cm_TopSeed"+myVarSuffix);
             const auto& Stop2_pt_cm_TopSeed               = tr.getVar<double>("Stop2_pt_cm_TopSeed"+myVarSuffix);
             const auto& Stop2_eta_cm_TopSeed              = tr.getVar<double>("Stop2_eta_cm_TopSeed"+myVarSuffix);
             const auto& Stop2_phi_cm_TopSeed              = tr.getVar<double>("Stop2_phi_cm_TopSeed"+myVarSuffix);
             const auto& Stop2_mass_cm_TopSeed             = tr.getVar<double>("Stop2_mass_cm_TopSeed"+myVarSuffix);
+            const auto& Stop2_scalarPt_cm_TopSeed             = tr.getVar<double>("Stop2_scalarPt_cm_TopSeed"+myVarSuffix);
+            const auto& dR_Stop1Stop2_cm_TopSeed          = tr.getVar<double>("dR_Stop1Stop2_cm_TopSeed"+myVarSuffix);
+            const auto& dPhi_Stop1Stop2_cm_TopSeed        = tr.getVar<double>("dPhi_Stop1Stop2_cm_TopSeed"+myVarSuffix);
 
             const auto& Stop1_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop1_phi_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop1_mass_cm_OldSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop1_scalarPt_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop1_scalarPt_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_pt_cm_OldSeed_NonIsoMuon    = tr.getVar<double>("Stop2_pt_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_eta_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_eta_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_phi_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_mass_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop2_scalarPt_cm_OldSeed_NonIsoMuon  = tr.getVar<double>("Stop2_scalarPt_cm_OldSeed_NonIsoMuon"+myVarSuffix);
+            const auto& dR_Stop1Stop2_cm_OldSeed_NonIsoMuon   = tr.getVar<double>("dR_Stop1Stop2_cm_OldSeed_NonIsoMuon"+myVarSuffix);
+            const auto& dPhi_Stop1Stop2_cm_OldSeed_NonIsoMuon = tr.getVar<double>("dPhi_Stop1Stop2_cm_OldSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_pt_cm_TopSeed_NonIsoMuon    = tr.getVar<double>("Stop1_pt_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_eta_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop1_eta_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_phi_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop1_phi_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop1_mass_cm_TopSeed_NonIsoMuon  = tr.getVar<double>("Stop1_mass_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop1_scalarPt_cm_TopSeed_NonIsoMuon  = tr.getVar<double>("Stop1_scalarPt_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_pt_cm_TopSeed_NonIsoMuon    = tr.getVar<double>("Stop2_pt_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_eta_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop2_eta_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_phi_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("Stop2_phi_cm_TopSeed_NonIsoMuon"+myVarSuffix);
             const auto& Stop2_mass_cm_TopSeed_NonIsoMuon  = tr.getVar<double>("Stop2_mass_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& Stop2_scalarPt_cm_TopSeed_NonIsoMuon  = tr.getVar<double>("Stop2_scalarPt_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& dR_Stop1Stop2_cm_TopSeed_NonIsoMuon   = tr.getVar<double>("dR_Stop1Stop2_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+            const auto& dPhi_Stop1Stop2_cm_TopSeed_NonIsoMuon = tr.getVar<double>("dPhi_Stop1Stop2_cm_TopSeed_NonIsoMuon"+myVarSuffix);
+
 
             const auto& GoodLeptons                       = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons"+myVarSuffix);
             const auto& GoodLeptonsCharge                 = tr.getVec<int>("GoodLeptonsCharge"+myVarSuffix);
             const auto& GoodLeptonsMiniIso                = tr.getVec<double>("GoodLeptonsMiniIso"+myVarSuffix);
+
+            const auto& lvMET_cm_m_0l                        = tr.getVar<double>("lvMET_cm_m_0l"+myVarSuffix);
+            const auto& lvMET_cm_eta_0l                      = tr.getVar<double>("lvMET_cm_eta_0l"+myVarSuffix);
+            const auto& lvMET_cm_phi_0l                      = tr.getVar<double>("lvMET_cm_phi_0l"+myVarSuffix);
+            const auto& lvMET_cm_pt_0l                       = tr.getVar<double>("lvMET_cm_pt_0l"+myVarSuffix);
+            const auto& lvMET_cm_m_1l                        = tr.getVar<double>("lvMET_cm_m_1l"+myVarSuffix);
+            const auto& lvMET_cm_eta_1l                      = tr.getVar<double>("lvMET_cm_eta_1l"+myVarSuffix);
+            const auto& lvMET_cm_phi_1l                      = tr.getVar<double>("lvMET_cm_phi_1l"+myVarSuffix);
+            const auto& lvMET_cm_pt_1l                       = tr.getVar<double>("lvMET_cm_pt_1l"+myVarSuffix);
+            const auto& Mbl                               = tr.getVar<double>("Mbl"+myVarSuffix);
 
             const auto& Stop1_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass"+myVarSuffix);
             const auto& Stop2_mass_PtRank_matched         = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass"+myVarSuffix);
             const auto& Stop1_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass"+myVarSuffix);
             const auto& Stop2_mass_MassRank_matched       = runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass"+myVarSuffix);
             const auto& Stop_mass_average_matched         = runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"+myVarSuffix);
+            
+            const auto& ntops                             = tr.getVar<int>("ntops");
+            const auto& nb                                = tr.getVar<int>("NGoodBJets");
+            const auto& dR_bjets                          = tr.getVar<double>("dR_bjets"); 
 
             std::vector<double> Jets_flavb_0l;   std::vector<double> Jets_flavb_1l;
             std::vector<double> Jets_flavc_0l;   std::vector<double> Jets_flavc_1l;
             std::vector<double> Jets_flavg_0l;   std::vector<double> Jets_flavg_1l;
             std::vector<double> Jets_flavuds_0l; std::vector<double> Jets_flavuds_1l;
             std::vector<double> Jets_flavq_0l;   std::vector<double> Jets_flavq_1l;
+            std::vector<double> Jets_CSVb_0l;    std::vector<double> Jets_CSVb_1l;
+            std::vector<double> Jets_CSVc_0l;    std::vector<double> Jets_CSVc_1l;
+            std::vector<double> Jets_CSVudsg_0l; std::vector<double> Jets_CSVudsg_1l;
+            std::vector<double> Jets_ptD_0l; std::vector<double> Jets_ptD_1l;
+            std::vector<double> Jets_axismajor_0l; std::vector<double> Jets_axismajor_1l;
+            std::vector<double> Jets_axisminor_0l; std::vector<double> Jets_axisminor_1l;
             std::vector<double> JetNonIsoMuons_flavb_1l;
             std::vector<double> JetNonIsoMuons_flavc_1l;
             std::vector<double> JetNonIsoMuons_flavg_1l;
             std::vector<double> JetNonIsoMuons_flavuds_1l;
             std::vector<double> JetNonIsoMuons_flavq_1l;
+            std::vector<double> JetNonIsoMuons_CSVb_1l;   
+            std::vector<double> JetNonIsoMuons_CSVc_1l;   
+            std::vector<double> JetNonIsoMuons_CSVudsg_1l;
+            std::vector<double> JetNonIsoMuons_ptD_1l; 
+            std::vector<double> JetNonIsoMuons_axismajor_1l;
+            std::vector<double> JetNonIsoMuons_axisminor_1l;
 
             // Here assume number cm jets is same in CR and SR selection
             for (unsigned int iJet = 1; iJet <= nMVAJets_0l; iJet++) {
@@ -355,6 +440,12 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 Jets_flavg_0l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_0l"+myVarSuffix));
                 Jets_flavuds_0l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_0l"+myVarSuffix));
                 Jets_flavq_0l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_0l"+myVarSuffix));
+                Jets_CSVb_0l.push_back(tr.getVar<double>("Jet_CSVb_"+std::to_string(iJet)+"_0l"+myVarSuffix));
+                Jets_CSVc_0l.push_back(tr.getVar<double>("Jet_CSVc_"+std::to_string(iJet)+"_0l"+myVarSuffix));
+                Jets_CSVudsg_0l.push_back(tr.getVar<double>("Jet_CSVudsg_"+std::to_string(iJet)+"_0l"+myVarSuffix));
+                Jets_ptD_0l.push_back(tr.getVar<double>("Jet_ptD_"+std::to_string(iJet)+"_0l"+myVarSuffix));
+                Jets_axismajor_0l.push_back(tr.getVar<double>("Jet_axismajor_"+std::to_string(iJet)+"_0l"+myVarSuffix));
+                Jets_axisminor_0l.push_back(tr.getVar<double>("Jet_axisminor_"+std::to_string(iJet)+"_0l"+myVarSuffix));
             }
 
             for (unsigned int iJet = 1; iJet <= nMVAJets_1l; iJet++) {
@@ -363,12 +454,24 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 Jets_flavg_1l.push_back(tr.getVar<double>("Jet_flavg_"+std::to_string(iJet)+"_1l"+myVarSuffix));
                 Jets_flavuds_1l.push_back(tr.getVar<double>("Jet_flavuds_"+std::to_string(iJet)+"_1l"+myVarSuffix));
                 Jets_flavq_1l.push_back(tr.getVar<double>("Jet_flavq_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                Jets_CSVb_1l.push_back(tr.getVar<double>("Jet_CSVb_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                Jets_CSVc_1l.push_back(tr.getVar<double>("Jet_CSVc_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                Jets_CSVudsg_1l.push_back(tr.getVar<double>("Jet_CSVudsg_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                Jets_ptD_1l.push_back(tr.getVar<double>("Jet_ptD_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                Jets_axismajor_1l.push_back(tr.getVar<double>("Jet_axismajor_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                Jets_axisminor_1l.push_back(tr.getVar<double>("Jet_axisminor_"+std::to_string(iJet)+"_1l"+myVarSuffix));
 
                 JetNonIsoMuons_flavb_1l.push_back(  tr.getVar<double>("JetNonIsoMuons_flavb_"+std::to_string(iJet)+"_1l"+myVarSuffix));
                 JetNonIsoMuons_flavc_1l.push_back(  tr.getVar<double>("JetNonIsoMuons_flavc_"+std::to_string(iJet)+"_1l"+myVarSuffix));
                 JetNonIsoMuons_flavg_1l.push_back(  tr.getVar<double>("JetNonIsoMuons_flavg_"+std::to_string(iJet)+"_1l"+myVarSuffix));
                 JetNonIsoMuons_flavuds_1l.push_back(tr.getVar<double>("JetNonIsoMuons_flavuds_"+std::to_string(iJet)+"_1l"+myVarSuffix));
                 JetNonIsoMuons_flavq_1l.push_back(  tr.getVar<double>("JetNonIsoMuons_flavq_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                JetNonIsoMuons_CSVb_1l.push_back(tr.getVar<double>("JetNonIsoMuons_CSVb_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                JetNonIsoMuons_CSVc_1l.push_back(tr.getVar<double>("JetNonIsoMuons_CSVc_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                JetNonIsoMuons_CSVudsg_1l.push_back(tr.getVar<double>("JetNonIsoMuons_CSVudsg_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                JetNonIsoMuons_ptD_1l.push_back(tr.getVar<double>("JetNonIsoMuons_ptD_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                JetNonIsoMuons_axismajor_1l.push_back(tr.getVar<double>("JetNonIsoMuons_axismajor_"+std::to_string(iJet)+"_1l"+myVarSuffix));
+                JetNonIsoMuons_axisminor_1l.push_back(tr.getVar<double>("JetNonIsoMuons_axisminor_"+std::to_string(iJet)+"_1l"+myVarSuffix));
             }
 
             // Put 0L and 1L version of variables into vector
@@ -376,6 +479,8 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             // For 0L things in the CR, nominal version of jets and derived quantities are used, take note !
             std::vector<int>                                        NGoodJets                     {NGoodJets_pt30,                        NGoodJets_pt30};
             std::vector<int>                                        NNonIsoMuonJets               {NGoodJets_pt30,                        NNonIsoMuonJets_pt30};
+            std::vector<int>                                        NBJets                        {nb,                                    nb};
+            std::vector<int>                                        NTops                         {ntops,                                 ntops};
             std::vector<double>                                     HT_trigger                    {HT_trigger_pt30,                       HT_trigger_pt30};
             std::vector<double>                                     HT_NonIsoMuon                 {HT_trigger_pt30,                       HT_NonIsoMuon_pt30};
             std::vector<double>                                     fwm2_top6                     {fwm2_top6_0l,                          fwm2_top6_1l};
@@ -398,23 +503,48 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::vector<std::vector<double> >                       Jets_flavg                    {Jets_flavg_0l,                         Jets_flavg_1l};
             std::vector<std::vector<double> >                       Jets_flavuds                  {Jets_flavuds_0l,                       Jets_flavuds_1l};
             std::vector<std::vector<double> >                       Jets_flavq                    {Jets_flavq_0l,                         Jets_flavq_1l};
+            std::vector<std::vector<double> >                       Jets_CSVb                     {Jets_CSVb_0l,                          Jets_CSVb_1l};
+            std::vector<std::vector<double> >                       Jets_CSVc                     {Jets_CSVc_0l,                          Jets_CSVc_1l};
+            std::vector<std::vector<double> >                       Jets_CSVudsg                  {Jets_CSVudsg_0l,                       Jets_CSVudsg_1l};
+            std::vector<std::vector<double> >                       Jets_ptD                      {Jets_ptD_0l,                           Jets_ptD_1l};
+            std::vector<std::vector<double> >                       Jets_axismajor                {Jets_axismajor_0l,                     Jets_axismajor_1l};
+            std::vector<std::vector<double> >                       Jets_axisminor                {Jets_axisminor_0l,                     Jets_axisminor_1l};
             std::vector<std::vector<double> >                       Jets_flavb_QCDCR              {Jets_flavb_0l,                         JetNonIsoMuons_flavb_1l};
             std::vector<std::vector<double> >                       Jets_flavc_QCDCR              {Jets_flavc_0l,                         JetNonIsoMuons_flavc_1l};
             std::vector<std::vector<double> >                       Jets_flavg_QCDCR              {Jets_flavg_0l,                         JetNonIsoMuons_flavg_1l};
             std::vector<std::vector<double> >                       Jets_flavuds_QCDCR            {Jets_flavuds_0l,                       JetNonIsoMuons_flavuds_1l};
             std::vector<std::vector<double> >                       Jets_flavq_QCDCR              {Jets_flavq_0l,                         JetNonIsoMuons_flavq_1l};
-            std::vector<std::vector<utility::LorentzVector> >               Jets_cm_top6                  {Jets_cm_top6_0l,                       Jets_cm_top6_1l};
-            std::vector<std::vector<utility::LorentzVector> >               Jets_cm_top6_QCDCR            {Jets_cm_top6_0l,                       NonIsoMuons_Jets_cm_top6_1l};
+            std::vector<std::vector<double> >                       Jets_CSVb_QCDCR               {Jets_CSVb_0l,                          JetNonIsoMuons_CSVb_1l};
+            std::vector<std::vector<double> >                       Jets_CSVc_QCDCR               {Jets_CSVc_0l,                          JetNonIsoMuons_CSVc_1l};
+            std::vector<std::vector<double> >                       Jets_CSVudsg_QCDCR            {Jets_CSVudsg_0l,                       JetNonIsoMuons_CSVudsg_1l};
+            std::vector<std::vector<double> >                       Jets_ptD_QCDCR                {Jets_ptD_0l,                           JetNonIsoMuons_ptD_1l};
+            std::vector<std::vector<double> >                       Jets_axismajor_QCDCR          {Jets_axismajor_0l,                     JetNonIsoMuons_axismajor_1l};
+            std::vector<std::vector<double> >                       Jets_axisminor_QCDCR          {Jets_axisminor_0l,                     JetNonIsoMuons_axisminor_1l};
+            std::vector<std::vector<utility::LorentzVector> >               Jets_cm_top6          {Jets_cm_top6_0l,                       Jets_cm_top6_1l};
+            std::vector<std::vector<utility::LorentzVector> >               Jets_cm_top6_QCDCR    {Jets_cm_top6_0l,                       NonIsoMuons_Jets_cm_top6_1l};
+
+            std::vector<double>                                   combined7thToLastJet_pt      {combined7thToLastJet_pt_0l,               combined7thToLastJet_pt_1l};
+            std::vector<double>                                   combined7thToLastJet_eta     {combined7thToLastJet_eta_0l,              combined7thToLastJet_eta_1l};
+            std::vector<double>                                   combined7thToLastJet_phi     {combined7thToLastJet_phi_0l,              combined7thToLastJet_phi_1l};
+            std::vector<double>                                   combined7thToLastJet_m       {combined7thToLastJet_m_0l,                combined7thToLastJet_m_1l};
+            std::vector<double>                                   combined7thToLastJet_E       {combined7thToLastJet_E_0l,                combined7thToLastJet_E_1l};
+            std::vector<double>                                   combined7thToLastJetNonIsoMuons_pt      {combined7thToLastJet_pt_0l,           combined7thToLastJetNonIsoMuons_pt_1l};
+            std::vector<double>                                   combined7thToLastJetNonIsoMuons_eta     {combined7thToLastJet_eta_0l,          combined7thToLastJetNonIsoMuons_eta_1l};
+            std::vector<double>                                   combined7thToLastJetNonIsoMuons_phi     {combined7thToLastJet_phi_0l,          combined7thToLastJetNonIsoMuons_phi_1l};
+            std::vector<double>                                   combined7thToLastJetNonIsoMuons_m       {combined7thToLastJet_m_0l,            combined7thToLastJetNonIsoMuons_m_1l};
+            std::vector<double>                                   combined7thToLastJetNonIsoMuons_E       {combined7thToLastJet_E_0l,            combined7thToLastJetNonIsoMuons_E_1l};
+
+            std::vector<double>                                   lvMET_cm_m                              {lvMET_cm_m_0l,                        lvMET_cm_m_1l};
+            std::vector<double>                                   lvMET_cm_phi                            {lvMET_cm_phi_0l,                        lvMET_cm_phi_1l};
+            std::vector<double>                                   lvMET_cm_eta                            {lvMET_cm_eta_0l,                        lvMET_cm_eta_1l};
+            std::vector<double>                                   lvMET_cm_pt                             {lvMET_cm_pt_0l,                        lvMET_cm_pt_1l};
 
             // ------------------------
             // -- Define weight
             // ------------------------
             double eventweight = 1.0, leptonweight = 1.0, bTagWeight = 1.0, prefiringScaleFactor = 1.0, pileupWeight = 1.0, htDerivedweight = 1.0;
             double weight0L             = 1.0, weight1L            = 1.0;
-            double weight0LNoB          = 1.0, weight1LNoB         = 1.0;
             double weight0L_NonIsoMuon  = 1.0, weight1L_NonIsoMuon = 1.0;
-            double weight0L_topReweight = 1.0, weight1L_topReweight = 1.0;
-            double weight0L_NonIsoMuon_topReweight = 1.0, weight1L_NonIsoMuon_topReweight = 1.0;
             if(runtype == "MC" )
             {
                 // Define Lumi weight
@@ -433,42 +563,29 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L             *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
-                weight0L             *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight1L             *= eventweight; // *  leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
+                weight0L             *= eventweight; // *                 bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
 
-                weight1LNoB          *= eventweight * leptonweight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
-                weight0LNoB          *= eventweight *                prefiringScaleFactor * pileupWeight; // * htDerivedweight;
-
-                weight1L_topReweight *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
-                weight0L_topReweight *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
-
-                weight1L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
-                weight0L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight;
-
-                weight1L_NonIsoMuon_topReweight  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
-                weight0L_NonIsoMuon_topReweight  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
+                weight1L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
+                weight0L_NonIsoMuon  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
             }
 
             std::vector<double> weight                      {weight0L,                         weight1L};
-            std::vector<double> weight_NoB                  {weight0LNoB,                      weight1LNoB};
             std::vector<double> weight_QCDCR                {weight0L_NonIsoMuon,              weight1L_NonIsoMuon};
-            std::vector<double> weight_topReweight          {weight0L_topReweight,             weight1L_topReweight};
-            std::vector<double> weight_QCDCR_topReweight    {weight0L_NonIsoMuon_topReweight,  weight1L_NonIsoMuon_topReweight};
 
             const std::map<std::string, bool> cut_map
             {
                 {"_1l"               , passBaseline1l_Good},                         
                 {"_1l_blind"         , passBaseline1l_Good_blind},                         
+                //{"_1l_loose"         , passBaseline1l_Good_loose},                         
                 //{"_1l_NoB"           , passBaseline1l_Good},                         
-                {"_1l_topPtReweight" , passBaseline1l_Good},                         
                 //{"_1l_HT500"         , passBaseline1l_HT500_Good},                         
                 //{"_1l_HT700"         , passBaseline1l_HT700_Good},                         
                 {"_0l"               , passBaseline0l_Good},                         
                 {"_0l_blind"         , passBaseline0l_Good_blind},                         
+                //{"_0l_loose"         , passBaseline0l_Good_loose},                         
                 //{"_0l_NoB"           , passBaseline0l_Good},                         
-                {"_0l_topPtReweight" , passBaseline0l_Good},                         
                 {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon},                         
-                {"_1l_QCDCR_topPtReweight"         , passBaseline1l_NonIsoMuon},                         
                 //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
             };
 
@@ -493,13 +610,13 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                     channel = std::stoi(kv.first.substr(1,1));
 
                 bool isQCD          = kv.first.find("QCDCR")    != std::string::npos;
-                bool isTopReweight  = kv.first.find("top")      != std::string::npos;
-                bool isNoB          = kv.first.find("NoB")      != std::string::npos;
                 unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
 
                 // For 0L, we always use the NGoodJets case
                 njetsMap = {
                     {"Incl",     true},
+                    {"5",      (!isQCD or channel==0) ? NGoodJets[channel]==5 : false},
+                    {"6",      (!isQCD or channel==0) ? NGoodJets[channel]==6 : false},
                     {"7",      (!isQCD or channel==0) ? NGoodJets[channel]==7  : NNonIsoMuonJets[channel]==7},
                     {"8",      (!isQCD or channel==0) ? NGoodJets[channel]==8  : NNonIsoMuonJets[channel]==8},
                     {"9",      (!isQCD or channel==0) ? NGoodJets[channel]==9  : NNonIsoMuonJets[channel]==9},
@@ -509,10 +626,6 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 double w  = !isQCD ? weight[channel]        : weight_QCDCR[channel];
                 double ht = !isQCD ? HT_trigger[channel]    : HT_NonIsoMuon[channel];
-
-                w  = !isTopReweight ? w                     : weight_topReweight[channel];
-                w  = !(isTopReweight && isQCD) ? w          : weight_QCDCR_topReweight[channel];
-                w  = !isNoB ? w                             : weight_NoB[channel];
 
                 std::string name;
                 for (auto& njetsPass : njetsMap)
@@ -526,17 +639,18 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                     if (kv.second and inNjetsBin)
                     {
                         name = kv.first + njetsStr;
-                        if (njets == "Incl")
-                        {
+                        //if (njets == "Incl")
+                        //{
 
-                            my_histos["h_njets"      + name]->Fill(!isQCD ? NGoodJets[channel]    : NNonIsoMuonJets[channel], w);
-                            my_histos["fwm2_top6"    + name]->Fill(!isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
-                            my_histos["fwm3_top6"    + name]->Fill(!isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
-                            my_histos["fwm4_top6"    + name]->Fill(!isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
-                            my_histos["fwm5_top6"    + name]->Fill(!isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
-                            my_histos["jmt_ev0_top6" + name]->Fill(!isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
-                            my_histos["jmt_ev1_top6" + name]->Fill(!isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
-                            my_histos["jmt_ev2_top6" + name]->Fill(!isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
+                            my_histos["h_njets"         + name]->Fill(!isQCD ? NGoodJets[channel]    : NNonIsoMuonJets[channel], w);
+                            my_histos["HT_trigger_pt30" + name]->Fill(ht, w);
+                            my_histos["fwm2_top6"       + name]->Fill(!isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
+                            my_histos["fwm3_top6"       + name]->Fill(!isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
+                            my_histos["fwm4_top6"       + name]->Fill(!isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
+                            my_histos["fwm5_top6"       + name]->Fill(!isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
+                            my_histos["jmt_ev0_top6"    + name]->Fill(!isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
+                            my_histos["jmt_ev1_top6"    + name]->Fill(!isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
+                            my_histos["jmt_ev2_top6"    + name]->Fill(!isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
 
                             // Plots of stop 4-vector are made with pt-ranked stops
                             if (Stop1_pt_cm_OldSeed  > Stop2_pt_cm_OldSeed)
@@ -545,22 +659,26 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                 my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_OldSeed_NonIsoMuon, w);
+                                my_histos["Stop1_ptrHT_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_OldSeed / Stop1_mass_cm_OldSeed_NonIsoMuon  : Stop1_pt_cm_OldSeed_NonIsoMuon / ht,   w);
 
                                 my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_OldSeed_NonIsoMuon,   w);
                                 my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_OldSeed_NonIsoMuon, w);
+                                my_histos["Stop2_ptrHT_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_OldSeed / Stop2_mass_cm_OldSeed_NonIsoMuon  : Stop2_pt_cm_OldSeed_NonIsoMuon / ht,   w);
                             } else
                             {
                                 my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_OldSeed   : Stop2_pt_cm_OldSeed_NonIsoMuon,   w);
                                 my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_OldSeed  : Stop2_eta_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_OldSeed  : Stop2_phi_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_OldSeed : Stop2_mass_cm_OldSeed_NonIsoMuon, w);
+                                my_histos["Stop1_ptrHT_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_OldSeed / Stop2_mass_cm_OldSeed_NonIsoMuon  : Stop2_pt_cm_OldSeed_NonIsoMuon / ht,   w);
 
                                 my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_OldSeed   : Stop1_pt_cm_OldSeed_NonIsoMuon,   w);
                                 my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_OldSeed  : Stop1_eta_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_OldSeed  : Stop1_phi_cm_OldSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_mass_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_OldSeed : Stop1_mass_cm_OldSeed_NonIsoMuon, w);
+                                my_histos["Stop2_ptrHT_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_OldSeed / Stop1_mass_cm_OldSeed_NonIsoMuon  : Stop1_pt_cm_OldSeed_NonIsoMuon / ht,   w);
                             }
 
                             if (Stop1_pt_cm_TopSeed  > Stop2_pt_cm_TopSeed)
@@ -569,29 +687,32 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                 my_histos["Stop1_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_TopSeed  : Stop1_eta_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_TopSeed  : Stop1_phi_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_TopSeed : Stop1_mass_cm_TopSeed_NonIsoMuon, w);
+                                my_histos["Stop1_ptrHT_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_TopSeed / Stop1_mass_cm_TopSeed_NonIsoMuon  : Stop1_pt_cm_TopSeed_NonIsoMuon / ht,   w);
 
                                 my_histos["Stop2_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_TopSeed   : Stop2_pt_cm_TopSeed_NonIsoMuon,   w);
                                 my_histos["Stop2_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_TopSeed  : Stop2_eta_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_TopSeed  : Stop2_phi_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_TopSeed : Stop2_mass_cm_TopSeed_NonIsoMuon, w);
+                                my_histos["Stop2_ptrHT_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_TopSeed / Stop2_mass_cm_TopSeed_NonIsoMuon  : Stop2_pt_cm_TopSeed_NonIsoMuon / ht,   w);
                             } else
                             {
                                 my_histos["Stop1_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_TopSeed   : Stop2_pt_cm_TopSeed_NonIsoMuon,   w);
                                 my_histos["Stop1_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_eta_cm_TopSeed  : Stop2_eta_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop2_phi_cm_TopSeed  : Stop2_phi_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop1_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_mass_cm_TopSeed : Stop2_mass_cm_TopSeed_NonIsoMuon, w);
+                                my_histos["Stop1_ptrHT_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop2_pt_cm_TopSeed / Stop2_mass_cm_TopSeed_NonIsoMuon  : Stop2_pt_cm_TopSeed_NonIsoMuon / ht,   w);
 
                                 my_histos["Stop2_pt_cm_TopSeed"   + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_TopSeed   : Stop1_pt_cm_TopSeed_NonIsoMuon,   w);
                                 my_histos["Stop2_eta_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_eta_cm_TopSeed  : Stop1_eta_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_phi_cm_TopSeed"  + name]->Fill((!isQCD or channel==0) ? Stop1_phi_cm_TopSeed  : Stop1_phi_cm_TopSeed_NonIsoMuon,  w);
                                 my_histos["Stop2_mass_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_mass_cm_TopSeed : Stop1_mass_cm_TopSeed_NonIsoMuon, w);
+                                my_histos["Stop2_ptrHT_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? Stop1_pt_cm_TopSeed / Stop1_mass_cm_TopSeed_NonIsoMuon  : Stop1_pt_cm_TopSeed_NonIsoMuon / ht,   w);
                             }
 
-                            my_histos["Stop1_mass_PtRank_matched"   + name]->Fill(Stop1_mass_PtRank_matched,   w);
-                            my_histos["Stop2_mass_PtRank_matched"   + name]->Fill(Stop2_mass_PtRank_matched,   w);
-                            my_histos["Stop1_mass_MassRank_matched" + name]->Fill(Stop1_mass_MassRank_matched, w);
-                            my_histos["Stop2_mass_MassRank_matched" + name]->Fill(Stop2_mass_MassRank_matched, w);
-                            my_histos["Stop_mass_average_matched"   + name]->Fill(Stop_mass_average_matched,   w);
+                            my_histos["dR_Stop1Stop2_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? dR_Stop1Stop2_cm_OldSeed : dR_Stop1Stop2_cm_OldSeed_NonIsoMuon, w);
+                            my_histos["dPhi_Stop1Stop2_cm_OldSeed" + name]->Fill((!isQCD or channel==0) ? dPhi_Stop1Stop2_cm_OldSeed : dPhi_Stop1Stop2_cm_OldSeed_NonIsoMuon, w);
+                            my_histos["dR_Stop1Stop2_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? dR_Stop1Stop2_cm_TopSeed : dR_Stop1Stop2_cm_TopSeed_NonIsoMuon, w);
+                            my_histos["dPhi_Stop1Stop2_cm_TopSeed" + name]->Fill((!isQCD or channel==0) ? dPhi_Stop1Stop2_cm_TopSeed : dPhi_Stop1Stop2_cm_TopSeed_NonIsoMuon, w);
 
                             for(unsigned int i = 1; i <= nJets; i++)
                             {
@@ -619,14 +740,16 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                 my_histos["Jet_cm_phi_"    + std::to_string(i) + name]->Fill(phi, w);
                                 my_histos["Jet_cm_m_"      + std::to_string(i) + name]->Fill(m, w);
                                 my_histos["Jet_cm_E_"      + std::to_string(i) + name]->Fill(E, w);
-                                my_2d_histos["h_cm_ptrHT_fwm2_top6" + name]->Fill(pt/ht, !isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
-                                my_2d_histos["h_cm_ptrHT_fwm3_top6" + name]->Fill(pt/ht, !isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
-                                my_2d_histos["h_cm_ptrHT_fwm4_top6" + name]->Fill(pt/ht, !isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
-                                my_2d_histos["h_cm_ptrHT_fwm5_top6" + name]->Fill(pt/ht, !isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
-                                my_2d_histos["h_cm_ptrHT_jmt_ev0_top6" + name]->Fill(pt/ht, !isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
-                                my_2d_histos["h_cm_ptrHT_jmt_ev1_top6" + name]->Fill(pt/ht, !isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
-                                my_2d_histos["h_cm_ptrHT_jmt_ev2_top6" + name]->Fill(pt/ht, !isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
-                                
+                                if ( i <= 7) 
+                                {
+                                my_2d_histos["h_cm_ptrHT_fwm2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_fwm3_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_fwm4_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_fwm5_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_jmt_ev0_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_jmt_ev1_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_jmt_ev2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
+                                }
 
                                 if (!isQCD)
                                 {
@@ -635,6 +758,12 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Jet_cm_flavg_"   + std::to_string(i) + name]->Fill(Jets_flavg[channel].at(i-1),   w);
                                     my_histos["Jet_cm_flavq_"   + std::to_string(i) + name]->Fill(Jets_flavq[channel].at(i-1),   w);
                                     my_histos["Jet_cm_flavuds_" + std::to_string(i) + name]->Fill(Jets_flavuds[channel].at(i-1), w);
+                                    my_histos["Jet_cm_CSVb_" + std::to_string(i) + name]->Fill(Jets_CSVb[channel].at(i-1), w);
+                                    my_histos["Jet_cm_CSVc_" + std::to_string(i) + name]->Fill(Jets_CSVc[channel].at(i-1), w);
+                                    my_histos["Jet_cm_CSVudsg_" + std::to_string(i) + name]->Fill(Jets_CSVudsg[channel].at(i-1), w);
+                                    my_histos["Jet_ptD_" + std::to_string(i) + name]->Fill(Jets_ptD[channel].at(i-1), w);
+                                    my_histos["Jet_axismajor_" + std::to_string(i) + name]->Fill(Jets_axismajor[channel].at(i-1), w);
+                                    my_histos["Jet_axisminor_" + std::to_string(i) + name]->Fill(Jets_axisminor[channel].at(i-1), w);
                                 } else
                                 {
                                     my_histos["Jet_cm_flavb_"   + std::to_string(i) + name]->Fill(Jets_flavb_QCDCR[channel].at(i-1),   w);
@@ -642,10 +771,40 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["Jet_cm_flavg_"   + std::to_string(i) + name]->Fill(Jets_flavg_QCDCR[channel].at(i-1),   w);
                                     my_histos["Jet_cm_flavq_"   + std::to_string(i) + name]->Fill(Jets_flavq_QCDCR[channel].at(i-1),   w);
                                     my_histos["Jet_cm_flavuds_" + std::to_string(i) + name]->Fill(Jets_flavuds_QCDCR[channel].at(i-1), w);
+                                    my_histos["Jet_cm_CSVb_" + std::to_string(i) + name]->Fill(Jets_CSVb_QCDCR[channel].at(i-1), w);
+                                    my_histos["Jet_cm_CSVc_" + std::to_string(i) + name]->Fill(Jets_CSVc_QCDCR[channel].at(i-1), w);
+                                    my_histos["Jet_cm_CSVudsg_" + std::to_string(i) + name]->Fill(Jets_CSVudsg_QCDCR[channel].at(i-1), w);
+                                    my_histos["Jet_ptD_" + std::to_string(i) + name]->Fill(Jets_ptD_QCDCR[channel].at(i-1), w);
+                                    my_histos["Jet_axismajor_" + std::to_string(i) + name]->Fill(Jets_axismajor_QCDCR[channel].at(i-1), w);
+                                    my_histos["Jet_axisminor_" + std::to_string(i) + name]->Fill(Jets_axisminor_QCDCR[channel].at(i-1), w);
                                 }
                             }
+                            if(!isQCD)
+                            {
+                                my_histos["combined7thToLastJet_pt_cm" + name]->Fill(combined7thToLastJet_pt[channel], w);
+                                my_histos["combined7thToLastJet_eta_cm" + name]->Fill(combined7thToLastJet_eta[channel], w);
+                                my_histos["combined7thToLastJet_phi_cm" + name]->Fill(combined7thToLastJet_phi[channel], w);
+                                my_histos["combined7thToLastJet_m_cm" + name]->Fill(combined7thToLastJet_m[channel], w);
+                                my_histos["combined7thToLastJet_E_cm" + name]->Fill(combined7thToLastJet_E[channel], w);
+                            } else 
+                            {
+                                my_histos["combined7thToLastJet_pt_cm" + name]->Fill(combined7thToLastJetNonIsoMuons_pt[channel], w);
+                                my_histos["combined7thToLastJet_eta_cm" + name]->Fill(combined7thToLastJetNonIsoMuons_eta[channel], w);
+                                my_histos["combined7thToLastJet_phi_cm" + name]->Fill(combined7thToLastJetNonIsoMuons_phi[channel], w);
+                                my_histos["combined7thToLastJet_m_cm" + name]->Fill(combined7thToLastJetNonIsoMuons_m[channel], w);
+                                my_histos["combined7thToLastJet_E_cm" + name]->Fill(combined7thToLastJetNonIsoMuons_E[channel], w);
+                            }
+                            my_histos["h_ht"        + name]->Fill(ht, w);
+                            my_histos["h_nb"        + name]->Fill(nb, w);
+                            my_histos["h_ntops"     + name]->Fill(ntops, w);
+                            my_histos["h_dRbjet"    + name]->Fill(dR_bjets, w);
+                            my_histos["h_Mbl"       + name]->Fill(Mbl, w);
 
-                            my_histos["h_ht"                  + name]->Fill(ht, w);
+                            my_histos["h_lvMET_cm_m"    + name]->Fill(lvMET_cm_m[channel], w);
+                            my_histos["h_lvMET_cm_eta"  + name]->Fill(lvMET_cm_eta[channel], w);
+                            my_histos["h_lvMET_cm_phi"  + name]->Fill(lvMET_cm_phi[channel], w);
+                            my_histos["h_lvMET_cm_pt"   + name]->Fill(lvMET_cm_pt[channel], w);
+
                             for(std::size_t j = 0 ; j < std::size(GoodLeptons); ++j)
                             {
                                 auto& type = GoodLeptons[j].first;
@@ -675,16 +834,7 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_mMiniIso" + name]->Fill(  iso ,w);
                                 }
                             }
-                            
-                            for(unsigned int j = 0; j < Jets.size(); j++) 
-                            {
-                                if(!GoodJets_pt30[j]) continue;
-                                my_histos["h_jPt" + name]->Fill(Jets.at(j).Pt(), w); 
-                                my_histos["h_jEta" + name]->Fill(Jets.at(j).Eta(), w); 
-                                my_histos["h_jPhi" + name]->Fill(Jets.at(j).Phi(), w); 
-                                my_histos["h_jM" + name]->Fill(Jets.at(j).M(), w); 
-                            }
-                        }
+                        //}
 
                         for(unsigned int i = 1; i <= nJets; i++)
                         {
@@ -707,13 +857,13 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                             } 
                             my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt, i, w);
                             my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
-                            my_2d_histos["h_cm_ptrHT_fwm2_top6" + name]->Fill(pt/ht, !isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_fwm3_top6" + name]->Fill(pt/ht, !isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_fwm4_top6" + name]->Fill(pt/ht, !isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_fwm5_top6" + name]->Fill(pt/ht, !isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_jmt_ev0_top6" + name]->Fill(pt/ht, !isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_jmt_ev1_top6" + name]->Fill(pt/ht, !isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_jmt_ev2_top6" + name]->Fill(pt/ht, !isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_fwm2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_fwm3_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_fwm4_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_fwm5_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_jmt_ev0_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_jmt_ev1_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
+                            my_2d_histos["h_cm_ptrHT_jmt_ev2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
                         }
                     }
                 }
