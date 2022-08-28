@@ -23,6 +23,8 @@ Quantities are aggregated from the `All_Regions` objects and curated for sending
 
 `common_TableWriter.py`: A module that provides a `TableWriter` class that has curated information from the `All_Regions` class passed to it for making custom LaTeX tables.
 
+`common_HiggsCombineInputs.py`: A module that provides functions to make a root file including all sys for Higgs combine.
+
 ## `DoubleDisCo` Applications
 
 Currently, there are four ``applications'' that perform specific validation studies: `DoubleDisCo_BinEdges.py`, `DoubleDisCo_MCcorrectionFactor_TT.py`, `DoubleDisCo_MCcorrectionFactor_TTvar.py`, `DoubleDisCo_Optimized_BinEdges.py`.
