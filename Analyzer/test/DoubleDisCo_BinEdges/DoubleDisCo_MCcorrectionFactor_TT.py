@@ -31,6 +31,9 @@ class MCcorrectionFactor_TT():
                                 "Val_D"  : np.arange(0.60, 1.05, 0.05)
         }
 
+    # -------------
+    # main function
+    # ------------- 
     def run(self, disc1edge=None, disc2edge=None, fastMode=False, **kwargs):
 
         tablesPath        = kwargs["tablesPath"]["TT"]
@@ -154,8 +157,8 @@ class MCcorrectionFactor_TT():
                 eventsTT = {}; eventsData = {}; edgesPerNjets = {}
                 for njet in njets:
 
-                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion),    region = region, njet = njet, boundary = b, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
-                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion),    region = region, njet = njet, boundary = b, sample = "Data") for subregion in ["A", "B", "C", "D"]}
+                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = b, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
+                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = b, sample = "Data") for subregion in ["A", "B", "C", "D"]}
 
                     eventsTT.setdefault(njet,      {}).setdefault(region, nEventsTT)
                     eventsData.setdefault(njet,    {}).setdefault(region, nEventsData)

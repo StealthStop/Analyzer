@@ -200,8 +200,8 @@ class MCcorrectionFactor_TTvar():
                 eventsTT = {}; eventsData = {}; edgesPerNjets = {}
                 for njet in njets:
 
-                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion),    region = region, njet = njet, boundary = b, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
-                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion),    region = region, njet = njet, boundary = b, sample = "Data") for subregion in ["A", "B", "C", "D"]}
+                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = b, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
+                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = b, sample = "Data") for subregion in ["A", "B", "C", "D"]}
 
                     eventsTT.setdefault(njet,      {}).setdefault(region, nEventsTT)
                     eventsData.setdefault(njet,    {}).setdefault(region, nEventsData)
@@ -210,31 +210,53 @@ class MCcorrectionFactor_TTvar():
         # ----------------------------------------
         # Plot non-closure as function of boundary
         # ----------------------------------------
+        # initilaize a dictionary to include all variables for sys to put in Higgs Combine
+        TT_TTvar_sys = { "MCcorr_TT"        : {},
+                         "MCcorr_TTvar"     : {}, 
+                         "MCcorr_Ratio_MC"  : {},
+                         #"MCcoorRatio_Data" : {},
+        }
+
+        # -------------------
+        # loop over the njets
+        # -------------------
         for njet in njets:
 
+            # initialize a sub-dictionaries for sys
+            for key, value in TT_TTvar_sys.items():
+                if njet not in value:
+                    value[njet] = {}        
+                
+            # ---------------------
+            # loop over the regions
+            # -------------------
             for region in regions:
                 if "Val_" not in region:
                     continue
 
-                # TT
-                closureCorrPerBoundaryTT          = {}
-
-                # TTinData = Data - NonTT
+                # initialize the dictionaries
+                closureCorrPerBoundaryTT                        = {}
                 closurePerBoundaryTTinData                      = {}
-                MC_TT_corrected_dataClosure_PerBoundaryTTinData = {} 
+                MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
+                MCcorrRatio_MC_BoundaryTT                       = {}
 
-                closureCorrPerBoundaryTT["TT"]                            = theAggy.getPerBoundary(variable = "closureCorr",              sample = "TT",  region = region, njet = njet)            
-                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]     = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure", sample = "TTinData", region = region, njet = njet)
+                closureCorrPerBoundaryTT["TT"]                          = theAggy.getPerBoundary(variable = "closureCorr",              sample = "TT",       region = region, njet = njet)            
+                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure", sample = "TTinData", region = region, njet = njet)
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["None"] = theAggy.getPerBoundary(variable = "Closure",                  sample = "TTinData", region = region, njet = njet)
 
+                # -------------------
+                # loop over the ttVar
+                # -------------------
                 for ttVar in self.ttVars:
                 
-                    # TT
-                    closureCorrPerBoundaryTT[ttVar]       = theAggy.getPerBoundary(variable = "closureCorr", sample = ttVar, region = region, njet = njet)            
-
-                    # TTinData = Data - NonTT
-                    #closurePerBoundaryTTinData[ttVar]                         = theAggy.getPerBoundary(variable = "Closure",                        sample = "TTinData", region = region, njet = njet)
+                    closureCorrPerBoundaryTT[ttVar]                        = theAggy.getPerBoundary(variable = "closureCorr",                    sample = ttVar,                 region = region, njet = njet)  
                     MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "MC_ttVar_corrected_dataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
+                    MCcorrRatio_MC_BoundaryTT[ttVar]                       = theAggy.getPerBoundary(variable = "MCcorrRatio_MC",                 sample = ttVar,                 region = region, njet = njet)
+
+                    # fill the TT_TTvar_sys dictionary
+                    TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
+                    TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
+                    TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
                 # set y axis for higher njets bins
                 yMin = None; yMax = None
@@ -270,3 +292,10 @@ class MCcorrectionFactor_TTvar():
 
                 # TTinData = Data - NonTT
                 plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_DetectorVars", njet, self.colors, self.valColors[region])
+
+        # -------------------------------------------------------------
+        # put each variable of TT_TTvar_sys dictionary to the root file
+        # -------------------------------------------------------------
+        higgsCombine = HiggsCombineInputs(self.year, njets, self.channel, samples, regions)        
+        higgsCombine.put_HiggsCombineInputs_toRootFiles(TT_TTvar_sys)
+        higgsCombine.close_HiggsCombineInputs_RootFiles()
