@@ -474,43 +474,41 @@ class All_Regions:
             self.add("pull",       disc1Key, disc2Key, (pull_TTvar,    pullUnc_TTvar),    self.ttVar)
             self.add("pull",       disc1Key, disc2Key, (pull_Data,     pullUnc_Data),     "Data"    )
             self.add("pull",       disc1Key, disc2Key, (pull_TTinData, pullUnc_TTinData), "TTinData")
-      
+
+            # MC closure correction factor     
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TT,       closureCorrUnc_TT) ,       "TT"      )
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_NonTT,    closureCorrUnc_NonTT) ,    "NonTT"   )
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTvar,    closureCorrUnc_TTvar ),    self.ttVar)
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_Data,     closureCorrUnc_Data ),     "Data"    )
             self.add("closureCorr", disc1Key, disc2Key, (closureCorr_TTinData, closureCorrUnc_TTinData ), "TTinData")
 
-            # MC corrected Data Closure
-            # using MC correction factor to calculate Data Closure
-            MC_corrected_dataClosure     = Closure_TTinData * closureCorr_TT
+            # ------------------------------------
+            # MC correction factor ratio: TT/TTvar
+            # ------------------------------------
+            MCcorrRatio_MC     = (closureCorr_TTvar / closureCorr_TT)
+            MCcorrRatio_MC_Unc = MCcorrRatio_MC * ( (closureCorrUnc_TTvar / closureCorr_TTvar)**2.0 + (closureCorrUnc_TT / closureCorr_TT)**2.0 )**0.5
+            self.add("MCcorrRatio_MC", disc1Key, disc2Key, (MCcorrRatio_MC, MCcorrRatio_MC_Unc), "TT") 
+
+            # ---------------------------------------------------------
+            # MC corrected Data Closure for TT
+            #   -- using MC correction factor to calculate Data Closure
+            # ---------------------------------------------------------
+            MC_corrected_dataClosure     = (Closure_TTinData * closureCorr_TT)
             MC_corrected_dataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TT)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
             self.add("MC_corrected_dataClosure", disc1Key, disc2Key, (MC_corrected_dataClosure, MC_corrected_dataClosure_Unc), "TTinData")
 
-            # Related with MC correction factor
-            closureCorr_TTinDataVsTT = 999.0; closureCorrUnc_TTinDataVsTT = 0.0
-            if closureCorr_TTinData != 0.0 and closureCorr_TT != 0.0:
-                closureCorr_TTinDataVsTT    = closureCorr_TTinData / closureCorr_TT
-                closureCorrUnc_TTinDataVsTT = closureCorr_TTinDataVsTT * ((closureCorrUnc_TTinData / closureCorr_TTinData)**2.0 + (closureCorrUnc_TT / closureCorr_TT)**2.0)**0.5
-
-            self.add("closureCorrTTinDataVsTT", disc1Key, disc2Key, (closureCorr_TTinDataVsTT, closureCorrUnc_TTinDataVsTT), "TTinData")
-
-            # MC (ttVar) corrected Data Closure
-            # using MC correction (ttVar) factor to calculate Data Closure
-            MC_ttVar_corrected_dataClosure     = Closure_TTinData * closureCorr_TTvar
+            # ----------------------------------------------------
+            # MC corrected Data Closure for TTvar
+            # using MC correction factor to calculate Data Closure
+            # ----------------------------------------------------
+            MC_ttVar_corrected_dataClosure     = (Closure_TTinData * closureCorr_TTvar)
             MC_ttVar_corrected_dataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TTvar)**2.0 + (ClosureUnc_TTinData * closureCorr_TTvar)**2.0)
             self.add("MC_ttVar_corrected_dataClosure", disc1Key, disc2Key, (MC_ttVar_corrected_dataClosure, MC_ttVar_corrected_dataClosure_Unc), "TTinData")
 
-            # Related with MC correction factor
-            closureCorr_TTinDataVsTTvar = 999.0; closureCorrUnc_TTinDataVsTTvar = 0.0
-            if closureCorr_TTinData != 0.0 and closureCorr_TTvar != 0.0:
-                closureCorr_TTinDataVsTTvar    = closureCorr_TTinData / closureCorr_TTvar
-                closureCorrUnc_TTinDataVsTTvar = closureCorr_TTinDataVsTTvar * ((closureCorrUnc_TTinData / closureCorr_TTinData)**2.0 + (closureCorrUnc_TTvar / closureCorr_TTvar)**2.0)**0.5
-
-            self.add("closureCorrTTinDataVsTTvar", disc1Key, disc2Key, (closureCorr_TTinDataVsTTvar, closureCorrUnc_TTinDataVsTTvar), "TTinData")
-
+            # ----------------------------------------------------
             # significance for optimization metric for only TT !!! 
             # significance, significanceUnc for 2D plots
+            # ----------------------------------------------------
             significance_TT = 0.0; significanceUnc_TT = 0.0; tempOptMetric = 999.0
 
             significance_TT += self.cal_Significance(nSigEvents_A, nTTEvents_A)**2.0
@@ -668,3 +666,11 @@ def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
 
         g.write("} \n")
         g.close()
+
+# ------------------------------------------------------------------
+# get the sys for MC
+#   -- get the MC correction value for TT from boundary 1.0
+#   -- get the MC correction value for also TTvars from boundary 1.0
+#   -- gat the ratio of MC correction value: (TT/TTvar)
+# ------------------------------------------------------------------
+
