@@ -27,7 +27,7 @@ Quantities are aggregated from the `All_Regions` objects and curated for sending
 
 ## `DoubleDisCo` Applications
 
-Currently, there are four ``applications'' that perform specific validation studies: `DoubleDisCo_BinEdges.py`, `DoubleDisCo_MCcorrectionFactor_TT.py`, `DoubleDisCo_MCcorrectionFactor_TTvar.py`, `DoubleDisCo_Optimized_BinEdges.py`.
+Currently, there are four `applications` that perform specific validation studies: `DoubleDisCo_BinEdges.py`, `DoubleDisCo_MCcorrectionFactor_TT.py`, `DoubleDisCo_MCcorrectionFactor_TTvar.py`, `DoubleDisCo_Optimized_BinEdges.py`.
 
 `DoubleDisCo_BinEdges.py`: This application performs a general validation where several quantities are plotted as a function of ABCD edges in both 1D and 2D.
 Three validation regions (subdivision of BD, subdivision of CD, and subdivision of D) are defined with predefined boundary values, and quantities are plotted
