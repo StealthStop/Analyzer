@@ -1,9 +1,10 @@
 import numpy as np
 
-from collections import defaultdict
-from common_Regions    import *
-from common_Plotter    import *
-from common_Aggregator import *
+from collections               import defaultdict
+from common_Regions            import *
+from common_Plotter            import *
+from common_Aggregator         import *
+from common_HiggsCombineInputs import *
 
 class MCcorrectionFactor_TTvar():
 
