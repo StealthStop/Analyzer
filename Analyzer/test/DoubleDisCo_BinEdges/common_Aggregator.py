@@ -74,19 +74,19 @@ class Aggregator:
                 self.data[self.makeKey(variable = "nEvents%s"%(subregion),  sample = sample, **kwargs)] = regionObj.getFinal("nEvents%s"%(subregion), sample)
 
             if not any(s in sample for s in ["RPV", "SYY", "SHH"]):
-                self.data[self.makeKey(variable = "nonClosures",  sample = sample, **kwargs)] = regionObj.get("nonClosure",       None, None, sample) # vars with any combination of bin edges
-                self.data[self.makeKey(variable = "pulls",        sample = sample, **kwargs)] = regionObj.get("pull",             None, None, sample)
-                self.data[self.makeKey(variable = "closureCorrs", sample = sample, **kwargs)] = regionObj.get("closureCorr",      None, None, sample)
-                self.data[self.makeKey(variable = "Closure",      sample = sample, **kwargs)] = regionObj.getFinal("Closure",                 sample)
-                self.data[self.makeKey(variable = "nonClosure",   sample = sample, **kwargs)] = regionObj.getFinal("nonClosure",              sample) # vars with the final choice of bin edges
-                self.data[self.makeKey(variable = "pull",         sample = sample, **kwargs)] = regionObj.getFinal("pull",                    sample)
-                self.data[self.makeKey(variable = "closureCorr",  sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",             sample) # vars with the final choice of bin edges
-
+                self.data[self.makeKey(variable = "nonClosures",    sample = sample, **kwargs)] = regionObj.get("nonClosure",       None, None, sample) # vars with any combination of bin edges
+                self.data[self.makeKey(variable = "pulls",          sample = sample, **kwargs)] = regionObj.get("pull",             None, None, sample)
+                self.data[self.makeKey(variable = "closureCorrs",   sample = sample, **kwargs)] = regionObj.get("closureCorr",      None, None, sample)
+                self.data[self.makeKey(variable = "Closure",        sample = sample, **kwargs)] = regionObj.getFinal("Closure",                 sample)
+                self.data[self.makeKey(variable = "nonClosure",     sample = sample, **kwargs)] = regionObj.getFinal("nonClosure",              sample) # vars with the final choice of bin edges
+                self.data[self.makeKey(variable = "pull",           sample = sample, **kwargs)] = regionObj.getFinal("pull",                    sample)
+                self.data[self.makeKey(variable = "closureCorr",    sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",             sample) # vars with the final choice of bin edges
                 if sample == "TTinData":
-                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTT",        sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTT",        sample)
                     self.data[self.makeKey(variable = "MC_corrected_dataClosure",       sample = sample, **kwargs)] = regionObj.getFinal("MC_corrected_dataClosure",       sample)
-                    self.data[self.makeKey(variable = "closureCorrTTinDataVsTTvar",     sample = sample, **kwargs)] = regionObj.getFinal("closureCorrTTinDataVsTTvar",     sample)
                     self.data[self.makeKey(variable = "MC_ttVar_corrected_dataClosure", sample = sample, **kwargs)] = regionObj.getFinal("MC_ttVar_corrected_dataClosure", sample)
+
+            if "TT_" in sample:
+                self.data[self.makeKey(variable = "MCcorrRatio_MC", sample = sample, **kwargs)] = regionObj.getFinal("MCcorrRatio_MC",          sample)
 
         self.data[self.makeKey(variable = "significances", **kwargs)] = regionObj.get("significance",      None, None, "TT")
         self.data[self.makeKey(variable = "significance",  **kwargs)] = regionObj.getFinal("significance",             "TT")
@@ -125,10 +125,10 @@ class Aggregator:
             # this statement for data and data/MC closure correction
             sigFracA = self.data[chefKey][0]
             if (sigFracA >= 0.05 and sample == "TTinData"):
-                payload[boundary] = (-999.0, 0.0)
+                payload[round(boundary, 2)] = (-999.0, 0.0)
 
             else: 
-                payload[boundary] = self.data[masterKey]
+                payload[round(boundary, 2)] = self.data[masterKey]
 
         return payload 
 

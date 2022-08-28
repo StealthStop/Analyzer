@@ -20,21 +20,55 @@ class HiggsCombineInputs:
         # ----------------
         # open a root file
         # ----------------
-        fileName = path.replace("year",year) + year + "_" + "TT_TTvar_sys" + ".root"  
-        self.f   = ROOT.TFile.Open(fileNAme, "RECREATE")        
+        fileName = year + "_" + "TT_TTvar_sys" + "_" + channel + ".root" 
+        self.f   = ROOT.TFile.Open(fileName, "RECREATE")        
 
     # -------------------------------------------------------
     # make a root file to include:
     #   -- MC correction values for TT in signal region 
     #   -- MC correction values for TTvar in signal region
     #   -- MC correction factor ratio: TT/TTvar (in MC level)
-    # and close root file 
     # -------------------------------------------------------
-    def make_HiggsCombineInputs_RootFiles(self, TH1, varName) 
+    def make_HiggsCombineInputs_RootFiles(self, TH1, varName): 
 
         self.f.WriteObject(TH1, "%s"%(varName))
 
-    def close_HiggsCombineInputs_RootFiles(self)
+
+    # ----------------------------------
+    # put the variables to the root file
+    # ----------------------------------
+    def put_HiggsCombineInputs_toRootFiles(self, dictionary):
+
+        # llop over the dictionary
+        for var, value in dictionary.items():
+            
+            ttVars = {}
+
+            # loop over the sub-dictionary to get ttVar
+            for key, subDictionary in value.items():
+            
+                ttVars = subDictionary.keys()
+                break
+
+            # loop over ttVar
+            for ttVar in ttVars:
+
+                hist = ROOT.TH1F(var + "_" + ttVar, var + "_" + ttVar, len(self.njets), 0, len(self.njets))
+
+                # loop over njets
+                for njet in self.njets:                        
+
+                    Njet = int(njet.replace("incl", ""))
+
+                    hist.SetBinContent((Njet - len(self.njets)), value[njet][ttVar][0])
+
+                # put the variables to root file
+                self.make_HiggsCombineInputs_RootFiles(hist, (var + "_" + ttVar))
+                        
+    # ---------------
+    # close root file
+    # ---------------
+    def close_HiggsCombineInputs_RootFiles(self):
 
         self.f.Close()
 

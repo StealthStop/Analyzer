@@ -484,10 +484,20 @@ class All_Regions:
 
             # ------------------------------------
             # MC correction factor ratio: TT/TTvar
+            #   -- in MC level
             # ------------------------------------
-            MCcorrRatio_MC     = (closureCorr_TTvar / closureCorr_TT)
-            MCcorrRatio_MC_Unc = MCcorrRatio_MC * ( (closureCorrUnc_TTvar / closureCorr_TTvar)**2.0 + (closureCorrUnc_TT / closureCorr_TT)**2.0 )**0.5
-            self.add("MCcorrRatio_MC", disc1Key, disc2Key, (MCcorrRatio_MC, MCcorrRatio_MC_Unc), "TT") 
+            temp_closureCorr_TTvar = closureCorr_TTvar
+            temp_closureCorr_TT    = closureCorr_TT
+
+            if (closureCorr_TTvar == 0.0): 
+                temp_closureCorr_TTvar = 10e-10
+                
+            if (closureCorr_TT == 0.0):
+                temp_closureCorr_TT = 10e-10
+
+            MCcorrRatio_MC = (closureCorr_TTvar / temp_closureCorr_TT)
+            MCcorrRatio_MC_Unc = MCcorrRatio_MC * ( (closureCorrUnc_TTvar / temp_closureCorr_TTvar)**2.0 + (closureCorrUnc_TT / temp_closureCorr_TT)**2.0 )**0.5
+            self.add("MCcorrRatio_MC", disc1Key, disc2Key, (MCcorrRatio_MC, MCcorrRatio_MC_Unc), self.ttVar) 
 
             # ---------------------------------------------------------
             # MC corrected Data Closure for TT
