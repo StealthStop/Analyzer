@@ -23,13 +23,11 @@ Quantities are aggregated from the `All_Regions` objects and curated for sending
 
 `common_TableWriter.py`: A module that provides a `TableWriter` class that has curated information from the `All_Regions` class passed to it for making custom LaTeX tables.
 
+`common_HiggsCombineInputs.py`: A module that provides functions to make a root file including all sys for Higgs combine.
+
 ## `DoubleDisCo` Applications
 
-Currently, there are four ``applications'' that perform specific validation studies: `DoubleDisCo_BinEdges.py`, `DoubleDisCo_MCcorrectionFactor_TT.py`, `DoubleDisCo_MCcorrectionFactor_TTvar.py`, `DoubleDisCo_Optimized_BinEdges.py`.
-
-`DoubleDisCo_BinEdges.py`: This application performs a general validation where several quantities are plotted as a function of ABCD edges in both 1D and 2D.
-Three validation regions (subdivision of BD, subdivision of CD, and subdivision of D) are defined with predefined boundary values, and quantities are plotted
-individually for these validation boundaries.
+Currently, there are four `applications` that perform specific validation studies: `DoubleDisCo_BinEdges.py`, `DoubleDisCo_MCcorrectionFactor_TT.py`, `DoubleDisCo_MCcorrectionFactor_TTvar.py`, `DoubleDisCo_Optimized_BinEdges.py`.
 
 `DoubleDisCo_Optimized_BinEdges.py`: This application specifically performs an optimization procedure to determine what the best choice of edges defining the proper ABCD regions.
 The best choice is determined based on best signal sensitivy as well as minimal non-closure, and limited signal contamination in the B, C, and D regions.
@@ -38,7 +36,11 @@ The top `n` choices (requested by the user) are printed in a LaTeX table.
 `DoubleDisCo_MCcorrectionFactor_TT.py`: This application plots quantities related a correction factor to be applied to the ABCD calculation.
 Things are plotted as a function of the boundary value defining the validation regions. 
 
-`DoubleDisCo_MCcorrectionFactor_TTvar.py`: The ``TTvar'' version of the `MCcorrectionFactor` application plots quantities related a correction factor to be applied to the ABCD calculation for several variations of the TT background e.g. TT_erdOn, TT_fsrUp, TT_fsrDown, etc.
+`DoubleDisCo_MCcorrectionFactor_TTvar.py`: The `TTvar` version of the `MCcorrectionFactor` application plots quantities related a correction factor to be applied to the ABCD calculation for several variations of the TT background e.g. TT_erdOn, TT_fsrUp, TT_fsrDown, etc.
+
+`DoubleDisCo_BinEdges.py`: This application performs a general validation where several quantities are plotted as a function of ABCD edges in both 1D and 2D.
+Three validation regions (subdivision of BD, subdivision of CD, and subdivision of D) are defined with predefined boundary values, and quantities are plotted
+individually for these validation boundaries.
 
 ## Performing Validation Studies
 
@@ -98,9 +100,6 @@ python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 
 python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 1l  --disc1edge 0.59 --disc2edge 0.70
 
 # Running for BinEdges
-python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 0l --disc1edge 0.6 --disc2edge 0.6
-python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 1l --disc1edge 0.6 --disc2edge 0.6
-
 python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 0l --disc1edge 0.69 --disc2edge 0.74
 python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 1l --disc1edge 0.59 --disc2edge 0.70
 ```
