@@ -328,7 +328,7 @@ class MCcorrectionFactor_TTvar():
         # put each variable of TT_TTvar_sys dictionary to the root file
         # -------------------------------------------------------------
         higgsCombine = HiggsCombineInputs(self.year, njets, self.channel, samples, regions)        
-        higgsCombine.put_HiggsCombineInputs_toRootFiles(TT_TTvar_sys)
+        higgsCombine.put_MCcorrFactors_toRootFiles(TT_TTvar_sys)
         higgsCombine.put_averageCorrectedDataValue_toRootFiles(averageCorrectedDataValue_forAllRegions)
         higgsCombine.close_HiggsCombineInputs_RootFiles()
 

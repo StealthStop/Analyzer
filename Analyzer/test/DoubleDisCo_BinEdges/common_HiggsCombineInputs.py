@@ -28,15 +28,16 @@ class HiggsCombineInputs:
     #   -- MC correction values for TT in signal region 
     #   -- MC correction values for TTvar in signal region
     #   -- MC correction factor ratio: TT/TTvar (in MC level)
+    #   -- average value of MC corrected data 
     # -------------------------------------------------------
     def make_HiggsCombineInputs_RootFiles(self, TH1, varName): 
 
         self.f.WriteObject(TH1, "%s"%(varName))
 
-    # ----------------------------------
-    # put the variables to the root file
-    # ----------------------------------
-    def put_HiggsCombineInputs_toRootFiles(self, dictionary):
+    # ------------------------------------------------------
+    # put the MC correction factors and ratio to a root file 
+    # ------------------------------------------------------
+    def put_MCcorrFactors_toRootFiles(self, dictionary):
 
         # loop over the dictionary
         for var, value in dictionary.items():
@@ -64,10 +65,10 @@ class HiggsCombineInputs:
                 # put the variables to root file
                 self.make_HiggsCombineInputs_RootFiles(hist, (var + "_" + ttVar))
                         
-    # ----------------------------------------------------------
-    # add the average MC corrected data values for all njet bins 
-    # to the same root file like for MC corrections included 
-    # ----------------------------------------------------------
+    # ----------------------------------------------------------------
+    # put the average value of MC corrected data to the same root file 
+    #   -- in between for all variances and all val regions
+    # ----------------------------------------------------------------
     def put_averageCorrectedDataValue_toRootFiles(self, dictionary):
 
         hist = ROOT.TH1F("average_MCcorrectedData_Value", "average_MCcorrectedData_Value", len(self.njets), 0, len(self.njets))
@@ -82,9 +83,9 @@ class HiggsCombineInputs:
         # put the average value of MC corrected data to the dictionary
         self.make_HiggsCombineInputs_RootFiles(hist, ("average_MCcorrectedData_Value"))
 
-    # ---------------
-    # close root file
-    # ---------------
+    # -------------------
+    # close the root file
+    # -------------------
     def close_HiggsCombineInputs_RootFiles(self):
 
         self.f.Close()
