@@ -33,13 +33,12 @@ class HiggsCombineInputs:
 
         self.f.WriteObject(TH1, "%s"%(varName))
 
-
     # ----------------------------------
     # put the variables to the root file
     # ----------------------------------
     def put_HiggsCombineInputs_toRootFiles(self, dictionary):
 
-        # llop over the dictionary
+        # loop over the dictionary
         for var, value in dictionary.items():
             
             ttVars = {}
@@ -65,10 +64,38 @@ class HiggsCombineInputs:
                 # put the variables to root file
                 self.make_HiggsCombineInputs_RootFiles(hist, (var + "_" + ttVar))
                         
+    # ----------------------------------------------------------
+    # add the average MC corrected data values for all njet bins 
+    # to the same root file like for MC corrections included 
+    # ----------------------------------------------------------
+    def put_averageCorrectedDataValue_toRootFiles(self, dictionary):
+
+        hist = ROOT.TH1F("average_MCcorrectedData_Value", "average_MCcorrectedData_Value", len(self.njets), 0, len(self.njets))
+
+        # loop over the njets
+        for njet in self.njets:
+
+            Njet = int(njet.replace("incl", ""))
+
+            hist.SetBinContent((Njet - len(self.njets)), dictionary[njet]) 
+
+        # put the average value of MC corrected data to the dictionary
+        self.make_HiggsCombineInputs_RootFiles(hist, ("average_MCcorrectedData_Value"))
+
     # ---------------
     # close root file
     # ---------------
     def close_HiggsCombineInputs_RootFiles(self):
 
         self.f.Close()
+
+
+
+
+
+
+
+    
+
+
 
