@@ -211,11 +211,14 @@ class MCcorrectionFactor_TTvar():
         # Plot non-closure as function of boundary
         # ----------------------------------------
         # initilaize a dictionary to include all variables for sys to put in Higgs Combine
-        TT_TTvar_sys = { "MCcorr_TT"        : {},
-                         "MCcorr_TTvar"     : {}, 
-                         "MCcorr_Ratio_MC"  : {},
-                         #"MCcoorRatio_Data" : {},
+        TT_TTvar_sys = { "MCcorr_TT"       : {},
+                         "MCcorr_TTvar"    : {}, 
+                         "MCcorr_Ratio_MC" : {},
         }
+
+        # initialitze a dictionary to get the average MC corrected data values
+        # for all variances and all val regions to put Higgs combine
+        averageCorrectedDataValue_forAllRegions = {}
 
         # -------------------
         # loop over the njets
@@ -226,7 +229,13 @@ class MCcorrectionFactor_TTvar():
             for key, value in TT_TTvar_sys.items():
                 if njet not in value:
                     value[njet] = {}        
-                
+
+            
+            # initialize variables to get the average MC corrected data values 
+            # for all variances and all val regions to put Higgs combine
+            summedCorrectedDataValues_forAllRegions       = 0.0
+            summedCorrectedDataValues_forAllRegions_count = 0.0         
+      
             # ---------------------
             # loop over the regions
             # -------------------
@@ -266,6 +275,19 @@ class MCcorrectionFactor_TTvar():
                 else:
                     yMin = 0.65; yMax = 1.5
 
+                # -------------------------------------------------------------
+                # fill a dictionary to get the average MC corrected data values 
+                # for all variances and all val regions to put Higgs combine
+                # -------------------------------------------------------------
+                for ttProcess, boundaryDictionary in MC_TT_corrected_dataClosure_PerBoundaryTTinData.items():
+
+                    for boundaryValue, MC_corrected_dataClosure in boundaryDictionary.items(): 
+
+                        if MC_corrected_dataClosure[0] != -999.0:
+
+                            summedCorrectedDataValues_forAllRegions       += MC_corrected_dataClosure[0]
+                            summedCorrectedDataValues_forAllRegions_count += 1.0
+
                 # -------------------------------
                 # Make plots for all TT variances
                 # -------------------------------
@@ -293,9 +315,20 @@ class MCcorrectionFactor_TTvar():
                 # TTinData = Data - NonTT
                 plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_DetectorVars", njet, self.colors, self.valColors[region])
 
+            # -------------------------------------------------------------------------------
+            # put the average MC corrected data value to the sub dictionary for all njet bins
+            # ------------------------------------------------------------------------------- 
+            if summedCorrectedDataValues_forAllRegions_count != 0.0:
+                averageCorrectedDataValue_forAllRegions[njet] = 1.0 / (summedCorrectedDataValues_forAllRegions / summedCorrectedDataValues_forAllRegions_count)
+
+            else:
+                averageCorrectedDataValue_forAllRegions[njet] = 1.0
+
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
         # -------------------------------------------------------------
         higgsCombine = HiggsCombineInputs(self.year, njets, self.channel, samples, regions)        
         higgsCombine.put_HiggsCombineInputs_toRootFiles(TT_TTvar_sys)
+        higgsCombine.put_averageCorrectedDataValue_toRootFiles(averageCorrectedDataValue_forAllRegions)
         higgsCombine.close_HiggsCombineInputs_RootFiles()
+
