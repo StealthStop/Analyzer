@@ -667,7 +667,7 @@ class Common_Calculations_Plotters:
     # plot variable as a function of per boundary for all variances
     #   -- as part of closure correction factor study
     # -------------------------------------------------------------
-    def plot_VarVsBoundary_MCcorrectionFactor_TTvar(self, var, ttVars, labels, xWidth, yMin = None, yMax = None, lineY = None, region = "", ylabel = "", tag = "", Njets = -1, colors=None, valColor=None):
+    def plot_VarVsBoundary_MCcorrectionFactor_TTvar(self, var, ttVars, labels, xWidth, yMin = None, yMax = None, lineY = None, region = "", ylabel = "", tag = "", Njets = -1, colors=None, valColor=None, scaleFactor=1.0):
 
         x    = {ttVar : [] for ttVar in ttVars}
         y    = {ttVar : [] for ttVar in ttVars}
@@ -680,7 +680,7 @@ class Common_Calculations_Plotters:
         for ttVar in ttVars:
             for boundary, value in var[ttVar].items():
                 x[ttVar].append(boundary)
-                y[ttVar].append(value[0])
+                y[ttVar].append(value[0]*scaleFactor)
                 yUnc[ttVar].append(value[1])
                 xUnc[ttVar].append(xWidth)
 

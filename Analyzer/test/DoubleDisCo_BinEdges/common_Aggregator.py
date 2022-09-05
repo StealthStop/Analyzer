@@ -82,8 +82,8 @@ class Aggregator:
                 self.data[self.makeKey(variable = "pull",           sample = sample, **kwargs)] = regionObj.getFinal("pull",                    sample)
                 self.data[self.makeKey(variable = "closureCorr",    sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",             sample) # vars with the final choice of bin edges
                 if sample == "TTinData":
-                    self.data[self.makeKey(variable = "MC_corrected_dataClosure",       sample = sample, **kwargs)] = regionObj.getFinal("MC_corrected_dataClosure",       sample)
-                    self.data[self.makeKey(variable = "MC_ttVar_corrected_dataClosure", sample = sample, **kwargs)] = regionObj.getFinal("MC_ttVar_corrected_dataClosure", sample)
+                    self.data[self.makeKey(variable = "MC_corrected_dataClosure",       sample = sample,                                **kwargs)] = regionObj.getFinal("MC_corrected_dataClosure",       sample)
+                    self.data[self.makeKey(variable = "MC_ttVar_corrected_dataClosure", sample = sample+"_"+regionObj.get_ttVar_Name(), **kwargs)] = regionObj.getFinal("MC_ttVar_corrected_dataClosure", sample)
 
             if "TT_" in sample:
                 self.data[self.makeKey(variable = "MCcorrRatio_MC", sample = sample, **kwargs)] = regionObj.getFinal("MCcorrRatio_MC",          sample)
@@ -124,7 +124,7 @@ class Aggregator:
 
             # this statement for data and data/MC closure correction
             sigFracA = self.data[chefKey][0]
-            if (sigFracA >= 0.05 and sample == "TTinData"):
+            if (sigFracA >= 0.05 and "TTinData" in sample):
                 payload[round(boundary, 2)] = (-999.0, 0.0)
 
             else: 
