@@ -220,6 +220,11 @@ class MCcorrectionFactor_TTvar():
         # for all variances and all val regions to put Higgs combine
         averageCorrectedDataValue_forAllRegions = {}
 
+        for region in regions:
+            averageCorrectedDataValue_forAllRegions[region] = {}
+
+        averageCorrectedDataValue_forAllRegions["All"] = {}
+
         # -------------------
         # loop over the njets
         # -------------------
@@ -229,13 +234,63 @@ class MCcorrectionFactor_TTvar():
             for key, value in TT_TTvar_sys.items():
                 if njet not in value:
                     value[njet] = {}        
-
             
             # initialize variables to get the average MC corrected data values 
             # for all variances and all val regions to put Higgs combine
-            summedCorrectedDataValues_forAllRegions       = 0.0
-            summedCorrectedDataValues_forAllRegions_count = 0.0         
-      
+            summedCorrectedDataValues_forAllRegions       = {}
+            summedCorrectedDataValues_forAllRegions_count = {}         
+
+            for region in regions:
+                summedCorrectedDataValues_forAllRegions[region] = 0.0
+                summedCorrectedDataValues_forAllRegions_count[region] = 0.0        
+
+            summedCorrectedDataValues_forAllRegions["All"] = 0.0
+            summedCorrectedDataValues_forAllRegions_count["All"] = 0.0        
+
+            for region in regions:
+                if "Val_" not in region:
+                    continue
+
+                MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
+                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure", sample = "TTinData", region = region, njet = njet)
+
+                for ttVar in self.ttVars:
+                    MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "MC_ttVar_corrected_dataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
+
+                # -------------------------------------------------------------
+                # fill a dictionary to get the average MC corrected data values 
+                # for all variances and all val regions to put Higgs combine
+                # -------------------------------------------------------------
+                for ttProcess, boundaryDictionary in MC_TT_corrected_dataClosure_PerBoundaryTTinData.items():
+
+                    if ("TT_" in ttProcess) or ("None" in ttProcess): continue
+
+                    for boundaryValue, MC_corrected_dataClosure in boundaryDictionary.items(): 
+
+                        if MC_corrected_dataClosure[0] != -999.0:
+
+                            summedCorrectedDataValues_forAllRegions[region]       += (1.0 / MC_corrected_dataClosure[0])
+                            summedCorrectedDataValues_forAllRegions_count[region] += 1.0
+
+                            summedCorrectedDataValues_forAllRegions["All"]       += (1.0 / MC_corrected_dataClosure[0])
+                            summedCorrectedDataValues_forAllRegions_count["All"] += 1.0
+
+                if summedCorrectedDataValues_forAllRegions_count[region] != 0.0:
+                    averageCorrectedDataValue_forAllRegions[region][njet] = (summedCorrectedDataValues_forAllRegions[region] / summedCorrectedDataValues_forAllRegions_count[region])
+
+                else:
+                    averageCorrectedDataValue_forAllRegions[region][njet] = 1.0
+
+
+            # -------------------------------------------------------------------------------
+            # put the average MC corrected data value to the sub dictionary for all njet bins
+            # ------------------------------------------------------------------------------- 
+            if summedCorrectedDataValues_forAllRegions_count["All"] != 0.0:
+                averageCorrectedDataValue_forAllRegions["All"][njet] = (summedCorrectedDataValues_forAllRegions["All"] / summedCorrectedDataValues_forAllRegions_count["All"])
+
+            else:
+                averageCorrectedDataValue_forAllRegions["All"][njet] = 1.0
+
             # ---------------------
             # loop over the regions
             # -------------------
@@ -269,24 +324,11 @@ class MCcorrectionFactor_TTvar():
 
                 # set y axis for higher njets bins
                 yMin = None; yMax = None
-                if int(njet.replace("incl", "")) > 8:
-                    yMin = 0.7; yMax = 1.7
+                #if int(njet.replace("incl", "")) > 8:
+                #    yMin = 0.7; yMax = 1.7
 
-                else:
-                    yMin = 0.65; yMax = 1.5
-
-                # -------------------------------------------------------------
-                # fill a dictionary to get the average MC corrected data values 
-                # for all variances and all val regions to put Higgs combine
-                # -------------------------------------------------------------
-                for ttProcess, boundaryDictionary in MC_TT_corrected_dataClosure_PerBoundaryTTinData.items():
-
-                    for boundaryValue, MC_corrected_dataClosure in boundaryDictionary.items(): 
-
-                        if MC_corrected_dataClosure[0] != -999.0:
-
-                            summedCorrectedDataValues_forAllRegions       += MC_corrected_dataClosure[0]
-                            summedCorrectedDataValues_forAllRegions_count += 1.0
+                #else:
+                #    yMin = 0.65; yMax = 1.5
 
                 # -------------------------------
                 # Make plots for all TT variances
@@ -315,20 +357,36 @@ class MCcorrectionFactor_TTvar():
                 # TTinData = Data - NonTT
                 plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_DetectorVars", njet, self.colors, self.valColors[region])
 
-            # -------------------------------------------------------------------------------
-            # put the average MC corrected data value to the sub dictionary for all njet bins
-            # ------------------------------------------------------------------------------- 
-            if summedCorrectedDataValues_forAllRegions_count != 0.0:
-                averageCorrectedDataValue_forAllRegions[njet] = 1.0 / (summedCorrectedDataValues_forAllRegions / summedCorrectedDataValues_forAllRegions_count)
 
-            else:
-                averageCorrectedDataValue_forAllRegions[njet] = 1.0
+                # ----------------------------------------------
+                # Make corrected MC corrected data closure plots
+                # ----------------------------------------------
+                # TTinData = Data - NonTT
+                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+
+                # TTinData = Data - NonTT
+                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+
+                # TTinData = Data - NonTT
+                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+
+                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+
+                # TTinData = Data - NonTT
+                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+
+                # TTinData = Data - NonTT
+                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
         # -------------------------------------------------------------
         higgsCombine = HiggsCombineInputs(self.year, njets, self.channel, samples, regions)        
         higgsCombine.put_MCcorrFactors_toRootFiles(TT_TTvar_sys)
-        higgsCombine.put_averageCorrectedDataValue_toRootFiles(averageCorrectedDataValue_forAllRegions)
+        for region in regions:
+            if "Val" not in region: continue
+            higgsCombine.put_averageCorrectedDataValue_toRootFiles(averageCorrectedDataValue_forAllRegions[region], region)
+        higgsCombine.put_averageCorrectedDataValue_toRootFiles(averageCorrectedDataValue_forAllRegions["All"], "All")
+
         higgsCombine.close_HiggsCombineInputs_RootFiles()
 
