@@ -20,7 +20,7 @@ class HiggsCombineInputs:
         # ----------------
         # open a root file
         # ----------------
-        fileName = year + "_" + "TT_TTvar_sys" + "_" + channel + ".root" 
+        fileName = year + "_" + "TT_TTvar_Syst" + "_" + channel + ".root" 
         self.f   = ROOT.TFile.Open(fileName, "RECREATE")        
 
     # -------------------------------------------------------
@@ -72,7 +72,7 @@ class HiggsCombineInputs:
     # ----------------------------------------------------------------
     def put_averageCorrectedDataValue_toRootFiles(self, dictionary, region):
 
-        hist = ROOT.TH1F("average_MCcorrectedData_Value", "average_MCcorrectedData_Value", len(self.njets), 0, len(self.njets))
+        hist = ROOT.TH1F("average_MCcorrectedData_Syst", "average_MCcorrectedData_Syst", len(self.njets), 0, len(self.njets))
 
         # loop over the njets
         for njet in self.njets:
@@ -82,7 +82,28 @@ class HiggsCombineInputs:
             hist.SetBinContent((Njet - len(self.njets)), dictionary[njet]) 
 
         # put the average value of MC corrected data to the dictionary
-        self.make_HiggsCombineInputs_RootFiles(hist, ("average_MCcorrectedData_Value_%s"%(region)))
+        self.make_HiggsCombineInputs_RootFiles(hist, ("average_MCcorrectedData_Syst_%s"%(region)))
+
+
+    # ----------------------------------------------------------------
+    # put the maximum value of MC corrected data to the same root file 
+    #   -- in between for all variances and all val regions
+    #   -- this value is used to calculate another type sys.
+    # ----------------------------------------------------------------
+    def put_maximumCorrectedDataValue_toRootFiles(self, dictionary, region):
+
+        hist = ROOT.TH1F("maximum_MCcorrectedData_Syst", "maximum_MCcorrectedData_Syst", len(self.njets), 0, len(self.njets))
+
+        # loop over the njets
+        for njet in self.njets:
+
+            Njet = int(njet.replace("incl", ""))
+
+            hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
+
+        # put the mximum value of MC corrected data to the dicionary
+        self.make_HiggsCombineInputs_RootFiles(hist, ("maximum_MCcorrectedData_Syst_%s"%(region)))
+
 
     # -------------------
     # close the root file
