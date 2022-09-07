@@ -131,14 +131,6 @@ const double W_JET_MATCH_DR = 0.2;
 template< class... >
 using void_t = void;
 
-struct nonesuch {
-    nonesuch() = delete;
-    ~nonesuch() = delete;
-    nonesuch(nonesuch const&) = delete;
-    void operator=(nonesuch const&) = delete;
-};
-
-
 template <typename T> struct argument_type;
 template <typename T, typename U> struct argument_type<T(U)> {
     typedef U type;
@@ -198,9 +190,9 @@ struct SliceData {
     int n_gen_leps;
     float gen_w_pt;
     const std::vector<utility::LorentzVector> &Jets;
-    // const std::vector<float> &nsr21;
-    // const std::vector<float> &nsr42;
-    // const std::vector<float> &nsr43;
+    const std::vector<float> &nsr21;
+    const std::vector<float> &nsr42;
+    const std::vector<float> &nsr43;
     std::size_t j1_index=0;
     std::size_t j2_index=1;
     bool has_2_jets=false;
@@ -311,7 +303,6 @@ class GenLepCut : public Cut {
 
 
 
-#if 0
 class SelectionCut : public Cut {
     public:
         SelectionCut()
@@ -373,7 +364,6 @@ class TauCut : public Cut {
             }
         }
 };
-#endif
 
 class MassRatioCut : public Cut {
     public:
@@ -437,19 +427,23 @@ Analyze2W::Analyze2W() {
 
     my_histos.cuts.push_back(std::make_unique<GenHTCut>());
     my_histos.cuts.push_back(std::make_unique<GenLepCut>());
-    //my_histos.cuts.push_back(std::make_unique<SelectionCut>());
+    my_histos.cuts.push_back(std::make_unique<SelectionCut>());
     my_histos.cuts.push_back(std::make_unique<MassRatioCut>());
-    //my_histos.cuts.push_back(std::make_unique<TauCut>());
+    my_histos.cuts.push_back(std::make_unique<TauCut>());
     my_histos.cuts.push_back(std::make_unique<EtaCut>());
     my_histos.cuts.push_back(std::make_unique<GenWPt>());
     my_histos.constructChains({
             {"GenLepCut"},
-            {"GenLepCut", "GenWPt"},
-            {"GenLepCut", "GenHTCut", "GenWPt"}
-            //{"GenLepCut", "SelectionCut"},
-            //{"GenLepCut", "SelectionCut","EtaCut"},
-            //{"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
-            //{"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
+    //        {"GenLepCut", "GenWPt"},
+    //        {"GenLepCut", "GenHTCut", "GenWPt"},
+            {"GenLepCut", "SelectionCut"},
+            {"GenLepCut", "SelectionCut","EtaCut"},
+            {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
+            {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
+            {"SelectionCut"},
+            {"SelectionCut","EtaCut"},
+            {"SelectionCut","EtaCut", "MassRatioCut"},
+            {"SelectionCut","EtaCut", "MassRatioCut", "TauCut"}
             });
     InitHistos();
     //my_histos.printHistos();
@@ -566,6 +560,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
     std::cout << " FILETAG    " << filetag << "\n";
     bool is_virtual_sbottom = (filetag.find("mB-0") != std::string::npos);
     bool is_rpv_mc = (filetag.find("RPV2W") != std::string::npos);
+    bool has_ca12 = is_rpv_mc ||  (filetag.find("stealth") != std::string::npos);
     while (tr.getNextEvent()) {
         if (maxevents != -1 && tr.getEvtNum() >= maxevents) {
             std::cout << std::endl;
@@ -866,8 +861,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         if(std::size(gen_w_boson)){
             max_gen_w_pt =  std::max_element(gen_w_boson.begin(), gen_w_boson.end(), [](const auto& x,const auto& y){return x.second.Pt() < y.second.Pt();})->second.Pt();
         }
-        SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, max_gen_w_pt, JetsAK8};
-        if(is_rpv_mc){
+        if(has_ca12){
             makeVec(JetsCA12, utility::LorentzVector);
             makeVec(JetsCA12_NsubjettinessTau4, float);
             makeVec(JetsCA12_NsubjettinessTau3, float);
@@ -876,6 +870,10 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             MAKE_RATIO(CA12,4, 3);
             MAKE_RATIO(CA12,4, 2);
             MAKE_RATIO(CA12,2, 1);
+            SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, max_gen_w_pt, JetsAK8, 
+                nsrCA12_21,
+                nsrCA12_42,
+                nsrCA12_43};
             my_histos.processCuts(data);
 
             Fill("nCA12Jets", std::size(JetsCA12));
@@ -892,6 +890,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             Fill("mass_ratio", data.mass_ratio);
         } else {
             //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, {}, {}, {}, {}};
+            SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, max_gen_w_pt, JetsAK8, {},{},{}};
             my_histos.processCuts(data);
         }
 
