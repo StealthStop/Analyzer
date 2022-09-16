@@ -214,7 +214,7 @@ nytprof.out
 pm_to_blib
 
 ##Cfg symlinks
-**.cfg
+#**.cfg
 
 ## Added by JCH, intended to work globally
 docker_stderror
