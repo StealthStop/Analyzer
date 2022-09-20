@@ -495,17 +495,22 @@ class All_Regions:
             if (closureCorr_TT == 0.0):
                 temp_closureCorr_TT = 10e-10
 
-            MCcorrRatio_MC = (closureCorr_TTvar / temp_closureCorr_TT)
-            MCcorrRatio_MC_Unc = MCcorrRatio_MC * ( (closureCorrUnc_TTvar / temp_closureCorr_TTvar)**2.0 + (closureCorrUnc_TT / temp_closureCorr_TT)**2.0 )**0.5
-            self.add("MCcorrRatio_MC", disc1Key, disc2Key, (MCcorrRatio_MC, MCcorrRatio_MC_Unc), self.ttVar) 
+            MCcorrRatio_MC        = (closureCorr_TTvar / temp_closureCorr_TT)
+            closureCorrUnc_TT_Sys = abs(1.0 - MCcorr_Ratio_MC)
+
+            MCcorrRatio_MC_Unc         = MCcorrRatio_MC * ( (closureCorrUnc_TTvar / temp_closureCorr_TTvar)**2.0 + ((closureCorrUnc_TT / temp_closureCorr_TT)**2.0 )**0.5
+            MCcorrRatio_MC_Unc_withSys = MCcorrRatio_MC * ( (closureCorrUnc_TTvar / temp_closureCorr_TTvar)**2.0 + ((closureCorrUnc_TT**2.0 + closureCorrUnc_TT_Sys**2.0)**0.5 / temp_closureCorr_TT)**2.0 )**0.5
+
+            self.add("MCcorrRatio_MC", disc1Key, disc2Key, (MCcorrRatio_MC, MCcorrRatio_MC_Unc, MCcorrRatio_MC_Unc_withSys), self.ttVar) 
 
             # ---------------------------------------------------------
             # MC corrected Data Closure for TT
             #   -- using MC correction factor to calculate Data Closure
             # ---------------------------------------------------------
-            MC_corrected_dataClosure     = (Closure_TTinData * closureCorr_TT)
-            MC_corrected_dataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TT)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
-            self.add("MC_corrected_dataClosure", disc1Key, disc2Key, (MC_corrected_dataClosure, MC_corrected_dataClosure_Unc), "TTinData")
+            MC_corrected_dataClosure             = (Closure_TTinData * closureCorr_TT)
+            MC_corrected_dataClosure_Unc         = math.sqrt((Closure_TTinData * closureCorrUnc_TT)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
+            MC_corrected_dataClosure_Unc_withSys = math.sqrt((Closure_TTinData * closureCorrUnc_TT_withSys)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
+            self.add("MC_corrected_dataClosure", disc1Key, disc2Key, (MC_corrected_dataClosure, MC_corrected_dataClosure_Unc, MC_corrected_dataClosure_Unc_withSys), "TTinData")
 
             # ----------------------------------------------------
             # MC corrected Data Closure for TTvar

@@ -15,11 +15,11 @@ from DoubleDisCo_MCcorrectionFactor_TTvar import *
 # ------------------------------------------------------------------------------------------- 
 
 # Running for MCcorrectionFactor_TT
-# -------------------------------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------------------------------
 # command to run this script
-#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 0l --disc1edge 0.69 --disc2edge 0.74 --fastMode
-#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 1l --disc1edge 0.59 --disc2edge 0.70 --fastMode
-# -------------------------------------------------------------------------------------------------------------------------------------------  
+#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 0l --disc1edge 0.6 --disc2edge 0.6 --fastMode
+#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 1l --disc1edge 0.6 --disc2edge 0.6 --fastMode
+# -----------------------------------------------------------------------------------------------------------------------------------------  
 
 # Running for MCcorrectionFactor_TTvar
 # ------------------------------------------------------------------------------------------------------------------------------------
