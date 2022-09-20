@@ -291,13 +291,13 @@ class MCcorrectionFactor_TTvar():
                             summedCorrectedDataValues_forAllRegions["All"]       += (1.0 / MC_corrected_dataClosure[0])
                             summedCorrectedDataValues_forAllRegions_count["All"] += 1.0
 
-                        # get the maximum values of MC corrected data
-                        correctedDataValue_Diff = abs(MC_corrected_dataClosure[0] - 1.0)
+                            # get the maximum values of MC corrected data
+                            correctedDataValue_Diff = abs(MC_corrected_dataClosure[0] - 1.0)
 
-                        if (correctedDataValue_Diff > best_correctedDataValue_Diff["All"]):
+                            if (correctedDataValue_Diff > best_correctedDataValue_Diff["All"]):
 
-                            best_correctedDataValue_Diff["All"] = correctedDataValue_Diff
-                            best_correctedDataValue["All"]      = MC_corrected_dataClosure[0]
+                                best_correctedDataValue_Diff["All"] = correctedDataValue_Diff
+                                best_correctedDataValue["All"]      = MC_corrected_dataClosure[0]
 
                 if summedCorrectedDataValues_forAllRegions_count[region] != 0.0:
                     averageCorrectedDataValue_forAllRegions[region][njet] = (summedCorrectedDataValues_forAllRegions[region] / summedCorrectedDataValues_forAllRegions_count[region])
@@ -331,6 +331,7 @@ class MCcorrectionFactor_TTvar():
                 closurePerBoundaryTTinData                      = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
                 MCcorrRatio_MC_BoundaryTT                       = {}
+                MCcorrRatio_MC_Unc_BoundaryTT                   = {}
 
                 closureCorrPerBoundaryTT["TT"]                          = theAggy.getPerBoundary(variable = "closureCorr",              sample = "TT",       region = region, njet = njet)            
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure", sample = "TTinData", region = region, njet = njet)
@@ -344,6 +345,7 @@ class MCcorrectionFactor_TTvar():
                     closureCorrPerBoundaryTT[ttVar]                        = theAggy.getPerBoundary(variable = "closureCorr",                    sample = ttVar,                 region = region, njet = njet)  
                     MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "MC_ttVar_corrected_dataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
                     MCcorrRatio_MC_BoundaryTT[ttVar]                       = theAggy.getPerBoundary(variable = "MCcorrRatio_MC",                 sample = ttVar,                 region = region, njet = njet)
+                    MCcorrRatio_MC_Unc_BoundaryTT[ttVar]                   = theAggy.getPerBoundary(variable = "MCcorrRatio_MC_Unc",             sample = ttVar,                 region = region, njet = njet)
 
                     # fill the TT_TTvar_sys dictionary
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
@@ -362,7 +364,8 @@ class MCcorrectionFactor_TTvar():
                 # Make plots for all TT variances
                 # -------------------------------
                 # TT
-                plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,          self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",   "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
+                plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",                    "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
+                plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MCcorrRatio_MC_Unc_BoundaryTT, self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Unc. on Closure Correction Ratio[TTvar/TT]", "MCcorrRatio_MC_Unc_PerBoundary",   njet, self.colors, self.valColors[region])
 
                 # TTinData = Data - NonTT
                 plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary", njet, self.colors, self.valColors[region])
@@ -413,12 +416,16 @@ class MCcorrectionFactor_TTvar():
         # -------------------------------------------------------------
         for key_njet, maximum_correctedDataValue in maximum_CorrectedDataValue_forAllRegions["All"].items():
 
-            if maximum_correctedDataValue != -999:
+            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
                 calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
-
             else:
-                
-                calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"]["8"])
+                absoluteMax = 999.0
+                someNjets = ["7", "8", "9"]
+                for someNjet in someNjets:
+                    if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] < absoluteMax:
+                        absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
+
+                calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
