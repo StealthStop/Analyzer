@@ -22,22 +22,24 @@ from DoubleDisCo_MCcorrectionFactor_TTvar import *
 # -----------------------------------------------------------------------------------------------------------------------------------------  
 
 # Running for MCcorrectionFactor_TTvar
-# ------------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------------------------------
 # command to run this script
-#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 0l  --disc1edge 0.69 --disc2edge 0.74
-#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 1l  --disc1edge 0.59 --disc2edge 0.70
-# ------------------------------------------------------------------------------------------------------------------------------------  
+#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 0l  --disc1edge 0.6 --disc2edge 0.6 --fastMode  
+#   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 1l  --disc1edge 0.6 --disc2edge 0.6 --fastMode
+# ---------------------------------------------------------------------------------------------------------------------------------------------  
 
 # Running for BinEdges
-# --------------------------------------------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------------
 # get the plots with fixed ABCD and Validation edges:
 #   -- python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 0l --disc1edge 0.6 --disc2edge 0.6
 #   -- python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 1l --disc1edge 0.6 --disc2edge 0.6
+# -----------------------------------------------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------------------------------------------------------------------------- 
 # get the plots with optimized ABCD edges:
 #   -- first run the "run_DoubleDisCo_Optimized_BinEdges.py" to print the optimized ABCD edges and use them as fixed edges on the command line
-#   -- python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 0l --disc1edge 0.69 --disc2edge 0.74
-#   -- python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 1l --disc1edge 0.59 --disc2edge 0.70
+#   -- python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 0l --disc1edge 0.71 --disc2edge 0.65 --plotVars2D
+#   -- python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 1l --disc1edge 0.57 --disc2edge 0.65 --plotVars2D
 # --------------------------------------------------------------------------------------------------------------------------------------------  
 
 usage  = "usage: %prog [options]"
