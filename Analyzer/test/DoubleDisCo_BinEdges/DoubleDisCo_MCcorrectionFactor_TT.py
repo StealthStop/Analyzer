@@ -23,12 +23,14 @@ class MCcorrectionFactor_TT():
                            "Val_D"  : "#990099",
         }
 
+        self.regionGridWidth = 0.05
+
         # ------------------------------------------------
         # make the lists for rightBoundary and topBoundary
         # ------------------------------------------------
-        self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, 0.05),
-                                "Val_CD" : np.arange(0.40, 1.05, 0.05),
-                                "Val_D"  : np.arange(0.60, 1.05, 0.05)
+        self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, self.regionGridWidth),
+                                "Val_CD" : np.arange(0.40, 1.05, self.regionGridWidth),
+                                "Val_D"  : np.arange(0.60, 1.05, self.regionGridWidth)
         }
 
     # -------------
@@ -212,18 +214,18 @@ class MCcorrectionFactor_TT():
 
             if plotVarVsBoundary:
                 # TT
-                plotter["TT"].plot_VarVsBoundary(weighted_nTTeventsA_PerBoundaryTT, regionGridWidth/2.0, None, None, None, "Weighted Events in A [MC]", "TT_weighted_nTTeventsA_PerBoundary", njet, self.valColors)
-                plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,           regionGridWidth/2.0, 0.0,  0.3,  None, "Non-Closure [MC]",          "TT_NonClosure_PerBoundary",          njet, self.valColors)
-                plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'A\'",              "TT_SigFracA_PerBoundary",            njet, self.valColors) 
-                plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'B\'",              "TT_SigFracB_PerBoundary",            njet, self.valColors)
-                plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'C\'",              "TT_SigFracC_PerBoundary",            njet, self.valColors)
-                plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT,        regionGridWidth/2.0, None, None, None, "SigFrac\'D\'",              "TT_SigFracD_PerBoundary",            njet, self.valColors)
-                plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,          regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [TT]",  "TT_ClosureCorrection_PerBoundary",   njet, self.valColors)
-                plotter[self.ttVar].plot_VarVsBoundary(closureCorrPerBoundaryTTvar, regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [%s]"%(self.ttVar), "%s_ClosureCorrection_PerBoundary"%(self.ttVar),   njet, self.valColors)
+                #plotter["TT"].plot_VarVsBoundary(weighted_nTTeventsA_PerBoundaryTT, self.regionGridWidth/2.0, None, None, None, "Weighted Events in A [MC]", "TT_weighted_nTTeventsA_PerBoundary", njet, self.valColors)
+                #plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,           self.regionGridWidth/2.0, 0.0,  0.3,  None, "Non-Closure [MC]",          "TT_NonClosure_PerBoundary",          njet, self.valColors)
+                #plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'A\'",              "TT_SigFracA_PerBoundary",            njet, self.valColors) 
+                #plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'B\'",              "TT_SigFracB_PerBoundary",            njet, self.valColors)
+                #plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'C\'",              "TT_SigFracC_PerBoundary",            njet, self.valColors)
+                #plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'D\'",              "TT_SigFracD_PerBoundary",            njet, self.valColors)
+                plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,          self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [TT]",  "TT_ClosureCorrection_PerBoundary",   njet, self.valColors)
+                #plotter[self.ttVar].plot_VarVsBoundary(closureCorrPerBoundaryTTvar, self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [%s]"%(self.ttVar), "%s_ClosureCorrection_PerBoundary"%(self.ttVar),   njet, self.valColors)
 
                 # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary(weighted_nTTEventsA_PerBoundaryTTinData,            regionGridWidth/2.0, None, None, None, "Weighted Events in A [Data]",  "TTinData_weighted_nTTeventsA_PerBoundary",     njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,                      regionGridWidth/2.0, 0.0, 0.3,   None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",              njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                         regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",      "TTinData_DataClosure_PerBoundary",                         njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(MC_corrected_dataClosure_PerBoundaryTTinData,       regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary",            njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(MC_ttVar_corrected_dataClosure_PerBoundaryTTinData, regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)
+                #plotter["Data"].plot_VarVsBoundary(weighted_nTTEventsA_PerBoundaryTTinData,            self.regionGridWidth/2.0, None, None, None, "Weighted Events in A [Data]",  "TTinData_weighted_nTTeventsA_PerBoundary",     njet, self.valColors)
+                #plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,                      self.regionGridWidth/2.0, 0.0, 0.3,   None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",              njet, self.valColors)
+                plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                         self.regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",      "TTinData_DataClosure_PerBoundary",                         njet, self.valColors)
+                plotter["Data"].plot_VarVsBoundary(MC_corrected_dataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary",            njet, self.valColors)
+                #plotter["Data"].plot_VarVsBoundary(MC_ttVar_corrected_dataClosure_PerBoundaryTTinData, self.regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)

@@ -9,18 +9,19 @@ class HiggsCombineInputs:
     # --------------------
     # Initialize the class 
     # --------------------
-    def __init__(self, year, njets, channel, samples, regions):
+    def __init__(self, year, njets, channel, samples, regions, edges):
 
-        self.year       = year
-        self.njets      = njets
-        self.channel    = channel
-        self.samples    = samples 
-        self.regions    = regions
+        self.year     = year
+        self.njets    = njets
+        self.channel  = channel
+        self.samples  = samples 
+        self.regions  = regions
+        self.edges    = edges
 
         # ----------------
         # open a root file
         # ----------------
-        fileName = year + "_" + "TT_TTvar_Syst" + "_" + channel + ".root" 
+        fileName = year + "_" + "TT_TTvar_Syst" + "_" + channel + edges + ".root" 
         self.f   = ROOT.TFile.Open(fileName, "RECREATE")        
 
     # -------------------------------------------------------
