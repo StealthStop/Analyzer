@@ -111,7 +111,7 @@ class Aggregator:
         
         payload = {}
         newKwargs = kwargs.copy()
-        sample = newKwargs.pop("sample", None)
+        sample = newKwargs.pop("sample", "None")
 
         for boundary in self.boundaries:
 

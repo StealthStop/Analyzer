@@ -13,11 +13,14 @@ from matplotlib.collections import PatchCollection
 
 class Common_Calculations_Plotters:
 
-    def __init__(self, outputDir, year, model, mass, channel):
-        self.year    = year
-        self.model   = model
-        self.mass    = mass
-        self.channel = channel
+    def __init__(self, outputDir, year, model, mass, channel, cmsLabel, label_xPosition, label_yPosition):
+        self.year            = year
+        self.model           = model
+        self.mass            = mass
+        self.channel         = channel
+        self.cmsLabel        = cmsLabel
+        self.label_xPosition = label_xPosition
+        self.label_yPosition = label_yPosition
 
         self.outputDir = outputDir
 
@@ -126,53 +129,39 @@ class Common_Calculations_Plotters:
         ax.spines['right'].set_color('none')
         ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
     
-        # closure plot
+        # unweighted event counts
         ax1 = fig.add_subplot(4, 1, (1, 2))  
-        #ax1 = fig.add_subplot(3, 1, (1, 2))
         fig.subplots_adjust(left=0.15, right=0.95)
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-        ax1.text(0.05, 0.1, '$\\chi^2$ / ndof = %3.2f' % (totalChi2 / float(ndof)), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=10)
-        ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
-        ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
-        ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
+        #ax1.text(0.05, 0.1, '$\\chi^2$ / ndof = %3.2f'%(totalChi2 / float(ndof)), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=10)
+        ax1.text(0.16, 1.065, 'CMS',                                               transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
+        ax1.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+        ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year),                          transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
         ax1.set_ylabel('Unweighted Event Counts', fontsize=14)
         ax1.errorbar(x, pred, yerr=predUnc, label='Predicted', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label='Observed',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
-        # non-closure   
+        # closure   
         ax2 = fig.add_subplot(4, 1, 3)
-        #ax2 = fig.add_subplot(3, 1, 3)
         ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
         ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax2.set_ylabel('Non-Closure', fontsize=14)
-        #ax2.set_ylim([-1.4, 1.4])
         ax2.set_ylim([-0.5, 0.5])   
-        #ax2.set_xlabel('Number of jets', fontsize=14)
 
-        # pull plot
-        #pc = makeErrorBoxes(np.array(x), np.array(zeros), np.array([xUnc, xUnc]), np.array([pullDenom, pullDenom]))
+        # pull 
         ax3 = fig.add_subplot(4, 1, 4)
         ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
-        #ax3.add_collection(pc)
         ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax3.set_xlabel('Number of jets', fontsize=14)
-        ax3.set_ylabel('Pull') 
+        ax3.set_ylabel('Pull',           fontsize=14) 
         ax3.set_ylim([-5.4, 5.4])
  
-        # ( obsUnc^2 + predUnc^2 )^0.5 / pred
-        #pc = makeErrorBoxes(np.array(x), np.array(zeros), np.array([xUnc, xUnc]), np.array([pullDenom, pullDenom]))
-        #ax4 = ax3.twinx()
-        #ax4.set_ylabel(r'pullDen / pred')
-        #ax4.add_collection(pc)
-        #ax4.set_ylim([-0.2, 0.2])        
-        #ax4.set_yscale('log')
         plt.show()
-
         plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
     
         ax1.legend(loc='best', numpoints=1, frameon=False)
@@ -279,9 +268,9 @@ class Common_Calculations_Plotters:
             ax1 = fig.add_subplot(14, 1, (1,6))
             fig.subplots_adjust(hspace=0.8, left=0.15, right=0.95)
             ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-            ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=40, fontweight='bold',   va='top', ha='right')
-            ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=36, fontstyle='italic',  va='top', ha='right')
-            ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=34, fontweight='normal', va='top', ha='right')
+            ax1.text(0.16, 1.065, 'CMS',                                               transform=ax.transAxes, fontsize=40, fontweight='bold',   va='top', ha='right')
+            ax1.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+            ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year),                          transform=ax.transAxes, fontsize=34, fontweight='normal', va='top', ha='right')
             ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label='Predicted MC',   xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=3, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=6.0)
             ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label='Observed MC',    xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=3, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=6.0)
             ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data', xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=3, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=6.0)
@@ -432,25 +421,25 @@ class Common_Calculations_Plotters:
         if TT_EventsPerNjets != None and NonTT_EventsPerNjets == None and data_EventsPerNjets == None: 
             self.plot_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
         
-        if NonTT_EventsPerNjets != None and TT_EventsPerNjets == None and  data_EventsPerNjets == None:
-            self.plot_ClosureNjets(np.array(NonTT_EventsNjets), np.array(NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
+        #if NonTT_EventsPerNjets != None and TT_EventsPerNjets == None and  data_EventsPerNjets == None:
+        #    self.plot_ClosureNjets(np.array(NonTT_EventsNjets), np.array(NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
 
-        if TT_EventsPerNjets != None and NonTT_EventsPerNjets != None and data_EventsPerNjets != None:
-            self.plot_ClosureNjets(np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag, isBlind=True) 
+        #if TT_EventsPerNjets != None and NonTT_EventsPerNjets != None and data_EventsPerNjets != None:
+        #    self.plot_ClosureNjets(np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag, isBlind=True) 
 
-        if data_EventsPerNjets != None:
-            self.plot_ClosureNjets(np.array(data_EventsNjets), np.array(data_EventsNjetsPred), Njets, name, closureTag, bkgTag) # initial data closure without subtraction
+        #if data_EventsPerNjets != None:
+        #    self.plot_ClosureNjets(np.array(data_EventsNjets), np.array(data_EventsNjetsPred), Njets, name, closureTag, bkgTag) # initial data closure without subtraction
 
         # data-MC closure & pull
-        if TT_EventsPerNjets != None and data_EventsPerNjets != None and NonTT_EventsPerNjets != None: 
-            self.plot_dataVsMC_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag) # for TT
+        #if TT_EventsPerNjets != None and data_EventsPerNjets != None and NonTT_EventsPerNjets != None: 
+        #    self.plot_dataVsMC_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag) # for TT
         
         # MC correction factor related closure
         if TT_EventsPerNjets != None and data_EventsPerNjets != None and NonTT_EventsPerNjets != None: 
             self.plot_MCcorr_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
 
             # MC correction factor related data event counts
-            self.plot_dataEventCounts_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
+            #self.plot_dataEventCounts_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
 
 
     # ----------------------------------------------------------------
@@ -460,16 +449,16 @@ class Common_Calculations_Plotters:
 
         nBins = math.ceil((1.0 + binWidth)/binWidth)
 
-        fig = plt.figure() 
+        fig = plt.figure(figsize=(7, 6)) 
         fig.subplots_adjust()
         plt.hist2d(edges[:,0], edges[:,1], bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=var, cmin=cmin, cmax=cmax, vmin=vmin, vmax=vmax)
         plt.colorbar()
         ax = plt.gca()
         ax.set_xlabel("Disc. 1 Bin Edge", fontsize=14)
         ax.set_ylabel("Disc. 2 Bin Edge", fontsize=14)
-        ax.text(0.16, 1.065, 'CMS',                     transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
-        ax.text(0.50, 1.055, 'Preliminary',             transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
-        ax.text(1.0,  1.055, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
+        ax.text(0.16, 1.065, 'CMS',                                               transform=ax.transAxes, fontsize=20, fontweight='bold',   va='top', ha='right')
+        ax.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+        ax.text(1.0,  1.055, '%s (13 TeV)' % self.year,                           transform=ax.transAxes, fontsize=14, fontweight='normal', va='top', ha='right')
 
         l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
         ax.add_line(l1); 
@@ -531,9 +520,9 @@ class Common_Calculations_Plotters:
         ax = plt.gca()
         ax.set_xlabel('Disc. 1')
         ax.set_ylabel('Disc. 2')
-        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                                                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year,                            transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         #l1 = ml.Line2D([float(allRegionsEdges["ABCD"][0]), float(allRegionsEdges["ABCD"][0])], [0.0, 1.0],   color="darkviolet", linewidth=4, linestyle='solid')
         #l2 = ml.Line2D([0.0, 1.0], [float(allRegionsEdges["ABCD"][1]), float(allRegionsEdges["ABCD"][1])],   color="darkviolet", linewidth=4, linestyle='solid')
         #
@@ -608,9 +597,9 @@ class Common_Calculations_Plotters:
         ax.set_ylabel(ylabel, fontsize=14)
         plt.legend(loc='best', numpoints=1)
 
-        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+        ax.text(0.12, 1.05, 'CMS',                                                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year,                            transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
 
         fig.tight_layout()
         fig.savefig('%s/%s_%s_Slices_Disc%d_Njets%s_%s_%s.pdf' % (self.outputDir, self.year, tag, disc, Njets, name, self.channel), dpi=fig.dpi)
@@ -649,9 +638,9 @@ class Common_Calculations_Plotters:
         ax.set_ylabel(ylabel, fontsize=14)
         plt.legend(loc='best', numpoints=1)
 
-        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
+        ax.text(0.12, 1.05, 'CMS',                                                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year,                            transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
 
         if lineY != None:
             l1 = ml.Line2D([0.0, 1.05], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
@@ -706,10 +695,9 @@ class Common_Calculations_Plotters:
         iamLegend = plt.legend(ncol=2, loc='upper right', numpoints=1, frameon=False, fontsize=7, markerscale=0.8)
         ax.text(0.15, 0.97, region, transform=ax.transAxes, color=valColor, fontsize=9, fontweight='bold',   va='center', ha='center')
 
-        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right') 
-
+        ax.text(0.12, 1.05, 'CMS',                                                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year,                            transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
 
         if lineY != None:
             l1 = ml.Line2D([0.0, 1.05], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
@@ -721,7 +709,7 @@ class Common_Calculations_Plotters:
         plt.close(fig)
 
     # -------------------------------------------------------
-    # plot closure oer njets for MC closure correction factor
+    # plot closure per njets for MC closure correction factor
     #   -- MC correction factor
     #   -- Data closure (Data with non-TT subtruction)
     #   -- MC corrected Data Closure
@@ -830,9 +818,9 @@ class Common_Calculations_Plotters:
                 ax1 = fig.add_subplot(10, 1, (1,6))
                 fig.subplots_adjust(hspace=0.8, left=0.15, right=0.95)
                 ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-                ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=40, fontweight='bold',   va='top', ha='right')
-                ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=36, fontstyle='italic',  va='top', ha='right')
-                ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=34, fontweight='normal', va='top', ha='right')
+                ax1.text(0.16, 1.065, 'CMS',                                               transform=ax.transAxes, fontsize=40, fontweight='bold',   va='top', ha='right')
+                ax1.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=28, fontstyle='italic',  va='top', ha='right')
+                ax1.text(1.0,  1.055, '%s (13 TeV)' % self.year,                           transform=ax.transAxes, fontsize=28, fontweight='normal', va='top', ha='right')
                 ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label='Predicted MC',   xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=3, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=6.0)
                 ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label='Observed MC',    xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=3, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=6.0)
                 ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data', xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=3, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=6.0)
@@ -921,9 +909,6 @@ class Common_Calculations_Plotters:
         # --------------------------
         # plot Chris's fancy closure
         # --------------------------
-        #fig = plt.figure(figsize=(5, 5))
-        #ax  = fig.add_subplot(111)
-        #fig.subplots_adjust(hspace=0.4, left=0.15, right=0.95, top=0.94)
         fig = plt.figure(figsize=(5, 5))
         ax = fig.add_subplot(111)
     
@@ -942,9 +927,9 @@ class Common_Calculations_Plotters:
         ax.grid(axis='y', color='black', linestyle='dashed', which='both')
 
         # unweighted event counts
-        ax.text(0.12, 1.05, 'CMS',                     transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
-        ax.text(0.33, 1.04, 'Preliminary',             transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='top', ha='right')
-        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year, transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
+        ax.text(0.12, 1.05, 'CMS',                                                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+        ax.text(0.99, 1.04, '%s (13 TeV)' % self.year,                            transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         plt.errorbar(x, data_pred,             yerr=data_predUnc,              label='Predicted Data',          xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=3, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=6.0)
         plt.errorbar(x, MC_corrected_PredData, yerr=MC_corrected_PredData_Unc, label='MC corr. Predicted Data', xerr=xUnc, fmt='', capsize=0, color='royalblue', lw=0, elinewidth=3, marker='o', markeredgecolor='royalblue', markerfacecolor='royalblue', markersize=6.0)
         plt.errorbar(x, data_obs,              yerr=data_obsUnc,               label='Observed Data',           xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=3, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=6.0)
@@ -1061,9 +1046,9 @@ class Common_Calculations_Plotters:
         fig.subplots_adjust(hspace=0.8, left=0.15, right=0.95)
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
         #ax1.text(0.05, 0.1, '$\\chi^2$ / ndof = %3.2f' % (totalChi2 / float(ndof)), horizontalalignment='left', verticalalignment='center', transform=ax1.transAxes, fontsize=10)
-        ax1.text(0.16, 1.065, 'CMS',                      transform=ax.transAxes, fontsize=40, fontweight='bold',   va='top', ha='right')
-        ax1.text(0.50, 1.055, 'Preliminary',              transform=ax.transAxes, fontsize=36, fontstyle='italic',  va='top', ha='right')
-        ax1.text(1.0,  1.055, '%s (13 TeV)' %(self.year), transform=ax.transAxes, fontsize=34, fontweight='normal', va='top', ha='right')
+        ax1.text(0.12, 1.05, 'CMS',                                                transform=ax.transAxes, fontsize=14, fontweight='bold',   va='top', ha='right')
+        ax1.text(self.label_xPosition, self.label_yPosition, '%s'%(self.cmsLabel), transform=ax.transAxes, fontsize=16, fontstyle='italic',  va='top', ha='right')
+        ax1.text(0.99, 1.04, '%s (13 TeV)' % self.year,                            transform=ax.transAxes, fontsize=10, fontweight='normal', va='top', ha='right')
         ax1.errorbar(x, pred,     yerr=predUnc,     label='Predicted TT',          xerr=xUnc, fmt='', capsize=0, color='red',     lw=0, elinewidth=2, marker='o', markeredgecolor='red',     markerfacecolor='red',     markersize=5.0)
         ax1.errorbar(x, obs,      yerr=obsUnc,      label='Observed TT',           xerr=xUnc, fmt='', capsize=0, color='black',   lw=0, elinewidth=2, marker='o', markeredgecolor='black',   markerfacecolor='black',   markersize=5.0)
         ax1.errorbar(x, pred_var, yerr=predUnc_var, label='Predicted %s'%(varTag), xerr=xUnc, fmt='', capsize=0, color='cyan',    lw=0, elinewidth=2, marker='o', markeredgecolor='cyan',    markerfacecolor='cyan',    markersize=5.0)
