@@ -23,11 +23,14 @@
 #include <TH2D.h>
 #include <iostream>
 
+
 AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
 {
 
     histInfos = {
         // NN Related Variables
+        {"h_DoubleDisCo_disc1",          80,    0,    1},
+        {"h_DoubleDisCo_disc2",          80,    0,    1},
         {"HT_trigger_pt30",             500,    0, 5000},
         {"fwm2_top6",                    50,    0,    1},
         {"fwm3_top6",                    50,    0,    1},
@@ -100,6 +103,7 @@ AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
     };
 
     hist2DInfos = {
+        {"h_DoubleDisCo_disc1_disc2", 100, 0, 1, 100, 0, 1}, 
         {"h_cm_ptrHT_jetRank", 100, 0, 1, 10, 0, 10},
         {"h_cm_pt_jetRank", 150, 0, 1500, 10, 0, 10},
     };
@@ -283,12 +287,24 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
             const auto& passBaseline0l_Good_blind         = tr.getVar<bool>("passBaseline0l_good_blind"+myVarSuffix);
             const auto& passBaseline1l_Good_blind         = tr.getVar<bool>("passBaseline1l_Good_blind"+myVarSuffix);
-            const auto& passBaseline0l_Good_loose         = tr.getVar<bool>("passBaseline0l_good_loose"+myVarSuffix);
-            const auto& passBaseline1l_Good_loose         = tr.getVar<bool>("passBaseline1l_Good_loose"+myVarSuffix);
+            //const auto& passBaseline0l_Good_loose         = tr.getVar<bool>("passBaseline0l_good_loose"+myVarSuffix);
+            //const auto& passBaseline1l_Good_loose         = tr.getVar<bool>("passBaseline1l_Good_loose"+myVarSuffix);
             const auto& passBaseline1l_HT500_Good         = tr.getVar<bool>("passBaseline1l_HT500_Good"+myVarSuffix);
             const auto& passBaseline1l_HT700_Good         = tr.getVar<bool>("passBaseline1l_HT700_Good"+myVarSuffix);
             const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR"+myVarSuffix);
             const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon"+myVarSuffix);
+            const auto& passBaseline2l_Good               = tr.getVar<bool>("passBaseline2l_Good"+myVarSuffix);
+            const auto& passBaseline2l_Good_blind         = tr.getVar<bool>("passBaseline2l_Good_blind"+myVarSuffix);
+            const auto& passBaseline2lonZ_Good            = tr.getVar<bool>("passBaseline2lonZ_Good"+myVarSuffix);
+
+            const auto& DoubleDisCo_disc1_0l              = tr.getVar<double>("DoubleDisCo_disc1_0l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc2_0l              = tr.getVar<double>("DoubleDisCo_disc2_0l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc1_1l              = tr.getVar<double>("DoubleDisCo_disc1_1l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc2_1l              = tr.getVar<double>("DoubleDisCo_disc2_1l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc1_NonIsoMuon_0l   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_0l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc2_NonIsoMuon_0l   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_0l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc1_NonIsoMuon_1l   = tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_1l_RPV"+myVarSuffix);
+            const auto& DoubleDisCo_disc2_NonIsoMuon_1l   = tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_1l_RPV"+myVarSuffix);
 
             const auto& fwm2_top6_0l                      = tr.getVar<double>("fwm2_top6_0l"+myVarSuffix);
             const auto& fwm3_top6_0l                      = tr.getVar<double>("fwm3_top6_0l"+myVarSuffix);
@@ -483,6 +499,10 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             std::vector<int>                                        NTops                         {ntops,                                 ntops};
             std::vector<double>                                     HT_trigger                    {HT_trigger_pt30,                       HT_trigger_pt30};
             std::vector<double>                                     HT_NonIsoMuon                 {HT_trigger_pt30,                       HT_NonIsoMuon_pt30};
+            std::vector<double>                                     DoubleDisCo_disc1             {DoubleDisCo_disc1_0l,                  DoubleDisCo_disc1_1l};
+            std::vector<double>                                     DoubleDisCo_disc2             {DoubleDisCo_disc2_0l,                  DoubleDisCo_disc2_1l};
+            std::vector<double>                                     DoubleDisCo_QCDCR_disc1       {DoubleDisCo_disc1_NonIsoMuon_0l,       DoubleDisCo_disc1_NonIsoMuon_1l};
+            std::vector<double>                                     DoubleDisCo_QCDCR_disc2       {DoubleDisCo_disc2_NonIsoMuon_0l,       DoubleDisCo_disc2_NonIsoMuon_1l};
             std::vector<double>                                     fwm2_top6                     {fwm2_top6_0l,                          fwm2_top6_1l};
             std::vector<double>                                     fwm3_top6                     {fwm3_top6_0l,                          fwm3_top6_1l};
             std::vector<double>                                     fwm4_top6                     {fwm4_top6_0l,                          fwm4_top6_1l};
@@ -549,7 +569,7 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             {
                 // Define Lumi weight
                 const auto& Weight = tr.getVar<float>("Weight");
-                const auto& lumi   = tr.getVar<double>("Lumi");
+                const auto& lumi   = tr.getVar<double>("FinalLumi");
                 eventweight        = lumi * Weight;
                 
                 const auto& eleLepWeight     = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
@@ -586,7 +606,10 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 //{"_0l_loose"         , passBaseline0l_Good_loose},                         
                 //{"_0l_NoB"           , passBaseline0l_Good},                         
                 {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon},                         
-                //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
+                //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},
+                {"_2l"               , passBaseline2l_Good},
+                {"_2l_blind"         , passBaseline2l_Good_blind},
+                {"_2l_onZ"           , passBaseline2lonZ_Good},                       
             };
 
             std::map<std::string, bool>               njetsMap;
@@ -608,6 +631,7 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 int channel = 1;
                 if (kv.first.size() > 0 and kv.first.substr(2,1) == "l")
                     channel = std::stoi(kv.first.substr(1,1));
+                    if (channel == 2) channel = 1;
 
                 bool isQCD          = kv.first.find("QCDCR")    != std::string::npos;
                 unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
@@ -834,37 +858,51 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                                     my_histos["h_mMiniIso" + name]->Fill(  iso ,w);
                                 }
                             }
-                        //}
 
-                        for(unsigned int i = 1; i <= nJets; i++)
-                        {
-                            double pt = 0.0, eta = 0.0, phi = 0.0, m = 0.0, E = 0.0;
+
+                            for(unsigned int i = 1; i <= nJets; i++)
+                            {
+                                double pt = 0.0, eta = 0.0, phi = 0.0, m = 0.0, E = 0.0;
                             
+                                if (!isQCD)
+                                {
+                                    pt  = static_cast<double>(Jets_cm_top6[channel].at(i-1).Pt());
+                                    //eta = static_cast<double>(Jets_cm_top6[channel].at(i-1).Eta());
+                                    //phi = static_cast<double>(Jets_cm_top6[channel].at(i-1).Phi());
+                                    //m   = static_cast<double>(Jets_cm_top6[channel].at(i-1).M());
+                                    //E   = static_cast<double>(Jets_cm_top6[channel].at(i-1).E());
+                                } 
+                                else
+                                {
+                                    pt  = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Pt());
+                                    //eta = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Eta());
+                                    //phi = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Phi());
+                                    //m   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).M());
+                                    //E   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).E());
+                                } 
+                                my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt, i, w);
+                                my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
+                                my_2d_histos["h_cm_ptrHT_fwm2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_fwm3_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_fwm4_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_fwm5_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_jmt_ev0_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_jmt_ev1_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
+                                my_2d_histos["h_cm_ptrHT_jmt_ev2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
+                            }
+
                             if (!isQCD)
                             {
-                                pt  = static_cast<double>(Jets_cm_top6[channel].at(i-1).Pt());
-                                //eta = static_cast<double>(Jets_cm_top6[channel].at(i-1).Eta());
-                                //phi = static_cast<double>(Jets_cm_top6[channel].at(i-1).Phi());
-                                //m   = static_cast<double>(Jets_cm_top6[channel].at(i-1).M());
-                                //E   = static_cast<double>(Jets_cm_top6[channel].at(i-1).E());
+                                my_histos["h_DoubleDisCo_disc1"          + name]->Fill(DoubleDisCo_disc1[channel], w);
+                                my_histos["h_DoubleDisCo_disc2"          + name]->Fill(DoubleDisCo_disc2[channel], w);
+                                my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_disc1[channel], DoubleDisCo_disc2[channel], w);
                             } else
                             {
-                                pt  = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Pt());
-                                //eta = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Eta());
-                                //phi = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Phi());
-                                //m   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).M());
-                                //E   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).E());
-                            } 
-                            my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt, i, w);
-                            my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
-                            my_2d_histos["h_cm_ptrHT_fwm2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm2_top6[channel]    : fwm2_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_fwm3_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm3_top6[channel]    : fwm3_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_fwm4_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm4_top6[channel]    : fwm4_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_fwm5_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? fwm5_top6[channel]    : fwm5_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_jmt_ev0_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_jmt_ev1_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_QCDCR[channel], w);
-                            my_2d_histos["h_cm_ptrHT_jmt_ev2_top6_" + std::to_string(i) + name]->Fill(pt/ht, !isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_QCDCR[channel], w);
-                        }
+                                my_histos["h_DoubleDisCo_disc1"          + name]->Fill(DoubleDisCo_QCDCR_disc1[channel], w);
+                                my_histos["h_DoubleDisCo_disc2"          + name]->Fill(DoubleDisCo_QCDCR_disc2[channel], w);
+                                my_2d_histos["h_DoubleDisCo_disc1_disc2" + name]->Fill(DoubleDisCo_QCDCR_disc1[channel], DoubleDisCo_QCDCR_disc2[channel], w);
+                            }
+                        //}
                     }
                 }
             }
