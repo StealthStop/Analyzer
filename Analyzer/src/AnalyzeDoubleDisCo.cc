@@ -562,8 +562,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             // -- Define weight
             // ------------------------
             double eventweight = 1.0, leptonweight = 1.0, bTagWeight = 1.0, prefiringScaleFactor = 1.0, pileupWeight = 1.0, htDerivedweight = 1.0;
-            double weight0L            = 1.0, weight1L            = 1.0;
-            double weight0L_NonIsoMuon = 1.0, weight1L_NonIsoMuon = 1.0;
+            double weight0L             = 1.0, weight1L            = 1.0;
+            double weight0LNoB          = 1.0, weight1LNoB         = 1.0;
+            double weight0L_NonIsoMuon  = 1.0, weight1L_NonIsoMuon = 1.0;
             double weight0L_topReweight = 1.0, weight1L_topReweight = 1.0;
             double weight0L_NonIsoMuon_topReweight = 1.0, weight1L_NonIsoMuon_topReweight = 1.0;
             if(runtype == "MC" )
@@ -584,8 +585,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L             *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
-                weight0L             *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight1L             *= eventweight; //* leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight0L             *= eventweight; //*                bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+
+                weight1LNoB          *= eventweight * leptonweight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight0LNoB          *= eventweight *                prefiringScaleFactor * pileupWeight; // * htDerivedweight;
 
                 weight1L_topReweight *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
                 weight0L_topReweight *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight * topPtScaleFactor; // * htDerivedweight;
@@ -597,22 +601,25 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 weight0L_NonIsoMuon_topReweight  *= eventweight * muNonIso                  * prefiringScaleFactor * pileupWeight * topPtScaleFactor;
             }
 
-            std::vector<double> weight             {weight0L,            weight1L};
-            std::vector<double> weight_QCDCR       {weight0L_NonIsoMuon, weight1L_NonIsoMuon};
-            std::vector<double> weight_topReweight {weight0L_topReweight, weight1L_topReweight};
-            std::vector<double> weight_QCDCR_topReweight {weight0L_NonIsoMuon_topReweight, weight1L_NonIsoMuon_topReweight};
+            std::vector<double> weight                      {weight0L,                         weight1L};
+            std::vector<double> weight_NoB                  {weight0LNoB,                      weight1LNoB};
+            std::vector<double> weight_QCDCR                {weight0L_NonIsoMuon,              weight1L_NonIsoMuon};
+            std::vector<double> weight_topReweight          {weight0L_topReweight,             weight1L_topReweight};
+            std::vector<double> weight_QCDCR_topReweight    {weight0L_NonIsoMuon_topReweight,  weight1L_NonIsoMuon_topReweight};
 
             const std::map<std::string, bool> cut_map
             {
                 {"_1l"               , passBaseline1l_Good},                         
+                //{"_1l_NoB"           , passBaseline1l_Good},                         
                 {"_1l_topPtReweight" , passBaseline1l_Good},                         
-                {"_1l_HT500"         , passBaseline1l_HT500_Good},                         
-                {"_1l_HT700"         , passBaseline1l_HT700_Good},                         
-                {"_0l"            , passBaseline0l_Good},                         
+                //{"_1l_HT500"         , passBaseline1l_HT500_Good},                         
+                //{"_1l_HT700"         , passBaseline1l_HT700_Good},                         
+                {"_0l"               , passBaseline0l_Good},                         
+                //{"_0l_NoB"           , passBaseline0l_Good},                         
                 {"_0l_topPtReweight" , passBaseline0l_Good},                         
                 {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon},                         
                 {"_1l_QCDCR_topPtReweight"         , passBaseline1l_NonIsoMuon},                         
-                {"_0l_QCDCR"      , passBaseline0l_NonIsoMuon},                         
+                //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
             };
 
             std::map<std::string, bool>               njetsMap;
@@ -636,8 +643,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 if (kv.first.size() > 0 and kv.first.substr(2,1) == "l")
                     channel = std::stoi(kv.first.substr(1,1));
 
-                bool isQCD  = kv.first.find("QCDCR")  != std::string::npos;
-                bool isTopReweight  = kv.first.find("top")  != std::string::npos;
+                bool isQCD          = kv.first.find("QCDCR")    != std::string::npos;
+                bool isTopReweight  = kv.first.find("top")      != std::string::npos;
+                bool isNoB          = kv.first.find("NoB")      != std::string::npos;
                 unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
 
                 // For 0L, we always use the NGoodJets case
@@ -666,6 +674,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 w  = !isTopReweight ? w                     : weight_topReweight[channel];
                 w  = !(isTopReweight && isQCD) ? w          : weight_QCDCR_topReweight[channel];
+                w  = !isNoB ? w                             : weight_NoB[channel];
 
                 std::string name;
                 for (auto& njetsPass : njetsMap)
