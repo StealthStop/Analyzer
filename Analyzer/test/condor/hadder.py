@@ -100,8 +100,10 @@ def main():
             print "-----------------------------------------------------------"
             
             # hadd signal root files
-            sampleSetsToHadd = ["2016preVFP_AllSignal", "2016postVFP_AllSignal", "2017_AllSignal", "2018_AllSignal", "2016preVFP_AllTT", "2016postVFP_AllTT", "2017_AllTT", "2018_AllTT"]
-            bgSampleSetsToHadd = ["2016preVFP_AllBg", "2016postVFP_AllBg", "2017_AllBg", "2018_AllBg"]
+            sampleSetsToHadd = ["2016_AllSignal", "2017_AllSignal", "2017_AllSignal_CP5", "2018pre_AllSignal", "2018post_AllSignal",
+                                "2016preVFP_RPV","2016postVFP_RPV","2017_RPV","2018_RPV",
+                                "2016preVFP_StealthSYY","2016postVFP_StealthSYY","2017_StealthSYY","2018_StealthSYY",
+                                ]
             if sampleCollection in sampleSetsToHadd:
                 for sample in sl:
                     files = " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
@@ -133,7 +135,6 @@ def main():
                 for sample in sl:
                     print("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1]))
                     files += " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
-                    print(files)
                     nEvents+=float(sample[2])
     
                 outfile = "%s/%s.root" % (outDir,sampleCollection)
@@ -181,10 +182,10 @@ def main():
     if options.haddOther:
         # Hack to make the BG_OTHER.root file
         sigNttbar_old = ["AllSignal", "TT", "TTJets", "Data_SingleMuon", "Data_SingleElectron"]
-        sigNttbar_2016preVFP = ["2016preVFP_AllSignal", "2016preVFP_TT", "2016preVFP_TTJets", "2016preVFP_Data_JetHT", "2016preVFP_Data_SingleMuon", "2016preVFP_Data_SingleElectron","2016preVFP_TT_isrUp", "2016preVFP_TT_isrDown", "2016preVFP_TT_fsrUp", "2016preVFP_TT_fsrDown", "2016preVFP_TTX" , "2016preVFP_QCD", "2016preVFP_TT_erdOn", "2016preVFP_TT_hdampUp", "2016preVFP_TT_hdampDown", "2016preVFP_TT_underlyingEvtUp", "2016preVFP_TT_underlyingEvtDown"]
-        sigNttbar_2016postVFP = ["2016postVFP_AllSignal", "2016postVFP_TT", "2016postVFP_TTJets", "2016postVFP_Data_JetHT", "2016postVFP_Data_SingleMuon", "2016postVFP_Data_SingleElectron","2016postVFP_TT_isrUp", "2016postVFP_TT_isrDown", "2016postVFP_TT_fsrUp", "2016postVFP_TT_fsrDown", "2016postVFP_TTX" , "2016postVFP_QCD", "2016postVFP_TT_erdOn", "2016postVFP_TT_hdampUp", "2016postVFP_TT_hdampDown", "2016postVFP_TT_underlyingEvtUp", "2016postVFP_TT_underlyingEvtDown"]
-        sigNttbar_2017 = ["2017_AllSignal", "2017_AllSignal_CP5", "2017_TT", "2017_TTJets", "2017_Data_JetHT", "2017_Data_SingleMuon", "2017_Data_SingleElectron", "2017_TTX", "2017_QCD", "2017_TT_erdOn", "2017_TT_hdampUp", "2017_TT_hdampDown", "2017_TT_underlyingEvtUp", "2017_TT_underlyingEvtDown"]
-        sigNttbar_2018 = ["2018_AllSignal", "2018_TT", "2018_TTJets", "2018_Data_JetHT", "2018_Data_SingleMuon", "2018_Data_SingleElectron", "2018_TTX", "2018_QCD",  "2018_TT_erdOn", "2018_TT_hdampUp", "2018_TT_hdampDown", "2018_TT_underlyingEvtUp", "2018_TT_underlyingEvtDown"]
+        sigNttbar_2016preVFP = ["2016preVFP_RPV", "2016preVFP_StealthSYY", "2016preVFP_AllSignal", "2016preVFP_TT", "2016preVFP_TTJets", "2016preVFP_Data_JetHT", "2016preVFP_Data_SingleMuon", "2016preVFP_Data_SingleElectron","2016preVFP_TT_isrUp", "2016preVFP_TT_isrDown", "2016preVFP_TT_fsrUp", "2016preVFP_TT_fsrDown", "2016preVFP_TTX" , "2016preVFP_QCD", "2016preVFP_TT_erdOn", "2016preVFP_TT_hdampUp", "2016preVFP_TT_hdampDown", "2016preVFP_TT_underlyingEvtUp", "2016preVFP_TT_underlyingEvtDown"]
+        sigNttbar_2016postVFP = ["2016postVFP_RPV", "2016postVFP_StealthSYY", "2016postVFP_AllSignal", "2016postVFP_TT", "2016postVFP_TTJets", "2016postVFP_Data_JetHT", "2016postVFP_Data_SingleMuon", "2016postVFP_Data_SingleElectron","2016postVFP_TT_isrUp", "2016postVFP_TT_isrDown", "2016postVFP_TT_fsrUp", "2016postVFP_TT_fsrDown", "2016postVFP_TTX" , "2016postVFP_QCD", "2016postVFP_TT_erdOn", "2016postVFP_TT_hdampUp", "2016postVFP_TT_hdampDown", "2016postVFP_TT_underlyingEvtUp", "2016postVFP_TT_underlyingEvtDown"]
+        sigNttbar_2017 = ["2017_RPV", "2017_StealthSYY", "2017_AllSignal", "2017_AllSignal_CP5", "2017_TT", "2017_TTJets", "2017_Data_JetHT", "2017_Data_SingleMuon", "2017_Data_SingleElectron", "2017_TTX", "2017_QCD", "2017_TT_erdOn", "2017_TT_hdampUp", "2017_TT_hdampDown", "2017_TT_underlyingEvtUp", "2017_TT_underlyingEvtDown"]
+        sigNttbar_2018 = ["2018_RPV", "2018_StealthSYY", "2018_AllSignal", "2018_TT", "2018_TTJets", "2018_Data_JetHT", "2018_Data_SingleMuon", "2018_Data_SingleElectron", "2018_TTX", "2018_QCD",  "2018_TT_erdOn", "2018_TT_hdampUp", "2018_TT_hdampDown", "2018_TT_underlyingEvtUp", "2018_TT_underlyingEvtDown"]
         sigNttbar = sigNttbar_old+sigNttbar_2016preVFP+sigNttbar_2016postVFP+sigNttbar_2017+sigNttbar_2018
         files = ""
         for sampleCollection in scl:
@@ -206,7 +207,7 @@ def main():
         # Hack to make the Data.root file (hadd all the data together)
         dataFiles = ["Data_SingleMuon.root", "Data_SingleElectron.root", "Data_JetHT.root",
                      "2016preVFP_Data_SingleMuon.root", "2016preVFP_Data_SingleElectron.root", "2016preVFP_Data_JetHT.root",
-                     "2016postVFP_Data_SingleMuon.root", "2016postVFP_Data_SingleElectron.root", "2016postVFP_Data_JetHT.root", 
+                     "2016postVFP_Data_SingleMuon.root", "2016postVFP_Data_SingleElectron.root", "2016postVFP_Data_JetHT.root",
                      "2017_Data_SingleMuon.root", "2017_Data_SingleElectron.root", "2017_Data_JetHT.root",
                      "2018_Data_SingleMuon.root", "2018_Data_SingleElectron.root", "2018_Data_JetHT.root"]
         if options.year:

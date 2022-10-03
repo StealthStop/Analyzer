@@ -438,6 +438,10 @@ public:
                 "BTagCorrector",
                 "ScaleFactors",
                 "StopGenMatch",
+                "DoubleDisCo_0l_RPV",
+                "DoubleDisCo_1l_RPV",
+                "DoubleDisCo_NonIsoMuon_0l_RPV",
+                "DoubleDisCo_NonIsoMuon_1l_RPV",
             };
             registerModules(tr, std::move(modulesList));
         }

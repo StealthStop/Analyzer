@@ -240,3 +240,32 @@ class Optimized_ABCDedges(TableWriter):
             self.f.write("\n")
 
             iOption += 1
+
+# ----------------------------------------------------------------------------------
+# Derived table writer class for the tt sys with the maxi value of MC corrected data
+# Over ride the writeHeader and writeLine method
+# ----------------------------------------------------------------------------------
+class maximumCorrectedData_ttSyst(TableWriter):
+
+    def writeHeader(self):
+        self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\n")
+        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("\n")
+        self.f.write("    \\begin{tabular}{| c | c | c |}")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+        self.f.write("        \\textbf{\\njets} & \\textbf{maxi MC Corrected Data} & \\textbf{\\ttbar syst.} \\\\")
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
+    def writeLine(self, **kwargs):
+        self.f.write("        %s & %.3f & %.3f \\\\" %(kwargs["njet"], kwargs["maxCorrData"], kwargs["ttSyst"]))
+        self.f.write("\n")
+        self.f.write("        \hline")
+        self.f.write("\n")
+
+
+

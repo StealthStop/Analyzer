@@ -571,7 +571,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             {
                 // Define Lumi weight
                 const auto& Weight = tr.getVar<float>("Weight");
-                const auto& lumi   = tr.getVar<double>("Lumi");
+                const auto& lumi   = tr.getVar<double>("FinalLumi");
                 eventweight        = lumi * Weight;
                 
                 const auto& eleLepWeight     = tr.getVar<double>("totGoodElectronSF"+myVarSuffix);
