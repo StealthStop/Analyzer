@@ -585,8 +585,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 htDerivedweight      = tr.getVar<double>("htDerivedweight"+myVarSuffix);
                 prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"+myVarSuffix);
 
-                weight1L             *= eventweight; //* leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
-                weight0L             *= eventweight; //*                bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight1L             *= eventweight * leptonweight * bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
+                weight0L             *= eventweight *                bTagWeight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
 
                 weight1LNoB          *= eventweight * leptonweight * prefiringScaleFactor * pileupWeight; // * htDerivedweight;
                 weight0LNoB          *= eventweight *                prefiringScaleFactor * pileupWeight; // * htDerivedweight;
