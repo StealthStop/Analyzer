@@ -116,7 +116,7 @@ def main():
                     nEvents+=float(sample[2])
     
                 outfile = "%s/%s.root" % (outDir,sampleCollection)
-                command = "hadd %s %s" % (outfile, files)
+                command = "python ahadd.py %s %s" % (outfile, files)
                 try:
                     if not options.noHadd: 
                         print("Launching Hadd command %s" % command)
@@ -124,7 +124,7 @@ def main():
                         process.wait()
                 except:
                     print red("Warning: Too many files to hadd, using the exception setup")
-                    command = "hadd %s/%s.root %s/%s/*" % (outDir, sampleCollection, inPath, sampleCollection)
+                    command = "python ahadd.py %s/%s.root %s/%s/*" % (outDir, sampleCollection, inPath, sampleCollection)
                     if not options.noHadd: system(command)
                     pass
     

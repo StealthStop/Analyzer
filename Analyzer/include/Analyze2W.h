@@ -33,15 +33,6 @@
    }
  */
 
-
-#define DO_DEBUG false
-#define DEBUG(x)                                                               \
-    do {                                                                         \
-        if (DO_DEBUG) {                                                            \
-            std::cout << __FILE__ << ":" << __LINE__ << ": " << x << std::endl;      \
-        }                                                                          \
-    } while (false)
-
 template <typename T> class Histogram {
     public:
         using HT = std::shared_ptr<T>;
@@ -131,27 +122,6 @@ class Generator {
         virtual ~Generator(){};
 };
 
-/*
-   template <typename T> typename T::value_type getAllNames(T vals) {
-   typename T::value_type ret;
-   ret.reserve(
-   std::accumulate(vals.begin(), vals.end(), 1, [](auto x, const auto &y) {
-   return x * (std::size(y) + 1);
-   }));
-   for (int i = 0; i < std::size(vals); ++i) {
-   int s = ret.size();
-   for (int j = 0; j < s; ++j) {
-   for (const auto &y : vals[i]) {
-   ret.push_back(ret[j] + "_" + y);
-   }
-   }
-   for (const auto &y : vals[i])
-   ret.push_back(y);
-   }
-   return ret;
-   }
- */
-
 template <typename T> typename T::value_type getAllNames(T vals) {
     typename T::value_type ret;
     std::vector<typename T::value_type::iterator> it;
@@ -173,18 +143,6 @@ template <typename T> typename T::value_type getAllNames(T vals) {
         }
     }
     return ret;
-}
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const std::vector<T> &v) {
-    bool first = true;
-    for (const T &val : v) {
-        if (!first) {
-            os << ", ";
-        }
-        os << val;
-        first = false;
-    }
-    return os;
 }
 
 struct Chain {
@@ -230,7 +188,6 @@ template <typename H> class HistogramManager {
         std::vector<std::unique_ptr<Generator>> generators;
 
         void constructChains(const std::vector<std::vector<std::string>> &vals) {
-            DEBUG("Constructing Chains");
             chains.clear();
             for (const auto &chain : vals) {
                 std::vector<Cut *> new_chain;
@@ -239,7 +196,6 @@ template <typename H> class HistogramManager {
                             [&](auto &x) { return x->name == name; });
                     new_chain.push_back(found->get());
                 }
-                DEBUG(new_chain);
                 chains.push_back(new_chain);
             }
         }
@@ -281,11 +237,9 @@ template <typename H> class HistogramManager {
             ret.log_y = logaxis;
             ret.SetTitle(newname.c_str());
             my_histos.emplace(basename, ret);
-            DEBUG("Added new histogram with name " << basename);
         }
 
         auto &operator[](const std::string &s) {
-            DEBUG("Attempting to fetch histogram " << s);
             return my_histos[s];
         }
 
@@ -298,7 +252,6 @@ template <typename H> class HistogramManager {
 
         template <typename... T>
             void fill(const std::string &name, double weight, T... fill) {
-                // DEBUG("Starting to fill variable" << name);
                 std::vector<std::string> valid_names;
                 for (const auto &chain : chains) {
                     std::string current_name = "";
@@ -317,7 +270,6 @@ template <typename H> class HistogramManager {
                 }
                 valid_names.push_back("");
                 for (const std::string &s : valid_names) {
-                    // DEBUG("Attempting to fill histogram with name" << name+s << " with
                     // value " << (fill << ...));
                     my_histos.at(name + s).Fill(fill..., weight);
                 }

@@ -189,10 +189,12 @@ struct SliceData {
     int NJets;
     int n_gen_leps;
     float gen_w_pt;
-    const std::vector<utility::LorentzVector> &Jets;
-    const std::vector<float> &nsr21;
-    const std::vector<float> &nsr42;
-    const std::vector<float> &nsr43;
+    std::vector<utility::LorentzVector> Jets;
+    std::vector<float> nsr21;
+    std::vector<float> nsr42;
+    std::vector<float> nsr43;
+    int nmedw =0 ;
+    int nbjets = 0 ;
     std::size_t j1_index=0;
     std::size_t j2_index=1;
     bool has_2_jets=false;
@@ -242,6 +244,79 @@ class HTCut : public Cut {
             } else {
                 passed = false;
                 value = possible_values[0];
+            }
+        }
+};
+
+class NBJetCut : public Cut {
+    public:
+        NBJetCut() : Cut("NBJetCut", false, {"0BJet", "1BJet", "2BJet", "gt2BJet"}) {}
+        void calculate(SliceData &data) override {
+            switch(data.nbjets){
+                case 0:
+                    passed = true;
+                    value = possible_values[0]; break;
+                case 1:
+                    passed = false;
+                    value = possible_values[1]; break;
+                case 2:
+                    passed = false;
+                    value = possible_values[2]; break;
+                default:
+                    passed = false;
+                    value = possible_values[3]; break;
+
+            }
+        }
+};
+
+class NJet8Cut: public Cut {
+    public:
+        NJet8Cut() : Cut("NJet8Cut", false, {"gte8Jet", "lt8Jet"}) {}
+        void calculate(SliceData &data) override {
+            if(data.NJets >= 8){
+                value = possible_values[0];
+                passed = true;
+            } else {
+                value = possible_values[1];
+                passed = false;
+            }
+        }
+};
+class NJet6Cut: public Cut {
+    public:
+        NJet6Cut() : Cut("NJet6Cut", false, {"gte6Jet", "lt6Jet"}) {}
+        void calculate(SliceData &data) override {
+            if(data.NJets >= 6){
+                value = possible_values[0];
+                passed = true;
+            } else {
+                value = possible_values[1];
+                passed = false;
+            }
+        }
+};
+
+
+
+class NMedWCut : public Cut {
+    public:
+        NMedWCut() : Cut("NMedWCut", false, {"0MedW", "1MedW", "2MedW", "gt2MedW"}) {}
+        void calculate(SliceData &data) override {
+            switch(data.nmedw){
+                case 0:
+                    passed = true;
+                    value = possible_values[0]; break;
+                case 1:
+                    passed = false;
+                    value = possible_values[1]; break;
+                case 2:
+                    passed = false;
+                    value = possible_values[2]; break;
+                default:
+                    passed = false;
+                    value = possible_values[3]; break;
+
             }
         }
 };
@@ -427,24 +502,41 @@ Analyze2W::Analyze2W() {
 
     my_histos.cuts.push_back(std::make_unique<GenHTCut>());
     my_histos.cuts.push_back(std::make_unique<GenLepCut>());
-    my_histos.cuts.push_back(std::make_unique<SelectionCut>());
-    my_histos.cuts.push_back(std::make_unique<MassRatioCut>());
-    my_histos.cuts.push_back(std::make_unique<TauCut>());
-    my_histos.cuts.push_back(std::make_unique<EtaCut>());
-    my_histos.cuts.push_back(std::make_unique<GenWPt>());
+    //my_histos.cuts.push_back(std::make_unique<SelectionCut>());
+    // my_histos.cuts.push_back(std::make_unique<MassRatioCut>());
+    // my_histos.cuts.push_back(std::make_unique<TauCut>());
+    // my_histos.cuts.push_back(std::make_unique<EtaCut>());
+    // my_histos.cuts.push_back(std::make_unique<GenWPt>());
+    my_histos.cuts.push_back(std::make_unique<NBJetCut>());
+    my_histos.cuts.push_back(std::make_unique<NMedWCut>());
+    my_histos.cuts.push_back(std::make_unique<NJet8Cut>());
+    my_histos.cuts.push_back(std::make_unique<NJet6Cut>());
     my_histos.constructChains({
             {"GenLepCut"},
-    //        {"GenLepCut", "GenWPt"},
-    //        {"GenLepCut", "GenHTCut", "GenWPt"},
-            {"GenLepCut", "SelectionCut"},
-            {"GenLepCut", "SelectionCut","EtaCut"},
-            {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
-            {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
-            {"SelectionCut"},
-            {"SelectionCut","EtaCut"},
-            {"SelectionCut","EtaCut", "MassRatioCut"},
-            {"SelectionCut","EtaCut", "MassRatioCut", "TauCut"}
-            });
+            //        {"GenLepCut", "GenWPt"},
+            //        {"GenLepCut", "GenHTCut", "GenWPt"},
+            // {"GenLepCut", "SelectionCut"},
+            // {"GenLepCut", "SelectionCut","EtaCut"},
+            // {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
+            // {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
+            {"GenLepCut", "NBJetCut"},
+            {"GenLepCut", "NMedWCut"},
+            {"GenLepCut", "NBJetCut", "NMedWCut"},
+
+            {"GenLepCut", "NJet8Cut"},
+            {"GenLepCut", "NJet8Cut", "NBJetCut"},
+            {"GenLepCut", "NJet8Cut", "NMedWCut"},
+            {"GenLepCut", "NJet8Cut", "NBJetCut", "NMedWCut"},
+
+            {"GenLepCut", "NJet6Cut"},
+            {"GenLepCut", "NJet6Cut", "NBJetCut"},
+            {"GenLepCut", "NJet6Cut", "NMedWCut"},
+            {"GenLepCut", "NJet6Cut", "NBJetCut", "NMedWCut"}
+            //{"SelectionCut"},
+            //{"SelectionCut","EtaCut"},
+            //{"SelectionCut","EtaCut", "MassRatioCut"},
+            //{"SelectionCut","EtaCut", "MassRatioCut", "TauCut"}
+    });
     InitHistos();
     //my_histos.printHistos();
 }
@@ -475,6 +567,7 @@ void Analyze2W::InitHistos() {
 
     // Tagging
     my_histos.createNewHistogram("DeepAK8TagW_medium_wp", 5, 0, 5, "DeepAK8TagW_medium_wp");
+    my_histos.createNewHistogram("DeepAK8TagW_pt", 200, 0, 1000, "DeepAK8TagW_pt");
     my_histos.createNewHistogram("DeepAK8TagW_HasNearGenW", 5, 0, 5, "DeepAK8TagW_HasNearGenW");
     my_histos.createNewHistogram("DeepAK8TagW_MatchedEnergyRatio", 100,0,3, "DeepAK8TagW_MatchedEnergyRatio");
 
@@ -744,8 +837,8 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         if(is_rpv_mc) {
             num_leps =  std::size(gen_leptons);
         } else  {
-            num_leps =  std::size(GoodLeptons);
         }
+        num_leps =  std::size(GoodLeptons);
 
 
         // W tagging
@@ -793,7 +886,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         std::array<int, 4> jets_idx_combos = {1,2,3,4};
         float imbalance=1000000.0f, reco_stop_mass = 0, reco_sbottom_mass=0, reco_sbottom_imbalance;
         std::array<float, 2> nearest_reco_stop;
-        auto callinner = [&](auto&& start, auto&& end){
+        auto callinner = [&](auto&& , auto&& ){
             auto reco_stop_1 = deep_w_jets[0] + ak4_exclusive[jets_idx_combos[0]] + ak4_exclusive[jets_idx_combos[1]];
             auto reco_stop_2 = (deep_w_jets[1] + ak4_exclusive[jets_idx_combos[2]] + ak4_exclusive[jets_idx_combos[3]]);
             float reco_stop_mass_test_1  = reco_stop_1.M();
@@ -856,7 +949,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 #define Fill(table, var) my_histos.fill(table, weight, var)
 
 
-            //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsrCA12_21, nsrCA12_42, nsrCA12_43};
+        //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsrCA12_21, nsrCA12_42, nsrCA12_43};
         float max_gen_w_pt = 0 ;
         if(std::size(gen_w_boson)){
             max_gen_w_pt =  std::max_element(gen_w_boson.begin(), gen_w_boson.end(), [](const auto& x,const auto& y){return x.second.Pt() < y.second.Pt();})->second.Pt();
@@ -870,10 +963,18 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             MAKE_RATIO(CA12,4, 3);
             MAKE_RATIO(CA12,4, 2);
             MAKE_RATIO(CA12,2, 1);
-            SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, max_gen_w_pt, JetsAK8, 
-                nsrCA12_21,
-                nsrCA12_42,
-                nsrCA12_43};
+            SliceData data;
+            data.Ht = HT_trigger_pt30;
+            data.genHt = GenHT;
+            data.NJets = NJets_pt30;
+            data.n_gen_leps = num_leps;
+            data.gen_w_pt = max_gen_w_pt;
+            data.Jets = JetsAK8;
+            data.nsr21 = nsrCA12_21;
+            data.nsr42 = nsrCA12_42;
+            data.nsr43 = nsrCA12_43;
+            data.nbjets = NBJets;
+            data.nmedw = nw_deep_tag ;
             my_histos.processCuts(data);
 
             Fill("nCA12Jets", std::size(JetsCA12));
@@ -889,8 +990,19 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             }
             Fill("mass_ratio", data.mass_ratio);
         } else {
-            //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, {}, {}, {}, {}};
-            SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, max_gen_w_pt, JetsAK8, {},{},{}};
+            SliceData data;
+            data.Ht = HT_trigger_pt30;
+            data.genHt = GenHT;
+            data.NJets = NJets_pt30;
+            data.n_gen_leps = num_leps;
+            data.gen_w_pt = max_gen_w_pt;
+            data.Jets = JetsAK8;
+            data.nsr21 = {};
+            data.nsr42 = {};
+            data.nsr43 = {};
+            data.nbjets = NBJets;
+            data.nmedw = nw_deep_tag ;
+            my_histos.processCuts(data);
             my_histos.processCuts(data);
         }
 
@@ -913,6 +1025,10 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             for(const auto& pair: matched_w_jets){
                 Fill("DeepAK8TagW_MatchedEnergyRatio", gen_w_boson[pair.first].second.E()/JetsAK8[pair.second].E());
             }
+        }
+
+        for(const auto& jet : deep_w_jets){
+            Fill("DeepAK8TagW_pt", jet.Pt());
         }
 
 
