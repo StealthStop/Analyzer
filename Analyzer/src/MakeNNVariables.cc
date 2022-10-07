@@ -25,7 +25,8 @@
 
 MakeNNVariables::MakeNNVariables()
 {
-    my_channels   = {"0l", "1l"};
+    //my_channels   = {"0l", "1l", "2l"};
+    my_channels   = {"2l"};
     my_splits     = {"count", "Train", "Test", "Val"};
     my_var_suffix = {"", "JECup", "JECdown", "JERup", "JERdown"};
 }
@@ -81,8 +82,9 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& filetag      = tr.getVar<std::string>("filetag");
 
             std::map<std::string, bool> baselines;
-            baselines["0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
-            baselines["1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
+            //baselines["0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
+            //baselines["1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
+            baselines["2l"] = tr.getVar<bool>("passBaseline2l_Good"+myVarSuffix);
 
             // Add a branch containing the mass for the stop
             // In the case of signal, use the top mass
@@ -283,6 +285,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "Jet_flavc_1"+myVarSuffix,     "Jet_flavc_2"+myVarSuffix,     "Jet_flavc_3"+myVarSuffix,     "Jet_flavc_4"+myVarSuffix,     "Jet_flavc_5"+myVarSuffix,     "Jet_flavc_6"+myVarSuffix,     "Jet_flavc_7"+myVarSuffix,
                     "Jet_flavuds_1"+myVarSuffix,   "Jet_flavuds_2"+myVarSuffix,   "Jet_flavuds_3"+myVarSuffix,   "Jet_flavuds_4"+myVarSuffix,   "Jet_flavuds_5"+myVarSuffix,   "Jet_flavuds_6"+myVarSuffix,   "Jet_flavuds_7"+myVarSuffix,
                     "Jet_flavq_1"+myVarSuffix,     "Jet_flavq_2"+myVarSuffix,     "Jet_flavq_3"+myVarSuffix,     "Jet_flavq_4"+myVarSuffix,     "Jet_flavq_5"+myVarSuffix,     "Jet_flavq_6"+myVarSuffix,     "Jet_flavq_7"+myVarSuffix,
+                    "Jet_CSVb_1"+myVarSuffix,      "Jet_CSVb_2"+myVarSuffix,      "Jet_CSVb_3"+myVarSuffix,      "Jet_CSVb_4"+myVarSuffix,      "Jet_CSVb_5"+myVarSuffix,      "Jet_CSVb_6"+myVarSuffix,      "Jet_CSVb_7"+myVarSuffix,
                 };            
 
                 for (std::string channel : my_channels)
@@ -296,6 +299,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                         myMiniTuple[split.first][channel][myVarSuffix]->setTupleVars(varJets);
                         myMiniTuple[split.first][channel][myVarSuffix]->setTupleVars(varOldSeed);
                         myMiniTuple[split.first][channel][myVarSuffix]->setTupleVars(var7toLastJet);
+                        myMiniTuple[split.first][channel][myVarSuffix]->setTupleVars(varLeptonic);
                 
                         if (channel == "0l") 
                         {
