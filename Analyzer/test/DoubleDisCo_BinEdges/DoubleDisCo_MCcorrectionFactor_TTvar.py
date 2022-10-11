@@ -19,74 +19,76 @@ class MCcorrectionFactor_TTvar():
         self.translator  = translator
         self.edges       = edges
 
-        self.ttVarsModel = ["TT_fsrUp",            
-                            "TT_fsrDown",          
-                            "TT_isrUp",            
-                            "TT_isrDown",          
-                            "TT_hdampUp",          
-                            "TT_hdampDown",        
-                            "TT_underlyingEvtUp",
-                            "TT_underlyingEvtDown",
-                            "TT_erdOn"
+        self.ttVarsModel = [
+                            #"TT_fsrUp",            
+                            #"TT_fsrDown",          
+                            #"TT_isrUp",            
+                            #"TT_isrDown",          
+                            "TT_hdampUP",          
+                            "TT_hdampDOWN",        
+                            "TT_TuneCP5up",
+                            "TT_TuneCP5down",
+                            "TT_erdON"
         ]
 
-        self.ttVarsDetect = ["TT_JECup",            
-                             "TT_JECdown",          
-                             "TT_JERup",            
-                             "TT_JERdown"          
+        self.ttVarsDetect = [
+                             #"TT_JECup",            
+                             #"TT_JECdown",          
+                             #"TT_JERup",            
+                             #"TT_JERdown"          
         ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect
 
         # make colors for each TT variance
-        self.colors = { "TT"                   : "#525252",
-                        "None"                 : "#525252",
-                        "TT_erdOn"             : "#A6CEE3",
-                        "TT_fsrUp"             : "#B2DF8A",
-                        "TT_fsrDown"           : "#B2DF8A",
-                        "TT_isrUp"             : "#FB9A99",
-                        "TT_isrDown"           : "#FB9A99",
-                        "TT_hdampUp"           : "#CAB2D6",
-                        "TT_hdampDown"         : "#CAB2D6",
-                        "TT_JECup"             : "#1F78B4",
-                        "TT_JECdown"           : "#1F78B4",
-                        "TT_JERup"             : "#33A02C",
-                        "TT_JERdown"           : "#33A02C",
-                        "TT_underlyingEvtUp"   : "#FDBF6F",
-                        "TT_underlyingEvtDown" : "#FDBF6F",
+        self.colors = { "TT"             : "#525252",
+                        "None"           : "#525252",
+                        "TT_erdON"       : "#A6CEE3",
+                        "TT_fsrUp"       : "#B2DF8A",
+                        "TT_fsrDown"     : "#B2DF8A",
+                        "TT_isrUp"       : "#FB9A99",
+                        "TT_isrDown"     : "#FB9A99",
+                        "TT_hdampUP"     : "#CAB2D6",
+                        "TT_hdampDOWN"   : "#CAB2D6",
+                        "TT_JECup"       : "#1F78B4",
+                        "TT_JECdown"     : "#1F78B4",
+                        "TT_JERup"       : "#33A02C",
+                        "TT_JERdown"     : "#33A02C",
+                        "TT_TuneCP5up"   : "#FDBF6F",
+                        "TT_TuneCP5down" : "#FDBF6F",
         }
 
-        self.correctionLabels = { "TT"                   : "Nominal",
-                                  "TT_erdOn"             : "Color Reconn.",
-                                  "TT_fsrUp"             : "FSR Up",
-                                  "TT_fsrDown"           : "FSR Down",
-                                  "TT_isrUp"             : "ISR Up",
-                                  "TT_isrDown"           : "ISR Down",
-                                  "TT_hdampUp"           : "ME-PS Up",
-                                  "TT_hdampDown"         : "ME-PS Down",
-                                  "TT_JECup"             : "JEC Up",
-                                  "TT_JECdown"           : "JEC Down",
-                                  "TT_JERup"             : "JER Up",
-                                  "TT_JERdown"           : "JER Down",
-                                  "TT_underlyingEvtUp"   : "Tune Up",
-                                  "TT_underlyingEvtDown" : "Tune Down",
+        self.correctionLabels = { "TT"             : "Nominal",
+                                  "TT_erdON"       : "Color Reconn.",
+                                  "TT_fsrUp"       : "FSR Up",
+                                  "TT_fsrDown"     : "FSR Down",
+                                  "TT_isrUp"       : "ISR Up",
+                                  "TT_isrDown"     : "ISR Down",
+                                  "TT_hdampUP"     : "ME-PS Up",
+                                  "TT_hdampDOWN"   : "ME-PS Down",
+                                  "TT_JECup"       : "JEC Up",
+                                  "TT_JECdown"     : "JEC Down",
+                                  "TT_JERup"       : "JER Up",
+                                  "TT_JERdown"     : "JER Down",
+                                  "TT_TuneCP5up"   : "Tune Up",
+                                  "TT_TuneCP5down" : "Tune Down",
         }
 
-        self.closureLabels = { "TT"                   : "w/ Nominal Corr.",
-                               "None"                 : "w/o Corr.",
-                               "TT_erdOn"             : "w/ Color Reconn. Corr.",
-                               "TT_fsrUp"             : "w/ FSR Up Corr.",
-                               "TT_fsrDown"           : "w/ FSR Down Corr.",
-                               "TT_isrUp"             : "w/ ISR Up Corr.",
-                               "TT_isrDown"           : "w/ ISR Down Corr.",
-                               "TT_hdampUp"           : "w/ ME-PS Up Corr.",
-                               "TT_hdampDown"         : "w/ ME-PS Down Corr.",
-                               "TT_JECup"             : "w/ JEC Up Corr.",
-                               "TT_JECdown"           : "w/ JEC Down Corr.",
-                               "TT_JERup"             : "w/ JER Up Corr.",
-                               "TT_JERdown"           : "w/ JER Down Corr.",
-                               "TT_underlyingEvtUp"   : "w/ Tune Up Corr.",
-                               "TT_underlyingEvtDown" : "w/ Tune Down Corr.",
+        self.closureLabels = { "TT"             : "w/ Nominal Corr.",
+                               "None"           : "w/o Corr.",
+                               "TT_erdON"       : "w/ Color Reconn. Corr.",
+                               "TT_fsrUp"       : "w/ FSR Up Corr.",
+                               "TT_fsrDown"     : "w/ FSR Down Corr.",
+                               "TT_isrUp"       : "w/ ISR Up Corr.",
+                               "TT_isrDown"     : "w/ ISR Down Corr.",
+                               "TT_hdampUP"     : "w/ ME-PS Up Corr.",
+                               "TT_hdampDOWN"   : "w/ ME-PS Down Corr.",
+                               "TT_JECup"       : "w/ JEC Up Corr.",
+                               "TT_JECdown"     : "w/ JEC Down Corr.",
+                               "TT_JERup"       : "w/ JER Up Corr.",
+                               "TT_JERdown"     : "w/ JER Down Corr.",
+                               "TT_TuneCP5up"   : "w/ Tune Up Corr.",
+                               "TT_TuneCP5down" : "w/ Tune Down Corr.",
         }
 
         self.valColors = { "Val_BD" : "#DDBB87",
@@ -362,11 +364,11 @@ class MCcorrectionFactor_TTvar():
 
                 # set y axis for higher njets bins
                 yMin = None; yMax = None
-                #if int(njet.replace("incl", "")) > 8:
-                #    yMin = 0.7; yMax = 1.7
+                if int(njet.replace("incl", "")) > 8:
+                    yMin = 0.7; yMax = 1.7
 
-                #else:
-                #    yMin = 0.65; yMax = 1.5
+                else:
+                    yMin = 0.7; yMax = 1.3
 
                 # -------------------------------
                 # Make plots for all TT variances
@@ -400,22 +402,13 @@ class MCcorrectionFactor_TTvar():
                 # ----------------------------------------------
                 # Make corrected MC corrected data closure plots
                 # ----------------------------------------------
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
 
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
-
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyTotalAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
-
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
-
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
-
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary_ScaledbyRegionAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
 
         # -------------------------------------------------------------
         # calculate the sys. via the maximum value of MC corrected data
@@ -429,6 +422,7 @@ class MCcorrectionFactor_TTvar():
                 absoluteMax = 999.0
                 someNjets = ["7", "8", "9"]
                 for someNjet in someNjets:
+                    if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
                     if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] < absoluteMax:
                         absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
 

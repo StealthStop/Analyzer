@@ -2,7 +2,6 @@ from common_Regions     import *
 from common_TableWriter import *
 
 # ---------------------------------------------------
-# ---------------------------------------------------
 # get a table to see how the significance differences 
 # between non-optimized and optimized ABCD bin edges
 #   -- non-closure, pull, sigFracs and bin edges
@@ -18,6 +17,7 @@ class Optimized_BinEdges():
         self.ttVar      = ttVar
         self.translator = translator
 
+    # ---------------------------------------------------
     # get list of all possible optimized ABCD edges
     #   -- put them in a list
     #   -- choice the same edges for all njets bins later
@@ -35,11 +35,12 @@ class Optimized_BinEdges():
             if ( float(all_ABCDEdges[i_list][0]) > 0.95 or  float(all_ABCDEdges[i_list][1]) > 0.95 ): continue
     
             total_significance = 0.0; pass_nonClosure = True; pass_sigFrac = True; 
+
             for njet in njets:
     
                 # get significance for each njet bin and add them quadrature 
                 total_significance += (significance[njet][i_list]**2.0)
-    
+ 
                 # check the non-closure and pull to get the same ABCD edges for all njet bins
                 if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2): 
                     pass_nonClosure = False
@@ -50,6 +51,7 @@ class Optimized_BinEdges():
     
             # Add manually the non-optimized edges and associated quantities
             if all_ABCDEdges[i_list][0] == "0.600" and all_ABCDEdges[i_list][1] == "0.600":
+
                 best_choices_params[999.0] = {}
             
                 best_choices_params[999.0]["Significance"] = math.sqrt(total_significance)
@@ -68,12 +70,15 @@ class Optimized_BinEdges():
             if (pass_nonClosure and pass_sigFrac):
     
                 if (total_significance > max_significance):
-    
+
                     max_significance = total_significance
                     i_bestChoice     = i_list
-    
+
+                    print "maximum significance : ", max_significance
+                    print "disc1, disc2         : ", all_ABCDEdges[i_bestChoice] 
+ 
                 # make the table to compare the significances between 
-                if math.sqrt(total_significance) > 3.5:
+                if math.sqrt(total_significance) > 1.0:
     
                     best_choices_params[total_significance] = {}
             
@@ -91,6 +96,9 @@ class Optimized_BinEdges():
     
         return max_significance, all_ABCDEdges[i_bestChoice], best_choices_params
 
+    # --------------
+    # run the module
+    # -------------- 
     def run(self, disc1edge=None, disc2edge=None, fastMode=False, **kwargs):
 
         tablesPath     = kwargs["tablesPath"]["TT"]
@@ -101,7 +109,7 @@ class Optimized_BinEdges():
         files          = kwargs["files"]
         numEdgeChoices = kwargs["numEdgeChoices"]
 
-        optimized_ABCDedges    = Optimized_ABCDedges(tablesPath, self.channel, self.year, "ABCDedges", self.sig)
+        optimized_ABCDedges = Optimized_ABCDedges(tablesPath, self.channel, self.year, "ABCDedges", self.sig)
 
         # ---------------------------------------------------------
         # to optimize the ABCD edges
