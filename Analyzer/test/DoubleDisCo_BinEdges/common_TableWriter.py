@@ -204,7 +204,7 @@ class Optimized_ABCDedges(TableWriter):
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
-        self.f.write("        \\textbf{ABCD edges} & \\textbf{Significance} & \\textbf{\\njets} & \\textbf{Non-closure} & \\textbf{Pull} & \\textbf{Sig. Fracs B} & \\textbf{Sig. Fracs B} & \\textbf{Sig. Fracs B} \\\\")
+        self.f.write("        \\textbf{ABCD edges} & \\textbf{Significance} & \\textbf{\\njets} & \\textbf{Non-closure} & \\textbf{Pull} & \\textbf{Sig. Fracs B} & \\textbf{Sig. Fracs C} & \\textbf{Sig. Fracs D} \\\\")
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
@@ -248,9 +248,10 @@ class Optimized_ABCDedges(TableWriter):
 class maximumCorrectedData_ttSyst(TableWriter):
 
     def writeHeader(self):
-        self.f.write("\\resizebox{\linewidth}{!}{%")
+        self.f.write("\\centering")
+        self.f.write("\\resizebox{0.6\linewidth}{!}{%")
         self.f.write("\n")
-        self.f.write("    \def\\arraystretch{0.6}")
+        self.f.write("    \def\\arraystretch{0.7}")
         self.f.write("\n")
         self.f.write("    \\begin{tabular}{| c | c | c |}")
         self.f.write("\n")
