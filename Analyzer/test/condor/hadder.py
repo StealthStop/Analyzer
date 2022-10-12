@@ -58,6 +58,7 @@ def main():
     parser.add_option('--noHadd', action='store_true',                              help="Dont hadd the the root files")
     parser.add_option('--haddOther', action='store_true',                           help="Do the hack to make BG_OTHER.root")
     parser.add_option('--haddData', action='store_true',                            help="Do the hack to make Data.root")
+    parser.add_option('--haddAll', action='store_true',                             help="Do the hack to hadd All_Bg, All_Signal, All_Data")
     options, args = parser.parse_args()
 
     # Get input directory path
@@ -83,6 +84,7 @@ def main():
             exit(0)    
     else:
         os.makedirs(outDir) 
+        os.makedirs(outDir + "/temp")
     
     # Loop over all sample options to find files to hadd
     log = []
@@ -90,7 +92,7 @@ def main():
     scl = sc.sampleCollectionList()
     for sampleCollection in scl:
         sl = sc.sampleList(sampleCollection)
-        if sampleCollection in datasets:
+        if sampleCollection in datasets and not options.haddAll:
             directory = sampleCollection
             files = ""
             print "-----------------------------------------------------------"
@@ -109,9 +111,26 @@ def main():
                     command = "hadd %s/%s.root %s" % (outDir, sample[1], files)
                     if not options.noHadd: system(command)
                     log = checkNumEvents(nEvents=float(sample[2]), rootFile=outfile, sampleCollection=sample[1], log=log)
-    
+
+   
+            # hadd when using AllBg categories
+            elif False and sampleCollection in bgSampleSetsToHadd:
+                for sample in sl:
+                    if "TTTo" in sample[1]:
+                        files = " " + " ".join(glob("%s/%s/MyAnalysis_%s_[0-9]*.root" % (inPath, directory, sample[1])))
+                    else:
+                        files = " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
+                    
+                    if not os.path.isdir("%s/temp"%(outDir)):
+                        os.makedirs("%s/temp"%(outDir))
+
+                    outfile = "%s/temp/%s.root" % (outDir,sample[1])
+                    command = "hadd %s/temp/%s.root %s" % (outDir, sample[1], files)
+                    if not options.noHadd: system(command)
+                    log = checkNumEvents(nEvents=float(sample[2]), rootFile=outfile, sampleCollection=sample[1], log=log)
+
             # hadd other condor jobs
-            else:
+            elif False:
                 nEvents=0.0
                 for sample in sl:
                     print("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1]))
@@ -132,6 +151,26 @@ def main():
     
                 log = checkNumEvents(nEvents=nEvents, rootFile=outfile, sampleCollection=sampleCollection, log=log)
     
+    if options.haddAll:
+        for year in ['2016preVFP', '2016postVFP', '2017', '2018']:
+            files_TT = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*TTTo*.root" % (inPath, year, year))) 
+            command = "hadd %s/%s_TT.root %s" % (outDir, year, files_TT)
+            system(command)
+            files_QCD = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*QCD*.root" % (inPath, year, year)))
+            command = "hadd %s/%s_QCD.root %s" % (outDir, year, files_QCD)
+            system(command)
+            files_TTX = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*TT[WZ][TJ]*.root" % (inPath, year, year)) + glob("%s/%s_AllBg/MyAnalysis_%s*ttH*.root" % (inPath, year, year))) 
+            command = "hadd %s/%s_TTX.root %s" % (outDir, year, files_TTX)
+            system(command)
+            files_NotOther = files_TT + files_QCD + files_TTX
+            files_Other = " " + " ".join([f for f in glob("%s/%s_AllBg/MyAnalysis_%s*.root" % (inPath, year, year) ) if f not in files_NotOther])
+            command = "hadd %s/%s_BG_OTHER.root %s" % (outDir, year, files_Other)
+            system(command)
+
+            files_Data = " " + " ".join(glob("%s/%s_Data/MyAnalysis_%s*.root" % (inPath, year, year)))
+            command = "hadd %s/%s_Data.root %s" % (outDir, year, files_Data)
+            system(command)
+ 
     #Print log of hadd at the end
     if len(log) > 0:
          print red("------------------------------------------------------------------------------------------------")
@@ -173,11 +212,16 @@ def main():
                      "2018_Data_SingleMuon.root", "2018_Data_SingleElectron.root", "2018_Data_JetHT.root"]
         if options.year:
             command = "hadd %s/%s_Data.root " % (outDir,options.year)
+            for f in dataFiles:
+                if os.path.exists(outDir+"/"+f):
+                    command += " %s/%s" % (outDir, f)
         else:
-            command = "hadd %s/Data.root " % outDir
-        for f in dataFiles:
-            if os.path.exists(outDir+"/"+f):
-                command += " %s/%s" % (outDir, f)
+            for year in ['2016preVFP', '2016postVFP', '2017', '2018']:
+                command = "hadd %s/%s_Data/%s_Data.root " % (outDir, year, year)
+            
+                for f in dataFiles:
+                    if os.path.exists(outDir+"/"+year+"_Data/"+f):
+                        command += " %s/%s_Data/%s" % (outDir, year, f)
         print "-----------------------------------------------------------"
         print command
         print "-----------------------------------------------------------"
