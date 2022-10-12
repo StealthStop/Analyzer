@@ -113,11 +113,11 @@ def main():
 
     path = "year_TT_TTvar_Syst_label.root"
     
-    years = ["2016",
+    years = [#"2016",
              #"2016preVFP" ,
              #"2016postVFP" ,
-             "2017" ,
-             "2018" ,
+             #"2017" ,
+             #"2018" ,
              "Run2UL",
             ]
     

@@ -30,7 +30,6 @@ from DoubleDisCo_MCcorrectionFactor_TTvar import *
 #   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 1l --disc1edge 0.57 --disc2edge 0.65 --plotVarVsBoundary --fastMode
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------------  
 
-# Running for MCcorrectionFactor_TTvar
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # command to run this script
 #   -- python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 0l  --disc1edge 0.71 --disc2edge 0.65 --plotVarVsBoundary --fastMode  
@@ -113,6 +112,13 @@ if not os.path.exists(tablesPath["TT"]):
 # -----------------
 # get SYY histogram
 # -----------------
+modelLabel = None
+if (args.sig != "RPV"):
+    modelLabel = "Stealth"
+else:
+    modelLabel = ""
+
+
 modelDecay = "2t6j"
 if ("SHH" in args.sig):
     modelDecay = "2t4b"
@@ -138,7 +144,7 @@ files = {
     #"TT_UL"         : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_UL.root"), 
     "NonTT"          : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"),
     "Data"           : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"),
-    Sig              : ROOT.TFile.Open(args.path + "/" + args.year + "_%s_%s_mStop-%s.root"%(args.sig,modelDecay,args.mass)),
+    Sig              : ROOT.TFile.Open(args.path + "/" + args.year + "_%s%s_%s_mStop-%s.root"%(modelLabel, args.sig, modelDecay, args.mass)),
 }
 
 # ---------------------
