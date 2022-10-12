@@ -238,9 +238,9 @@ class BinEdges():
             # plot Disc1s vs Disc2s with all edges
             # ------------------------------------
             if kwargs["plotDisc1VsDisc2"]:
-                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = "RPV550", name = "Val_BD_CD", col1="yellow", col2="lime" )
+                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = self.sig, name = "Val_BD_CD", col1="yellow", col2="lime" )
                 plotter["TT"].plot_Disc1VsDisc2(hist_lists["TT"],      allRegionsFinalEdges, njet, tag = "TT",     name = "Val_BD_CD", col1="yellow", col2="lime" )
-                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = "RPV550", name = "Val_D",     col1="white",  col2="white")
+                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = self.sig, name = "Val_D",     col1="white",  col2="white")
                 plotter["TT"].plot_Disc1VsDisc2(hist_lists["TT"],      allRegionsFinalEdges, njet, tag = "TT",     name = "Val_D",     col1="white",  col2="white")
 
             # get the nEvents for each ABCD region
