@@ -59,7 +59,7 @@ const std::string getFullPath(const std::string& file)
     }
 }
 
-template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf, 
+template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf, const std::string dataSets,
                                     const int startFile, const int nFiles, const int maxEvts, 
                                     TFile* const outfile, const bool isQuiet, const std::string& analyzer)
 {
@@ -76,6 +76,7 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
         tr.registerDerivedVar("runtype",runtype);
         tr.registerDerivedVar("filetag",file.tag);
         tr.registerDerivedVar("analyzer",analyzer);
+        tr.registerDerivedVar("dataset",dataSets);
 
         printf( "runtype: %s nFiles: %i startFile: %i maxEvts: %i \n",runtype.c_str(),nFiles,startFile,maxEvts ); fflush( stdout );
 
@@ -171,7 +172,7 @@ int main(int argc, char *argv[])
     std::set<AnaSamples::FileSummary> vvf = setFS(dataSets, runOnCondor); 
     TFile* outfile = TFile::Open(histFile.c_str(), "RECREATE");
 
-    std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&,const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
+    std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&, const std::string, const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
         {"AnalyzeDoubleDisCo",         run<AnalyzeDoubleDisCo>        },
         {"AnalyzeLepTrigger",          run<AnalyzeLepTrigger>         },
         {"AnalyzeBTagSF",              run<AnalyzeBTagSF>             },
@@ -207,7 +208,7 @@ int main(int argc, char *argv[])
             if(pair.first==analyzer) 
             {
                 std::cout<<"Running the " << analyzer << " Analyzer" <<std::endl;
-                pair.second(vvf,startFile,nFiles,maxEvts,outfile,isQuiet,analyzer); 
+                pair.second(vvf,dataSets,startFile,nFiles,maxEvts,outfile,isQuiet,analyzer); 
                 foundAnalyzer = true;
             }
         }
