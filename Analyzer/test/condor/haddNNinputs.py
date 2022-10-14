@@ -16,10 +16,11 @@ if __name__ == "__main__":
 
     usage = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--outputdir", dest="outputdir", help="Directory to store hadded output",    required=True)
-    parser.add_argument("--inputdir",  dest="inputdir",  help="Directory of unhadded input",         required=True)
-    parser.add_argument("--year",      dest="year",      help="Which year to hadd",                  required=True)
-    parser.add_argument("--dryrun",    dest="dryrun",    help="Print what will happen, don't do it", action="store_true", default=False)
+    parser.add_argument("--outputdir",     dest="outputdir", help="Directory to store hadded output",      required=True)
+    parser.add_argument("--inputdir",      dest="inputdir",  help="Directory of unhadded input",           required=True)
+    parser.add_argument("--year",          dest="year",      help="Which year to hadd",                    required=True)
+    parser.add_argument("--dryrun",        dest="dryrun",    help="Print what will happen, don't do it",   action="store_true", default=False)
+    parser.add_argument("--verbose", "-v", dest="verbose",   help="Commands are printed before execution", action="store_true", default=False)
     args = parser.parse_args()
 
     if not os.path.exists(args.outputdir):
@@ -46,8 +47,7 @@ if __name__ == "__main__":
                       + glob.glob("%s/%s*/*_%s%s_????_%s.root"%(inputdir,args.year,background,varStr,split))
 
                 nFilesPerChunk = 20
-                print(len(files))
-                nChunks = len(files) / nFilesPerChunk
+                nChunks = len(files) / nFilesPerChunk + 1
                 if nChunks == 0:
                     nChunks += 1
 
@@ -55,13 +55,13 @@ if __name__ == "__main__":
 
                     filesChunk = []
                     for j in range(i*nFilesPerChunk, (i+1)*nFilesPerChunk):
-                        if j > len(files):
+                        if j >= len(files):
                             break
                         filesChunk.append(files[j])
 
                     command = ["hadd", "-f", "%s/MyAnalysis_%s_%s%s_%s_%d.root"%(args.outputdir,args.year,background,varStr,split,i)] + filesChunk
 
-                    print("Executing command: \"%s\""%(" ".join(command)))
+                    if args.verbose or args.dryrun: print("Executing command: \"%s\""%(" ".join(command)))
                     if not args.dryrun:
                         p = sb.Popen(command)
                         p.wait()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
                 tempFiles = glob.glob("%s/MyAnalysis_%s_%s%s_%s_*.root"%(args.outputdir,args.year,background,varStr,split))
                 command = ["hadd", "-f", "%s/MyAnalysis_%s_%s%s_%s.root"%(args.outputdir,args.year,background,varStr,split)] + tempFiles
 
-                print("Executing command: \"%s\""%(" ".join(command)))
+                if args.verbose or args.dryrun: print("Executing command: \"%s\""%(" ".join(command)))
                 if not args.dryrun:
                     p = sb.Popen(command)
                     p.wait()
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 command = ["hadd", "-f", "%s/MyAnalysis_%s_%s_2t6j_mStop-%s_%s.root"%(args.outputdir,args.year,model,mass,split)] \
                         + glob.glob("%s/%s*/*_%s_2t6j_mStop-%s_*_%s.root"%(inputdir,args.year,model,mass,split))
 
-                print("Executing command: \"%s\""%(" ".join(command)))
+                if args.verbose or args.dryrun: print("Executing command: \"%s\""%(" ".join(command)))
                 if not args.dryrun:
                     p = sb.Popen(command)
                     p.wait()
