@@ -40,6 +40,7 @@ def main():
     parser.add_option ('-c',        dest='noSubmit',                action='store_true', default = False,         help="Do not submit jobs.  Only create condor_submit.txt.")
     parser.add_option ('--output',  dest='outPath',  type='string',                      default = '.',           help="Name of directory where output of each condor job goes")
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
+    parser.add_option ('-s',        dest='subcollections', type='string',                default = '',            help="List of subcollections, comma separated")
     options, args = parser.parse_args()
 
     srcDir  = environ["CMSSW_BASE"] + "/src"
@@ -117,6 +118,10 @@ def main():
     else:
         print "No dataset specified"
         exit(0)
+
+    subcollections = []
+    if options.subcollections:
+        subcollections = options.subcollections.split(',')
     
     fileParts = []
     fileParts.append("Universe   = vanilla\n")
@@ -143,6 +148,7 @@ def main():
                     if '.root' in l:
                         count = count + 1
                 for startFileNum in xrange(0, count, nFilesPerJob):
+                    if options.subcollections and (n + '_' + str(startFileNum)) not in subcollections: continue
                     numberOfJobs+=1
                     outputDir = "%s/output-files/%s" % (options.outPath, ds)
                     outputFiles = [
