@@ -84,7 +84,7 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
 
-            weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
+            weight *= eventweight * bTagScaleFactor * prefiringScaleFactor * puScaleFactor;
         }
 
         // ---------------------------------------------------------------

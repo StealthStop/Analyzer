@@ -202,13 +202,14 @@ void AnalyzeDataMC::InitHistos(const std::map<std::string, bool>& cutMap)
 
 void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
-    const auto& filetag         = tr.getVar<std::string>("filetag");
-    const auto& runYear         = tr.getVar<std::string>("runYear");
-    const auto& bjetFileName    = tr.getVar<std::string>("bjetFileName");
-    const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
-    const auto& leptonFileName  = tr.getVar<std::string>("leptonFileName");
-    const auto& meanFileName    = tr.getVar<std::string>("meanFileName");
-    const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
+    const auto& filetag           = tr.getVar<std::string>("filetag");
+    const auto& runYear           = tr.getVar<std::string>("runYear");
+    const auto& bjetFileName      = tr.getVar<std::string>("bjetFileName");
+    const auto& bjetCSVFileName   = tr.getVar<std::string>("bjetCSVFileName");
+    const auto& leptonFileName    = tr.getVar<std::string>("leptonFileName");
+    const auto& hadronicFileName  = tr.getVar<std::string>("hadronicFileName");
+    const auto& meanFileName      = tr.getVar<std::string>("meanFileName");
+    const auto& TopTaggerCfg      = tr.getVar<std::string>("TopTaggerCfg");
 
     for(const auto& myVarSuffix : my_var_suffix)
     {
@@ -222,7 +223,7 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
+        ScaleFactors        scaleFactors( runYear, leptonFileName, hadronicFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
         BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
