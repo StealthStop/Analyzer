@@ -22,9 +22,6 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
 #include <iostream>
 
 class MakeNJetDists : public AnalyzeBase

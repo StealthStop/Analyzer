@@ -3,16 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
-#include <TDirectory.h>
-#include <TH1F.h>
 
 StealthHemispheres::StealthHemispheres() : inithisto(false) 
 {
@@ -151,7 +142,7 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
         const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& dR_bjets        = tr.getVar<float>("dR_bjets");               
+        const auto& dR_bjets        = tr.getVar<double>("dR_bjets");               
         const auto& ntops           = tr.getVar<int>("ntops");
         const auto& ntops_1jet      = tr.getVar<int>("ntops_1jet"); // merged
         const auto& ntops_2jet      = tr.getVar<int>("ntops_2jet");
@@ -163,7 +154,6 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const bool pass_0l          = NGoodLeptons == 0;  
         const bool pass_HT500       = HT_trigger_pt45 > 500;
         const bool pass_ge2b        = NGoodBJets_pt45 >= 2;
-        const bool pass_ge6j        = NGoodJets_pt45 >= 6;
         const bool pass_ge7j        = NGoodJets_pt45 >= 7;
         const bool pass_ge8j        = NGoodJets_pt45 >= 8;
         const bool pass_ge9j        = NGoodJets_pt45 >= 9;
@@ -237,7 +227,7 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             // Define Lumi weight
             const auto& Weight   = tr.getVar<float>("Weight");
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& lumi     = tr.getVar<double>("FinalLumi");
             eventweight          = lumi*Weight;
         
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
@@ -520,8 +510,4 @@ void StealthHemispheres::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

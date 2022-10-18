@@ -5,8 +5,7 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TEfficiency.h>
-#include <TTree.h>
+#include <TFile.h>
 
 #include <map>
 #include <string>
@@ -18,7 +17,6 @@ class HadTriggers_Analyzer
 public:
     std::map<std::string, std::shared_ptr<TH1D>>  my_histos;
     std::map<std::string, std::shared_ptr<TH2D>>  my_2d_histos;
-    std::map<std::string, std::shared_ptr<TEfficiency>>  my_efficiencies;
     
     HadTriggers_Analyzer();
     ~HadTriggers_Analyzer(){};

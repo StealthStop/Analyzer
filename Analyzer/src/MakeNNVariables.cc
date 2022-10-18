@@ -21,7 +21,6 @@
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 
 #include <iostream>
-#include <stdio.h> 
 
 MakeNNVariables::MakeNNVariables()
 {
@@ -194,7 +193,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                 //-----------------------------------       
                 std::set<std::string> varGeneral = 
                 {
-                    "Lumi",   
+                    "FinalLumi",   
                     "mass",   
                     "model",
                     "Weight",  

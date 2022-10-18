@@ -3,14 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
 
 AnalyzeLepTrigger::AnalyzeLepTrigger()
 {
@@ -111,7 +104,7 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
             const auto& Weight  = tr.getVar<float>("Weight");
-            const auto& lumi = tr.getVar<double>("Lumi");
+            const auto& lumi = tr.getVar<double>("FinalLumi");
             const auto& puWeight = tr.getVar<double>("puWeightCorr");
 
             // Define lepton weight
@@ -237,11 +230,6 @@ void AnalyzeLepTrigger::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-    
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }
-    
 }
 
 bool AnalyzeLepTrigger::containsGoodLepton( const std::vector<utility::LorentzVector>& leptons, const std::vector<bool>& goodLeptons, double ptThreshold, double etaSelection) { 
