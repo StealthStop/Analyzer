@@ -474,7 +474,7 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
+                "RunTopTagger_ResolvedOnly",
                 "CommonVariables",
                 "FatJetCombine",
                 "Baseline",
