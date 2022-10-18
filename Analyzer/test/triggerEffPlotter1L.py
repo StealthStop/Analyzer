@@ -8,6 +8,10 @@ ROOT.gStyle.SetPaintTextFormat("3.3f")
 ROOT.TH1.SetDefaultSumw2()
 ROOT.TH2.SetDefaultSumw2()
 
+# --------------------------------------------
+# run this script to make plots and root files:
+# ./triggerEfficiencySF_SEM.sh
+# --------------------------------------------
 usage = "usage: %prog [options]"
 parser = argparse.ArgumentParser(usage)
 parser.add_argument("--tag"      , dest="tag"      , help="Unique tag for output"         , type=str, required=True)
@@ -116,7 +120,7 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
 
     dataMcRatio.Draw("E1 P")
 
-    aCanvas.SaveAs("plots/%s/%s/1D/%s.pdf"%(tag,year,theName))
+    aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s/1D/%s.pdf"%(tag,year,theName))
 
 def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
@@ -180,7 +184,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     ROOT.gPad.SetTicks()
 
     dataRatio.Draw("COLZ E TEXT")
-    aCanvas.SaveAs("plots/%s/%s/2D/%s.pdf"%(tag,year,"data_"+theName))
+    aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s/2D/%s.pdf"%(tag,year,"data_"+theName))
 
     aCanvas = ROOT.TCanvas("c_mc_%s"%(theName), "c_mc_%s"%(theName), 1500, 1200)
     ROOT.gPad.Clear()
@@ -192,7 +196,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     ROOT.gPad.SetTicks()
 
     mcRatio.Draw("COLZ E TEXT")
-    aCanvas.SaveAs("plots/%s/%s/2D/%s.pdf"%(tag,year,"mc_"+theName))
+    aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s/2D/%s.pdf"%(tag,year,"mc_"+theName))
 
     aCanvas = ROOT.TCanvas("c_datamc_%s"%(theName), "c_datamc_%s"%(theName), 1500, 1200)
     ROOT.gPad.Clear()
@@ -204,7 +208,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     ROOT.gPad.SetTicks()
 
     dataMcRatio.Draw("COLZ E TEXT")
-    aCanvas.SaveAs("plots/%s/%s/2D/%s.pdf"%(tag, year, "datamc_"+theName))
+    aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s/2D/%s.pdf"%(tag, year, "datamc_"+theName))
 
 if __name__ == '__main__':
 
@@ -230,7 +234,7 @@ if __name__ == '__main__':
     elif dataset == "muon": dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleMuon.root")
 
 
-    outputPath = "./plots/%s/%s"%(tag,arg.year)
+    outputPath = "./triggerEfficiencySF_plots/%s/%s"%(tag,arg.year)
     outputFileName = "%s_TrigEff.root"%(year)
 
     if not os.path.exists(outputPath+"/1D"): os.makedirs(outputPath+"/1D")
