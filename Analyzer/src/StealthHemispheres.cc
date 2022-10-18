@@ -3,11 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
 #include <iostream>
-#include <TFile.h>
-#include <TDirectory.h>
 
 StealthHemispheres::StealthHemispheres() : inithisto(false) 
 {

@@ -21,7 +21,6 @@
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 
 #include <iostream>
-#include <stdio.h> 
 
 MakeNNVariables::MakeNNVariables()
 {

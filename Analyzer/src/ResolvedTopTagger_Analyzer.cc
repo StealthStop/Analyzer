@@ -4,8 +4,6 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
 #include <iostream>
 
 ResolvedTopTagger_Analyzer::ResolvedTopTagger_Analyzer() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), 

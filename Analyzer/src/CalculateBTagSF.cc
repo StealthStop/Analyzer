@@ -3,9 +3,6 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TEfficiency.h>
 #include <iostream>
 
 // Calcualte b-tag eff. needed for the scale factor 

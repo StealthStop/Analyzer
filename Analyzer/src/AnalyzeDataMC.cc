@@ -19,10 +19,7 @@
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
 #include <iostream>
-
 
 AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
 {

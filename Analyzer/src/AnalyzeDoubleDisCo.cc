@@ -20,8 +20,6 @@
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 #include "Framework/Framework/include/DeepEventShape.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
 #include <iostream>
 
 AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)

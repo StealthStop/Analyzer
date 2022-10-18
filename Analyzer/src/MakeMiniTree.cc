@@ -3,8 +3,6 @@
 #include "NTupleReader/include/NTupleReader.h"
 #include "Framework/Framework/include/MiniTupleMaker.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
 #include <iostream>
 
 MakeMiniTree::MakeMiniTree()

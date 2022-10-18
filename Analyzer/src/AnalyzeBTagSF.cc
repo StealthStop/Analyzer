@@ -3,12 +3,6 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 
 AnalyzeBTagSF::AnalyzeBTagSF()
@@ -21,7 +15,6 @@ void AnalyzeBTagSF::InitHistos()
 {
     
     TH1::SetDefaultSumw2();
-    TH2::SetDefaultSumw2();
 
     // Declare all your histograms here, that way we can fill them for multiple chains
 
@@ -205,11 +198,6 @@ void AnalyzeBTagSF::WriteHistos( TFile* outfile )
     outfile->cd();
 
     for (const auto &p : my_histos) {
-        p.second->SetDirectory(outfile);
-        p.second->Write();
-    }
-    
-    for (const auto &p : my_2d_histos) {
         p.second->SetDirectory(outfile);
         p.second->Write();
     }

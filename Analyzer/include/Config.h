@@ -428,7 +428,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="HEM_Analyzer" || analyzer=="AnalyzeHEM")
+        else if(analyzer=="HEM_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -447,7 +447,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }       
-        else if(analyzer=="TopTaggerSF_Analyzer")
+        else if(analyzer=="TopTaggerSF_Analyzer" || analyzer=="WholeTopTagger_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -483,27 +483,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="WholeTopTagger_Analyzer")
-        {   
-            const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "RunTopTagger",
-                "CommonVariables",
-                "FatJetCombine",
-                "Baseline",
-                "BTagCorrector",
-                "ScaleFactors",
-                "StopJets",
-                "StopGenMatch",
-            };
-            registerModules(tr, std::move(modulesList));
-        } 
-        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer")
+        else if(analyzer=="Semra_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -553,26 +533,6 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="TwoLepAnalyzer" || analyzer=="Make2LInputTrees")
-        {   
-            const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "CommonVariables",
-                "FatJetCombine",
-                "Baseline",
-                "MakeMVAVariables_2l",
-                "StopGenMatch",
-                "BTagCorrector",
-                "ScaleFactors",
-                "TrainingNTupleVars",
-            };
-            registerModules(tr, std::move(modulesList));
-        }
         else if(analyzer=="AnalyzeXsec")
         {   
             const std::vector<std::string> modulesList = {
@@ -586,7 +546,6 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-
         else
         {
             const std::vector<std::string> modulesList = {
