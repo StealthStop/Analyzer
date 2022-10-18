@@ -4,6 +4,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetOptStat("")
 ROOT.gStyle.SetLineWidth(2)
 ROOT.gStyle.SetFrameLineWidth(1)
+#ROOT.gStyle.SetEndErrorSize(0)
 ROOT.gStyle.SetPaintTextFormat("3.3f")
 ROOT.TH1.SetDefaultSumw2()
 ROOT.TH2.SetDefaultSumw2()
@@ -46,8 +47,8 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
     YMin = 0.30; YMax = 1; RatioYMin = 0; RatioYMax = 0.30
     PadFactor = (YMax-YMin) / (RatioYMax-RatioYMin)
 
-    XTitleSize = 0.045;  XLabelSize = 0.036;  XTitleOffset = 4.0 
-    YTitleSize = 0.045;  YLabelSize = 0.036;  YTitleOffset = 0.9
+    XTitleSize = 0.05;  XLabelSize = 0.05;  XTitleOffset = 4.0 
+    YTitleSize = 0.05;  YLabelSize = 0.05;  YTitleOffset = 0.9
 
     dataRatio = dataNum.Clone(); mcRatio = mcNum.Clone(); dataMcRatio = dataNum.Clone()
     dataRatio.Divide(dataNum, dataDen, 1, 1, "B"); mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
@@ -59,25 +60,32 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
     dataRatio.SetLineColor(ROOT.kBlack); mcRatio.SetLineColor(ROOT.kRed)
     dataRatio.SetMarkerColor(ROOT.kBlack); mcRatio.SetMarkerColor(ROOT.kRed)
     dataRatio.SetLineWidth(3); mcRatio.SetLineWidth(3)
-    dataRatio.SetMarkerSize(1.7); mcRatio.SetMarkerSize(1.7)
+    dataRatio.SetMarkerSize(3.0); mcRatio.SetMarkerSize(3.0)
     dataRatio.SetMarkerStyle(20); mcRatio.SetMarkerStyle(20)
-    dataRatio.GetYaxis().SetRangeUser(0.31,1.05)
+    dataRatio.GetYaxis().SetRangeUser(0.40,1.1)
     dataRatio.SetTitle(""); mcRatio.SetTitle("")
     dataRatio.GetYaxis().SetTitle("L1 + HLT Efficiency")
     dataRatio.GetYaxis().SetTitleSize(YTitleSize); dataRatio.GetXaxis().SetTitleSize(XTitleSize)
     dataRatio.GetYaxis().SetLabelSize(YLabelSize); dataRatio.GetXaxis().SetLabelSize(0)
     dataRatio.GetYaxis().SetTitleOffset(YTitleOffset); dataRatio.GetXaxis().SetTitleOffset(XTitleOffset)
 
-    aCanvas = ROOT.TCanvas("c_%s"%(theName), "c_%s"%(theName), 1200, 1200)
+    aCanvas = ROOT.TCanvas("c_%s"%(theName), "c_%s"%(theName), 1400, 1400)
     ROOT.gPad.Clear()
     aCanvas.Divide(1,2)
 
     aCanvas.cd(1); ROOT.gPad.SetPad(XMin, YMin, XMax, YMax)
     ROOT.gPad.SetGridy()
-    ROOT.gPad.SetTopMargin(0.01)
-    ROOT.gPad.SetLeftMargin(0.09)
-    ROOT.gPad.SetBottomMargin(0.01)
-    ROOT.gPad.SetRightMargin(0.025)
+    ROOT.gPad.SetGridx()
+
+    TopMargin    = 0.1
+    LeftMargin   = 0.17
+    BottomMargin = 0.01
+    RightMargin  = 0.05
+
+    ROOT.gPad.SetTopMargin(TopMargin)
+    ROOT.gPad.SetLeftMargin(LeftMargin)
+    ROOT.gPad.SetBottomMargin(BottomMargin)
+    ROOT.gPad.SetRightMargin(RightMargin)
     ROOT.gPad.SetTicks()
 
     dataRatio.Draw("E1 P"); mcRatio.Draw("E1 P SAME")
@@ -88,15 +96,33 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
         iamLegend.AddEntry(dataRatio, "Data_SingleElectron", "E1 P")
     elif dataset == "muon":
         iamLegend.AddEntry(dataRatio, "Data_SingleMuon", "E1 P")
-    iamLegend.AddEntry(mcRatio, "MC (TT)", "E1 P")
+    iamLegend.AddEntry(mcRatio, "TT", "E1 P")
 
     iamLegend.Draw("SAME")
 
+    mark = ROOT.TLatex()
+    mark.SetNDC(True)
+
+    mark.SetTextAlign(11)
+    mark.SetTextSize(0.055)
+    mark.SetTextFont(61)
+    mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
+
+    mark.SetTextFont(52)
+    mark.SetTextSize(0.045)
+
+    mark.DrawLatex(LeftMargin + 0.09, 1 - (TopMargin - 0.017), "Work in Progress")
+
+    mark.SetTextFont(42)
+    mark.SetTextAlign(31)
+    mark.DrawLatex(1 - RightMargin, 1 - (TopMargin - 0.017), "%s (13 TeV)"%(year))
+
+
     aCanvas.cd(2); ROOT.gPad.SetPad(RatioXMin, RatioYMin, RatioXMax, RatioYMax)
     ROOT.gPad.SetTopMargin(0.05)
-    ROOT.gPad.SetBottomMargin(0.26)
-    ROOT.gPad.SetRightMargin(0.025)
-    ROOT.gPad.SetLeftMargin(0.09)
+    ROOT.gPad.SetBottomMargin(0.35)
+    ROOT.gPad.SetRightMargin(RightMargin)
+    ROOT.gPad.SetLeftMargin(LeftMargin)
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
 
@@ -105,18 +131,18 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
     dataMcRatio.GetYaxis().SetNdivisions(-304)
     dataMcRatio.SetTitle("")
     dataMcRatio.SetLineWidth(3)
-    dataMcRatio.SetMarkerSize(1.7)
+    dataMcRatio.SetMarkerSize(3.0)
     dataMcRatio.SetMarkerStyle(20)
     dataMcRatio.SetMarkerColor(dataMcRatio.GetLineColor())
     dataMcRatio.GetYaxis().SetTitle("Data / MC")
     dataMcRatio.GetXaxis().SetTitle(XTitle)
     dataMcRatio.GetXaxis().SetTitleSize(PadFactor*XTitleSize); dataMcRatio.GetYaxis().SetTitleSize(0.8*PadFactor*YTitleSize)
     dataMcRatio.GetXaxis().SetLabelSize(PadFactor*XLabelSize); dataMcRatio.GetYaxis().SetLabelSize(PadFactor*YLabelSize)
-    dataMcRatio.GetYaxis().SetTitleOffset(1.3*YTitleOffset/PadFactor); dataMcRatio.GetXaxis().SetTitleOffset(0.65*XTitleOffset/PadFactor)
+    dataMcRatio.GetYaxis().SetTitleOffset(1.4*YTitleOffset/PadFactor); dataMcRatio.GetXaxis().SetTitleOffset(0.65*XTitleOffset/PadFactor)
 
     dataMcRatio.Draw("E1 P")
 
-    aCanvas.SaveAs("plots/%s/%s/1D/%s.pdf"%(tag,year,theName))
+    aCanvas.SaveAs("plots/%s/%s_%s.pdf"%(tag,year,theName))
 
 def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
@@ -136,7 +162,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     dataMcRatio.Divide(dataRatio, mcRatio)
     dataMcRatio.SetTitle("")
 
-    dataRatio.GetZaxis().SetRangeUser(0.75,1.1)
+    dataRatio.GetZaxis().SetRangeUser(0.8,1.2)
     dataRatio.SetTitle(""); mcRatio.SetTitle("")
     dataRatio.GetYaxis().SetTitle("#eta"); dataRatio.GetXaxis().SetTitle("p_{T} [GeV]")
     dataRatio.GetYaxis().SetTitleSize(YTitleSize); dataRatio.GetXaxis().SetTitleSize(XTitleSize)
@@ -144,7 +170,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     dataRatio.GetYaxis().SetTitleOffset(YTitleOffset); dataRatio.GetXaxis().SetTitleOffset(XTitleOffset)
     dataRatio.SetContour(255)
 
-    mcRatio.GetZaxis().SetRangeUser(0.75,1.1)
+    mcRatio.GetZaxis().SetRangeUser(0.80,1.2)
     mcRatio.SetTitle(""); mcRatio.SetTitle("")
     mcRatio.GetYaxis().SetTitle("#eta"); mcRatio.GetXaxis().SetTitle("p_{T} [GeV]")
     mcRatio.GetYaxis().SetTitleSize(YTitleSize); mcRatio.GetXaxis().SetTitleSize(XTitleSize)
@@ -152,7 +178,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     mcRatio.GetYaxis().SetTitleOffset(YTitleOffset); mcRatio.GetXaxis().SetTitleOffset(XTitleOffset)
     mcRatio.SetContour(255)
 
-    dataMcRatio.GetZaxis().SetRangeUser(0.75,1.1)
+    dataMcRatio.GetZaxis().SetRangeUser(0.65,1.05)
     dataMcRatio.SetTitle(""); dataMcRatio.SetTitle("")
     dataMcRatio.GetYaxis().SetTitle("#eta"); dataMcRatio.GetXaxis().SetTitle("p_{T} [GeV]")
     dataMcRatio.GetYaxis().SetTitleSize(YTitleSize); dataMcRatio.GetXaxis().SetTitleSize(XTitleSize)
@@ -169,42 +195,99 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
     theName = dataNum.GetName().replace("num","ratio")[3:]
 
-    aCanvas = ROOT.TCanvas("c_data_%s"%(theName), "c_data_%s"%(theName), 1500, 1200)
+    aCanvas = ROOT.TCanvas("c_data_%s"%(theName), "c_data_%s"%(theName), 1400, 1400)
     ROOT.gPad.Clear()
     aCanvas.cd()
-    ROOT.gPad.SetTopMargin(0.02)
-    ROOT.gPad.SetLeftMargin(0.09)
-    ROOT.gPad.SetBottomMargin(0.11)
-    ROOT.gPad.SetRightMargin(0.11)
+
+    TopMargin    = 0.098
+    LeftMargin   = 0.09
+    BottomMargin = 0.11
+    RightMargin  = 0.11
+
+    ROOT.gPad.SetTopMargin(TopMargin)
+    ROOT.gPad.SetLeftMargin(LeftMargin)
+    ROOT.gPad.SetBottomMargin(BottomMargin)
+    ROOT.gPad.SetRightMargin(RightMargin)
 
     ROOT.gPad.SetTicks()
 
     dataRatio.Draw("COLZ E TEXT")
-    aCanvas.SaveAs("plots/%s/%s/2D/%s.pdf"%(tag,year,"data_"+theName))
+    mark = ROOT.TLatex()
+    mark.SetNDC(True)
+
+    mark.SetTextAlign(11)
+    mark.SetTextSize(0.055)
+    mark.SetTextFont(61)
+    mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
+
+    mark.SetTextFont(52)
+    mark.SetTextSize(0.045)
+
+    mark.DrawLatex(LeftMargin + 0.13, 1 - (TopMargin - 0.017), "Work in Progress")
+
+    mark.SetTextFont(42)
+    mark.SetTextAlign(31)
+    mark.DrawLatex(1 - RightMargin, 1 - (TopMargin - 0.017), "%s (13 TeV)"%(year))
+
+    #aCanvas.SaveAs("plots/%s/%s_%s.pdf"%(tag,year,"data_"+theName))
 
     aCanvas = ROOT.TCanvas("c_mc_%s"%(theName), "c_mc_%s"%(theName), 1500, 1200)
     ROOT.gPad.Clear()
     aCanvas.cd()
-    ROOT.gPad.SetTopMargin(0.02)
-    ROOT.gPad.SetLeftMargin(0.09)
-    ROOT.gPad.SetBottomMargin(0.11)
-    ROOT.gPad.SetRightMargin(0.11)
+    ROOT.gPad.SetTopMargin(TopMargin)
+    ROOT.gPad.SetLeftMargin(LeftMargin)
+    ROOT.gPad.SetBottomMargin(BottomMargin)
+    ROOT.gPad.SetRightMargin(RightMargin)
     ROOT.gPad.SetTicks()
 
     mcRatio.Draw("COLZ E TEXT")
-    aCanvas.SaveAs("plots/%s/%s/2D/%s.pdf"%(tag,year,"mc_"+theName))
+    mark = ROOT.TLatex()
+    mark.SetNDC(True)
 
-    aCanvas = ROOT.TCanvas("c_datamc_%s"%(theName), "c_datamc_%s"%(theName), 1500, 1200)
+    mark.SetTextAlign(11)
+    mark.SetTextSize(0.050)
+    mark.SetTextFont(61)
+    mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
+
+    mark.SetTextFont(52)
+    mark.SetTextSize(0.040)
+
+    mark.DrawLatex(LeftMargin + 0.14, 1 - (TopMargin - 0.017), "Work in Progress")
+
+    mark.SetTextFont(42)
+    mark.SetTextAlign(31)
+    mark.DrawLatex(1 - RightMargin, 1 - (TopMargin - 0.017), "%s (13 TeV)"%(year))
+
+    #aCanvas.SaveAs("plots/%s/%s_%s.pdf"%(tag,year,"mc_"+theName))
+
+    aCanvas = ROOT.TCanvas("c_datamc_%s"%(theName), "c_datamc_%s"%(theName), 1400, 1400)
     ROOT.gPad.Clear()
     aCanvas.cd()
-    ROOT.gPad.SetTopMargin(0.02)
-    ROOT.gPad.SetLeftMargin(0.09)
-    ROOT.gPad.SetBottomMargin(0.11)
-    ROOT.gPad.SetRightMargin(0.11)
+    ROOT.gPad.SetTopMargin(TopMargin)
+    ROOT.gPad.SetLeftMargin(LeftMargin)
+    ROOT.gPad.SetBottomMargin(BottomMargin)
+    ROOT.gPad.SetRightMargin(RightMargin)
     ROOT.gPad.SetTicks()
 
     dataMcRatio.Draw("COLZ E TEXT")
-    aCanvas.SaveAs("plots/%s/%s/2D/%s.pdf"%(tag, year, "datamc_"+theName))
+    mark = ROOT.TLatex()
+    mark.SetNDC(True)
+
+    mark.SetTextAlign(11)
+    mark.SetTextSize(0.045)
+    mark.SetTextFont(61)
+    mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
+
+    mark.SetTextFont(52)
+    mark.SetTextSize(0.035)
+
+    mark.DrawLatex(LeftMargin + 0.105, 1 - (TopMargin - 0.017), "Work in Progress")
+
+    mark.SetTextFont(42)
+    mark.SetTextAlign(31)
+    mark.DrawLatex(1 - RightMargin, 1 - (TopMargin - 0.017), "%s (13 TeV)"%(year))
+
+    aCanvas.SaveAs("plots/%s/%s_%s.pdf"%(tag, year, "datamc_"+theName))
 
 if __name__ == '__main__':
 
@@ -213,7 +296,7 @@ if __name__ == '__main__':
     binTags      = [ "Eta", "Pt" ]
     ptTags       = [ "pt40" ]
     trigTags     = [ "trig" ] 
-    nJetCutTags  = [ "5", "6" ]
+    nJetCutTags  = [ "5" ]
 
     basePath = arg.basePath
     inputDir = arg.inputDir
@@ -232,9 +315,6 @@ if __name__ == '__main__':
 
     outputPath = "./plots/%s/%s"%(tag,arg.year)
     outputFileName = "%s_TrigEff.root"%(year)
-
-    if not os.path.exists(outputPath+"/1D"): os.makedirs(outputPath+"/1D")
-    if not os.path.exists(outputPath+"/2D"): os.makedirs(outputPath+"/2D")
 
     outputFile = ROOT.TFile.Open("%s/%s"%(outputPath,outputFileName), "UPDATE")
 

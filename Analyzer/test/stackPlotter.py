@@ -37,7 +37,7 @@ class Histogram:
         # Custom tuned values for these dimensions/sizes
         # Are scaled accordingly if margins change
         self.xDim["title"]  = 0.050; self.yDim["title"]  = 0.050
-        self.xDim["label"]  = 0.039; self.yDim["label"]  = 0.039
+        self.xDim["label"]  = 0.045; self.yDim["label"]  = 0.045
         self.xDim["offset"] = 1.1;   self.yDim["offset"] = 1.7 
 
         self.histogram = histo
@@ -140,7 +140,7 @@ class Histogram:
             self.histogram.SetLineWidth(self.info["lsize"]);  self.histogram.SetLineStyle(self.info["lstyle"])
     
             if "loption" in self.info and "L" not in self.info["loption"]:
-                self.histogram.SetFillColor(self.info["color"])
+                self.histogram.SetFillColorAlpha(self.info["color"], 0.25)
 
             if "fstyle" in self.info:
                 self.histogram.SetFillStyle(self.info["fstyle"])
@@ -155,6 +155,7 @@ class Histogram:
 # The StackPlotter class oversees the creation of all stack plots
 #     approved     : are these plots approved, then no "Preliminary"
 #     noRatio      : do not make a ratio plot in bottom panel
+#     noStack      : do not stack the backgrounds, superimpose
 #     printNEvents : show the number of events in legend
 #     printInfo    : show significance and cut label
 #     year         : corresponding year for the plots/inputs
@@ -169,7 +170,7 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, noRatio, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
+    def __init__(self, approved, noRatio, noStack, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -188,6 +189,7 @@ class StackPlotter:
 
         self.approved     = approved
         self.noRatio      = noRatio
+        self.noStack      = noStack
         self.normMC2Data  = normMC2Data
         self.normalize    = normalize
         self.printNEvents = printNEvents
@@ -216,7 +218,7 @@ class StackPlotter:
     # scenario.
     def makeCanvas(self, doLogY):
 
-        randStr = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(8)])
+        randStr = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
        
         canvas = ROOT.TCanvas(randStr, randStr, 900, 900)
 
@@ -265,13 +267,27 @@ class StackPlotter:
     # when going between ratio plot and pure stack with no ratio
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.025 / self.upperSplit
+        textSize = 0.040 / self.upperSplit
+        nColumns = 1
+        maxBkgLegendFrac = 0.25 * (1.0 - self.TopMargin - self.BottomMargin)
+
+        tooManyBkgds = nBkgs * textSize * 1.2 > maxBkgLegendFrac
+        if tooManyBkgds:
+            nColumns = 3
+            #textSize /= ((nBkgs*textSize*1.2/nColumns)/maxBkgLegendFrac)
+            print(textSize)
+
         space    = 0.015
 
-        bkgXmin = 0.60 if self.printNEvents else 0.75
+        bkgXmin = 0.70 - self.RightMargin
+        if self.printNEvents:
+            bkgXmin = 0.60 - self.RightMargin
+        if tooManyBkgds:
+            bkgXmin = self.LeftMargin + 0.05
+            
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.01
-        bkgYmin = bkgYmax-nBkgs*(textSize+space)
+        bkgYmin = bkgYmax-(float(nBkgs)/float(nColumns))*(1.2*textSize+space)
         
         if self.printInfo:
             bkgYmax -= 0.025
@@ -281,6 +297,8 @@ class StackPlotter:
         bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
+        if tooManyBkgds:
+            bkgLegend.SetNColumns(nColumns)
 
         sigXmin = self.LeftMargin+0.03
         sigYmax = bkgYmax
@@ -299,14 +317,14 @@ class StackPlotter:
 
         yMax = 1.0; factor = 1.0; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
-            power = math.log10(theMax / theMin) * 5.0
+            power = math.log10(theMax / theMin) * 3.0
 
         theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
 
         if self.printInfo:
             yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
         else:                             
-            yMax = (theMax-theMin) * (1.0 - theFrac)**(-power) * factor
+            yMax = (theMax-theMin) * (0.95 - theFrac)**(-power) * factor
 
         return bkgLegend, sigLegend, yMax
 
@@ -326,13 +344,13 @@ class StackPlotter:
         mark.SetTextSize(0.040)
 
         simStr = ""
-        if self.data == {}:
-            simStr = "Simulation "
+        #if self.data == {}:
+        #    simStr = "Simulation "
 
         if self.approved:
             mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sSupplementary"%(simStr))
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sPreliminary"%(simStr))
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%swork in progress"%(simStr))
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -347,7 +365,7 @@ class StackPlotter:
         # Top loop begins going over each histo-to-be-plotted
         for hname, hinfo in self.histograms.items():
 
-            orders = [-1]; selections = ["None"]
+            orders = [""]; selections = ["None"]
             if "orders" in hinfo:
                 orders = hinfo["orders"]
 
@@ -358,9 +376,9 @@ class StackPlotter:
             for order in orders:
                 for selection in self.selections:
          
-                    newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
+                    newName = hname.replace("@", order).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
-                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
+                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", order)
 
                     canvas               = self.makeCanvas(newInfo["logY"])
                     if self.noRatio:
@@ -491,18 +509,23 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
                         if Hobj.IsGood(): 
+                            weightedEvents = Hobj.Integral()
                             if mcScale != 0.0:
                                 if self.normMC2Data:
                                     Hobj.Scale(dataScale / mcScale)
                                 elif self.normalize:
-                                    Hobj.Scale(1.0 / mcScale)
+                                    if self.noStack and weightedEvents != 0.0:
+                                        Hobj.Scale(1.0 / weightedEvents)
+                                    elif not self.noStack:
+                                        Hobj.Scale(1.0 / mcScale)
+
                             if not firstDraw:
                                 totalMC = Hobj.Clone("totalMC%s"%(newName))
                                 firstDraw = True
                             else:
                                 totalMC.Add(Hobj.histogram)
 
-                            bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
+                            bhistos[weightedEvents] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
                             dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
 
                     # Add each background histo to the stack in order based on number of entries
@@ -510,7 +533,11 @@ class StackPlotter:
                         bstack.Add(h[1], h[2])
                         nBkgLegend += 1
 
-                    tempMax = bstack.GetMaximum()
+                    option = ""
+                    if self.noStack:
+                        option = "nostack"
+
+                    tempMax = bstack.GetMaximum(option)
                     if tempMax > theMax:
                         theMax = tempMax
 
@@ -532,7 +559,11 @@ class StackPlotter:
                     dummy.SetMaximum(yMax)
                     dummy.SetMinimum(theMin)
                     dummy.Draw()
-                    bstack.Draw("SAME")
+
+                    if self.noStack:
+                        bstack.Draw("SAME HIST NOSTACK")
+                    else:
+                        bstack.Draw("SAME")
 
                     # Loop over each signal and get their respective histo
                     option = "HIST"; loption = "L"
@@ -668,6 +699,7 @@ if __name__ == "__main__":
     usage = "usage: %stackPlotter [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",               default=False,  action="store_true") 
+    parser.add_argument("--noStack",      dest="noStack",      help="No stacking of bkgs",         default=False,  action="store_true") 
     parser.add_argument("--approved",     dest="approved",     help="Plot is approved",            default=False,  action="store_true") 
     parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",       default=False,  action="store_true") 
     parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
@@ -695,7 +727,7 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
+    plotter = StackPlotter(args.approved, args.noRatio, args.noStack, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
 
     if args.makeTable:

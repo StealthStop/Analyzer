@@ -43,10 +43,13 @@ if __name__ == "__main__":
                 files = glob.glob("%s/%s*/*_%s%s_?_%s.root"   %(inputdir,args.year,background,varStr,split)) \
                       + glob.glob("%s/%s*/*_%s%s_??_%s.root"  %(inputdir,args.year,background,varStr,split)) \
                       + glob.glob("%s/%s*/*_%s%s_???_%s.root" %(inputdir,args.year,background,varStr,split)) \
-                      + glob.glob("%s/%s*/*_%s%s_????_%s.root"%(inputdir,args.year,background,varStr,split))
+                      + glob.glob("%s/%s*/*_%s%s_????_%s.root"%(inputdir,args.year,background,varStr,split)) \
+                      + glob.glob("%s/%s*/*_%s%s_?????_%s.root"%(inputdir,args.year,background,varStr,split)) \
+
+                if len(files) == 0:
+                    break
 
                 nFilesPerChunk = 20
-                print(len(files))
                 nChunks = len(files) / nFilesPerChunk
                 if nChunks == 0:
                     nChunks += 1
@@ -55,7 +58,7 @@ if __name__ == "__main__":
 
                     filesChunk = []
                     for j in range(i*nFilesPerChunk, (i+1)*nFilesPerChunk):
-                        if j > len(files):
+                        if j >= len(files):
                             break
                         filesChunk.append(files[j])
 
@@ -81,8 +84,17 @@ if __name__ == "__main__":
         for mass in masses:
             for split in splits:
 
-                command = ["hadd", "-f", "%s/MyAnalysis_%s_%s_2t6j_mStop-%s_%s.root"%(args.outputdir,args.year,model,mass,split)] \
-                        + glob.glob("%s/%s*/*_%s_2t6j_mStop-%s_*_%s.root"%(inputdir,args.year,model,mass,split))
+                command = ["hadd", "-f", "%s/MyAnalysis_%s_%s_2t6j_mStop-%s_%s.root"%(args.outputdir,args.year,model,mass,split)]
+
+                files = glob.glob("%s/%s*/*_%s_%s_2t6j_mStop-%s_*_%s.root"%(inputdir,args.year,args.year,model,mass,split)) 
+    
+
+                print("%s/%s*/*_%s_%s_2t6j_mStop-%s_*_%s.root"%(inputdir,args.year,args.year,model,mass,split))
+
+                if len(files) == 0:
+                    continue
+
+                command += files
 
                 print("Executing command: \"%s\""%(" ".join(command)))
                 if not args.dryrun:
