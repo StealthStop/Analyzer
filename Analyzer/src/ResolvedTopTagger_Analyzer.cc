@@ -77,7 +77,7 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<float>("Weight");
-            const auto& lumi   = tr.getVar<double>("Lumi");
+            const auto& lumi   = tr.getVar<double>("FinalLumi");
             eventweight        = lumi*Weight;
 
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");

@@ -99,7 +99,6 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
 
         // General variables
         const auto& runtype            = tr.getVar<std::string>("runtype");     
-        const auto& Jets               = tr.getVec<TLorentzVector>("Jets");
         // Top variables
         const auto& ntops              = tr.getVar<int>("ntops");
         const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet"); // resolved 
@@ -152,12 +151,14 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& lumi     = tr.getVar<double>("FinalLumi");
             const auto& Weight   = tr.getVar<double>("Weight");
             eventweight          = lumi*Weight;
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
-        
-            weight *= eventweight * puScaleFactor;
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"            );
+            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+
+            weight *= eventweight * puScaleFactor * prefiringScaleFactor * bTagScaleFactor;
         }
 
         // -------------------------------------------------
