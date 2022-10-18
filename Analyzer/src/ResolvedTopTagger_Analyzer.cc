@@ -4,12 +4,6 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 
 ResolvedTopTagger_Analyzer::ResolvedTopTagger_Analyzer() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), 
@@ -77,7 +71,7 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<float>("Weight");
-            const auto& lumi   = tr.getVar<double>("Lumi");
+            const auto& lumi   = tr.getVar<double>("FinalLumi");
             eventweight        = lumi*Weight;
 
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
@@ -200,10 +194,6 @@ void ResolvedTopTagger_Analyzer::WriteHistos(TFile* outfile)
         p.second->Write();
     }
     
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }
-
     hists.save(outfile);
     histNjet7.save(outfile);
     histNjet8.save(outfile);

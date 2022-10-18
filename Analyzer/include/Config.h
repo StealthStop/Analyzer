@@ -55,12 +55,15 @@ private:
         const auto& filetag                   = tr.getVar<std::string>("filetag"                     );
         const auto& meanFileName              = tr.getVar<std::string>("meanFileName"                );
         const auto& TopTaggerCfg              = tr.getVar<std::string>("TopTaggerCfg"                );
+        const auto& TopTaggerCfg_ResolvedOnly = tr.getVar<std::string>("TopTaggerCfg_ResolvedOnly"   );
+
  
         for(const auto& module : modules)
         {
             if     (module=="PartialUnBlinding")                     tr.emplaceModule<PartialUnBlinding>();
             else if(module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
             else if(module=="RunTopTagger")                          tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
+            else if(module=="RunTopTagger_ResolvedOnly")             tr.emplaceModule<RunTopTagger>(TopTaggerCfg_ResolvedOnly);
             else if(module=="Muon")                                  tr.emplaceModule<Muon>();
             else if(module=="Electron")                              tr.emplaceModule<Electron>();
             else if(module=="Photon")                                tr.emplaceModule<Photon>();
@@ -128,7 +131,7 @@ public:
         std::string DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, DoubleDisCo_Cfg_NonIsoMuon_1l_RPV; 
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
-        std::string leptonFileName, hadronicFileName, bjetFileName, bjetCSVFileName, bjetCSVFileNameReshape, meanFileName, TopTaggerCfg;
+        std::string leptonFileName, hadronicFileName, bjetFileName, bjetCSVFileName, bjetCSVFileNameReshape, meanFileName, TopTaggerCfg, TopTaggerCfg_ResolvedOnly;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
@@ -164,6 +167,8 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016preVFP.cfg";
+            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2016preVFP.cfg";
+
         }
 
         else if(filetag.find("2016postVFP") != std::string::npos)
@@ -195,6 +200,8 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016postVFP.cfg";
+            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2016postVFP.cfg";
+
         }
         else if(filetag.find("2017") != std::string::npos)
         { 
@@ -225,6 +232,8 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2017.cfg";
+            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2017.cfg";
+
         }
         else if(filetag.find("2018") != std::string::npos) 
         {
@@ -257,6 +266,8 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2018.cfg";
+            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2018.cfg";
+
         }
 
         tr.registerDerivedVar("runYear",                           runYear                          );
@@ -288,6 +299,7 @@ public:
         tr.registerDerivedVar("etaCut",                            2.4                              ); 
         tr.registerDerivedVar("blind",                             blind                            );
         tr.registerDerivedVar("TopTaggerCfg",                      TopTaggerCfg                     );
+        tr.registerDerivedVar("TopTaggerCfg_ResolvedOnly",         TopTaggerCfg_ResolvedOnly        );
 
         // Register Modules that are needed for each Analyzer
         if(analyzer=="MakeNJetDists") // for legacy 1l
@@ -416,7 +428,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="HEM_Analyzer" || analyzer=="AnalyzeHEM")
+        else if(analyzer=="HEM_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -435,7 +447,43 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }       
-        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
+        else if(analyzer=="TopTaggerSF_Analyzer" || analyzer=="WholeTopTagger_Analyzer")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
+                "CommonVariables",
+                "FatJetCombine",
+                "Baseline",
+                "BTagCorrector",
+                "ScaleFactors"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="ResolvedTopTagger_Analyzer")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger_ResolvedOnly",
+                "CommonVariables",
+                "FatJetCombine",
+                "Baseline",
+                "BTagCorrector",
+                "ScaleFactors"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="Semra_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -450,20 +498,11 @@ public:
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
-                //"MakeMVAVariables_0l",
-                //"MakeMVAVariables_1l",
-                //"MakeMVAVariables_2l",
-                "MakeMVAVariables_NonIsoMuon_0l",
-                "MakeMVAVariables_NonIsoMuon_1l",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
                 "MakeStopHemispheres_OldSeed_NonIsoMuon",
                 "MakeStopHemispheres_TopSeed",
                 "StopGenMatch",
-                //"DoubleDisCo_0l_RPV",
-                //"DoubleDisCo_1l_RPV",
-                //"DoubleDisCo_NonIsoMuon_0l_RPV",
-                //"DoubleDisCo_NonIsoMuon_1l_RPV",
             };
             registerModules(tr, std::move(modulesList));
         } 
@@ -481,7 +520,6 @@ public:
                 "FatJetCombine",
                 "Baseline",
                 "MakeMVAVariables_0l",
-                //"MakeMVAVariables_1l",
                 "ISRJets",
                 "StopJets",
                 "MakeStopHemispheres_All",
@@ -492,26 +530,6 @@ public:
                 "StopGenMatch",
                 "BTagCorrector",
                 "ScaleFactors",
-            };
-            registerModules(tr, std::move(modulesList));
-        }
-        else if(analyzer=="TwoLepAnalyzer" || analyzer=="Make2LInputTrees")
-        {   
-            const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "CommonVariables",
-                "FatJetCombine",
-                "Baseline",
-                "MakeMVAVariables_2l",
-                "StopGenMatch",
-                "BTagCorrector",
-                "ScaleFactors",
-                "TrainingNTupleVars",
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -528,7 +546,6 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-
         else
         {
             const std::vector<std::string> modulesList = {
@@ -543,7 +560,8 @@ public:
                 "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "StopGenMatch"
             };
             registerModules(tr, std::move(modulesList));
         }

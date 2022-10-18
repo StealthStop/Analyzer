@@ -3,16 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
-#include <TDirectory.h>
-#include <TH1F.h>
 
 WholeTopTagger_Analyzer::WholeTopTagger_Analyzer() : inithisto(false) 
 {
@@ -99,7 +90,6 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
 
         // General variables
         const auto& runtype            = tr.getVar<std::string>("runtype");     
-        const auto& Jets               = tr.getVec<TLorentzVector>("Jets");
         // Top variables
         const auto& ntops              = tr.getVar<int>("ntops");
         const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet"); // resolved 
@@ -152,12 +142,14 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& lumi     = tr.getVar<double>("Lumi");
-            const auto& Weight   = tr.getVar<double>("Weight");
+            const auto& lumi     = tr.getVar<double>("FinalLumi");
+            const auto& Weight   = tr.getVar<float>("Weight");
             eventweight          = lumi*Weight;
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
-        
-            weight *= eventweight * puScaleFactor;
+            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor"            );
+            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+
+            weight *= eventweight * puScaleFactor * prefiringScaleFactor * bTagScaleFactor;
         }
 
         // -------------------------------------------------
@@ -282,8 +274,4 @@ void WholeTopTagger_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

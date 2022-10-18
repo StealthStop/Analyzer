@@ -3,16 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
-#include <TDirectory.h>
-#include <TH1F.h>
 
 Semra_Analyzer::Semra_Analyzer() : inithisto(false) // define inithisto variable
 {
@@ -387,8 +378,4 @@ void Semra_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

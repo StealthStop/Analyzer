@@ -3,12 +3,6 @@
 #include "NTupleReader/include/NTupleReader.h"
 #include "Framework/Framework/include/MiniTupleMaker.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 
 MakeMiniTree::MakeMiniTree()
@@ -42,16 +36,11 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //  Initialize the tree
         //-----------------------------------       
         std::set<std::string> variables = {
-            "Lumi",
-            "deepESM_val",
+            "FinalLumi",
             "filetag",
             "NGoodJets_pt30",
             "NGoodBJets_pt30",
             "passTriggerMC",
-            "deepESM_bin1",
-            "deepESM_bin2",
-            "deepESM_bin3",
-            "deepESM_bin4",
             "Mbl",
             "HT_trigger_pt30",
             "HT",
@@ -72,15 +61,10 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         };
         if( runtype != "MC" ) {
             variables = {
-            "Lumi",
-            "deepESM_val",
+            "FinalLumi",
             "filetag",
             "NGoodJets_pt30",
             "NGoodBJets_pt30",
-            "deepESM_bin1",
-            "deepESM_bin2",
-            "deepESM_bin3",
-            "deepESM_bin4",
             "Mbl",
             "NVtx",
             "HT_trigger_pt30",
@@ -124,10 +108,6 @@ void MakeMiniTree::WriteHistos( TFile* outfile )
     }
     
     for (const auto &p : my_2d_histos) {
-        p.second->Write();
-    }
-    
-    for (const auto &p : my_efficiencies) {
         p.second->Write();
     }
 

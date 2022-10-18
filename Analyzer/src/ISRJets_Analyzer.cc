@@ -3,16 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
-#include <TDirectory.h>
-#include <TH1F.h>
 
 ISRJets_Analyzer::ISRJets_Analyzer() : inithisto(false) 
 {
@@ -315,7 +306,7 @@ void ISRJets_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             // Define Lumi weight
             const auto& Weight   = tr.getVar<float>("Weight");
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& lumi     = tr.getVar<double>("FinalLumi");
             eventweight          = lumi*Weight;
         
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
@@ -1077,8 +1068,4 @@ void ISRJets_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

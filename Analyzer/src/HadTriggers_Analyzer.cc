@@ -3,14 +3,7 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
-#include <TFile.h>
 
 HadTriggers_Analyzer::HadTriggers_Analyzer()
 {
@@ -163,7 +156,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             // Define Lumi weight
             const auto& Weight   = tr.getVar<float>("Weight");
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& lumi     = tr.getVar<double>("FinalLumi");
             eventweight          = lumi*Weight;
 
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
@@ -234,12 +227,6 @@ void HadTriggers_Analyzer::WriteHistos(TFile* outfile)
     {
         p.second->Write();
     }
-    
-    for (const auto &p : my_efficiencies) 
-    {
-        p.second->Write();
-    }
-    
 }
 
 bool HadTriggers_Analyzer::containsGoodHadron( const std::vector<utility::LorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection) 
