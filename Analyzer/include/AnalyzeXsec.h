@@ -1,7 +1,7 @@
 #ifndef AnalyzeXsec_h
 #define AnalyzeXsec_h
 
-#include "TFile.h"
+#include <TFile.h>
 
 class NTupleReader;
 

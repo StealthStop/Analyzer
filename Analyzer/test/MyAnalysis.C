@@ -7,7 +7,6 @@
 #include "TopTagger/CfgParser/interface/TTException.h"
 
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
-#include "Analyzer/Analyzer/include/AnalyzeHEM.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
 #include "Analyzer/Analyzer/include/AnalyzeBTagSF.h"
@@ -176,7 +175,6 @@ int main(int argc, char *argv[])
         {"AnalyzeDoubleDisCo",         run<AnalyzeDoubleDisCo>        },
         {"AnalyzeLepTrigger",          run<AnalyzeLepTrigger>         },
         {"AnalyzeBTagSF",              run<AnalyzeBTagSF>             },
-        {"AnalyzeHEM",                 run<AnalyzeHEM>                },
         {"AnalyzeTest",                run<AnalyzeTest>               },
         {"CalculateBTagSF",            run<CalculateBTagSF>           },
         {"CalculateSFMean",            run<CalculateSFMean>           },

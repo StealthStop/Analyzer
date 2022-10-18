@@ -382,8 +382,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good"                          +myVarSuffix);
             const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good"                          +myVarSuffix);
-            const auto& passBaseline1l_HT500_Good         = tr.getVar<bool>("passBaseline1l_HT500_Good"                    +myVarSuffix);
-            const auto& passBaseline1l_HT700_Good         = tr.getVar<bool>("passBaseline1l_HT700_Good"                    +myVarSuffix);
             const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR"                                   +myVarSuffix);
             const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon"                    +myVarSuffix);
 
@@ -588,7 +586,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 const auto& eleLepWeight     = tr.getVar<double>("totGoodElectronSF"               +myVarSuffix);
                 const auto& muLepWeight      = tr.getVar<double>("totGoodMuonSF"                   +myVarSuffix);
                 const auto& muNonIso         = tr.getVar<double>("totNonIsoMuonSF"                 +myVarSuffix);
-                const auto& topPtScaleFactor = tr.getVar<double>("topPtScaleFactor"                +myVarSuffix);
                 leptonweight                 = eleLepWeight * muLepWeight;
                 // hadronic event weights
                 hadronicWeight = tr.getVar<double>("jetTrigSF"+myVarSuffix);
@@ -646,9 +643,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const std::map<std::string, bool> cut_map
             {
                 {"_0l"               , passBaseline0l_Good},
-                //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
+                {"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
                 {"_1l"               , passBaseline1l_Good},                         
-                //{"_1l_QCDCR"         , passBaseline1l_NonIsoMuon}, 
+                {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon}, 
             };
 
             std::map<std::string, bool>               njetsMap;
@@ -673,7 +670,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                     channel = std::stoi(kv.first.substr(1,1));
 
                 bool isQCD          = kv.first.find("QCDCR")    != std::string::npos;
-                bool isTopReweight  = kv.first.find("top")      != std::string::npos;
                 unsigned int nJets = !isQCD ? Jets_cm_top6[channel].size() : Jets_cm_top6_QCDCR[channel].size();
 
                 // For 0L, we always use the NGoodJets case
@@ -871,22 +867,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                             for(unsigned int i = 1; i <= nJets; i++)
                             {
-                                double pt = 0.0, eta = 0.0, phi = 0.0, m = 0.0, E = 0.0;
+                                double pt = 0.0;
                                 
                                 if (!isQCD)
                                 {
                                     pt  = static_cast<double>(Jets_cm_top6[channel].at(i-1).Pt());
-                                    //eta = static_cast<double>(Jets_cm_top6[channel].at(i-1).Eta());
-                                    //phi = static_cast<double>(Jets_cm_top6[channel].at(i-1).Phi());
-                                    //m   = static_cast<double>(Jets_cm_top6[channel].at(i-1).M());
-                                    //E   = static_cast<double>(Jets_cm_top6[channel].at(i-1).E());
                                 } else
                                 {
                                     pt  = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Pt());
-                                    //eta = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Eta());
-                                    //phi = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).Phi());
-                                    //m   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).M());
-                                    //E   = static_cast<double>(Jets_cm_top6_QCDCR[channel].at(i-1).E());
                                 } 
                                 
                                 my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt,    i, w);

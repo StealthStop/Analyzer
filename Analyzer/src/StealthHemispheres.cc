@@ -163,7 +163,6 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const bool pass_0l          = NGoodLeptons == 0;  
         const bool pass_HT500       = HT_trigger_pt45 > 500;
         const bool pass_ge2b        = NGoodBJets_pt45 >= 2;
-        const bool pass_ge6j        = NGoodJets_pt45 >= 6;
         const bool pass_ge7j        = NGoodJets_pt45 >= 7;
         const bool pass_ge8j        = NGoodJets_pt45 >= 8;
         const bool pass_ge9j        = NGoodJets_pt45 >= 9;
