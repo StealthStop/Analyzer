@@ -5,7 +5,6 @@
 #include "NTupleReader/include/NTupleReader.h"
 
 #include <TH1D.h>
-#include <TRandom3.h>
 #include <iostream>
 
 TopTaggerSF_Analyzer::TopTaggerSF_Analyzer() : ttHistsNjetIncl("NjetIncl_tt"), ttHistsNjetIncl_Joe("NjetIncl_tt_joe"), ttHistsNjet7("Njet7_tt"), ttHistsNjet8("Njet8_tt"), ttHistsNjet9("Njet9_tt"), ttHistsNjet10("Njet10_tt"), ttHistsNjet11("Njet11_tt"), ttHistsNjet12incl("Njet12incl_tt"), qcdHistsNjetIncl("NjetIncl_qcd"), qcdHistsNjetIncl_Joe("NjetIncl_qcd_joe"), qcdHistsNjet7("Njet7_qcd"), qcdHistsNjet8("Njet8_qcd"), qcdHistsNjet9("Njet9_qcd"), qcdHistsNjet10("Njet10_qcd"), qcdHistsNjet11("Njet11_qcd"), qcdHistsNjet12incl("Njet12incl_qcd")
@@ -209,7 +208,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<double>("Weight");
-            const auto& lumi   = tr.getVar<double>("Lumi");
+            const auto& lumi   = tr.getVar<double>("FinalLumi");
             eventweight        = lumi*Weight;
 
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");

@@ -5,14 +5,9 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 #include <TFile.h>
 #include <TDirectory.h>
-#include <TH1F.h>
 
 Semra_Analyzer::Semra_Analyzer() : inithisto(false) // define inithisto variable
 {

@@ -5,10 +5,6 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 
 Make2LInputTrees::Make2LInputTrees()

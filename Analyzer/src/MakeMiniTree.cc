@@ -5,10 +5,6 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 
 MakeMiniTree::MakeMiniTree()
@@ -42,7 +38,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //  Initialize the tree
         //-----------------------------------       
         std::set<std::string> variables = {
-            "Lumi",
+            "FinalLumi",
             "deepESM_val",
             "filetag",
             "NGoodJets_pt30",
@@ -72,7 +68,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         };
         if( runtype != "MC" ) {
             variables = {
-            "Lumi",
+            "FinalLumi",
             "deepESM_val",
             "filetag",
             "NGoodJets_pt30",

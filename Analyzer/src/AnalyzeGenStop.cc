@@ -5,9 +5,6 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TRandom3.h>
 #include <iostream>
 #include <TFile.h>
 
@@ -121,7 +118,7 @@ void AnalyzeGenStop::Loop(NTupleReader& tr, double, int maxevents, bool)
             if( !passMadHT ) continue; //Make sure not to double count DY events
             // Define Lumi weight
             const auto& Weight  = tr.getVar<float>("Weight");
-            const auto& lumi = tr.getVar<double>("Lumi");
+            const auto& lumi = tr.getVar<double>("FinalLumi");
             eventweight = lumi*Weight;
             
             // Define lepton weight

@@ -5,10 +5,7 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
 #include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 
 // Calcualte b-tag eff. needed for the scale factor 
@@ -82,7 +79,7 @@ void CalculateBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& deepCSV_WP_medium = tr.getVar<double>("deepCSV_WP_medium");
 
             const auto& Weight = tr.getVar<float>("Weight");
-            const auto& Lumi   = tr.getVar<double>("Lumi");
+            const auto& Lumi   = tr.getVar<double>("FinalLumi");
             const double eventweight = Lumi*Weight;
             
             for( unsigned int ij = 0; ij < Jets.size(); ++ij ) 

@@ -5,14 +5,9 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TEfficiency.h>
-#include <TRandom3.h>
 #include <iostream>
 #include <TFile.h>
 #include <TDirectory.h>
-#include <TH1F.h>
 
 WholeTopTagger_Analyzer::WholeTopTagger_Analyzer() : inithisto(false) 
 {
@@ -152,7 +147,7 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& lumi     = tr.getVar<double>("Lumi");
+            const auto& lumi     = tr.getVar<double>("FinalLumi");
             const auto& Weight   = tr.getVar<double>("Weight");
             eventweight          = lumi*Weight;
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
