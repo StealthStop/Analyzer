@@ -89,23 +89,23 @@ void AnalyzeBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& bTagSF_u            = tr.getVar<double>("bTagSF_EventWeightSimple_Up");
         const auto& bTagSF_d            = tr.getVar<double>("bTagSF_EventWeightSimple_Down");
         
-        const auto& bMisTagSF_u         = tr.getVar<float>("mistagSF_EventWeightSimple_Up");
-        const auto& bMisTagSF_d         = tr.getVar<float>("mistagSF_EventWeightSimple_Down");
+        const auto& bMisTagSF_u         = tr.getVar<double>("mistagSF_EventWeightSimple_Up");
+        const auto& bMisTagSF_d         = tr.getVar<double>("mistagSF_EventWeightSimple_Down");
         
         const auto& puSF                = tr.getVar<float>("puWeight");
         //const auto& puSF_JP             = tr.getVar<float>("_PUweightFactor");
         const auto& ntru_PV             = tr.getVar<float>("TrueNumInteractions");
 
-        const auto& scaleSF             = tr.getVar<float>("scaleWeightNom");
-        const auto& scaleSF_u           = tr.getVar<float>("scaleWeightUp");
-        const auto& scaleSF_d           = tr.getVar<float>("scaleWeightDown");
+        const auto& scaleSF             = tr.getVar<double>("scaleWeightNom");
+        const auto& scaleSF_u           = tr.getVar<double>("scaleWeightUp");
+        const auto& scaleSF_d           = tr.getVar<double>("scaleWeightDown");
 
-        const auto& pdfSF               = tr.getVar<float>("PDFweightNom");
-        const auto& pdfSF_u             = tr.getVar<float>("PDFweightUp");
-        const auto& pdfSF_d             = tr.getVar<float>("PDFweightDown");
+        const auto& pdfSF               = tr.getVar<double>("PDFweightNom");
+        const auto& pdfSF_u             = tr.getVar<double>("PDFweightUp");
+        const auto& pdfSF_d             = tr.getVar<double>("PDFweightDown");
 
-        const auto& electronSF          = tr.getVar<float>("leadGoodElectronSF");
-        const auto& muonSF              = tr.getVar<float>("leadGoodMuonSF");
+        const auto& electronSF          = tr.getVar<double>("totGoodElectronSF");
+        const auto& muonSF              = tr.getVar<double>("totGoodMuonSF");
 
 
         //------------------------------------
@@ -213,10 +213,5 @@ void AnalyzeBTagSF::WriteHistos( TFile* outfile )
         p.second->SetDirectory(outfile);
         p.second->Write();
     }
-    
-    for (const auto &p : my_efficiencies) {
-        p.second->SetDirectory(outfile);
-        p.second->Write();
-    }   
 }
 

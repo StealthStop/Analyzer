@@ -196,10 +196,6 @@ void ResolvedTopTagger_Analyzer::WriteHistos(TFile* outfile)
         p.second->Write();
     }
     
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }
-
     hists.save(outfile);
     histNjet7.save(outfile);
     histNjet8.save(outfile);

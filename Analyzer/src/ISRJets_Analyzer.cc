@@ -1072,8 +1072,4 @@ void ISRJets_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

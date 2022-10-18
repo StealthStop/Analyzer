@@ -543,7 +543,8 @@ public:
                 "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "StopGenMatch"
             };
             registerModules(tr, std::move(modulesList));
         }

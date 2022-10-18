@@ -64,43 +64,42 @@ void AnalyzeGenStop::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& Stop1mom       = tr.getVec<int>("GM_Stop1_mom");
         const auto& Stop2mom       = tr.getVec<int>("GM_Stop2_mom");
 
-        const auto& Stop1genetas       = tr.getVec<float>("GM_Stop1_genetas");
-        const auto& Stop2genetas       = tr.getVec<float>("GM_Stop2_genetas");
+        const auto& Stop1genetas       = tr.getVec<double>("GM_Stop1_genetas");
+        const auto& Stop2genetas       = tr.getVec<double>("GM_Stop2_genetas");
 
-        const auto& Stop1recetas       = tr.getVec<float>("GM_Stop1_recetas");
-        const auto& Stop2recetas       = tr.getVec<float>("GM_Stop2_recetas");
+        const auto& Stop1recetas       = tr.getVec<double>("GM_Stop1_recetas");
+        const auto& Stop2recetas       = tr.getVec<double>("GM_Stop2_recetas");
 
-        const auto& Stop1genpts       = tr.getVec<float>("GM_Stop1_genpts");
-        const auto& Stop2genpts       = tr.getVec<float>("GM_Stop2_genpts");
+        const auto& Stop1genpts       = tr.getVec<double>("GM_Stop1_genpts");
+        const auto& Stop2genpts       = tr.getVec<double>("GM_Stop2_genpts");
 
-        const auto& Stop1recphis       = tr.getVec<float>("GM_Stop1_recphis");
-        const auto& Stop2recphis       = tr.getVec<float>("GM_Stop2_recphis");
+        const auto& Stop1recphis       = tr.getVec<double>("GM_Stop1_recphis");
+        const auto& Stop2recphis       = tr.getVec<double>("GM_Stop2_recphis");
 
-        const auto& Stop1genphis       = tr.getVec<float>("GM_Stop1_genphis");
-        const auto& Stop2genphis       = tr.getVec<float>("GM_Stop2_genphis");
+        const auto& Stop1genphis       = tr.getVec<double>("GM_Stop1_genphis");
+        const auto& Stop2genphis       = tr.getVec<double>("GM_Stop2_genphis");
 
-        const auto& Stop1DR       = tr.getVec<float>("GM_Stop1_DR");
-        const auto& Stop2DR       = tr.getVec<float>("GM_Stop2_DR");
+        const auto& Stop1DR       = tr.getVec<double>("GM_Stop1_DR");
+        const auto& Stop2DR       = tr.getVec<double>("GM_Stop2_DR");
 
-        const auto& Stop1PT       = tr.getVec<float>("GM_Stop1_PT");
-        const auto& Stop2PT       = tr.getVec<float>("GM_Stop2_PT");
+        const auto& Stop1PT       = tr.getVec<double>("GM_Stop1_PT");
+        const auto& Stop2PT       = tr.getVec<double>("GM_Stop2_PT");
 
         const auto& Stop1MassPtRank    = tr.getVar<float>("stop1_ptrank_mass");
         const auto& Stop2MassPtRank    = tr.getVar<float>("stop2_ptrank_mass");
         const auto& Stop1MassMassRank  = tr.getVar<float>("stop1_mrank_mass");
         const auto& Stop2MassMassRank  = tr.getVar<float>("stop2_mrank_mass");
-        const auto& StopMass           = tr.getVar<float>("stop_avemass");
+        const auto& StopMass           = tr.getVar<double>("stop_avemass");
 
         const auto& passBaseline1l      = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l_Good");
+        const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l_good");
 
-        const auto& correct2018Split          = tr.getVar<bool>("correct2018Split");
         const auto& passTrigger               = tr.getVar<bool>("passTrigger");
         const auto& passTriggerMC             = tr.getVar<bool>("passTriggerMC");
         const auto& passMETFilters            = tr.getVar<bool>("passMETFilters");
         const auto& passMadHT                 = tr.getVar<bool>("passMadHT");
-        const auto& passHEMVeto               = tr.getVar<bool>("passHEMVeto");
-        bool pass_general    = passTriggerMC && passTrigger && passMadHT && passMETFilters && passHEMVeto && correct2018Split;
+        const auto& passHEMVeto               = tr.getVar<bool>("passElectronHEMveto");
+        bool pass_general    = passTriggerMC && passTrigger && passMadHT && passMETFilters && passHEMVeto;
 
         // ------------------------
         // -- Define weight

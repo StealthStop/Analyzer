@@ -230,12 +230,6 @@ void HadTriggers_Analyzer::WriteHistos(TFile* outfile)
     {
         p.second->Write();
     }
-    
-    for (const auto &p : my_efficiencies) 
-    {
-        p.second->Write();
-    }
-    
 }
 
 bool HadTriggers_Analyzer::containsGoodHadron( const std::vector<utility::LorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection) 

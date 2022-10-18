@@ -146,7 +146,7 @@ void StealthHemispheres::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& HT_trigger_pt45 = tr.getVar<double>("HT_trigger_pt45");
         const auto& NGoodJets_pt45  = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45 = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& dR_bjets        = tr.getVar<float>("dR_bjets");               
+        const auto& dR_bjets        = tr.getVar<double>("dR_bjets");               
         const auto& ntops           = tr.getVar<int>("ntops");
         const auto& ntops_1jet      = tr.getVar<int>("ntops_1jet"); // merged
         const auto& ntops_2jet      = tr.getVar<int>("ntops_2jet");
@@ -514,8 +514,4 @@ void StealthHemispheres::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

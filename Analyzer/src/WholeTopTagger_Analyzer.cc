@@ -94,7 +94,7 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
 
         // General variables
         const auto& runtype            = tr.getVar<std::string>("runtype");     
-        const auto& Jets               = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets               = tr.getVec<utility::LorentzVector>("Jets");
         // Top variables
         const auto& ntops              = tr.getVar<int>("ntops");
         const auto& ntops_3jet         = tr.getVar<int>("ntops_3jet"); // resolved 
@@ -148,7 +148,7 @@ void WholeTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool
         {
             // Define Lumi weight
             const auto& lumi     = tr.getVar<double>("FinalLumi");
-            const auto& Weight   = tr.getVar<double>("Weight");
+            const auto& Weight   = tr.getVar<float>("Weight");
             eventweight          = lumi*Weight;
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
         
@@ -277,8 +277,4 @@ void WholeTopTagger_Analyzer::WriteHistos(TFile* outfile)
     for (const auto &p : my_2d_histos) {
         p.second->Write();
     }
-
-    for (const auto &p : my_efficiencies) {
-        p.second->Write();
-    }    
 }

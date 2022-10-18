@@ -22,8 +22,6 @@
 #include "Analyzer/Analyzer/include/TopTaggerSF_Analyzer.h"
 #include "Analyzer/Analyzer/include/ISRJets_Analyzer.h"
 #include "Analyzer/Analyzer/include/HadTriggers_Analyzer.h"
-#include "Analyzer/Analyzer/include/TwoLepAnalyzer.h"
-#include "Analyzer/Analyzer/include/Make2LInputTrees.h"
 #include "Analyzer/Analyzer/include/StealthHemispheres.h"
 #include "Analyzer/Analyzer/include/AnalyzeTemplate.h"
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
@@ -187,8 +185,6 @@ int main(int argc, char *argv[])
         {"TopTaggerSF_Analyzer",       run<TopTaggerSF_Analyzer>      },
         {"ISRJets_Analyzer",           run<ISRJets_Analyzer>          },
         {"HadTriggers_Analyzer",       run<HadTriggers_Analyzer>      },
-        {"TwoLepAnalyzer",             run<TwoLepAnalyzer>            },
-        {"Make2LInputTrees",           run<Make2LInputTrees>          },
         {"StealthHemispheres",         run<StealthHemispheres>        },
         {"AnalyzeTemplate",            run<AnalyzeTemplate>           },
         {"MakeNNVariables",            run<MakeNNVariables>           },

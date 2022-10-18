@@ -3,7 +3,6 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TEfficiency.h>
 #include <TTree.h>
 
 #include <map>
