@@ -3,6 +3,22 @@ import sys
 import ROOT
 import argparse
 
+# Sequence to run
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag bothVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag bothVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag bothVeto --ratio
+# 
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag ePostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag ePostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag ePostVeto --ratio
+# 
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag bPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag bPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag bPostVeto --ratio
+# 
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag ebPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag ebPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag ebPostVeto --ratio
 
 # -------------------------------------------------
 # make up the histograms such as rebin, title, etc.
