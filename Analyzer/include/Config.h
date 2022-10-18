@@ -447,7 +447,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }       
-        else if(analyzer=="TopTaggerSF_Analyzer")
+        else if(analyzer=="TopTaggerSF_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -465,7 +465,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
+        else if(analyzer=="Semra_Analyzer" || analyzer=="WholeTopTagger_Analyzer")
         {   
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
