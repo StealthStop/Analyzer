@@ -109,8 +109,7 @@ def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKe
     ScaleFactor.GetYaxis().SetLabelSize(PadFactor*YLabelSize)
     ScaleFactor.GetYaxis().SetTitleOffset(1.6*YTitleOffset/PadFactor)
     ScaleFactor.Draw("E1 P")
-    #canvas.SaveAs("plots/plots_latestTriggers_16.04.2021/SingleMuon/" + year + "_SingleMuon_" + dataset + "_" + var + "_TriggerScaleFactor" + ".pdf")
-    canvas.SaveAs("triggerEffSFs_0l/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
+    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFs_0l/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
 
 
 def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile):
@@ -204,8 +203,7 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
     ROOT.gPad.SetTicks()
     ScaleFactor.Draw("COLZ E TEXT")
     addCMSlogo(aCanvas, year, TopMargin=0.12, LeftMargin=0.09, RightMargin=0.11, SF=1.0)
-    #aCanvas.SaveAs("plots/plots_latestTriggers_16.04.2021/SingleMuon/%s.pdf"%("ScaleFactor_"+theName))
-    aCanvas.SaveAs("triggerEffSFS_0l/%s.pdf"%(theName+"_TriggerSF"))
+    aCanvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/%s.pdf"%(theName+"_TriggerSF"))
 
     # make the zoom version of the SF plots
     #ScaleFactor.GetXaxis().SetRangeUser(500, 1000)
@@ -227,7 +225,7 @@ def main():
     # ---------------------------------
     # root path & years & histograms
     # --------------------------------- 
-    path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
+    path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_2022/2_triggerSFs/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
 
     years = [
         "2016preVFP" ,
@@ -266,7 +264,7 @@ def main():
    
     # ------------------------------------------------------------------------------
     # commandline options
-    #   -- python triggerRefAN_Efficiency_SF_all.py --model RPV --mass 550 
+    #   -- python triggerRefAN_Efficiency_SF_0l.py --model RPV --mass 550 
     # ------------------------------------------------------------------------------
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
@@ -292,7 +290,7 @@ def main():
         print_db("Opening file " + filename3)
         f3 = ROOT.TFile.Open(filename3, "READ")
 
-        f4 = ROOT.TFile.Open("triggerEffSFS_0l/%s_Hadronic_Triggers_SF.root"%(year), "RECREATE")
+        f4 = ROOT.TFile.Open("triggerEfficiencySF_plots/triggerEffSFS_0l/%s_Hadronic_Triggers_SF.root"%(year), "RECREATE")
 
 
         for var in varList1D:
