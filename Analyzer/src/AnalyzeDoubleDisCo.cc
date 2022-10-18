@@ -601,10 +601,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 // tt variations have unique samples "except" FSR/ISR
                 // FSR/ISR are event weight based variation 
                 // So, calculate the event weights for FSR/ISR to make unique samples
-                const auto& PSweight_FSRUp   = tr.getVar<float>("PSweight_FSRUp"  );
-                const auto& PSweight_FSRDown = tr.getVar<float>("PSweight_FSRDown");
-                const auto& PSweight_ISRUp   = tr.getVar<float>("PSweight_ISRUp"  );
-                const auto& PSweight_ISRDown = tr.getVar<float>("PSweight_ISRDown");
+                const auto& PSweight_FSRUp   = tr.getVar<double>("PSweight_FSRUp"  );
+                const auto& PSweight_FSRDown = tr.getVar<double>("PSweight_FSRDown");
+                const auto& PSweight_ISRUp   = tr.getVar<double>("PSweight_ISRUp"  );
+                const auto& PSweight_ISRDown = tr.getVar<double>("PSweight_ISRDown");
  
                 if (dataset.find("fsrUP") != std::string::npos)
                 {
