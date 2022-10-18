@@ -447,7 +447,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }       
-        else if(analyzer=="TopTaggerSF_Analyzer" || analyzer=="ResolvedTopTagger_Analyzer")
+        else if(analyzer=="TopTaggerSF_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -456,7 +456,25 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "RunTopTagger_ResolvedOnly",
+                "RunTopTagger",
+                "CommonVariables",
+                "FatJetCombine",
+                "Baseline",
+                "BTagCorrector",
+                "ScaleFactors"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="ResolvedTopTagger_Analyzer")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
                 "CommonVariables",
                 "FatJetCombine",
                 "Baseline",
