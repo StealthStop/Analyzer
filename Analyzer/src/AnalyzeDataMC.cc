@@ -19,10 +19,7 @@
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 
-#include <TH1D.h>
-#include <TH2D.h>
 #include <iostream>
-
 
 AnalyzeDataMC::AnalyzeDataMC() : initHistos(false)
 {
@@ -335,21 +332,21 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& nMVAJets_0l                       = tr.getVar<unsigned int>("nMVAJets_0l"+myVarSuffix);
             const auto& nMVAJets_1l                       = tr.getVar<unsigned int>("nMVAJets_1l"+myVarSuffix);
 
-            const auto& combined7thToLastJet_pt_0l        = tr.getVar<float>("combined7thToLastJet_pt_cm_0l"+myVarSuffix);
-            const auto& combined7thToLastJet_eta_0l       = tr.getVar<float>("combined7thToLastJet_eta_cm_0l"+myVarSuffix);
-            const auto& combined7thToLastJet_phi_0l       = tr.getVar<float>("combined7thToLastJet_phi_cm_0l"+myVarSuffix);
-            const auto& combined7thToLastJet_m_0l         = tr.getVar<float>("combined7thToLastJet_m_cm_0l"+myVarSuffix);
-            const auto& combined7thToLastJet_E_0l         = tr.getVar<float>("combined7thToLastJet_E_cm_0l"+myVarSuffix);
-            const auto& combined7thToLastJet_pt_1l        = tr.getVar<float>("combined7thToLastJet_pt_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJet_eta_1l       = tr.getVar<float>("combined7thToLastJet_eta_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJet_phi_1l       = tr.getVar<float>("combined7thToLastJet_phi_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJet_m_1l         = tr.getVar<float>("combined7thToLastJet_m_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJet_E_1l         = tr.getVar<float>("combined7thToLastJet_E_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJetNonIsoMuons_pt_1l        = tr.getVar<float>("combined7thToLastJetNonIsoMuons_pt_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJetNonIsoMuons_eta_1l       = tr.getVar<float>("combined7thToLastJetNonIsoMuons_eta_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJetNonIsoMuons_phi_1l       = tr.getVar<float>("combined7thToLastJetNonIsoMuons_phi_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJetNonIsoMuons_m_1l         = tr.getVar<float>("combined7thToLastJetNonIsoMuons_m_cm_1l"+myVarSuffix);
-            const auto& combined7thToLastJetNonIsoMuons_E_1l         = tr.getVar<float>("combined7thToLastJetNonIsoMuons_E_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_pt_0l        = tr.getVar<double>("combined7thToLastJet_pt_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_eta_0l       = tr.getVar<double>("combined7thToLastJet_eta_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_phi_0l       = tr.getVar<double>("combined7thToLastJet_phi_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_m_0l         = tr.getVar<double>("combined7thToLastJet_m_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_E_0l         = tr.getVar<double>("combined7thToLastJet_E_cm_0l"+myVarSuffix);
+            const auto& combined7thToLastJet_pt_1l        = tr.getVar<double>("combined7thToLastJet_pt_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_eta_1l       = tr.getVar<double>("combined7thToLastJet_eta_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_phi_1l       = tr.getVar<double>("combined7thToLastJet_phi_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_m_1l         = tr.getVar<double>("combined7thToLastJet_m_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJet_E_1l         = tr.getVar<double>("combined7thToLastJet_E_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_pt_1l        = tr.getVar<double>("combined7thToLastJetNonIsoMuons_pt_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_eta_1l       = tr.getVar<double>("combined7thToLastJetNonIsoMuons_eta_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_phi_1l       = tr.getVar<double>("combined7thToLastJetNonIsoMuons_phi_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_m_1l         = tr.getVar<double>("combined7thToLastJetNonIsoMuons_m_cm_1l"+myVarSuffix);
+            const auto& combined7thToLastJetNonIsoMuons_E_1l         = tr.getVar<double>("combined7thToLastJetNonIsoMuons_E_cm_1l"+myVarSuffix);
 
             const auto& eventCounter                      = tr.getVar<int>("eventCounter");
             const auto& Stop1_pt_cm_OldSeed               = tr.getVar<double>("Stop1_pt_cm_OldSeed"+myVarSuffix);

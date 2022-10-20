@@ -134,7 +134,6 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& jmt_ev1_top6              = tr.getVar<double>("jmt_ev1_top6");
         const auto& jmt_ev2_top6              = tr.getVar<double>("jmt_ev2_top6");
         const auto& event_beta_z              = tr.getVar<double>("event_beta_z");
-        const auto& passMadHT                 = tr.getVar<bool>("passMadHT");
         const auto& passBaseline_0l           = tr.getVar<bool>("passBaseline0l_good");
         const auto& passBaseline_1l           = tr.getVar<bool>("passBaseline1l_Good");
         const auto& passBaseline_0l_noHEMveto = tr.getVar<bool>("passBaseline0l_good_noHEMveto");
@@ -150,7 +149,7 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         double prefiringScaleFactor = 1.0;
 
         double leptonScaleFactor    = 1.0;
-        double htDerivedScaleFactor = 1.0;
+        double hadronicScaleFactor  = 1.0;
         
         if(runtype == "MC")
         {
@@ -158,6 +157,7 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
+            
 
             // Define lepton weight
             if(NGoodLeptons == 1)
@@ -166,8 +166,12 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 const auto& muLepWeight  = tr.getVar<double>("totGoodMuonSF");
                 leptonScaleFactor = (GoodLeptons[0].first == "e") ? eleLepWeight : muLepWeight;
             }
+            else if (NGoodLeptons == 0)
+            {
+                hadronicScaleFactor = tr.getVar<double>("jetTrigSF");
+            }
     
-            weight *= eventweight*leptonScaleFactor*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
+            weight *= eventweight * leptonScaleFactor * hadronicScaleFactor * bTagScaleFactor * prefiringScaleFactor * puScaleFactor;
         }
 
         // -------------------------------------------------

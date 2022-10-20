@@ -4,8 +4,6 @@
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
-#include <TH1D.h>
-#include <TRandom3.h>
 #include <iostream>
 
 TopTaggerSF_Analyzer::TopTaggerSF_Analyzer() : ttHistsNjetIncl("NjetIncl_tt"), ttHistsNjetIncl_Joe("NjetIncl_tt_joe"), ttHistsNjet7("Njet7_tt"), ttHistsNjet8("Njet8_tt"), ttHistsNjet9("Njet9_tt"), ttHistsNjet10("Njet10_tt"), ttHistsNjet11("Njet11_tt"), ttHistsNjet12incl("Njet12incl_tt"), qcdHistsNjetIncl("NjetIncl_qcd"), qcdHistsNjetIncl_Joe("NjetIncl_qcd_joe"), qcdHistsNjet7("Njet7_qcd"), qcdHistsNjet8("Njet8_qcd"), qcdHistsNjet9("Njet9_qcd"), qcdHistsNjet10("Njet10_qcd"), qcdHistsNjet11("Njet11_qcd"), qcdHistsNjet12incl("Njet12incl_qcd")
@@ -67,13 +65,13 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passMadHT        = tr.getVar<bool>("passMadHT");
 
         // Lepton quantities
-        const auto& Muons            = tr.getVec<TLorentzVector>("Muons");
+        const auto& Muons            = tr.getVec<utility::LorentzVector>("Muons");
         const auto& GoodMuons        = tr.getVec<bool>("GoodMuons");
         const auto& NGoodMuons       = tr.getVar<int>("NGoodMuons");
         const auto& NGoodElectrons   = tr.getVar<int>("NGoodElectrons");
 
         // Jet quantities
-        const auto& Jets                  = tr.getVec<TLorentzVector>("Jets");
+        const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
         const auto& JetID                 = tr.getVar<bool>("JetID");        
         const auto& GoodJets_pt30         = tr.getVec<bool>("GoodJets_pt30");
         const auto& NGoodJets_pt30        = tr.getVar<int>("NGoodJets_pt30");
@@ -83,12 +81,13 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         // Event-level quantities
         const auto& HT_trigger_pt30 = tr.getVar<double>("HT_trigger_pt30");
-        const auto& HT              = tr.getVar<double>("HT");
-        const auto& MET             = tr.getVar<double>("MET"); 
-        const auto& METPhi          = tr.getVar<double>("METPhi");
+        const auto& HT              = tr.getVar<float>("HT");
+        const auto& MET             = tr.getVar<float>("MET"); 
+        const auto& METPhi          = tr.getVar<float>("METPhi");
 
-        TLorentzVector lvMET;
-        lvMET.SetPtEtaPhiM(MET, 0.0, METPhi, 0.0);
+        // Get the 4-vec for the MET
+        utility::LorentzVector lvMET;
+        lvMET.SetPt(MET); lvMET.SetEta(0.0); lvMET.SetPhi(METPhi); lvMET.SetE(MET);
 
         bool pass_ZeroMuons     = NGoodMuons     == 0;
         bool pass_ZeroElectrons = NGoodElectrons == 0;
@@ -120,23 +119,23 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             if (GoodJets_pt30.at(iJet))
             {
-                goodjets_pt30.emplace_back(Jets.at(iJet));
+                goodjets_pt30.emplace_back(utility::convertLV<TLorentzVector>(Jets.at(iJet)));
 
                 if (jetOrder == 1)
                 {
-                    Jet1METdPhi      = Jets.at(iJet).DeltaPhi(lvMET);
+                    Jet1METdPhi      = utility::DeltaPhi(Jets.at(iJet), lvMET);
                     pass_Jet1METdPhi = fabs(Jet1METdPhi) > 0.5;
                     jetOrder++;
                 }
                 else if (jetOrder == 2)
                 {
-                    Jet2METdPhi      = Jets.at(iJet).DeltaPhi(lvMET);
+                    Jet2METdPhi      = utility::DeltaPhi(Jets.at(iJet), lvMET);
                     pass_Jet2METdPhi = fabs(Jet2METdPhi) > 0.5;
                     jetOrder++;
                 }
                 else if (jetOrder == 3)
                 {
-                    Jet3METdPhi      = Jets.at(iJet).DeltaPhi(lvMET);
+                    Jet3METdPhi      = utility::DeltaPhi(Jets.at(iJet), lvMET);
                     pass_Jet3METdPhi = fabs(Jet3METdPhi) > 0.3;
                     jetOrder++;
                 }
@@ -149,7 +148,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                     if (!GoodMuons.at(iMuon))
                         continue;
 
-                    double tempMuonBjetdR = Jets.at(iJet).DeltaR(Muons.at(iMuon));
+                    double tempMuonBjetdR = utility::DeltaR(Jets.at(iJet), Muons.at(iMuon));
 
                     // At least one loose Bjet be within a dR of 1.5
                     pass_MuonBjetdR |= (tempMuonBjetdR < 1.5);
@@ -185,7 +184,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             auto combinedMuonMET = Muons.at(iMuon) + lvMET;
 
-            double tempMuonMETdPhi  = Muons.at(iMuon).DeltaPhi(lvMET);
+            double tempMuonMETdPhi  = utility::DeltaPhi(Muons.at(iMuon), lvMET);
             double tempMuonMETmT    = utility::calcMT(Muons.at(iMuon), lvMET);
 
             if (fabs(tempMuonMETdPhi) < fabs(MuonMETdPhi))
@@ -208,8 +207,8 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if(runtype == "MC")
         {
             // Define Lumi weight
-            const auto& Weight = tr.getVar<double>("Weight");
-            const auto& lumi   = tr.getVar<double>("Lumi");
+            const auto& Weight = tr.getVar<float>("Weight");
+            const auto& lumi   = tr.getVar<double>("FinalLumi");
             eventweight        = lumi*Weight;
 
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
