@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import ROOT, random, os, argparse, string, copy, math
+import ROOT, random, os, argparse, string, copy, math, ctypes
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 ROOT.gROOT.SetBatch(True)
@@ -62,6 +62,11 @@ class Histogram:
     def Integral(self):
         return self.histogram.Integral()
         
+    def IntegralError(self):
+        error = ctypes.c_double(-999)
+        integral = self.histogram.IntegralAndError(0, self.histogram.GetNbinsX(), error)
+        return error.value
+
     def Clone(self, name):
         return self.histogram.Clone(name)
 
@@ -70,6 +75,9 @@ class Histogram:
 
     def IsGood(self):
         return self.histogram != -1
+    
+    def Write(self):
+        self.histogram.Write()
 
     def Draw(self, canvas, showNevents, firstDraw, nLegend, legend):
 
@@ -613,12 +621,12 @@ class StackPlotter:
                         ROOT.gPad.SetGridy()
                         ratio = Histogram(ratio, None, self.upperSplit/self.scale, self.lowerSplit/self.scale, None, rnewInfo, rinfo, 0.8).histogram
 
-                        ratio.SetMinimum(0.4); ratio.SetMaximum(1.6)
+                        ratio.SetMinimum(0.0); ratio.SetMaximum(2.2)
                         ratio.GetYaxis().SetNdivisions(5, 5, 0)
 
                         ratio.Draw("E0P")
 
-                    canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
+                    canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, newName))
 
 
     # function to put the raw nEvents significance and njet bin by njet bin bkg & sig fractions for baseline selection
