@@ -148,7 +148,7 @@ class Histogram:
             self.histogram.SetLineWidth(self.info["lsize"]);  self.histogram.SetLineStyle(self.info["lstyle"])
     
             if "loption" in self.info and "L" not in self.info["loption"]:
-                self.histogram.SetFillColor(self.info["color"])
+                self.histogram.SetFillColorAlpha(self.info["color"], 1.0)
 
             if "fstyle" in self.info:
                 self.histogram.SetFillStyle(self.info["fstyle"])
@@ -276,7 +276,12 @@ class StackPlotter:
         textSize = 0.025 / self.upperSplit
         space    = 0.015
 
-        bkgXmin = 0.60 if self.printNEvents else 0.75
+        bkgXmin = 0.70 - self.RightMargin
+        if self.printNEvents:
+            bkgXmin = 0.50 - self.RightMargin
+        if tooManyBkgds:
+            bkgXmin = self.LeftMargin + 0.05
+            
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.01
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
