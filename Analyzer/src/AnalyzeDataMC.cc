@@ -281,11 +281,11 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& HT_trigger_pt30                   = tr.getVar<double>("HT_trigger_pt30"+myVarSuffix);
             const auto& HT_NonIsoMuon_pt30                = tr.getVar<double>("HT_NonIsoMuon_pt30"+myVarSuffix);
 
-            const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix);
+            const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix);
             const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
-            const auto& passBaseline0l_Good_blind         = tr.getVar<bool>("passBaseline0l_good_blind"+myVarSuffix);
+            const auto& passBaseline0l_Good_blind         = tr.getVar<bool>("passBaseline0l_Good_blind"+myVarSuffix);
             const auto& passBaseline1l_Good_blind         = tr.getVar<bool>("passBaseline1l_Good_blind"+myVarSuffix);
-            //const auto& passBaseline0l_Good_loose         = tr.getVar<bool>("passBaseline0l_good_loose"+myVarSuffix);
+            //const auto& passBaseline0l_Good_loose         = tr.getVar<bool>("passBaseline0l_Good_loose"+myVarSuffix);
             //const auto& passBaseline1l_Good_loose         = tr.getVar<bool>("passBaseline1l_Good_loose"+myVarSuffix);
             const auto& passBaseline1l_HT500_Good         = tr.getVar<bool>("passBaseline1l_HT500_Good"+myVarSuffix);
             const auto& passBaseline1l_HT700_Good         = tr.getVar<bool>("passBaseline1l_HT700_Good"+myVarSuffix);
