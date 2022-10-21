@@ -381,7 +381,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& passBaseline0l_Good               = tr.getVar<bool>("passBaseline0l_Good"                          +myVarSuffix);
             const auto& passBaseline1l_Good               = tr.getVar<bool>("passBaseline1l_Good"                          +myVarSuffix);
             const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR"                                   +myVarSuffix);
-            const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon"                    +myVarSuffix);
+            const auto& pass_qcdCR         = tr.getVar<bool>("pass_qcdCR"                    +myVarSuffix);
 
             const auto& DoubleDisCo_massReg_0l            = tr.getVar<double>("DoubleDisCo_massReg_0l_RPV"                 +myVarSuffix);
             const auto& DoubleDisCo_massReg_1l            = tr.getVar<double>("DoubleDisCo_massReg_1l_RPV"                 +myVarSuffix);
@@ -643,7 +643,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 {"_0l"               , passBaseline0l_Good},
                 {"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},                         
                 {"_1l"               , passBaseline1l_Good},                         
-                {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon}, 
+                {"_1l_QCDCR"         , pass_qcdCR}, 
             };
 
             std::map<std::string, bool>               njetsMap;

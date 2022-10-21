@@ -290,7 +290,7 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& passBaseline1l_HT500_Good         = tr.getVar<bool>("passBaseline1l_HT500_Good"+myVarSuffix);
             const auto& passBaseline1l_HT700_Good         = tr.getVar<bool>("passBaseline1l_HT700_Good"+myVarSuffix);
             const auto& passBaseline0l_NonIsoMuon         = tr.getVar<bool>("pass_qcdCR"+myVarSuffix);
-            const auto& passBaseline1l_NonIsoMuon         = tr.getVar<bool>("passBaseline1l_NonIsoMuon"+myVarSuffix);
+            const auto& pass_qcdCR         = tr.getVar<bool>("pass_qcdCR"+myVarSuffix);
             const auto& passBaseline2l_Good               = tr.getVar<bool>("passBaseline2l_Good"+myVarSuffix);
             const auto& passBaseline2l_Good_blind         = tr.getVar<bool>("passBaseline2l_Good_blind"+myVarSuffix);
             const auto& passBaseline2lonZ_Good            = tr.getVar<bool>("passBaseline2lonZ_Good"+myVarSuffix);
@@ -603,7 +603,7 @@ void AnalyzeDataMC::Loop(NTupleReader& tr, double, int maxevents, bool)
                 {"_0l_blind"         , passBaseline0l_Good_blind},                         
                 //{"_0l_loose"         , passBaseline0l_Good_loose},                         
                 //{"_0l_NoB"           , passBaseline0l_Good},                         
-                {"_1l_QCDCR"         , passBaseline1l_NonIsoMuon},                         
+                {"_1l_QCDCR"         , pass_qcdCR},                         
                 //{"_0l_QCDCR"         , passBaseline0l_NonIsoMuon},
                 {"_2l"               , passBaseline2l_Good},
                 {"_2l_blind"         , passBaseline2l_Good_blind},
