@@ -217,7 +217,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
             for (const auto& Njet : njets)
             {
                 // For the disc1 vs disc2 plots, no need for njets inclusive one
-                if (Njet == "Incl" && h2dInfo.name.find("disco") != std::string::npos)
+                if (Njet == "Incl" && h2dInfo.name.find("DisCo") != std::string::npos)
                     continue;
 
                 std::string njetStr = "";
@@ -493,7 +493,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
                 Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                + myVarSuffix));
                 GoodJets.push_back(tr.getVec<bool>("GoodJets_pt30"                     + myVarSuffix));
                 NGoodJets.push_back(tr.getVar<int>("NGoodJets_pt30"                    + myVarSuffix));
-                HT_pt30_CR.push_back(tr.getVar<double>("HT_trigger_pt30"               + myVarSuffix));
+                HT_pt30.push_back(tr.getVar<double>("HT_trigger_pt30"                  + myVarSuffix));
                 Baseline.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good" + myVarSuffix));
                 Mbl.push_back(tr.getVar<double>("Mbl"                                  + myVarSuffix));
                 dRbjets.push_back(tr.getVar<double>("dR_bjets"                         + myVarSuffix));
@@ -727,11 +727,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool)
             for(auto& kv : cut_map)
             {
 
-                bool isQCD;
+                bool isQCD = false;
                 // Extract "0", "1", "2", or "Q" from cut string e.g. _1l
                 int channel = 1;
-                if (kv.first.size() > 0 and kv.first.substr(2,1) == "l")
+                if (kv.first.size() > 0)
                 {
+                    // Take first character after assumed underscore
                     std::string chunk = kv.first.substr(1,1);
                     
                     // One control region for the moment, so pick any of three channels
