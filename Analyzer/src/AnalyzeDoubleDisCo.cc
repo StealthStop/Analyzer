@@ -115,30 +115,18 @@ void AnalyzeDoubleDisCo::makeSubregions(const std::vector<std::vector<std::strin
             if (subRegionsMap.find(region) != subRegionsMap.end())
                 continue;
 
-            if (region.find("subDiv") == std::string::npos) {
-
-                int offset;
-                if (region.find("fixed") != std::string::npos) {
-                    offset = 5;
-                }
-                else {
-                    offset = 0;
-                }
-
-                // Attention to subregion names for bdEF
-                if (region[0+offset] == 'b' or region[0+offset] == 'B') {
-                    subRegionsMap[region].push_back(std::string(1, region[0+offset]));
-                    subRegionsMap[region].push_back(std::string(1, region[2+offset]));
-                    subRegionsMap[region].push_back(std::string(1, region[1+offset]));
-                    subRegionsMap[region].push_back(std::string(1, region[3+offset]));
-                } else {
-                    subRegionsMap[region].push_back(std::string(1, region[0+offset]));
-                    subRegionsMap[region].push_back(std::string(1, region[1+offset]));
-                    subRegionsMap[region].push_back(std::string(1, region[2+offset]));
-                    subRegionsMap[region].push_back(std::string(1, region[3+offset]));
-                }
-
-            } else if (region.find("subDiv") != std::string::npos) {
+            // Attention to subregion names for bdEF
+            if (region.find("bd") != std::string::npos or region.find("BD") != std::string::npos) {
+                subRegionsMap[region].push_back("B");
+                subRegionsMap[region].push_back("E");
+                subRegionsMap[region].push_back("D");
+                subRegionsMap[region].push_back("F");
+            } else if (region.find("cd") != std::string::npos or region.find("CD") != std::string::npos) {
+                subRegionsMap[region].push_back("C");
+                subRegionsMap[region].push_back("D");
+                subRegionsMap[region].push_back("G");
+                subRegionsMap[region].push_back("H");
+            } else if (region.find("subDiv") != std::string::npos or region.find("_D") != std::string::npos) {
                 subRegionsMap[region].push_back("dA");
                 subRegionsMap[region].push_back("dB");
                 subRegionsMap[region].push_back("dC");
