@@ -6,27 +6,6 @@ from collections import OrderedDict
 
 selections = [
     "",
-    #"_0l_HT500_0NonIsoMuon_ge7j_ge2t_ge1dRbjets",
-    #"_0l_HT500_0NonIsoMuon_7j_ge2t_ge1dRbjets",
-    #"_0l_HT500_0NonIsoMuon_8j_ge2t_ge1dRbjets",
-    #"_0l_HT500_0NonIsoMuon_9j_ge2t_ge1dRbjets",
-    #"_0l_HT500_0NonIsoMuon_10j_ge2t_ge1dRbjets",
-    #"_0l_HT500_0NonIsoMuon_11j_ge2t_ge1dRbjets",
-    #"_0l_HT500_0NonIsoMuon_ge12j_ge2t_ge1dRbjets",
-    #"_0l_HT500_ge7j_ge2t_ge1dRbjets",
-    #"_0l_HT500_7j_ge2t_ge1dRbjets",
-    #"_0l_HT500_8j_ge2t_ge1dRbjets",
-    #"_0l_HT500_9j_ge2t_ge1dRbjets",
-    #"_0l_HT500_10j_ge2t_ge1dRbjets",
-    #"_0l_HT500_11j_ge2t_ge1dRbjets",
-    #"_0l_HT500_ge12j_ge2t_ge1dRbjets",
-    #"_0l_HT500_ge7j_ge2b_ge2t_ge1dRbjets",
-    #"_0l_HT500_7j_ge2b_ge2t_ge1dRbjets",
-    #"_0l_HT500_8j_ge2b_ge2t_ge1dRbjets",
-    #"_0l_HT500_9j_ge2b_ge2t_ge1dRbjets",
-    #"_0l_HT500_10j_ge2b_ge2t_ge1dRbjets",
-    #"_0l_HT500_11j_ge2b_ge2t_ge1dRbjets",
-    #"_0l_HT500_ge12j_ge2b_ge2t_ge1dRbjets",
 ]
 
 histograms = {
@@ -39,7 +18,6 @@ histograms = {
 }
 
 backgrounds = {
-    #"AllBG"    : {"name" : "AllBg", "option" : "COLZ"},
     "TT"       : {"name" : "t#bar{t} + jets", "option" : "COLZ"},
     #"QCD"      : {"name" : "QCD multijet",    "option" : "COLZ"},
     #"TTX"      : {"name" : "t#bar{t} + X",    "option" : "COLZ"},
@@ -73,6 +51,4 @@ signals = OrderedDict({
 })
 
 data = {
-    #"Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3, "option" : "COLZ"}
-    #"pseudoDataS" : {"name" : "pseudoDataS", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
 }
