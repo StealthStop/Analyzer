@@ -60,7 +60,7 @@ public:
     void WriteHistos(TFile* outfile);
     void Debug(const std::string& message, int line);
 
-    bool debug = true;
+    bool debug = false;
 };
 
 #endif
