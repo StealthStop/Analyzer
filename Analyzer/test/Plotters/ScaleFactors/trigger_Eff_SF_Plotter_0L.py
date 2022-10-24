@@ -14,7 +14,9 @@ def print_db(input):
     if (debug):
         print input
 
-
+# ------------
+# Add CMS logo
+# ------------
 def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
 
     canvas.cd()
@@ -30,7 +32,9 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
     mark.SetTextAlign(31)
     mark.DrawLatex(1 - RightMargin, (1 - (TopMargin - 0.034)*SF), "%s (13 TeV)"%(year))
 
-
+# ---------------------
+# Make Efficiency plots
+# ---------------------
 def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKey):
 
     XMin = 0;    XMax = 1; RatioXMin = 0; RatioXMax = 1
@@ -109,9 +113,11 @@ def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKe
     ScaleFactor.GetYaxis().SetLabelSize(PadFactor*YLabelSize)
     ScaleFactor.GetYaxis().SetTitleOffset(1.6*YTitleOffset/PadFactor)
     ScaleFactor.Draw("E1 P")
-    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFs_0l/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
+    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
 
-
+# --------------------------
+# Make 2D Scale Factor plots
+# --------------------------
 def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile):
 
     XMin = 0;    XMax = 1; RatioXMin = 0; RatioXMax = 1
@@ -152,7 +158,7 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
     #Efficiency_mc.GetXaxis().SetTitleOffset(XTitleOffset)
     #Efficiency_mc.SetContour(255)
 
-    ScaleFactor.GetZaxis().SetRangeUser(0.65, 1.05) # 0.75, 1.1 / 0.5, 1.2
+    ScaleFactor.GetZaxis().SetRangeUser(0.50, 1.05) # 0.75, 1.1 / 0.5, 1.2
     #ScaleFactor.GetZaxis().SetRangeUser(0.0, 1.025) #0.65, 1.025
     ScaleFactor.SetTitle("")
     ScaleFactor.GetYaxis().SetTitle("6^{th} Jet p_{T} [GeV]")
@@ -217,16 +223,34 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
         ScaleFactor.SetName(theName)
         ScaleFactor.Write(theName) 
 
+
+# -------------
+# Main function
+# -------------
 def main():
+
+    # -------------------------------------------------------------------
+    # commandline options
+    #   -- python triggerRefAN_Efficiency_SF_0l.py --model RPV --mass 550
+    # -------------------------------------------------------------------
+    usage  = "usage: %prog [options]"
+    parser = argparse.ArgumentParser(usage)
+    parser.add_argument("--model", dest="model", help="signal model", default="RPV")
+    parser.add_argument("--mass",  dest="mass",  help="signal mass",  default="550")
+    args = parser.parse_args()
+
+
     gROOT.SetBatch(True)
     gStyle.SetOptStat(0)
     #gStyle.SetOptStat(1)    
  
-    # ---------------------------------
+    # ------------------------------
     # root path & years & histograms
-    # --------------------------------- 
-    path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_2022/2_triggerSFs/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
-
+    # ------------------------------ 
+    #path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_2022/2_triggerSFs/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
+    #path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/TriggerSFs_Run2UL_2022/2_secondVersion_forRootFileInFramework_22Octtober2022/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
+    path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/TriggerSFs_Run2UL_2022/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
+    
     years = [
         "2016preVFP" ,
         "2016postVFP" ,
@@ -249,10 +273,13 @@ def main():
     }
 
     varList2D = [
-        #"ge2bjetCut_pt45_HTvs6thJetPt",
-        "2bjetCut_pt45_HTvs6thJetPt",
-        "3bjetCut_pt45_HTvs6thJetPt",
-        "ge4bjetCut_pt45_HTvs6thJetPt",
+        "1bjetCut_pt45_HTvs6thJetPt",
+        #"ge1bjetCut_pt45_HTvs6thJetPt",
+        #"2bjetCut_pt45_HTvs6thJetPt",
+        "ge2bjetCut_pt45_HTvs6thJetPt",
+        #"3bjetCut_pt45_HTvs6thJetPt",
+        #"ge3bjetCut_pt45_HTvs6thJetPt",
+        #"ge4bjetCut_pt45_HTvs6thJetPt",
 
         #"ge6jetCut_pt45_HTvs6thJetPt",
         #"6jetCut_pt45_HTvs6thJetPt",
@@ -261,20 +288,10 @@ def main():
         #"9jetCut_pt45_HTvs6thJetPt",
         #"ge10jetCut_pt45_HTvs6thJetPt",
     ]
-   
-    # ------------------------------------------------------------------------------
-    # commandline options
-    #   -- python triggerRefAN_Efficiency_SF_0l.py --model RPV --mass 550 
-    # ------------------------------------------------------------------------------
-    usage  = "usage: %prog [options]"
-    parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--model", dest="model", help="signal model", default="RPV")
-    parser.add_argument("--mass",  dest="mass",  help="signal mass",  default="550")
-    args = parser.parse_args()
-
-    # -----------------------------
-    # loop over & get histograms 
-    # -----------------------------
+    
+    # --------------------------
+    # loop over & get histograms
+    # --------------------------
     for year in years:
         print_db("Processing year " + year)
 
@@ -292,35 +309,41 @@ def main():
 
         f4 = ROOT.TFile.Open("triggerEfficiencySF_plots/triggerEffSFS_0l/%s_Hadronic_Triggers_SF.root"%(year), "RECREATE")
 
-
+        # ----------------
+        # efficiency plots
+        # ----------------
         for var in varList1D:
             ROOT.TH1.AddDirectory(0)                                      
 
-            h_SingleMuon_Denominator = f3.Get("h_denominator_CombHadIsoMu_noTrig_ge2bjetCut_pt45_%s"%(var))
-            h_SingleMuon_Numerator   = f3.Get("h_numerator_CombHadIsoMu_trig_ge2bjetCut_pt45_%s"%(var))
-            h_RPV550_Denominator     = f1.Get("h_denominator_CombHadIsoMu_noTrig_ge2bjetCut_pt45_%s"%(var))
-            h_RPV550_Numerator       = f1.Get("h_numerator_CombHadIsoMu_trig_ge2bjetCut_pt45_%s"%(var))
-            h_TT_Denominator         = f2.Get("h_denominator_CombHadIsoMu_noTrig_ge2bjetCut_pt45_%s"%(var))
-            h_TT_Numerator           = f2.Get("h_numerator_CombHadIsoMu_trig_ge2bjetCut_pt45_%s"%(var))
+            h_SingleMuon_Denominator = f3.Get("h_denominator_CombHadIsoMu_noTrig_ge1bjetCut_pt45_%s"%(var))
+            h_SingleMuon_Numerator   = f3.Get("h_numerator_CombHadIsoMu_trig_ge1bjetCut_pt45_%s"%(var))
+            h_RPV550_Denominator     = f1.Get("h_denominator_CombHadIsoMu_noTrig_ge1bjetCut_pt45_%s"%(var))
+            h_RPV550_Numerator       = f1.Get("h_numerator_CombHadIsoMu_trig_ge1bjetCut_pt45_%s"%(var))
+            h_TT_Denominator         = f2.Get("h_denominator_CombHadIsoMu_noTrig_ge1bjetCut_pt45_%s"%(var))
+            h_TT_Numerator           = f2.Get("h_numerator_CombHadIsoMu_trig_ge1bjetCut_pt45_%s"%(var))
             makeEfficiency(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_RPV550_Numerator, h_RPV550_Denominator, year, "_SingleMuon", args.model + "_" + args.mass, var, varKeys[var])            
             makeEfficiency(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon", "TT", var, varKeys[var])
 
+        # ------------------
+        # scale factor plots
+        # ------------------
         for var in varList2D:
             ROOT.TH1.AddDirectory(0)
 
             h_SingleMuon_Denominator = f3.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
             h_SingleMuon_Numerator   = f3.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
-            h_RPV550_Denominator     = f1.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
-            h_RPV550_Numerator       = f1.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
+            #h_RPV550_Denominator     = f1.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
+            #h_RPV550_Numerator       = f1.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
             h_TT_Denominator         = f2.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
             h_TT_Numerator           = f2.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
-            make2DScaleFactor(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_RPV550_Numerator, h_RPV550_Denominator, year, "_SingleMuon" + "_" + args.model + "_" + args.mass, None)
+            #make2DScaleFactor(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_RPV550_Numerator, h_RPV550_Denominator, year, "_SingleMuon" + "_" + args.model + "_" + args.mass, None)
             make2DScaleFactor(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon_TT", f4)
 
     f1.Close()
     f2.Close()
     f3.Close()
     f4.Close()
+
  
 if __name__ == "__main__":
     main()

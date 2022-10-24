@@ -17,19 +17,19 @@ void HadTriggers_Analyzer::InitHistos()
 
     my_histos.emplace( "EventCounter", std::make_shared<TH1D>( "EventCounter", "EventCounter", 2, -1.1, 1.1 ) ) ;
 
-    std::vector<std::string> effTags      { "denominator", "numerator"                                            };
-    std::vector<std::string> combTrigTags { "CombHadIsoMu"                                                        }; 
-    std::vector<std::string> trigTags     { "trig", "noTrig"                                                      };
-    std::vector<std::string> nBJetCutTags { "ge2bjetCut", "2bjetCut", "3bjetCut", "ge4bjetCut"                    };
-    std::vector<std::string> nJetCutTags  { "ge6jetCut", "6jetCut", "7jetCut", "8jetCut", "9jetCut", "ge10jetCut" };
-    std::vector<std::string> ptTags       { "pt45"                                                                }; 
+    std::vector<std::string> effTags      { "denominator", "numerator"                                                                };
+    std::vector<std::string> combTrigTags { "CombHadIsoMu"                                                                            }; 
+    std::vector<std::string> trigTags     { "trig", "noTrig"                                                                          };
+    std::vector<std::string> nBJetCutTags { "1bjetCut", "ge1bjetCut", "2bjetCut", "ge2bjetCut", "3bjetCut", "ge3bjetCut", "ge4bjetCut"};
+    //std::vector<std::string> nJetCutTags  { "ge6jetCut", "6jetCut", "7jetCut", "8jetCut", "9jetCut", "ge10jetCut"                     };
+    std::vector<std::string> ptTags       { "pt45"                                                                                    }; 
 
-    const int htbins   = 8;
-    const int ptbins   = 5;
+    const int htbins   = 6;
+    const int ptbins   = 4;
     const int njetbins = 9;
     const int bjetbins = 3;
-    double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000, 1500, 2500};
-    double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 90, 200};
+    double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000};
+    double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 90};
     double njetbinEdges[njetbins + 1] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     double bjetbinEdges[bjetbins + 1] = {1.5, 2.5, 3.5, 8};
 
@@ -62,28 +62,28 @@ void HadTriggers_Analyzer::InitHistos()
     // --------------------------------------------------------
     // latest triggers and preselctions with pt45 with njet cut
     // --------------------------------------------------------
-    for( std::string effTag : effTags )
-    {
-        for( std::string combTrigTag : combTrigTags )
-        {
-            for( std::string trigTag : trigTags )
-            {
-                for( std::string nJetCutTag : nJetCutTags )
-                {
-                    for( std::string ptTag : ptTags )
-                    {
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT").c_str(), htbins, htbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet").c_str(), njetbins, njetbinEdges ) );                        
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
+    //for( std::string effTag : effTags )
+    //{
+    //    for( std::string combTrigTag : combTrigTags )
+    //    {
+    //        for( std::string trigTag : trigTags )
+    //        {
+    //            for( std::string nJetCutTag : nJetCutTags )
+    //            {
+    //                for( std::string ptTag : ptTags )
+    //                {
+    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT").c_str(), htbins, htbinEdges ) );
+    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
+    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet").c_str(), njetbins, njetbinEdges ) );                        
+    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
 
-                        my_2d_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
+    //                    my_2d_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
 
-                    }
-                }
-            }
-        }
-    }
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
 } //
 
@@ -106,14 +106,18 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& passTriggerMuonsRefAN = tr.getVar<bool>("passTriggerMuonsRefAN");
         const auto& passTriggerAllHad     = tr.getVar<bool>("passTriggerAllHad");
 
+        bool pass_1bjetCut   = NGoodBJets_pt45 == 1;
+        bool pass_ge1bjetCut = NGoodBJets_pt45 >= 1;
         bool pass_2bjetCut   = NGoodBJets_pt45 == 2;
+        bool pass_ge2bjetCut = NGoodBJets_pt45 >= 2;
         bool pass_3bjetCut   = NGoodBJets_pt45 == 3;
+        bool pass_ge3bjetCut = NGoodBJets_pt45 >= 3;
         bool pass_ge4bjetCut = NGoodBJets_pt45 >= 4;
-        bool pass_6jetCut    = NGoodJets_pt45 == 6;
-        bool pass_7jetCut    = NGoodJets_pt45 == 7;
-        bool pass_8jetCut    = NGoodJets_pt45 == 8;
-        bool pass_9jetCut    = NGoodJets_pt45 == 9;
-        bool pass_ge10jetCut = NGoodJets_pt45 >= 10;
+        //bool pass_6jetCut    = NGoodJets_pt45 == 6;
+        //bool pass_7jetCut    = NGoodJets_pt45 == 7;
+        //bool pass_8jetCut    = NGoodJets_pt45 == 8;
+        //bool pass_9jetCut    = NGoodJets_pt45 == 9;
+        //bool pass_ge10jetCut = NGoodJets_pt45 >= 10;
 
         // -----------------------------------------
         // get the 6th jet pt for reference analysis
@@ -176,14 +180,20 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             // ---------------------------------------------------------
             const std::map<std::string, bool> cut_map_combHadMuTriggers
             {
-                { "CombHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad                    },
+                { "CombHadIsoMu_trig_1bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_1bjetCut   },
+                { "CombHadIsoMu_trig_ge1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge1bjetCut },
                 { "CombHadIsoMu_trig_2bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_2bjetCut   },
+                { "CombHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge2bjetCut },
                 { "CombHadIsoMu_trig_3bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_3bjetCut   },
+                { "CombHadIsoMu_trig_ge3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge3bjetCut },
                 { "CombHadIsoMu_trig_ge4bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge4bjetCut },
 
-                { "CombHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN                    },
+                { "CombHadIsoMu_noTrig_1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_1bjetCut   },
+                { "CombHadIsoMu_noTrig_ge1bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge1bjetCut },               
                 { "CombHadIsoMu_noTrig_2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_2bjetCut   },
+                { "CombHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge2bjetCut },
                 { "CombHadIsoMu_noTrig_3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_3bjetCut   },
+                { "CombHadIsoMu_noTrig_ge3bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge3bjetCut },
                 { "CombHadIsoMu_noTrig_ge4bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge4bjetCut },
             };
             fillHistosRefAN(cut_map_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
@@ -191,24 +201,24 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             // --------------------------------------------------------
             // latest triggers and preselctions with pt45 with njet cut
             // --------------------------------------------------------
-            const std::map<std::string, bool> cut_map2_combHadMuTriggers
-            {
-                { "CombHadIsoMu_trig_ge6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad                    },    
-                { "CombHadIsoMu_trig_6jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_6jetCut    },
-                { "CombHadIsoMu_trig_7jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_7jetCut    },
-                { "CombHadIsoMu_trig_8jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_8jetCut    },
-                { "CombHadIsoMu_trig_9jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_9jetCut    },
-                { "CombHadIsoMu_trig_ge10jetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge10jetCut },
+            //const std::map<std::string, bool> cut_map2_combHadMuTriggers
+            //{
+            //    { "CombHadIsoMu_trig_ge6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad                    },    
+            //    { "CombHadIsoMu_trig_6jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_6jetCut    },
+            //    { "CombHadIsoMu_trig_7jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_7jetCut    },
+            //    { "CombHadIsoMu_trig_8jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_8jetCut    },
+            //    { "CombHadIsoMu_trig_9jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_9jetCut    },
+            //    { "CombHadIsoMu_trig_ge10jetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge10jetCut },
 
-                { "CombHadIsoMu_noTrig_ge6jetCut_pt45",  passBaseline0l_pt45 && passTriggerMuonsRefAN                    },
-                { "CombHadIsoMu_noTrig_6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_6jetCut    },
-                { "CombHadIsoMu_noTrig_7jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_7jetCut    },
-                { "CombHadIsoMu_noTrig_8jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_8jetCut    },
-                { "CombHadIsoMu_noTrig_9jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_9jetCut    },
-                { "CombHadIsoMu_noTrig_ge10jetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge10jetCut },
+            //    { "CombHadIsoMu_noTrig_ge6jetCut_pt45",  passBaseline0l_pt45 && passTriggerMuonsRefAN                    },
+            //    { "CombHadIsoMu_noTrig_6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_6jetCut    },
+            //    { "CombHadIsoMu_noTrig_7jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_7jetCut    },
+            //    { "CombHadIsoMu_noTrig_8jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_8jetCut    },
+            //    { "CombHadIsoMu_noTrig_9jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_9jetCut    },
+            //    { "CombHadIsoMu_noTrig_ge10jetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge10jetCut },
 
-            };
-            fillHistosRefAN(cut_map2_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight); 
+            //};
+            //fillHistosRefAN(cut_map2_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight); 
 
         }
     }
