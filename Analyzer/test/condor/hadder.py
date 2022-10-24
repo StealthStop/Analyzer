@@ -96,158 +96,142 @@ def main():
     else:
         os.makedirs(outDir) 
 
-    # Make an assumption if the user passes in mulitple input directories:
-    # That we should hadd equivalently named files from across the directories
-    if len(inPaths) > 1:
-
-        # Get the list of hadded ROOT files for each input directory
-        listOfFileLists = []
-        longestList       = []
-        longestListLength = 0
-        for path in inPaths:
-            listOfFileLists.append(os.listdir(path))
-
-            # All lists should be same length, but if not
-            # Use longest one so we can throw some errors
-            tempListLength = len(listOfFileLists[-1])
-            if tempListLength > longestListLength:
-                longestList       = listOfFileLists[-1]
-                longestListLength = tempListLength
-
-        for f in longestList:
-
-            chunks = f.partition("_")
-            year   = chunks[0]
-            sample = chunks[1]
-
-            fileStr = ""
-            for list in listOfFileLists:
-                for file in list:
-
-                     checkSample = file.partition("_")[-1]
-                     if sample == checkedSample:
-                        fileStr += file 
-                        break
-
-            
-    
     # Here we are in the nominal case of hadder.py
     # Combine files within one input directory
-    else:
-        # Loop over all sample options to find files to hadd
-        log = []
-        sc = SampleCollection("../sampleSets.cfg", "../sampleCollections.cfg")
-        scl = sc.sampleCollectionList()
+    # Loop over all sample options to find files to hadd
+    log = []
+    sc = SampleCollection("../sampleSets.cfg", "../sampleCollections.cfg")
+    scl = sc.sampleCollectionList()
+    for sampleCollection in scl:
+        sl = sc.sampleList(sampleCollection)
+        if sampleCollection in datasets:
+            directory = sampleCollection
+            files = ""
+            print "-----------------------------------------------------------"
+            print sampleCollection
+            print "-----------------------------------------------------------"
+            
+            # hadd individual samples within a collection
+            # this includes the AllSignal and the AllTT
+            sampleSetsToHadd = ["2016preVFP_AllSignal", "2016postVFP_AllSignal", "2017_AllSignal", "2018_AllSignal",
+                                "2016preVFP_AllTT",     "2016postVFP_AllTT",     "2017_AllTT",     "2018_AllTT",
+                                "2016preVFP_RPV",       "2016postVFP_RPV",       "2017_RPV",       "2018_RPV",
+                                "2016preVFP_StealthSYY","2016postVFP_StealthSYY","2017_StealthSYY","2018_StealthSYY",
+                                "2016preVFP_TTX",       "2016postVFP_TTX",       "2017_TTX",       "2018_TTX"
+                                ]
+
+            if sampleCollection in sampleSetsToHadd:
+                for sample in sl:
+                    files = None
+
+                    # For TT and its variations choose one of the three channels e.g. SemiLeptonic
+                    # And make wildcard string to hadd together all three channels files together
+                    # This is specifically here when choosing the AllTT collection: it should not
+                    # be hadded together, rather the individual variations should be hadded separately
+                    tempSample = sample[1]
+                    cleanName = sample[1]
+
+                    # Use the SemiLepton name to make a wildcard string to pick up all three channel names for hadding together
+                    # tempSample will contain the wildcards and cleanName goes into the output filename
+                    if "_TTTo" in tempSample and "SemiLep" in tempSample:
+                        tempSample = sample[1].replace("_TTToSemiLeptonic", "_TTTo*[cu]")
+                        cleanName = sample[1].replace("ToSemiLeptonic", "")
+                    # Skip the other two channels for TT since they already were hadded in with the SemiLep file
+                    elif "_TTTo" in tempSample:
+                        continue
+
+                    files = " ".join(glob("%s/%s/MyAnalysis_%s_[0-9]*.root" % (inPath, directory, tempSample)))
+                    outfile = "%s/%s.root" % (outDir, cleanName)
+                    command = "hadd %s/%s.root %s" % (outDir, cleanName, files)
+                    if not options.noHadd: subprocess.call(command.split(" "))
+                    log = checkNumEvents(nEvents=float(sample[2]), rootFile=outfile, sampleCollection=cleanName, log=log)
+    
+            # hadd other condor jobs
+            else:
+                nEvents=0.0
+                for sample in sl:
+                    print("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1]))
+                    files += " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
+                    nEvents+=float(sample[2])
+    
+                outfile = "%s/%s.root" % (outDir,sampleCollection)
+                command = "hadd %s %s" % (outfile, files)
+                try:
+                    if not options.noHadd: 
+                        process = subprocess.Popen(command, shell=True)
+                        process.wait()
+                except:
+                    print red("Warning: Too many files to hadd, using the exception setup")
+                    command = "hadd %s/%s.root %s/%s/*" % (outDir, sampleCollection, inPath, sampleCollection)
+                    if not options.noHadd: system(command)
+                    pass
+    
+                log = checkNumEvents(nEvents=nEvents, rootFile=outfile, sampleCollection=sampleCollection, log=log)
+   
+    if options.haddAll:
+        for year in ['2016preVFP', '2016postVFP', '2017', '2018']:
+            files_TT = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*TTTo*.root" % (inPath, year, year))) 
+            command = "hadd %s/%s_TT.root %s" % (outDir, year, files_TT)
+            system(command)
+            files_QCD = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*QCD*.root" % (inPath, year, year)))
+            command = "hadd %s/%s_QCD.root %s" % (outDir, year, files_QCD)
+            system(command)
+            files_TTX = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*TT[WZ][TJ]*.root" % (inPath, year, year)) + glob("%s/%s_AllBg/MyAnalysis_%s*ttH*.root" % (inPath, year, year))) 
+            command = "hadd %s/%s_TTX.root %s" % (outDir, year, files_TTX)
+            system(command)
+            files_NotOther = files_TT + files_QCD + files_TTX
+            files_Other = " " + " ".join([f for f in glob("%s/%s_AllBg/MyAnalysis_%s*.root" % (inPath, year, year) ) if f not in files_NotOther])
+            command = "hadd %s/%s_BG_OTHER.root %s" % (outDir, year, files_Other)
+            system(command)
+
+            files_Data = " " + " ".join(glob("%s/%s_Data/MyAnalysis_%s*.root" % (inPath, year, year)))
+            command = "hadd %s/%s_Data.root %s" % (outDir, year, files_Data)
+            system(command)
+
+    #Print log of hadd at the end
+    printError(log)    
+
+    if options.haddOther:
+        # Hack to make the BG_OTHER.root file
+        other_2016preVFP  = ["2016preVFP_Triboson",  "2016preVFP_Diboson.root",  "2016preVFP_DYJetsToLL_M-50.root",  "2016preVFP_WJets.root"]
+        other_2016postVFP = ["2016postVFP_Triboson", "2016postVFP_Diboson.root", "2016postVFP_DYJetsToLL_M-50.root", "2016postVFP_WJets.root"]
+        other_2017        = ["2017_Triboson",        "2017_Diboson.root",        "2017_DYJetsToLL_M-50.root",        "2017_WJets.root"]
+        other_2018        = ["2018_Triboson",        "2018_Diboson.root",        "2018_DYJetsToLL_M-50.root",        "2018_WJets.root"]
+        other = other_2016preVFP + other_2016postVFP + other_2017 + other_2018
+
+        files = ""
         for sampleCollection in scl:
             sl = sc.sampleList(sampleCollection)
-            if sampleCollection in datasets:
+            if sampleCollection in datasets and sampleCollection in other: 
                 directory = sampleCollection
-                files = ""
-                print "-----------------------------------------------------------"
-                print sampleCollection
-                print "-----------------------------------------------------------"
-                
-                # hadd individual samples within a collection
-                # this includes the AllSignal and the AllTT
-                sampleSetsToHadd = ["2016preVFP_AllSignal", "2016postVFP_AllSignal", "2017_AllSignal", "2018_AllSignal",
-                                    "2016preVFP_AllTT",     "2016postVFP_AllTT",     "2017_AllTT",     "2018_AllTT",
-                                    "2016preVFP_RPV",       "2016postVFP_RPV",       "2017_RPV",       "2018_RPV",
-                                    "2016preVFP_StealthSYY","2016postVFP_StealthSYY","2017_StealthSYY","2018_StealthSYY",
-                                    "2016preVFP_TTX",       "2016postVFP_TTX",       "2017_TTX",       "2018_TTX"
-                                    ]
-
-                if sampleCollection in sampleSetsToHadd:
-                    for sample in sl:
-                        files = None
-
-                        # For TT and its variations choose one of the three channels e.g. SemiLeptonic
-                        # And make wildcard string to hadd together all three channels files together
-                        # This is specifically here when choosing the AllTT collection: it should not
-                        # be hadded together, rather the individual variations should be hadded separately
-                        tempSample = sample[1]
-                        cleanName = sample[1]
-
-                        # Use the SemiLepton name to make a wildcard string to pick up all three channel names for hadding together
-                        # tempSample will contain the wildcards and cleanName goes into the output filename
-                        if "_TTTo" in tempSample and "SemiLep" in tempSample:
-                            tempSample = sample[1].replace("_TTToSemiLeptonic", "_TTTo*[cu]")
-                            cleanName = sample[1].replace("ToSemiLeptonic", "")
-                        # Skip the other two channels for TT since they already were hadded in with the SemiLep file
-                        elif "_TTTo" in tempSample:
-                            continue
-
-                        files = " ".join(glob("%s/%s/MyAnalysis_%s_[0123456789]*.root" % (inPath, directory, tempSample)))
-                        outfile = "%s/%s.root" % (outDir, cleanName)
-                        command = "hadd %s/%s.root %s" % (outDir, cleanName, files)
-                        if not options.noHadd: subprocess.call(command.split(" "))
-                        log = checkNumEvents(nEvents=float(sample[2]), rootFile=outfile, sampleCollection=cleanName, log=log)
+                files += " %s/%s.root " % (outDir, directory)
+        if options.year:
+            command = "hadd %s/%s_BG_OTHER.root %s" % (outDir, options.year, files)
+        else:
+            command = "hadd %s/BG_OTHER.root %s" % (outDir, files)
+        print "-----------------------------------------------------------"
+        print command
+        print "-----------------------------------------------------------"
+        system(command)
         
-                # hadd other condor jobs
-                else:
-                    nEvents=0.0
-                    for sample in sl:
-                        print("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1]))
-                        files += " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
-                        nEvents+=float(sample[2])
-        
-                    outfile = "%s/%s.root" % (outDir,sampleCollection)
-                    command = "hadd %s %s" % (outfile, files)
-                    try:
-                        if not options.noHadd: 
-                            process = subprocess.Popen(command, shell=True)
-                            process.wait()
-                    except:
-                        print red("Warning: Too many files to hadd, using the exception setup")
-                        command = "hadd %s/%s.root %s/%s/*" % (outDir, sampleCollection, inPath, sampleCollection)
-                        if not options.noHadd: system(command)
-                        pass
-        
-                    log = checkNumEvents(nEvents=nEvents, rootFile=outfile, sampleCollection=sampleCollection, log=log)
-   
-        #Print log of hadd at the end
-        printError(log)    
-
-        if options.haddOther:
-            # Hack to make the BG_OTHER.root file
-            other_2016preVFP  = ["2016preVFP_Triboson",  "2016preVFP_Diboson.root",  "2016preVFP_DYJetsToLL_M-50.root",  "2016preVFP_WJets.root"]
-            other_2016postVFP = ["2016postVFP_Triboson", "2016postVFP_Diboson.root", "2016postVFP_DYJetsToLL_M-50.root", "2016postVFP_WJets.root"]
-            other_2017        = ["2017_Triboson",        "2017_Diboson.root",        "2017_DYJetsToLL_M-50.root",        "2017_WJets.root"]
-            other_2018        = ["2018_Triboson",        "2018_Diboson.root",        "2018_DYJetsToLL_M-50.root",        "2018_WJets.root"]
-            other = other_2016preVFP + other_2016postVFP + other_2017 + other_2018
-
-            files = ""
-            for sampleCollection in scl:
-                sl = sc.sampleList(sampleCollection)
-                if sampleCollection in datasets and sampleCollection in other: 
-                    directory = sampleCollection
-                    files += " %s/%s.root " % (outDir, directory)
-            if options.year:
-                command = "hadd %s/%s_BG_OTHER.root %s" % (outDir, options.year, files)
-            else:
-                command = "hadd %s/BG_OTHER.root %s" % (outDir, files)
-            print "-----------------------------------------------------------"
-            print command
-            print "-----------------------------------------------------------"
-            system(command)
-            
-        if options.haddData:
-            # Hack to make the Data.root file (hadd all the data together)
-            dataFiles = ["Data_SingleMuon.root",             "Data_SingleElectron.root",             "Data_JetHT.root",
-                         "2016preVFP_Data_SingleMuon.root",  "2016preVFP_Data_SingleElectron.root",  "2016preVFP_Data_JetHT.root",
-                         "2016postVFP_Data_SingleMuon.root", "2016postVFP_Data_SingleElectron.root", "2016postVFP_Data_JetHT.root",
-                         "2017_Data_SingleMuon.root",        "2017_Data_SingleElectron.root",        "2017_Data_JetHT.root",
-                         "2018_Data_SingleMuon.root",        "2018_Data_SingleElectron.root",        "2018_Data_JetHT.root"]
-            if options.year:
-                command = "hadd %s/%s_Data.root " % (outDir,options.year)
-            else:
-                command = "hadd %s/Data.root " % outDir
-            for f in dataFiles:
-                if os.path.exists(outDir+"/"+f):
-                    command += " %s/%s" % (outDir, f)
-            print "-----------------------------------------------------------"
-            print command
-            print "-----------------------------------------------------------"
-            system(command)
+    if options.haddData:
+        # Hack to make the Data.root file (hadd all the data together)
+        dataFiles = ["Data_SingleMuon.root",             "Data_SingleElectron.root",             "Data_JetHT.root",
+                     "2016preVFP_Data_SingleMuon.root",  "2016preVFP_Data_SingleElectron.root",  "2016preVFP_Data_JetHT.root",
+                     "2016postVFP_Data_SingleMuon.root", "2016postVFP_Data_SingleElectron.root", "2016postVFP_Data_JetHT.root",
+                     "2017_Data_SingleMuon.root",        "2017_Data_SingleElectron.root",        "2017_Data_JetHT.root",
+                     "2018_Data_SingleMuon.root",        "2018_Data_SingleElectron.root",        "2018_Data_JetHT.root"]
+        if options.year:
+            command = "hadd %s/%s_Data.root " % (outDir,options.year)
+        else:
+            command = "hadd %s/Data.root " % outDir
+        for f in dataFiles:
+            if os.path.exists(outDir+"/"+f):
+                command += " %s/%s" % (outDir, f)
+        print "-----------------------------------------------------------"
+        print command
+        print "-----------------------------------------------------------"
+        system(command)
 
 if __name__ == "__main__":
     main()
