@@ -81,7 +81,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& filetag      = tr.getVar<std::string>("filetag");
 
             std::map<std::string, bool> baselines;
-            //baselines["0l"] = tr.getVar<bool>("passBaseline0l_good"+myVarSuffix); 
+            //baselines["0l"] = tr.getVar<bool>("passBaseline0l_Good"+myVarSuffix); 
             //baselines["1l"] = tr.getVar<bool>("passBaseline1l_Good"+myVarSuffix);
             baselines["2l"] = tr.getVar<bool>("passBaseline2l_Good"+myVarSuffix);
 

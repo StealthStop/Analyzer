@@ -89,7 +89,7 @@ void AnalyzeGenStop::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& StopMass           = tr.getVar<double>("stop_avemass");
 
         const auto& passBaseline1l      = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l_good");
+        const auto& passBaseline0l      = tr.getVar<bool>("passBaseline0l_Good");
 
         const auto& passTrigger               = tr.getVar<bool>("passTrigger");
         const auto& passTriggerMC             = tr.getVar<bool>("passTriggerMC");

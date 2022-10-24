@@ -71,7 +71,7 @@ class RocAndRoll:
         if self.approved:
             mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.016), "Simulation Supplementary")
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.016), "Simulation Preliminary")
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.016), "work in progress")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -178,12 +178,12 @@ class RocAndRoll:
 
             iamLegend = ROOT.TLegend(self.LeftMargin, (1.0-self.TopMargin+0.2*self.BottomMargin) / 1.2, 1.0-self.RightMargin, 1.0-self.TopMargin)
             iamLegend.SetNColumns(4)
-            iamLegend.SetTextSize(0.024)
+            iamLegend.SetTextSize(0.028)
             iamLegend.AddEntry(None, self.printSignal(self.signal), "")
 
-            jamLegend = ROOT.TLegend(0.73, self.BottomMargin+0.03, 1.0-self.RightMargin-0.03, 0.5)
+            jamLegend = ROOT.TLegend(0.65, self.BottomMargin+0.03, 1.0-self.RightMargin-0.03, 0.5)
             jamLegend.SetNColumns(1)
-            jamLegend.SetTextSize(0.025)
+            jamLegend.SetTextSize(0.039)
 
             count = 0
             for mass in self.masses:
@@ -238,9 +238,9 @@ class RocAndRoll:
             iamLegend.SetTextSize(0.034)
             iamLegend.AddEntry(None, self.printSignal(self.signal), "")
 
-            jamLegend = ROOT.TLegend(0.73, self.BottomMargin+0.03, 1.0-self.RightMargin-0.03, 0.5)
+            jamLegend = ROOT.TLegend(0.65, self.BottomMargin+0.03, 1.0-self.RightMargin-0.03, 0.5)
             jamLegend.SetNColumns(1)
-            jamLegend.SetTextSize(0.025)
+            jamLegend.SetTextSize(0.039)
 
             count = 0
             for Njet in self.Njets:

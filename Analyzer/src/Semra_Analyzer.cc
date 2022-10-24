@@ -125,7 +125,7 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const bool pass_ge12j_pt45        = NGoodJets_pt45 >= 12;
         // New Baseline selection
         const auto& passBaseline0l_pre    = tr.getVar<bool>("passBaseline0l_pre");
-        const auto& passBaseline0l_good   = tr.getVar<bool>("passBaseline0l_good");
+        const auto& passBaseline0l_Good   = tr.getVar<bool>("passBaseline0l_Good");
         const auto& NNonIsoMuons          = tr.getVar<int>("NNonIsoMuons");
         const bool ZeroNonIsoMuon         = NNonIsoMuons == 0;
         const bool pass_HT500_pt30        = HT_trigger_pt30 > 500;
@@ -233,13 +233,13 @@ void Semra_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"0l_HT500_ge12j_ge2t_ge1dRbjets", passBaseline0l_pre && pass_ge12j_pt30 && pass_ge2t && pass_ge1dRbjets},
 
             // with NonIsoMuon cut
-            {"0l_HT500_0NonIsoMuon_ge7j_ge2t_ge1dRbjets",  passBaseline0l_pre && passBaseline0l_good                   },
-            {"0l_HT500_0NonIsoMuon_7j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_good && pass_7j_pt30   },
-            {"0l_HT500_0NonIsoMuon_8j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_good && pass_8j_pt30   },
-            {"0l_HT500_0NonIsoMuon_9j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_good && pass_9j_pt30   },
-            {"0l_HT500_0NonIsoMuon_10j_ge2t_ge1dRbjets",   passBaseline0l_pre && passBaseline0l_good && pass_10j_pt30  },
-            {"0l_HT500_0NonIsoMuon_11j_ge2t_ge1dRbjets",   passBaseline0l_pre && passBaseline0l_good && pass_11j_pt30  },
-            {"0l_HT500_0NonIsoMuon_ge12j_ge2t_ge1dRbjets", passBaseline0l_pre && passBaseline0l_good && pass_ge12j_pt30},           
+            {"0l_HT500_0NonIsoMuon_ge7j_ge2t_ge1dRbjets",  passBaseline0l_pre && passBaseline0l_Good                   },
+            {"0l_HT500_0NonIsoMuon_7j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_Good && pass_7j_pt30   },
+            {"0l_HT500_0NonIsoMuon_8j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_Good && pass_8j_pt30   },
+            {"0l_HT500_0NonIsoMuon_9j_ge2t_ge1dRbjets",    passBaseline0l_pre && passBaseline0l_Good && pass_9j_pt30   },
+            {"0l_HT500_0NonIsoMuon_10j_ge2t_ge1dRbjets",   passBaseline0l_pre && passBaseline0l_Good && pass_10j_pt30  },
+            {"0l_HT500_0NonIsoMuon_11j_ge2t_ge1dRbjets",   passBaseline0l_pre && passBaseline0l_Good && pass_11j_pt30  },
+            {"0l_HT500_0NonIsoMuon_ge12j_ge2t_ge1dRbjets", passBaseline0l_pre && passBaseline0l_Good && pass_ge12j_pt30},           
  
             // -----------------
             // QCD CR selections

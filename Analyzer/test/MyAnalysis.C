@@ -9,7 +9,6 @@
 #include "Analyzer/Analyzer/include/AnalyzeDoubleDisCo.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
-#include "Analyzer/Analyzer/include/AnalyzeBTagSF.h"
 #include "Analyzer/Analyzer/include/MakeNJetDists.h"
 #include "Analyzer/Analyzer/include/MakeMiniTree.h"
 #include "Analyzer/Analyzer/include/CalculateBTagSF.h"
@@ -27,7 +26,6 @@
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 #include "Analyzer/Analyzer/include/AnalyzeXsec.h"
-#include "Analyzer/Analyzer/include/AnalyzeDataMC.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -172,7 +170,6 @@ int main(int argc, char *argv[])
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&, const std::string, const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
         {"AnalyzeDoubleDisCo",         run<AnalyzeDoubleDisCo>        },
         {"AnalyzeLepTrigger",          run<AnalyzeLepTrigger>         },
-        {"AnalyzeBTagSF",              run<AnalyzeBTagSF>             },
         {"AnalyzeTest",                run<AnalyzeTest>               },
         {"CalculateBTagSF",            run<CalculateBTagSF>           },
         {"CalculateSFMean",            run<CalculateSFMean>           },
@@ -190,7 +187,6 @@ int main(int argc, char *argv[])
         {"MakeNNVariables",            run<MakeNNVariables>           },
         {"AnalyzeGenStop",             run<AnalyzeGenStop>            },
         {"AnalyzeXsec",                run<AnalyzeXsec>               },
-        {"AnalyzeDataMC",              run<AnalyzeDataMC>             }
 
     }; 
 
