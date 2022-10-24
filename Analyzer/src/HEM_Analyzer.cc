@@ -134,9 +134,9 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& jmt_ev1_top6              = tr.getVar<double>("jmt_ev1_top6");
         const auto& jmt_ev2_top6              = tr.getVar<double>("jmt_ev2_top6");
         const auto& event_beta_z              = tr.getVar<double>("event_beta_z");
-        const auto& passBaseline_0l           = tr.getVar<bool>("passBaseline0l_good");
+        const auto& passBaseline_0l           = tr.getVar<bool>("passBaseline0l_Good");
         const auto& passBaseline_1l           = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passBaseline_0l_noHEMveto = tr.getVar<bool>("passBaseline0l_good_noHEMveto");
+        const auto& passBaseline_0l_noHEMveto = tr.getVar<bool>("passBaseline0l_Good_noHEMveto");
         const auto& passBaseline_1l_noHEMveto = tr.getVar<bool>("passBaseline1l_Good_noHEMveto");
 
         // -------------------

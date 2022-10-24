@@ -156,15 +156,15 @@ def add_CMSlogo(canvas):
     mark.SetTextAlign(11)
     mark.SetTextFont(61)
     mark.SetTextSize(0.050)
-    mark.DrawLatex(LeftMargin,        1 - (TopMargin - 0.015), "CMS"          )
+    mark.DrawLatex(LeftMargin,        1 - (TopMargin - 0.015), "CMS"             )
     
     mark.SetTextFont(52)
     mark.SetTextSize(0.032)
-    mark.DrawLatex(LeftMargin + 0.12, 1 - (TopMargin - 0.017), "Preliminary"  )
+    mark.DrawLatex(LeftMargin + 0.12, 1 - (TopMargin - 0.017), "Work in Progress")
 
     mark.SetTextAlign(31)
     mark.SetTextFont(42)
-    mark.DrawLatex(1 - RightMargin,   1 - (TopMargin - 0.017), "2018 (13 TeV)")
+    mark.DrawLatex(1 - RightMargin,   1 - (TopMargin - 0.017), "2018 (13 TeV)"   )
 
 
 if __name__ == '__main__':
@@ -188,10 +188,10 @@ if __name__ == '__main__':
     # ------------------------------------------------------------------
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--inputDir", dest="inputDir", help="input directory",                   default="condor/hadd_2018_HEM_issue_0l_1l_18.04.2022/", type=str)
+    parser.add_argument("--inputDir", dest="inputDir", help="input directory",                   default="condor/2_2018UL_HEM_study_2022/hadd_2018_HEM_issue_0l_1l_18.04.2022/", type=str)
     parser.add_argument("--data",     dest="data",     help="JetHT, SingleElectron, SingleMuon", default="NULL", type=str)
-    parser.add_argument("--tag",      dest="tag",     help="Tag to put in folder name",          default="NULL", type=str)
-    parser.add_argument("--ratio",    dest="ratio",    help="Draw ratio", action="store_true",   default=False)
+    parser.add_argument("--tag",      dest="tag",      help="Tag to put in folder name",         default="NULL", type=str)
+    parser.add_argument("--ratio",    dest="ratio",    help="Draw ratio", action="store_true",   default=False           )
     
     args = parser.parse_args()
 
@@ -222,16 +222,10 @@ if __name__ == '__main__':
             "h_jmt_ev1_top6"      : {  "Y" : {"logY" : True, },  "X" : {"rebin" : 30,  "title" : "JMT 1"                                               }  },
             "h_jmt_ev2_top6"      : {  "Y" : {"logY" : True, },  "X" : {"rebin" : 30,  "title" : "JMT 2"                                               }  },
             "h_event_beta_z"      : {  "Y" : {"logY" : False,},  "X" : {"rebin" : 50,  "title" : "#beta_{z}"                                           }  },
-            "h_jet_EtaVsPhi"      : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "Jet #phi"},      "X" : {"rebin" : 360, "title" : "Jet #eta"      }  },
-            "h_bjet_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "b Jet #phi"},    "X" : {"rebin" : 360, "title" : "b Jet #eta"    }  },
-            "h_electron_EtaVsPhi" : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "Electron #phi"}, "X" : {"rebin" : 360, "title" : "Electron #eta" }  },
-            "h_muon_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 80, "title" : "Muon #phi"},     "X" : {"rebin" : 360, "title" : "Muon #eta"     }  },
-
-            #"h_jet_EtaVsPhi"      : {  "Y" : {"logY" : True, "rebin" : 24, "title" : "Jet #phi"},      "X" : {"rebin" : 24, "title" : "Jet #eta"      }  },
-            #"h_bjet_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 24, "title" : "b Jet #phi"},    "X" : {"rebin" : 24, "title" : "b Jet #eta"    }  },
-            #"h_electron_EtaVsPhi" : {  "Y" : {"logY" : True, "rebin" : 24, "title" : "Electron #phi"}, "X" : {"rebin" : 24, "title" : "Electron #eta" }  },
-            #"h_muon_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 24, "title" : "Muon #phi"},     "X" : {"rebin" : 24, "title" : "Muon #eta"     }  },
-
+            "h_jet_EtaVsPhi"      : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "Jet #phi"},      "X" : {"rebin" : 12, "title" : "Jet #eta"       }  },
+            "h_bjet_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "b Jet #phi"},    "X" : {"rebin" : 12, "title" : "b Jet #eta"     }  },
+            "h_electron_EtaVsPhi" : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "Electron #phi"}, "X" : {"rebin" : 12, "title" : "Electron #eta"  }  },
+            "h_muon_EtaVsPhi"     : {  "Y" : {"logY" : True, "rebin" : 12, "title" : "Muon #phi"},     "X" : {"rebin" : 12, "title" : "Muon #eta"      }  },
     }
 
     # -----------------------------------
@@ -423,13 +417,13 @@ if __name__ == '__main__':
 
                 data2.SetMarkerColor(38)
                 data2.SetLineColor(38)
-                data2.SetMarkerSize(5)
+                data2.SetMarkerSize(7) # 5 
                 data2.SetLineWidth(3)
                 data2.SetMarkerStyle(29)
                 data2.SetTitle("")
                 data1.SetMarkerColor(46)
                 data1.SetLineColor(46)
-                data1.SetMarkerSize(5)
+                data1.SetMarkerSize(7) # 5
                 data1.SetLineWidth(3)
                 data1.SetMarkerStyle(29)
                 data1.SetTitle("")
@@ -443,7 +437,7 @@ if __name__ == '__main__':
 
                 legend.SetBorderSize(0)
                 legend.SetFillStyle(0)
-                legend.SetTextSize(0.035)
+                legend.SetTextSize(0.04) # 0.035
                 legend.AddEntry(data2, "pre HEM",  "l")
                 legend.AddEntry(data1, "post HEM", "l") 
                 
