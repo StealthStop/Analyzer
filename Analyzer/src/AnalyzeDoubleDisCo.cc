@@ -799,9 +799,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             Debug("Preparing cut map", __LINE__);
 
             // Define subregions of the 2D disco plane for studying populations
-            bool central    = pow(DoubleDisCo_disc1[1]-0.4, 2) + pow(DoubleDisCo_disc2[1]-0.4, 2) < 0.09;
             bool leftEdge   = DoubleDisCo_disc1[1] < 0.1;
             bool bottomEdge = DoubleDisCo_disc2[1] < 0.1;
+            bool central    = !leftEdge and !bottomEdge and DoubleDisCo_disc1[1] < 0.8 and DoubleDisCo_disc2[1] < 0.8;
             bool outside    = !central and !leftEdge and !bottomEdge;
 
             const std::map<std::string, bool> cut_map
