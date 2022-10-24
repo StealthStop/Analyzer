@@ -45,6 +45,7 @@ getTaggerCfg.sh -t StealthStop_DeepCSVwp0.4506_DeepResolvedwp0.95_DeepAK8wp0.895
 getTaggerCfg.sh -t StealthStop_DeepCSVwp0.4168_DeepResolvedwp0.95_DeepAK8wp0.895_2018UL -f TopTaggerCfg_2018.cfg -o
 getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_v2.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
 getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_v2.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_v0.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
 ```
 
 Example of running MyAnalysis interactively

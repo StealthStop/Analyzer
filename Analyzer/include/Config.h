@@ -99,14 +99,14 @@ private:
             else if(module=="DoubleDisCo_NonIsoMuon_0l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV);
             else if(module=="DoubleDisCo_1l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV); 
             else if(module=="DoubleDisCo_NonIsoMuon_1l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV);
-            else if(module=="DoubleDisCo_2l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV); 
-            else if(module=="DoubleDisCo_NonIsoMuon_2l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV);
+            else if(module=="DoubleDisCo_2l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l_RPV, DoubleDisCo_Model_2l_RPV); 
+            else if(module=="DoubleDisCo_NonIsoMuon_2l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV);
             else if(module=="DoubleDisCo_0l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY);
             else if(module=="DoubleDisCo_NonIsoMuon_0l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_0l_SYY, DoubleDisCo_Model_0l_SYY);
             else if(module=="DoubleDisCo_1l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY); 
             else if(module=="DoubleDisCo_NonIsoMuon_1l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l_SYY, DoubleDisCo_Model_1l_SYY);
-            else if(module=="DoubleDisCo_2l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY); 
-            else if(module=="DoubleDisCo_NonIsoMuon_2l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l_SYY, DoubleDisCo_Model_1l_SYY);
+            else if(module=="DoubleDisCo_2l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY); 
+            else if(module=="DoubleDisCo_NonIsoMuon_2l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_2l_SYY, DoubleDisCo_Model_2l_SYY);
 
             if(runtype == "MC")
             {
@@ -159,9 +159,9 @@ public:
             DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // Use RPV config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
@@ -170,9 +170,9 @@ public:
             DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
@@ -199,9 +199,9 @@ public:
             DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // SYY config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
@@ -210,9 +210,9 @@ public:
             DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
@@ -239,9 +239,9 @@ public:
             DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // Use RPV config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
@@ -250,9 +250,9 @@ public:
             DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
@@ -281,9 +281,9 @@ public:
             DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // Use RPV config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
@@ -292,9 +292,9 @@ public:
             DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
             DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
 
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
@@ -371,37 +371,7 @@ public:
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "RunTopTagger",
-                "CommonVariables",
-                "Baseline",
-                "FatJetCombine",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
-                "MakeMVAVariables_2l",
-                "MakeMVAVariables_NonIsoMuon_0l",
-                "MakeMVAVariables_NonIsoMuon_1l",
-                "MakeMVAVariables_NonIsoMuon_2l",
-                "StopJets",
-                "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_OldSeed_NonIsoMuon",
-                "MakeStopHemispheres_TopSeed",
-                "MakeStopHemispheres_TopSeed_NonIsoMuon",
-                "BTagCorrector",
-                "ScaleFactors",
-                "StopGenMatch",
-                "DoubleDisCo_0l_RPV",
-                "DoubleDisCo_1l_RPV",
-                "DoubleDisCo_NonIsoMuon_0l_RPV",
-                "DoubleDisCo_NonIsoMuon_1l_RPV",
-                //"DoubleDisCo_0l_SYY",
-                //"DoubleDisCo_1l_SYY",
-                //"DoubleDisCo_NonIsoMuon_0l_SYY",
-                //"DoubleDisCo_NonIsoMuon_1l_SYY",
+                // All other necessary modules instatiated explicitly in AnalyzeDoubleDisCo !!!
             };
             registerModules(tr, std::move(modulesList));
         }
