@@ -26,7 +26,7 @@ class RocAndRoll:
         if signal[0] == "S":
             self.signal = "Stealth" + signal
 
-        minNjet = 7; maxNjet = 11
+        minNjet = 7; maxNjet = 12
 
         self.Njets = [str(Njet) if Njet < maxNjet else str(Njet)+"incl" for Njet in range(minNjet, maxNjet+1)]
         self.masses = ["300", "450", "550", "650", "850", "1200"]
