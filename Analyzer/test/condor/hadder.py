@@ -58,21 +58,19 @@ def getDataSets(inPath):
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser("usage: %prog [options]\n")
-    parser.add_argument('-d', dest='datasets', type=str,            default='',               help="Lists of datasets, comma separated")
-    parser.add_argument('-H', dest='outDir',   type=str,            default='rootfiles',      help="Can pass in the output directory name")
-    parser.add_argument('-p', dest='inPath',   type=str, nargs="+", default=['output-files'], help="Can pass in the input directory name")
-    parser.add_argument('-y', dest='year',     type=str,            default='',               help="Can pass in the year for this data")
-    parser.add_argument('-o',          action='store_true',                                   help="Overwrite output directory")
-    parser.add_argument('--noHadd',    action='store_true',                                   help="Dont hadd the the root files")
-    parser.add_argument('--haddOther', action='store_true',                                   help="Do the hack to make BG_OTHER.root")
-    parser.add_argument('--haddData',  action='store_true',                                   help="Do the hack to make Data.root")
+    parser.add_argument('-d', dest='datasets', type=str,            default = '',               help = "Lists of datasets, comma separated")
+    parser.add_argument('-H', dest='outDir',   type=str,            default = 'rootfiles',      help = "Can pass in the output directory name")
+    parser.add_argument('-p', dest='inPath',   type=str,            default = 'output-files',   help = "Can pass in the input directory name")
+    parser.add_argument('-y', dest='year',     type=str,            default = '',               help = "Can pass in the year for this data")
+    parser.add_argument('-o',                  action='store_true',                             help = "Overwrite output directory")
+    parser.add_argument('--noHadd',            action='store_true',                             help = "Dont hadd the the root files")
+    parser.add_argument('--haddOther',         action='store_true',                             help = "Do the hack to make BG_OTHER.root")
+    parser.add_argument('--haddData',          action='store_true',                             help = "Do the hack to make Data.root")
+    parser.add_argument('--haddAll',           action='store_true',                             help = "Do the hack to hadd All_Bg, All_Signal, All_Data")
     options = parser.parse_args()
 
     # Get input directory path
-    inPaths = options.inPath
-    inPath = None
-    if len(inPaths) == 1:
-        inPath = inPaths[0]
+    inPath = options.inPath
         
     # Checks if user specified a dataset(s)
     datasets = []
@@ -121,6 +119,7 @@ def main():
                                 ]
 
             if sampleCollection in sampleSetsToHadd:
+                individualSamples = ""
                 for sample in sl:
                     files = None
 
@@ -145,6 +144,13 @@ def main():
                     command = "hadd %s/%s.root %s" % (outDir, cleanName, files)
                     if not options.noHadd: subprocess.call(command.split(" "))
                     log = checkNumEvents(nEvents=float(sample[2]), rootFile=outfile, sampleCollection=cleanName, log=log)
+
+                    individualSamples += " %s/%s.root"%(outDir, cleanName)
+
+                # After hadding all the little guys individually, put them together into the big sampleCollection (if desired)
+                if "TTX" in sampleCollection:
+                    command = "hadd %s/%s.root%s"%(outDir, sampleCollection, individualSamples)
+                    if not options.noHadd: subprocess.call(command.split(" "))
     
             # hadd other condor jobs
             else:
