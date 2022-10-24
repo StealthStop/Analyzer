@@ -53,6 +53,8 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"Stop2_phi_cm_TopSeed",         64,   -4,    4},
         {"Stop2_mass_cm_TopSeed",       180,    0, 1800},
         {"h_njets",                      21, -0.5, 20.5},
+        {"h_nbjets",                     21, -0.5, 20.5},
+        {"h_ntops",                       7, -0.5,  6.5},
         {"h_njets_12incl",               24, -0.5, 23.5},
         {"h_ht",                        720,    0, 7200},
         {"h_dRbjets",                   180,    0,    6},
@@ -425,6 +427,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     weight_CR                      ;
             std::vector<std::vector<bool> >                         GoodJets_CR                    ;
             std::vector<int>                                        NGoodJets_CR                   ;
+            std::vector<int>                                        NGoodBJets_CR                  ;
+            std::vector<int>                                        NTops_CR                       ;
             std::vector<double>                                     Mbl_CR                         ;
             std::vector<double>                                     dRbjets_CR                     ;
             std::vector<double>                                     HT_pt30_CR                     ;
@@ -498,6 +502,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     weight                         ;
             std::vector<std::vector<bool> >                         GoodJets                       ;
             std::vector<int>                                        NGoodJets                      ;
+            std::vector<int>                                        NGoodBJets                     ;
+            std::vector<int>                                        NTops                          ;
             std::vector<double>                                     HT_pt30                        ;
             std::vector<double>                                     Mbl                            ;
             std::vector<double>                                     dRbjets                        ;
@@ -587,6 +593,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 GoodJets.push_back(tr.getVec<bool>("GoodJets_pt30"                                 + myVarSuffix));
                 NGoodJets.push_back(tr.getVar<int>("NGoodJets_pt30"                                + myVarSuffix));
+                NGoodBJets.push_back(tr.getVar<int>("NGoodBJets_pt30"                              + myVarSuffix));
+                NTops.push_back(tr.getVar<int>("ntops"                                             + myVarSuffix));
                 HT_pt30.push_back(tr.getVar<double>("HT_trigger_pt30"                              + myVarSuffix));
                 Baseline.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good"             + myVarSuffix));
                 Baseline_blind.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_blind" + myVarSuffix));
@@ -684,8 +692,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Jets_CR.push_back(tr.getVec<utility::LorentzVector>("Jets"         + myVarSuffix));
                 Jets_cm_top6_CR.push_back(tr.getVec<utility::LorentzVector>(mvaName + "Jets_cm_top6" + tag+myVarSuffix));
 
-                GoodJets_CR.push_back(tr.getVec<bool>("NonIsoMuonJets_pt30"        + myVarSuffix));
+                GoodJets_CR.push_back(tr.getVec<bool>(jetsName + "Jets_pt30"        + myVarSuffix));
                 NGoodJets_CR.push_back(tr.getVar<int>("N" + jetsName + "Jets_pt30" + myVarSuffix));
+                NGoodBJets_CR.push_back(tr.getVar<int>("NGoodBJets_pt30" + myVarSuffix));
+                NTops_CR.push_back(tr.getVar<int>("ntops" + myVarSuffix));
                 HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + myVarSuffix));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + myVarSuffix));
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + myVarSuffix));
@@ -911,6 +921,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                 Debug("Filling event variable histograms with name: " + name, __LINE__);
                                 my_histos["h_njets"      + name]->Fill(!isQCD ?    NGoodJets[channel] : NGoodJets_CR[channel],    w);
+                                my_histos["h_nbjets"     + name]->Fill(!isQCD ?   NGoodBJets[channel] : NGoodBJets_CR[channel],   w);
+                                my_histos["h_ntops"      + name]->Fill(!isQCD ?        NTops[channel] : NTops_CR[channel],        w);
                                 my_histos["fwm2_top6"    + name]->Fill(!isQCD ?    fwm2_top6[channel] : fwm2_top6_CR[channel],    w);
                                 my_histos["fwm3_top6"    + name]->Fill(!isQCD ?    fwm3_top6[channel] : fwm3_top6_CR[channel],    w);
                                 my_histos["fwm4_top6"    + name]->Fill(!isQCD ?    fwm4_top6[channel] : fwm4_top6_CR[channel],    w);
