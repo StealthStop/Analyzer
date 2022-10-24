@@ -371,7 +371,7 @@ public:
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
-                // All other necessary modules instatiated explicitly in AnalyzeDoubleDisCo !!!
+                // All other necessary modules instantiated explicitly in AnalyzeDoubleDisCo !!!
             };
             registerModules(tr, std::move(modulesList));
         }
