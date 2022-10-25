@@ -37,7 +37,7 @@ class Histogram:
         # Custom tuned values for these dimensions/sizes
         # Are scaled accordingly if margins change
         self.xDim["title"]  = 0.050; self.yDim["title"]  = 0.050
-        self.xDim["label"]  = 0.039; self.yDim["label"]  = 0.039
+        self.xDim["label"]  = 0.045; self.yDim["label"]  = 0.045
         self.xDim["offset"] = 1.1;   self.yDim["offset"] = 1.7 
 
         self.histogram = histo
@@ -148,7 +148,7 @@ class Histogram:
             self.histogram.SetLineWidth(self.info["lsize"]);  self.histogram.SetLineStyle(self.info["lstyle"])
     
             if "loption" in self.info and "L" not in self.info["loption"]:
-                self.histogram.SetFillColor(self.info["color"])
+                self.histogram.SetFillColorAlpha(self.info["color"], 1.0)
 
             if "fstyle" in self.info:
                 self.histogram.SetFillStyle(self.info["fstyle"])
@@ -163,6 +163,7 @@ class Histogram:
 # The StackPlotter class oversees the creation of all stack plots
 #     approved     : are these plots approved, then no "Preliminary"
 #     noRatio      : do not make a ratio plot in bottom panel
+#     noStack      : do not stack the backgrounds, superimpose
 #     printNEvents : show the number of events in legend
 #     printInfo    : show significance and cut label
 #     year         : corresponding year for the plots/inputs
@@ -177,7 +178,7 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, noRatio, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
+    def __init__(self, approved, noRatio, noStack, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -189,13 +190,12 @@ class StackPlotter:
         self.inpath      = inpath
         self.outpath     = outpath
         
-        self.njetsTableDictionary = {}
-
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
 
         self.approved     = approved
         self.noRatio      = noRatio
+        self.noStack      = noStack
         self.normMC2Data  = normMC2Data
         self.normalize    = normalize
         self.printNEvents = printNEvents
@@ -224,7 +224,7 @@ class StackPlotter:
     # scenario.
     def makeCanvas(self, doLogY):
 
-        randStr = ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(8)])
+        randStr = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
        
         canvas = ROOT.TCanvas(randStr, randStr, 900, 900)
 
@@ -273,13 +273,25 @@ class StackPlotter:
     # when going between ratio plot and pure stack with no ratio
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.025 / self.upperSplit
+        textSize = 0.040 / self.upperSplit
+        nColumns = 1
+        maxBkgLegendFrac = 0.25 * (1.0 - self.TopMargin - self.BottomMargin)
+
+        tooManyBkgds = nBkgs * textSize * 1.2 > maxBkgLegendFrac
+        if tooManyBkgds:
+            nColumns = 3
+
         space    = 0.015
 
-        bkgXmin = 0.60 if self.printNEvents else 0.75
+        bkgXmin = 0.70 - self.RightMargin
+        if self.printNEvents:
+            bkgXmin = 0.60 - self.RightMargin
+        if tooManyBkgds:
+            bkgXmin = self.LeftMargin + 0.05
+            
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.01
-        bkgYmin = bkgYmax-nBkgs*(textSize+space)
+        bkgYmin = bkgYmax-(float(nBkgs)/float(nColumns))*(1.2*textSize+space)
         
         if self.printInfo:
             bkgYmax -= 0.025
@@ -289,6 +301,8 @@ class StackPlotter:
         bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
+        if tooManyBkgds:
+            bkgLegend.SetNColumns(nColumns)
 
         sigXmin = self.LeftMargin+0.03
         sigYmax = bkgYmax
@@ -307,14 +321,14 @@ class StackPlotter:
 
         yMax = 1.0; factor = 1.0; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
-            power = math.log10(theMax / theMin) * 5.0
+            power = math.log10(theMax / theMin) * 3.0
 
         theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
 
         if self.printInfo:
             yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
         else:                             
-            yMax = (theMax-theMin) * (1.0 - theFrac)**(-power) * factor
+            yMax = (theMax-theMin) * (0.95 - theFrac)**(-power) * factor
 
         return bkgLegend, sigLegend, yMax
 
@@ -333,14 +347,10 @@ class StackPlotter:
         mark.SetTextFont(52)
         mark.SetTextSize(0.040)
 
-        simStr = ""
-        if self.data == {}:
-            simStr = "Simulation "
-
         if self.approved:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sSupplementary"%(simStr))
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Supplementary")
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sPreliminary"%(simStr))
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "work in progress")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -355,7 +365,7 @@ class StackPlotter:
         # Top loop begins going over each histo-to-be-plotted
         for hname, hinfo in self.histograms.items():
 
-            orders = [-1]; selections = ["None"]
+            orders = [""]; selections = ["None"]
             if "orders" in hinfo:
                 orders = hinfo["orders"]
 
@@ -366,9 +376,9 @@ class StackPlotter:
             for order in orders:
                 for selection in self.selections:
          
-                    newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
+                    newName = hname.replace("@", order).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
-                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
+                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", order)
 
                     canvas               = self.makeCanvas(newInfo["logY"])
                     if self.noRatio:
@@ -436,13 +446,6 @@ class StackPlotter:
                         ttFrac  = wegTT / totalWegBkg
                         qcdFrac = wegQCD / totalWegBkg
           
-                    if "njets" in hname:
-                        self.njetsTableDictionary[selection] = {}
-                        self.njetsTableDictionary[selection]["TT Frac"]               = ttFrac
-                        self.njetsTableDictionary[selection]["QCD Frac"]              = qcdFrac
-                        self.njetsTableDictionary[selection]["TT Unweighted Events"]  = unWegTT
-                        self.njetsTableDictionary[selection]["QCD Unweighted Events"] = unWegQCD
-
                     # Preemptively loop over signal to determine maximums
                     wegRPV350   = 0.0; wegRPV550   = 0.0; wegRPV850   = 0.0; rpv350Frac = 0.0; rpv550Frac = 0.0; rpv850Frac = 0.0;
                     unWegRPV350 = 0.0; unWegRPV550 = 0.0; unWegRPV850 = 0.0;
@@ -479,14 +482,6 @@ class StackPlotter:
                     if wegRPV550 + totalWegBkg != 0.0: rpv550Frac = wegRPV550 / (wegRPV550 + totalWegBkg)
                     if wegRPV850 + totalWegBkg != 0.0: rpv850Frac = wegRPV850 / (wegRPV850 + totalWegBkg)
                    
-                    if "njets" in hname: 
-                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-350 Frac"]              = rpv350Frac
-                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-550 Frac"]              = rpv550Frac
-                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-850 Frac"]              = rpv850Frac
-                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-350 Unweighted Events"] = unWegRPV350
-                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-550 Unweighted Events"] = unWegRPV550
-                        self.njetsTableDictionary[selection]["RPV_2t6j_mStop-850 Unweighted Events"] = unWegRPV850
-
                     # Loop over each background and get their respective histo, scale if necessary
                     option = "HIST"; loption = "F"
                     for bname, binfo in self.backgrounds.items(): 
@@ -499,18 +494,23 @@ class StackPlotter:
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
                         if Hobj.IsGood(): 
+                            weightedEvents = Hobj.Integral()
                             if mcScale != 0.0:
                                 if self.normMC2Data:
                                     Hobj.Scale(dataScale / mcScale)
                                 elif self.normalize:
-                                    Hobj.Scale(1.0 / mcScale)
+                                    if self.noStack and weightedEvents != 0.0:
+                                        Hobj.Scale(1.0 / weightedEvents)
+                                    elif not self.noStack:
+                                        Hobj.Scale(1.0 / mcScale)
+
                             if not firstDraw:
                                 totalMC = Hobj.Clone("totalMC%s"%(newName))
                                 firstDraw = True
                             else:
                                 totalMC.Add(Hobj.histogram)
 
-                            bhistos[Hobj.Integral()] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
+                            bhistos[weightedEvents] = (binfo["name"], Hobj.histogram, binfo["option"], binfo["loption"])
                             dummy = Hobj.Clone("dummy%s"%(hname)); dummy.Reset("ICESM")
 
                     # Add each background histo to the stack in order based on number of entries
@@ -518,7 +518,11 @@ class StackPlotter:
                         bstack.Add(h[1], h[2])
                         nBkgLegend += 1
 
-                    tempMax = bstack.GetMaximum()
+                    option = ""
+                    if self.noStack:
+                        option = "nostack"
+
+                    tempMax = bstack.GetMaximum(option)
                     if tempMax > theMax:
                         theMax = tempMax
 
@@ -540,7 +544,11 @@ class StackPlotter:
                     dummy.SetMaximum(yMax)
                     dummy.SetMinimum(theMin)
                     dummy.Draw()
-                    bstack.Draw("SAME")
+
+                    if self.noStack:
+                        bstack.Draw("SAME HIST NOSTACK")
+                    else:
+                        bstack.Draw("SAME")
 
                     # Loop over each signal and get their respective histo
                     option = "HIST"; loption = "L"
@@ -567,11 +575,6 @@ class StackPlotter:
                             Hobj.Scale(1.0 / scale)
 
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend)
-
-                        if "njets" in hname:
-                            self.njetsTableDictionary[selection]["significance_350"] = theSignificance_350
-                            self.njetsTableDictionary[selection]["significance_550"] = theSignificance_550
-                            self.njetsTableDictionary[selection]["significance_850"] = theSignificance_850
 
                     # Loop over the data and get their respective histo
                     option = "E0P"; loption = "ELP"
@@ -628,60 +631,17 @@ class StackPlotter:
 
                     canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, newName))
 
-
-    # function to put the raw nEvents significance and njet bin by njet bin bkg & sig fractions for baseline selection
-    def make_njetsTable(self):        
-
-        f = open("%s/%s_nRawEvents_significance_bkgSigFracs_njets_stackPlots_0l_.tex" %(self.outpath, self.year), "w")
-        f.write("\\resizebox{\linewidth}{!}{%")
-        f.write("\n")
-        f.write("    \def\\arraystretch{0.6}")
-        f.write("\n")
-        f.write("    \\begin{tabular}{| l | c | c | c | c | c | c | c | c | c | c | c | c | c |}")
-        f.write("\n")
-        f.write("        \hline")
-        f.write("\n")
-        f.write("        & \multicolumn{2}{c|}{\\textcolor{ttjetscol}{TT}} & \multicolumn{2}{c|}{\\textcolor{qcdcol}{QCD}} & \multicolumn{2}{c|}{\\textcolor{rpvcol}{RPV350}} & \multicolumn{2}{c|}{\\textcolor{rpvcol}{RPV550}} & \multicolumn{2}{c|}{\\textcolor{rpvcol}{RPV850}} & \multicolumn{3}{c|}{Significance} \\\\")
-        f.write("\n")
-        f.write("        \hline")
-        f.write("\n")
-        f.write("        Cuts & \\textcolor{ttjetscol}{Raw Events} & \\textcolor{ttjetscol}{Frac} & \\textcolor{qcdcol}{Raw Events} & \\textcolor{qcdcol}{Frac} & \\textcolor{rpvcol}{Raw Events}    & \\textcolor{rpvcol}{Frac} & \\textcolor{rpvcol}{Raw Events} & \\textcolor{rpvcol}{Frac} & \\textcolor{rpvcol}{Raw Events} & \\textcolor{rpvcol}{Frac} & RPV350 & RPV550 & RPV850 \\\\")
-        f.write("\n")
-        f.write("        \hline")
-        f.write("\n")
- 
-        # loops for putting the table
-        for cut in self.selections:  
- 
-            f.write("    \scriptsize %s & \scriptsize \\textcolor{ttjetscol}{%d} & \scriptsize \\textcolor{ttjetscol}{%.3f} & \scriptsize \\textcolor{qcdcol}{%d} & \scriptsize \\textcolor{qcdcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%d} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%d} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize \\textcolor{rpvcol}{%d} & \scriptsize \\textcolor{rpvcol}{%.3f} & \scriptsize %.3f & \scriptsize %.3f & \scriptsize %.3f \\\\"
-                %(cut.replace("_", "\_"), self.njetsTableDictionary[cut]["TT Unweighted Events"],  self.njetsTableDictionary[cut]["TT Frac"], 
-                       self.njetsTableDictionary[cut]["QCD Unweighted Events"], self.njetsTableDictionary[cut]["QCD Frac"],
-                       self.njetsTableDictionary[cut]["RPV_2t6j_mStop-350 Unweighted Events"], self.njetsTableDictionary[cut]["RPV_2t6j_mStop-350 Frac"], 
-                       self.njetsTableDictionary[cut]["RPV_2t6j_mStop-550 Unweighted Events"], self.njetsTableDictionary[cut]["RPV_2t6j_mStop-550 Frac"],
-                       self.njetsTableDictionary[cut]["RPV_2t6j_mStop-850 Unweighted Events"], self.njetsTableDictionary[cut]["RPV_2t6j_mStop-850 Frac"],
-                       self.njetsTableDictionary[cut]["significance_350"], self.njetsTableDictionary[cut]["significance_550"], self.njetsTableDictionary[cut]["significance_850"]))
-            f.write("\n")
-            f.write("        \hline")
-            f.write("\n")
-
-        f.write("    \end{tabular}")
-        f.write("\n")
-        f.write("}")
-        f.write("\n")
-        f.close()                             
-
-
 if __name__ == "__main__":
 
     usage = "usage: %stackPlotter [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",               default=False,  action="store_true") 
+    parser.add_argument("--noStack",      dest="noStack",      help="No stacking of bkgs",         default=False,  action="store_true") 
     parser.add_argument("--approved",     dest="approved",     help="Plot is approved",            default=False,  action="store_true") 
     parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",       default=False,  action="store_true") 
     parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
     parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",      default=False,  action="store_true") 
     parser.add_argument("--printInfo",    dest="printInfo",    help="Print significance and cuts", default=False,  action="store_true")
-    parser.add_argument("--makeTable",    dest="makeTable",    help="Make the table of fracs",     default=False,  action="store_true")
     parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="NULL", required=True)
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="NULL", required=True)
     parser.add_argument("--year",         dest="year",         help="which year",                                  required=True)
@@ -703,9 +663,5 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.noRatio, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
+    plotter = StackPlotter(args.approved, args.noRatio, args.noStack, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
-
-    if args.makeTable:
-        plotter.make_njetsTable()
-        plotter.makeTable()

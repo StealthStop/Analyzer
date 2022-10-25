@@ -59,12 +59,12 @@ endif
 # Include our code
 INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(INDIR) -I$(SNDIR) -I$(ITTDir) -I$(STTDir)
 
-PROGRAMS = $(ODIR)/rootdict.cc MyAnalysis
+PROGRAMS = $(ODIR)/rootdict.cc Stack_plot_0l MyAnalysis
 
 ANALYZERS  = $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/MakeMiniTree.o $(ODIR)/AnalyzeLepTrigger.o $(ODIR)/AnalyzeTest.o 
 ANALYZERS += $(ODIR)/MakeMiniTree.o $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/BTagCalibrationStandalone.o 
 ANALYZERS += $(ODIR)/AnalyzeXsec.o $(ODIR)/MakeNNVariables.o $(ODIR)/AnalyzeDoubleDisCo.o $(ODIR)/AnalyzeGenStop.o
-ANALYZERS += $(ODIR)/Semra_Analyzer.o $(ODIR)/ResolvedTopTagger_Analyzer.o $(ODIR)/WholeTopTagger_Analyzer.o $(ODIR)/HEM_Analyzer.o $(ODIR)/TopTaggerSF_Analyzer.o $(ODIR)/ISRJets_Analyzer.o $(ODIR)/HadTriggers_Analyzer.o $(ODIR)/AnalyzeDataMC.o 
+ANALYZERS += $(ODIR)/Semra_Analyzer.o $(ODIR)/ResolvedTopTagger_Analyzer.o $(ODIR)/HEM_Analyzer.o $(ODIR)/TopTaggerSF_Analyzer.o $(ODIR)/ISRJets_Analyzer.o $(ODIR)/HadTriggers_Analyzer.o 
 
 HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/NTRException.o $(ODIR)/histio.o 
 HELPERS += $(ODIR)/Hemispheres.o $(ODIR)/StealthHemispheres.o 
@@ -101,6 +101,9 @@ $(foreach DIR,$(SRC_DIR),$(foreach EXT,$(SRC_EXT),$(eval $(call compile_rule,$(D
 # Make executables
 MyAnalysis: $(ODIR)/MyAnalysis.o $(HELPERS) $(ANALYZERS) $(ODIR)/rootdict.o
 	$(LD) $^ $(LIBSTOPTAGGER) $(LIBS) -o $@
+
+Stack_plot_0l: $(ODIR)/Stack_plot_0l.o
+	$(LD) $^ $(LIBS) -o $@
 
 # Remove obj directory 
 clean:

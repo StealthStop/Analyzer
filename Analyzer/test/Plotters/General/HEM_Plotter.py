@@ -3,6 +3,22 @@ import sys
 import ROOT
 import argparse
 
+# Sequence to run
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag bothVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag bothVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag bothVeto --ratio
+# 
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag ePostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag ePostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag ePostVeto --ratio
+# 
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag bPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag bPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag bPostVeto --ratio
+# 
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleElectron --tag ebPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag ebPostVeto --ratio
+# python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag ebPostVeto --ratio
 
 # -------------------------------------------------
 # make up the histograms such as rebin, title, etc.
@@ -160,7 +176,7 @@ if __name__ == '__main__':
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat("")
     ROOT.gStyle.SetLineWidth(2)
-    ROOT.gStyle.SetPaintTextFormat("3.2f")
+    ROOT.gStyle.SetPaintTextFormat("3.4f")
     ROOT.gStyle.SetFrameLineWidth(2)
     ROOT.gStyle.SetErrorX(0)
 
@@ -250,6 +266,9 @@ if __name__ == '__main__':
         # make 2D plots
         # ------------- 
         if "TH2" in mapPFAhistos.values()[0][name].ClassName():
+
+            maxRange = 0.025 
+            option = "COLZ E TEXT"
             
             # -----------------------
             # 2D plots with HEM issue
@@ -278,7 +297,11 @@ if __name__ == '__main__':
             data1.SetContour(255)
             data2.SetContour(255)
 
-            data1.Draw("COLZ")
+            if data1.Integral() != 0.0:
+                data1.Scale(1./data1.Integral())
+            data1.Draw(option)
+            data1.GetZaxis().SetRangeUser(0.0,maxRange)
+            data1.GetZaxis().SetMaxDigits(2)
 
             data1.SetTitle("post HEM")
             #add_CMSlogo(c1)
@@ -295,15 +318,42 @@ if __name__ == '__main__':
             ROOT.gPad.SetLeftMargin(magicMargins_2D["L"])
             ROOT.gPad.SetRightMargin(magicMargins_2D["R"])
 
-            data2.Draw("COLZ")
+            if data2.Integral() != 0.0:
+                data2.Scale(1./data2.Integral())
+            data2.GetZaxis().SetRangeUser(0.0,maxRange)
+            data2.GetZaxis().SetMaxDigits(2)
+
+            data2.Draw(option)
             data2.SetTitle("pre HEM")
             #add_CMSlogo(c2)
             c2.SaveAs("%s/%s_NOHEM.pdf"%(outpath,name))
 
+            # --------------------------
+            # 2D plots combined 
+            # --------------------------
+            c3 = ROOT.TCanvas("%s_ALLHEM"%(name), "%s_ALLHEM"%(name), XCANVAS, YCANVAS)
+            c3.cd()
+
+            ROOT.gPad.SetTopMargin(magicMargins_2D["T"])
+            ROOT.gPad.SetBottomMargin(magicMargins_2D["B"])
+            ROOT.gPad.SetLeftMargin(magicMargins_2D["L"])
+            ROOT.gPad.SetRightMargin(magicMargins_2D["R"])
+
+            data2.Add(data1)
+            if data2.Integral() != 0.0:
+                data2.Scale(1./data2.Integral())
+            data2.GetZaxis().SetRangeUser(0.0,maxRange)
+            data2.GetZaxis().SetMaxDigits(2)
+
+            data2.Draw(option)
+            data2.SetTitle("all HEM")
+            #add_CMSlogo(c2)
+            c3.SaveAs("%s/%s_ALLHEM.pdf"%(outpath,name))
+
             # ---------------------------
             # make HEM ratio for 2D plots
             # ---------------------------
-            if data1.Integral() != 0:
+            if data2.Integral() != 0:
 
                 c1 = ROOT.TCanvas("%s_ratio"%(name), "%s_ratio"%(name), XCANVAS, YCANVAS)
                 c1.cd()
@@ -313,11 +363,14 @@ if __name__ == '__main__':
                 ROOT.gPad.SetLeftMargin(magicMargins_2D["L"])
                 ROOT.gPad.SetRightMargin(magicMargins_2D["R"])
 
-                data1.Scale(1./data1.Integral())
-                data2.Scale(1./data2.Integral())
+                if data1.Integral() > 0.0:
+                    data1.Scale(1./data1.Integral())
+                if data2.Integral() > 0.0:
+                    data2.Scale(1./data2.Integral())
+
                 data1.Divide(data2)
                 data1.GetZaxis().SetRangeUser(0.5,2.0)
-                data1.Draw("COLZ")
+                data1.Draw(option)
                 data1.SetTitle("HEM Ratio")
                 c1.SaveAs("%s/%s_ratio.pdf"%(outpath,name))
 
@@ -375,8 +428,10 @@ if __name__ == '__main__':
                 data1.SetMarkerStyle(29)
                 data1.SetTitle("")
 
-                data1.Scale(1./data1.Integral())
-                data2.Scale(1./data2.Integral())
+                if data1.Integral() != 0.0:
+                    data1.Scale(1./data1.Integral())
+                if data2.Integral() != 0.0:
+                    data2.Scale(1./data2.Integral())
                 #data1.GetYaxis().SetRangeUser(0.001,1.1*data1.GetMaximum())
                 data1.GetXaxis().SetLabelSize(0)
 
@@ -392,32 +447,33 @@ if __name__ == '__main__':
                 # add CMS logo           
                 add_CMSlogo(c1)            
 
-                # ---------------------------------------------------
-                # put the ratio plot between with HEM and without HEM
-                # ---------------------------------------------------
-                c1.cd(2)
+                if data2.Integral() != 0.0:
+                    # ---------------------------------------------------
+                    # put the ratio plot between with HEM and without HEM
+                    # ---------------------------------------------------
+                    c1.cd(2)
 
-                ROOT.gPad.SetGridy()
-                ROOT.gPad.SetTopMargin(0.002)
-                ROOT.gPad.SetBottomMargin(0.35)
-                ROOT.gPad.SetLeftMargin(magicMargins_1D["L"])
-                ROOT.gPad.SetRightMargin(magicMargins_1D["R"])
-                ROOT.gPad.SetPad(RatioXMin, RatioYMin, RatioXMax, RatioYMax)
+                    ROOT.gPad.SetGridy()
+                    ROOT.gPad.SetTopMargin(0.002)
+                    ROOT.gPad.SetBottomMargin(0.35)
+                    ROOT.gPad.SetLeftMargin(magicMargins_1D["L"])
+                    ROOT.gPad.SetRightMargin(magicMargins_1D["R"])
+                    ROOT.gPad.SetPad(RatioXMin, RatioYMin, RatioXMax, RatioYMax)
 
-                ratio.SetTitle("")
-                ratio.Divide(data1,data2)
+                    ratio.SetTitle("")
+                    ratio.Divide(data1,data2)
 
-                ratio.GetYaxis().SetRangeUser(0.50,1.5)
-                ratio.GetYaxis().SetNdivisions(-304)
-                ratio.GetYaxis().SetTitle("HEM / Nominal")
-                ratio.GetYaxis().SetTitleSize(ratio.GetYaxis().GetTitleSize()*0.6)
-                ratio.GetXaxis().SetTitleSize(ratio.GetXaxis().GetTitleSize()*0.8)
-                ratio.GetYaxis().SetTitleOffset(0.5)
-                ratio.GetXaxis().SetTitleOffset(0.9)
-                ratio.SetMarkerStyle(20); ratio.SetMarkerSize(3); ratio.SetMarkerColor(ROOT.kBlue+2)
-                ratio.SetLineWidth(2); ratio.SetLineColor(ROOT.kBlue+2)
+                    ratio.GetYaxis().SetRangeUser(0.50,1.5)
+                    ratio.GetYaxis().SetNdivisions(-304)
+                    ratio.GetYaxis().SetTitle("HEM / Nominal")
+                    ratio.GetYaxis().SetTitleSize(ratio.GetYaxis().GetTitleSize()*0.6)
+                    ratio.GetXaxis().SetTitleSize(ratio.GetXaxis().GetTitleSize()*0.8)
+                    ratio.GetYaxis().SetTitleOffset(0.5)
+                    ratio.GetXaxis().SetTitleOffset(0.9)
+                    ratio.SetMarkerStyle(20); ratio.SetMarkerSize(3); ratio.SetMarkerColor(ROOT.kBlue+2)
+                    ratio.SetLineWidth(2); ratio.SetLineColor(ROOT.kBlue+2)
 
-                ratio.Draw("EP")
+                    ratio.Draw("EP")
                 c1.SaveAs("%s/%s.pdf"%(outpath,name))
         
 

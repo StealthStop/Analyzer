@@ -375,38 +375,6 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeDataMC")
-        {
-            const std::vector<std::string> modulesList = {
-                "PrepNTupleVars",
-                "Muon",
-                "Electron",
-                "Photon",
-                "Jet",
-                "BJet",
-                "RunTopTagger",
-                "CommonVariables",
-                "Baseline",
-                "FatJetCombine",
-                "MakeMVAVariables_0l",
-                "MakeMVAVariables_1l",
-                "MakeMVAVariables_NonIsoMuon_0l",
-                "MakeMVAVariables_NonIsoMuon_1l",
-                "StopJets",
-                "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_OldSeed_NonIsoMuon",
-                "MakeStopHemispheres_TopSeed",
-                "MakeStopHemispheres_TopSeed_NonIsoMuon",
-                "BTagCorrector",
-                "ScaleFactors",
-                "StopGenMatch",
-                "DoubleDisCo_0l_RPV",
-                "DoubleDisCo_1l_RPV",
-                "DoubleDisCo_NonIsoMuon_0l_RPV",
-                "DoubleDisCo_NonIsoMuon_1l_RPV",
-            };
-            registerModules(tr, std::move(modulesList));
-        }
         else if(analyzer=="MakeNNVariables")
         {
             const std::vector<std::string> modulesList = {
@@ -464,7 +432,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }       
-        else if(analyzer=="TopTaggerSF_Analyzer" || analyzer=="WholeTopTagger_Analyzer")
+        else if(analyzer=="TopTaggerSF_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",

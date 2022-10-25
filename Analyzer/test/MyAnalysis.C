@@ -16,7 +16,6 @@
 #include "Analyzer/Analyzer/include/Config.h"
 #include "Analyzer/Analyzer/include/Semra_Analyzer.h"
 #include "Analyzer/Analyzer/include/ResolvedTopTagger_Analyzer.h"
-#include "Analyzer/Analyzer/include/WholeTopTagger_Analyzer.h"
 #include "Analyzer/Analyzer/include/HEM_Analyzer.h"
 #include "Analyzer/Analyzer/include/TopTaggerSF_Analyzer.h"
 #include "Analyzer/Analyzer/include/ISRJets_Analyzer.h"
@@ -26,7 +25,6 @@
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 #include "Analyzer/Analyzer/include/AnalyzeXsec.h"
-#include "Analyzer/Analyzer/include/AnalyzeDataMC.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -178,7 +176,6 @@ int main(int argc, char *argv[])
         {"MakeNJetDists",              run<MakeNJetDists>             },
         {"Semra_Analyzer",             run<Semra_Analyzer>            },
         {"ResolvedTopTagger_Analyzer", run<ResolvedTopTagger_Analyzer>},
-        {"WholeTopTagger_Analyzer",    run<WholeTopTagger_Analyzer>   },
         {"HEM_Analyzer",               run<HEM_Analyzer>              },
         {"TopTaggerSF_Analyzer",       run<TopTaggerSF_Analyzer>      },
         {"ISRJets_Analyzer",           run<ISRJets_Analyzer>          },
@@ -188,7 +185,6 @@ int main(int argc, char *argv[])
         {"MakeNNVariables",            run<MakeNNVariables>           },
         {"AnalyzeGenStop",             run<AnalyzeGenStop>            },
         {"AnalyzeXsec",                run<AnalyzeXsec>               },
-        {"AnalyzeDataMC",              run<AnalyzeDataMC>             }
 
     }; 
 

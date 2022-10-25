@@ -302,6 +302,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
     const auto& dataset                           = tr.getVar<std::string>("dataset"                          ); // to check the collection name for FSR/ISR, JEC/JER 
     const auto& filetag                           = tr.getVar<std::string>("filetag"                          );
+    const auto& runtype                           = tr.getVar<std::string>("runtype"                          );    
     const auto& runYear                           = tr.getVar<std::string>("runYear"                          );
     const auto& bjetFileName                      = tr.getVar<std::string>("bjetFileName"                     );
     const auto& bjetCSVFileName                   = tr.getVar<std::string>("bjetCSVFileName"                  );
@@ -343,10 +344,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        ScaleFactors        scaleFactors( runYear, leptonFileName, hadronicFileName, meanFileName, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         FatJetCombine       fatJetCombine(myVarSuffix);
-        BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, "", filetag);
         DeepEventShape      neuralNetwork0L(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork1L(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix); 
@@ -364,8 +363,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed    );
         MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets",     "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets", "GoodStopJets",        "NGoodStopJets",        "_TopSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
-        bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
-  
+
         // Remember, order matters here !
         // Follow what is done in Config.h
         tr.registerFunction(muon);
@@ -388,9 +386,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(stopHemispheres_TopSeed);
         tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
         tr.registerFunction(stopHemispheres_TopSeed_NonIsoMuon);
-        tr.registerFunction(bTagCorrector);
-        tr.registerFunction(scaleFactors);
-        tr.registerFunction(stopGenMatch);
+
+        if (runtype == "MC")
+        {
+            ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, meanFileName, myVarSuffix);
+            BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, "", filetag);
+            bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
+
+            tr.registerFunction(bTagCorrector);
+            tr.registerFunction(scaleFactors);
+            tr.registerFunction(stopGenMatch);
+       }
+
         tr.registerFunction(neuralNetwork0L);
         tr.registerFunction(neuralNetwork0L_NonIsoMuon);
         tr.registerFunction(neuralNetwork1L);
@@ -415,7 +422,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         for(const auto& myVarSuffix : my_var_suffix)
         {
-            const auto& runtype      = tr.getVar<std::string>("runtype");    
             const auto& eventCounter = tr.getVar<int>("eventCounter");
 
             // Put 0L and 1L version of variables into vector
