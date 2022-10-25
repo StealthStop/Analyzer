@@ -23,7 +23,6 @@
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 #include "Framework/Framework/include/StopJets.h"
 #include "Framework/Framework/include/ISRJets.h"
-#include "Framework/Framework/include/JetAK8.h"
 
 class Config
 {
@@ -84,7 +83,6 @@ private:
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
-            else if(module=="JetAK8")                                tr.emplaceModule<JetAK8>();
             else if(module=="TrainingNTupleVars")                    tr.emplaceModule<TrainingNTupleVars>();
             else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",                 "NJets",                    "_All",                "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",            "", Hemisphere::InvMassSeed);
@@ -356,7 +354,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
@@ -384,7 +381,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
@@ -422,7 +418,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
@@ -441,7 +436,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
@@ -476,7 +470,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
@@ -500,7 +493,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
@@ -540,7 +532,6 @@ public:
                 "Photon",
                 "Jet",
                 "BJet",
-                "JetAK8",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
