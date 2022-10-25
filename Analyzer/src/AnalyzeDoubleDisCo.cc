@@ -10,7 +10,7 @@
 #include "Framework/Framework/include/BJet.h"
 #include "Framework/Framework/include/CommonVariables.h"
 #include "Framework/Framework/include/RunTopTagger.h"
-#include "Framework/Framework/include/FatJetCombine.h"
+#include "Framework/Framework/include/JetAK8.h"
 #include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/Baseline.h"
 #include "Framework/Framework/include/BTagCorrector.h"
@@ -340,12 +340,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         BJet                bjet(myVarSuffix);
         Muon                muon(myVarSuffix);
         Photon              photon(myVarSuffix);
+        JetAK8              jetAK8(myVarSuffix);
         Baseline            baseline(myVarSuffix);
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
-        FatJetCombine       fatJetCombine(myVarSuffix);
         DeepEventShape      neuralNetwork0L(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
         DeepEventShape      neuralNetwork1L(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix); 
@@ -374,7 +374,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
         tr.registerFunction(baseline);
-        tr.registerFunction(fatJetCombine);
+        tr.registerFunction(jetAK8);
         tr.registerFunction(makeMVAVariables0L_NonIsoMuon);
         tr.registerFunction(makeMVAVariables1L_NonIsoMuon);
         tr.registerFunction(makeMVAVariables2L_NonIsoMuon);

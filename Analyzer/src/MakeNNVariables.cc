@@ -11,7 +11,7 @@
 #include "Framework/Framework/include/BJet.h"
 #include "Framework/Framework/include/CommonVariables.h"
 #include "Framework/Framework/include/RunTopTagger.h"
-#include "Framework/Framework/include/FatJetCombine.h"
+#include "Framework/Framework/include/JetAK8.h"
 #include "Framework/Framework/include/MakeMVAVariables.h"
 #include "Framework/Framework/include/Baseline.h"
 #include "Framework/Framework/include/BTagCorrector.h"
@@ -41,12 +41,12 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         BJet                bjet(myVarSuffix);
         Muon                muon(myVarSuffix);
         Photon              photon(myVarSuffix);
+        JetAK8              jetAK8(myVarSuffix);
         Baseline            baseline(myVarSuffix);
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
-        FatJetCombine       fatJetCombine(myVarSuffix);
         CommonVariables     commonVariables(myVarSuffix);
         MakeMVAVariables    makeMVAVariables(false, myVarSuffix, "GoodJets_pt30", false, true, 7, 2, "");
         MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
@@ -62,7 +62,7 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
         tr.registerFunction(baseline);
-        tr.registerFunction(fatJetCombine);
+        tr.registerFunction(jetAK8);
         tr.registerFunction(makeMVAVariables);
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres_OldSeed);
