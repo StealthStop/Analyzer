@@ -70,6 +70,7 @@ private:
             else if(module=="Electron")                              tr.emplaceModule<Electron>();
             else if(module=="Photon")                                tr.emplaceModule<Photon>();
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
+            else if(module=="JetAK8")                                tr.emplaceModule<JetAK8>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
             else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",        false, true, 7, 2, "");
