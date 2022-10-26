@@ -16,10 +16,8 @@
 #include "Framework/Framework/include/DeepEventShape.h"
 #include "Framework/Framework/include/BTagCorrector.h"
 #include "Framework/Framework/include/ScaleFactors.h"
-#include "Framework/Framework/include/PartialUnBlinding.h"
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MegaJetCombine.h"
-#include "Framework/Framework/include/TrainingNTupleVars.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 #include "Framework/Framework/include/StopJets.h"
 #include "Framework/Framework/include/ISRJets.h"
@@ -62,8 +60,7 @@ private:
  
         for(const auto& module : modules)
         {
-            if     (module=="PartialUnBlinding")                     tr.emplaceModule<PartialUnBlinding>();
-            else if(module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
+            if     (module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
             else if(module=="RunTopTagger")                          tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
             else if(module=="RunTopTagger_ResolvedOnly")             tr.emplaceModule<RunTopTagger>(TopTaggerCfg_ResolvedOnly);
             else if(module=="Muon")                                  tr.emplaceModule<Muon>();
@@ -84,7 +81,6 @@ private:
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
-            else if(module=="TrainingNTupleVars")                    tr.emplaceModule<TrainingNTupleVars>();
             else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",                 "NJets",                    "_All",                "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",            "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR",  "", Hemisphere::InvMassSeed);
