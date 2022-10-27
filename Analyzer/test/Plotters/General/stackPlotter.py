@@ -178,7 +178,7 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, noRatio, noStack, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
+    def __init__(self, approved, wip, noRatio, noStack, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -194,6 +194,7 @@ class StackPlotter:
             os.makedirs(self.outpath)
 
         self.approved     = approved
+        self.wip          = wip
         self.noRatio      = noRatio
         self.noStack      = noStack
         self.normMC2Data  = normMC2Data
@@ -348,9 +349,13 @@ class StackPlotter:
         mark.SetTextSize(0.040)
 
         if self.approved:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Supplementary")
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "")
+
+        elif (self.wip):
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Work in Progress")
+
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "work in progress")
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Preliminary")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -629,7 +634,7 @@ class StackPlotter:
 
                         ratio.Draw("E0P")
 
-                    canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, newName))
+                    canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
 
 if __name__ == "__main__":
 
@@ -638,6 +643,7 @@ if __name__ == "__main__":
     parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",               default=False,  action="store_true") 
     parser.add_argument("--noStack",      dest="noStack",      help="No stacking of bkgs",         default=False,  action="store_true") 
     parser.add_argument("--approved",     dest="approved",     help="Plot is approved",            default=False,  action="store_true") 
+    parser.add_argument("--wip",          dest="wip",          help="Work in Progress",            default=False,  action="store_true")
     parser.add_argument("--printNEvents", dest="printNEvents", help="Show number of events",       default=False,  action="store_true") 
     parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
     parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",      default=False,  action="store_true") 
@@ -663,5 +669,5 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.noRatio, args.noStack, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
+    plotter = StackPlotter(args.approved, args.wip, args.noRatio, args.noStack, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
     plotter.makePlots()
