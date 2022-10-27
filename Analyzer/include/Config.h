@@ -16,14 +16,11 @@
 #include "Framework/Framework/include/DeepEventShape.h"
 #include "Framework/Framework/include/BTagCorrector.h"
 #include "Framework/Framework/include/ScaleFactors.h"
-#include "Framework/Framework/include/PartialUnBlinding.h"
 #include "Framework/Framework/include/StopGenMatch.h"
 #include "Framework/Framework/include/MegaJetCombine.h"
-#include "Framework/Framework/include/TrainingNTupleVars.h"
 #include "Framework/Framework/include/MakeStopHemispheres.h"
 #include "Framework/Framework/include/StopJets.h"
 #include "Framework/Framework/include/ISRJets.h"
-#include "Framework/Framework/include/FatJetCombine.h"
 
 class Config
 {
@@ -63,14 +60,14 @@ private:
  
         for(const auto& module : modules)
         {
-            if     (module=="PartialUnBlinding")                     tr.emplaceModule<PartialUnBlinding>();
-            else if(module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
+            if     (module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
             else if(module=="RunTopTagger")                          tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
             else if(module=="RunTopTagger_ResolvedOnly")             tr.emplaceModule<RunTopTagger>(TopTaggerCfg_ResolvedOnly);
             else if(module=="Muon")                                  tr.emplaceModule<Muon>();
             else if(module=="Electron")                              tr.emplaceModule<Electron>();
             else if(module=="Photon")                                tr.emplaceModule<Photon>();
             else if(module=="Jet")                                   tr.emplaceModule<Jet>();
+            else if(module=="JetAK8")                                tr.emplaceModule<JetAK8>();
             else if(module=="BJet")                                  tr.emplaceModule<BJet>();
             else if(module=="CommonVariables")                       tr.emplaceModule<CommonVariables>();
             else if(module=="MakeMVAVariables")                      tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",        false, true, 7, 2, "");
@@ -84,8 +81,6 @@ private:
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
-            else if(module=="FatJetCombine")                         tr.emplaceModule<FatJetCombine>();
-            else if(module=="TrainingNTupleVars")                    tr.emplaceModule<TrainingNTupleVars>();
             else if(module=="MakeStopHemispheres_All")               tr.emplaceModule<MakeStopHemispheres>("Jets",     "AllJets",                 "NJets",                    "_All",                "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed")           tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20",           "NGoodJets_pt20",           "_OldSeed",            "", Hemisphere::InvMassSeed);
             else if(module=="MakeStopHemispheres_OldSeed_maskedISR") tr.emplaceModule<MakeStopHemispheres>("Jets",     "GoodJets_pt20_maskedISR", "NGoodJets_pt20_maskedISR", "_OldSeed_maskedISR",  "", Hemisphere::InvMassSeed);
@@ -358,7 +353,6 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "MakeMVAVariables",
                 "DeepEventShape",
@@ -387,7 +381,6 @@ public:
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
-                "FatJetCombine",
                 "MakeMVAVariables",
                 "StopJets",
                 "MakeStopHemispheres_OldSeed",
@@ -424,7 +417,6 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",        
@@ -443,7 +435,6 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
@@ -461,7 +452,6 @@ public:
                 "BJet",
                 "RunTopTagger_ResolvedOnly",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
@@ -479,7 +469,6 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
@@ -503,7 +492,6 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "MakeMVAVariables_0l",
                 "ISRJets",
@@ -543,7 +531,6 @@ public:
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
-                "FatJetCombine",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
