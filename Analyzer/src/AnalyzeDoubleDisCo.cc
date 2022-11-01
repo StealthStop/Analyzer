@@ -387,24 +387,29 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         StopJets            stopJets(myVarSuffix);
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
-        DeepEventShape      neuralNetwork0L(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
-        DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix);
-        DeepEventShape      neuralNetwork1L(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix); 
-        DeepEventShape      neuralNetwork1L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix);
-        DeepEventShape      neuralNetwork2L(DoubleDisCo_Cfg_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix); 
-        DeepEventShape      neuralNetwork2L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix);
         CommonVariables     commonVariables(myVarSuffix);
-        MakeMVAVariables    makeMVAVariables0L_NonIsoMuon(false, myVarSuffix, "GoodJets_pt30",        false, true, 7,  1, "_0l");
-        MakeMVAVariables    makeMVAVariables1L_NonIsoMuon(false, myVarSuffix, "NonIsoMuonJets_pt30",  false, true, 7,  1, "_1l");
-        MakeMVAVariables    makeMVAVariables2L_NonIsoMuon(false, myVarSuffix, "NonIsoMuonJets_pt30",  false, true, 7,  1, "_2l");
-        MakeMVAVariables    makeMVAVariables0L(false, myVarSuffix, "GoodJets_pt30", false, true, 7, 0, "_0l");
-        MakeMVAVariables    makeMVAVariables1L(false, myVarSuffix, "GoodJets_pt30", false, true, 7, 1, "_1l");
-        MakeMVAVariables    makeMVAVariables2L(false, myVarSuffix, "GoodJets_pt30", false, true, 6, 2, "_2l");
-        MakeStopHemispheres stopHemispheres_OldSeed("Jets",     "GoodJets_pt20", "NGoodJets_pt20", "_OldSeed", myVarSuffix, Hemisphere::InvMassSeed);
-        MakeStopHemispheres stopHemispheres_TopSeed("StopJets", "GoodStopJets",  "NGoodStopJets",  "_TopSeed", myVarSuffix, Hemisphere::TopSeed    );
-        MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets",     "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
-        MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets", "GoodStopJets",        "NGoodStopJets",        "_TopSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
-
+        // 0l
+        // note that if we make the inputs to the NN, we use just the GoodJets_pt30 collection to derive things
+        // but, if we define the QCD CR selection, we use the NonIsoMuonJets_pt30 collection 
+        DeepEventShape      neuralNetwork0L(           DoubleDisCo_Cfg_0l_RPV,            DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix                          );
+        DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix                          );
+        MakeMVAVariables    makeMVAVariables0L(                false,  myVarSuffix,        "GoodJets_pt30", false, true, 7, 0, "_0l"                                   );
+        MakeMVAVariables    makeMVAVariables0L_NonIsoMuon(     false,  myVarSuffix,        "GoodJets_pt30", false, true, 7, 1, "_0l"                                   );
+        MakeStopHemispheres stopHemispheres_TopSeed(           "StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed",            myVarSuffix, Hemisphere::TopSeed    );
+        MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
+        // 1l
+        DeepEventShape      neuralNetwork1L(           DoubleDisCo_Cfg_1l_RPV,            DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    ); 
+        DeepEventShape      neuralNetwork1L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    );
+        MakeMVAVariables    makeMVAVariables1L(                false,  myVarSuffix,           "GoodJets_pt30",        false, true, 7, 0, "_1l"                                   );
+        MakeMVAVariables    makeMVAVariables1L_NonIsoMuon(     false,  myVarSuffix,           "NonIsoMuonJets_pt30",  false, true, 7, 1, "_1l"                                   );
+        MakeStopHemispheres stopHemispheres_OldSeed(           "Jets", "GoodJets_pt20",       "NGoodJets_pt20",       "_OldSeed",            myVarSuffix, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets", "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);        
+        // 2l
+        //DeepEventShape      neuralNetwork2L(           DoubleDisCo_Cfg_2l_RPV,            DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix); 
+        //DeepEventShape      neuralNetwork2L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix);
+        //MakeMVAVariables    makeMVAVariables1L(           false, myVarSuffix, "GoodJets_pt30",        false, true, 7, 0, "_2l"               );
+        //MakeMVAVariables    makeMVAVariables2L_NonIsoMuon(false, myVarSuffix, "NonIsoMuonJets_pt30",  false, true, 7, 1, "_2l"               );
+        
         // Remember, order matters here !
         // Follow what is done in Config.h
         tr.registerFunction(muon);
@@ -415,12 +420,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
         tr.registerFunction(baseline);
-        tr.registerFunction(makeMVAVariables0L_NonIsoMuon);
-        tr.registerFunction(makeMVAVariables1L_NonIsoMuon);
-        tr.registerFunction(makeMVAVariables2L_NonIsoMuon);
         tr.registerFunction(makeMVAVariables0L);
         tr.registerFunction(makeMVAVariables1L);
-        tr.registerFunction(makeMVAVariables2L);
+        //tr.registerFunction(makeMVAVariables2L);
+        tr.registerFunction(makeMVAVariables0L_NonIsoMuon);
+        tr.registerFunction(makeMVAVariables1L_NonIsoMuon);
+        //tr.registerFunction(makeMVAVariables2L_NonIsoMuon);
         tr.registerFunction(stopJets);
         tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
@@ -442,8 +447,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(neuralNetwork0L_NonIsoMuon);
         tr.registerFunction(neuralNetwork1L);
         tr.registerFunction(neuralNetwork1L_NonIsoMuon);
-        tr.registerFunction(neuralNetwork2L);
-        tr.registerFunction(neuralNetwork2L_NonIsoMuon);
+        //tr.registerFunction(neuralNetwork2L);
+        //tr.registerFunction(neuralNetwork2L_NonIsoMuon);
     }
 
     Debug("Initialized modules to run", __LINE__);
@@ -459,7 +464,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         if (tr.getEvtNum() % 1000 == 0)
             printf("  Event %i\n", tr.getEvtNum() );
 
-        std::vector<std::string> channels = {"0", "1", "2"};
+        std::vector<std::string> channels = {"0", "1"}; // "2"};
 
         Debug("Initializing variables for signal and control regions", __LINE__);
 
@@ -637,7 +642,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             // ------------------
             for (auto& channel : channels)
             {
-                // Collection names for 0L and 2L do  not change when in the QCDCR, because of the jet collection used...
+                // Collection names for 0L, 1L, 2L do  not change when in the QCDCR, because of the jet collection used...
                 std::string mvaName  = "NonIsoMuons_";
                 std::string flavName = "NonIsoMuons";
                 std::string jetsName = "NonIsoMuon";
@@ -904,10 +909,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 {"_1l_bottomEdge"    , Baseline[1] && bottomEdge},                         
                 {"_1l_central"       , Baseline[1] && central},                         
                 {"_1l_outside"       , Baseline[1] && outside},                         
-                {"_2l"               , Baseline[2]}, 
+                //{"_2l"               , Baseline[2]}, 
                 {"_0l_blind"         , Baseline_blind[0]},
                 {"_1l_blind"         , Baseline_blind[1]},                         
-                {"_2l_blind"         , Baseline_blind[2]}, 
+                //{"_2l_blind"         , Baseline_blind[2]}, 
                 {"_QCDCR"            , Baseline_CR[0]}, 
             };
 
