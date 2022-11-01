@@ -400,7 +400,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         // 1l
         DeepEventShape      neuralNetwork1L(           DoubleDisCo_Cfg_1l_RPV,            DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    ); 
         DeepEventShape      neuralNetwork1L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    );
-        MakeMVAVariables    makeMVAVariables1L(                false,  myVarSuffix,           "GoodJets_pt30",        false, true, 7, 0, "_1l"                                   );
+        MakeMVAVariables    makeMVAVariables1L(                false,  myVarSuffix,           "GoodJets_pt30",        false, true, 7, 1, "_1l"                                   );
         MakeMVAVariables    makeMVAVariables1L_NonIsoMuon(     false,  myVarSuffix,           "NonIsoMuonJets_pt30",  false, true, 7, 1, "_1l"                                   );
         MakeStopHemispheres stopHemispheres_OldSeed(           "Jets", "GoodJets_pt20",       "NGoodJets_pt20",       "_OldSeed",            myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets", "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);        
