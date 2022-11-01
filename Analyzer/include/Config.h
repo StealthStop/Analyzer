@@ -430,14 +430,17 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
                 "CommonVariables",
                 "Baseline",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "StopJets",
+                "MakeMVAVariables_0l",
+                "MakeStopHemispheres_TopSeed",
+                "DoubleDisCo_0l_RPV"
             };
             registerModules(tr, std::move(modulesList));
         }
