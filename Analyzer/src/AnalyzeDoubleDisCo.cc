@@ -711,6 +711,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + myVarSuffix));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b"                 + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"                 + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"              + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"                 + myVarSuffix));
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + myVarSuffix));
                 dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + myVarSuffix));
 
@@ -840,6 +844,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 {"_1l_blind"         , Baseline_blind[1]},                         
                 {"_2l_blind"         , Baseline_blind[2]}, 
                 {"_QCDCR"            , Baseline_CR[0]}, 
+                {"_QCDCR_1b"         , Baseline_CR[1]}, 
+                {"_QCDCR_1t"         , Baseline_CR[2]}, 
+                {"_QCDCR_1b_1t"      , Baseline_CR[3]}, 
+                {"_QCDCR_2b"         , Baseline_CR[4]},   
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
