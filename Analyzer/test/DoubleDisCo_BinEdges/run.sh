@@ -70,7 +70,7 @@ for YEAR in ${YEARS[@]}; do
                         fi
 
                         #################################
-                        if [ $command == "MCcorrectionFactor_TT" ] || [ $command == "All" ]; then 
+                        if [ $command == "MCcorrectionFactor_TTvar" ] || [ $command == "All" ]; then 
                             echo "running for MCcorrectionFactor_TTvar:---------------------------------"
                             python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode        
                         fi
