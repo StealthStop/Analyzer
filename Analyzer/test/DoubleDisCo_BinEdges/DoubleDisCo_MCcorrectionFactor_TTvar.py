@@ -20,10 +20,10 @@ class MCcorrectionFactor_TTvar():
         self.edges       = edges
 
         self.ttVarsModel = [
-                            #"TT_fsrUp",            
-                            #"TT_fsrDown",          
-                            #"TT_isrUp",            
-                            #"TT_isrDown",          
+                            "TT_fsrUp",            
+                            "TT_fsrDown",          
+                            "TT_isrUp",            
+                            "TT_isrDown",          
                             "TT_hdampUP",          
                             "TT_hdampDOWN",        
                             "TT_TuneCP5up",
@@ -32,10 +32,10 @@ class MCcorrectionFactor_TTvar():
         ]
 
         self.ttVarsDetect = [
-                             #"TT_JECup",            
-                             #"TT_JECdown",          
-                             #"TT_JERup",            
-                             #"TT_JERdown"          
+                             "TT_JECup",            
+                             "TT_JECdown",          
+                             "TT_JERup",            
+                             "TT_JERdown"          
         ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect
@@ -139,7 +139,23 @@ class MCcorrectionFactor_TTvar():
 
             for sample in samples:
 
-                hist_lists[sample] = files[sample].Get(histName + njet)
+                # get the fsr/isr higtograms from TT root file
+                ttvarStr = ""
+
+                if sample == "TT_fsrDown":
+                    ttvarStr = "_fsrDown"
+
+                elif sample == "TT_fsrUp":
+                    ttvarStr = "_fsrUp"
+
+                elif sample == "TT_isrDown":
+                    ttvarStr = "_isrDown"
+
+                elif sample == "TT_isrUp":
+                    ttvarStr = "_isrUp"
+
+                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
             maxEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(hist_lists["TT"].GetNbinsX()+1)
