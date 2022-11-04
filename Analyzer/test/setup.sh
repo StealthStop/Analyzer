@@ -8,6 +8,12 @@ then
     echo "adding ${SCRIPTSDIR} to the path"
 fi
 
+PYTHONDIR=${CMSSW_BASE}/src/Analyzer/Analyzer/test/Plotters/General
+if [[ $PYTHONPATH != *"${PYTHONDIR}"* ]]
+then
+    export PYTHONPATH=${PYTHONDIR}:${PYTHONPATH}
+fi
+
 # set up the top tagger libraries etc
 echo "|-----------------------------|"
 echo "|      Set up top tagger      |"
