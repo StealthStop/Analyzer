@@ -29,12 +29,12 @@
 
 #DATE=("11.10.2022")
 command=$1
-YEARS=("Run2UL" "2016" "2017" "2018")
-MODELS=("RPV" "SYY")
+YEARS=("Run2UL") # "2016" "2017" "2018")
+MODELS=("RPV") # "SYY")
 MASSES=("550")
-CHANNELS=("1l")
-DISC1s=("0.6")
-DISC2s=("0.6")
+CHANNELS=("0l" "1l")
+DISC1s=("0.6") 
+DISC2s=("0.6") 
 
 for YEAR in ${YEARS[@]}; do
 
@@ -59,8 +59,8 @@ for YEAR in ${YEARS[@]}; do
                         #################################
                         if [ $command == "BinEdges" ] || [ $command == "All" ]; then 
                             echo "running for BinEdges:---------------------------------"
-                            #python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVars2D #--plotDisc1VsDisc2 
-                            python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotDisc1VsDisc2 
+                            python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVars2D --plotDisc1VsDisc2 
+                            #python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotDisc1VsDisc2 
                         fi
                                                     
                         #################################

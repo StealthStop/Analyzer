@@ -65,7 +65,23 @@ class MCcorrectionFactor_TT():
 
             for sample in samples:
 
-                hist_lists[sample] = files[sample].Get(histName + njet)
+                # get the fsr/isr higtograms from TT root file
+                ttvarStr = ""
+
+                if sample == "TT_fsrDown":
+                    ttvarStr = "_fsrDown"
+
+                elif sample == "TT_fsrUp":
+                    ttvarStr = "_fsrUp"
+
+                elif sample == "TT_isrDown":
+                    ttvarStr = "_isrDown"
+
+                elif sample == "TT_isrUp":
+                    ttvarStr = "_isrUp"
+
+                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
             maxEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(hist_lists["TT"].GetNbinsX()+1)
