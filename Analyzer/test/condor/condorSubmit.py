@@ -42,9 +42,13 @@ def main():
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
 
-    srcDir  = environ["CMSSW_BASE"] + "/src"
-    testDir = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
-    
+    srcDir   = environ["CMSSW_BASE"] + "/src"
+    testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
+    userName = environ["USER"]
+
+    workingDir = options.outPath
+    eosDir     = "root://cmseos.fnal.gov///store/user/%s/StealthStop/%s"%(userName, options.outPath)
+
     # Prepare the list of files to transfer
     mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)
     mvaFileName2016postVFP = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016postVFP.cfg" % repo)
@@ -123,21 +127,23 @@ def main():
         exit(0)
     
     fileParts = []
-    fileParts.append("Universe   = vanilla\n")
-    fileParts.append("Executable = run_Analyzer_condor.sh\n")
+    fileParts.append("Universe             = vanilla\n")
+    fileParts.append("Executable           = run_Analyzer_condor.sh\n")
     fileParts.append("Transfer_Input_Files = %s/%s.tar.gz, %s/exestuff.tar.gz\n" % (options.outPath,environ["CMSSW_VERSION"],options.outPath))
-    fileParts.append("Should_Transfer_Files = YES\n")
-    fileParts.append("WhenToTransferOutput = ON_EXIT\n")
-    fileParts.append("x509userproxy = $ENV(X509_USER_PROXY)\n\n")
+    fileParts.append("x509userproxy        = $ENV(X509_USER_PROXY)\n\n")
 
     nFilesPerJob = options.numfile
     numberOfJobs = 0
     for ds in datasets:
         ds = ds.strip()
+
+        stubDir = "output-files/%s"%(ds)
+        logsDir = "log-files/%s"%(ds)
         # create the directory
-        if not os.path.isdir("%s/output-files/%s" % (options.outPath, ds)):
-            os.makedirs("%s/output-files/%s" % (options.outPath, ds))
-    
+        if not os.path.isdir("%s/%s" %(workingDir, logsDir)):
+            subprocess.call(["eos", "root://cmseos.fnal.gov", "mkdir", "-p", eosDir[23:] + "/" + stubDir])
+            system('mkdir -p %s/%s' %(workingDir, logsDir))
+   
         for s, n, e in sc.sampleList(ds):
             print "SampleSet:", n, ", nEvents:", e
             f = open(s)
@@ -148,24 +154,11 @@ def main():
                         count = count + 1
                 for startFileNum in xrange(0, count, nFilesPerJob):
                     numberOfJobs+=1
-                    outputDir = "%s/output-files/%s" % (options.outPath, ds)
-                    outputFiles = [
-                        "MyAnalysis_%s_%s.root" % (n, startFileNum),
-                        "MyAnalysis_%s_%s_Train.root" % (n, startFileNum),
-                        "MyAnalysis_%s_%s_Test.root" % (n, startFileNum),
-                        "MyAnalysis_%s_%s_Val.root" % (n, startFileNum),
-                    ]
-                    transfer = "transfer_output_remaps = \""
-                    for f_ in outputFiles:
-                        transfer += "%s = %s/%s" % (f_, outputDir, f_)
-                        if f_ != outputFiles[-1]:
-                            transfer += "; "
-                    transfer += "\"\n"                    
-                    fileParts.append(transfer)
-                    fileParts.append("Arguments = %s %i %i %s %s %s\n"%(n, nFilesPerJob, startFileNum, s, options.analyze, environ["CMSSW_VERSION"]))
-                    fileParts.append("Output = %s/log-files/MyAnalysis_%s_%i.stdout\n"%(options.outPath, n, startFileNum))
-                    fileParts.append("Error = %s/log-files/MyAnalysis_%s_%i.stderr\n"%(options.outPath, n, startFileNum))
-                    fileParts.append("Log = %s/log-files/MyAnalysis_%s_%i.log\n"%(options.outPath, n, startFileNum))
+
+                    fileParts.append("Arguments = %s %i %i %s %s %s %s\n"%(n, nFilesPerJob, startFileNum, s, options.analyze, environ["CMSSW_VERSION"], eosDir + "/" + stubDir))
+                    fileParts.append("Output    = %s/%s/MyAnalysis_%s_%i.stdout\n"%(workingDir, logsDir, n, startFileNum))
+                    fileParts.append("Error     = %s/%s/MyAnalysis_%s_%i.stderr\n"%(workingDir, logsDir, n, startFileNum))
+                    fileParts.append("Log       = %s/%s/MyAnalysis_%s_%i.log\n"%(workingDir,    logsDir, n, startFileNum))
                     fileParts.append("Queue\n\n")
     
                 f.close()
@@ -178,8 +171,6 @@ def main():
         makeExeAndFriendsTarball(filestoTransfer, "exestuff", options.outPath)
         system("tar --exclude-caches-all --exclude-vcs -zcf %s/${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp" % options.outPath)
         
-    system('mkdir -p %s/log-files' % options.outPath)
-
     if not options.noSubmit: 
         system("echo 'condor_submit condor_submit.txt'")
         system('condor_submit condor_submit.txt')
