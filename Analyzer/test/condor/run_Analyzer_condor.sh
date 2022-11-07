@@ -14,6 +14,7 @@ filelist=$4
 analyzer=$5
 CMSSW_VERSION=$6
 eosPath=$7
+fastMode=$8
 base_dir=`pwd`
 printf "\n\n base dir is $base_dir\n\n"
 
@@ -68,8 +69,14 @@ file=$(printf ${filelist} | sed 's|/eos/uscms||')
 printf "\n\n xrdcp root://cmseos.fnal.gov/${file} .\n\n"
 xrdcp root://cmseos.fnal.gov/${file} .
 
+fastMode=""
+if [ $fastMode == 1 ]
+then
+    fastMode="-s"
+fi
+
 printf "\n\n Attempting to run MyAnalysis executable.\n\n"
-./MyAnalysis -A ${analyzer} --condor -D ${dataset} -N ${nfiles} -M ${startfile}
+./MyAnalysis -A ${analyzer} --condor -D ${dataset} -N ${nfiles} -M ${startfile} ${fastMode}
 
 printf "\n\n ls output\n"
 ls -l

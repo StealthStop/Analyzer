@@ -38,6 +38,7 @@ def main():
     parser.add_option ('-l',        dest='dataCollections',         action='store_true', default = False,         help="List all datacollections")
     parser.add_option ('-L',        dest='dataCollectionslong',     action='store_true', default = False,         help="List all datacollections and sub collections")
     parser.add_option ('-c',        dest='noSubmit',                action='store_true', default = False,         help="Do not submit jobs.  Only create condor_submit.txt.")
+    parser.add_option ('-s',        dest='fastMode',                action='store_true', default = False,         help="Run Analyzer in fast mode")
     parser.add_option ('--output',  dest='outPath',  type='string',                      default = '.',           help="Name of directory where output of each condor job goes")
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
@@ -155,7 +156,7 @@ def main():
                 for startFileNum in xrange(0, count, nFilesPerJob):
                     numberOfJobs+=1
 
-                    fileParts.append("Arguments = %s %i %i %s %s %s %s\n"%(n, nFilesPerJob, startFileNum, s, options.analyze, environ["CMSSW_VERSION"], eosDir + "/" + stubDir))
+                    fileParts.append("Arguments = %s %i %i %s %s %s %s %d\n"%(n, nFilesPerJob, startFileNum, s, options.analyze, environ["CMSSW_VERSION"], eosDir + "/" + stubDir, options.fastMode))
                     fileParts.append("Output    = %s/%s/MyAnalysis_%s_%i.stdout\n"%(workingDir, logsDir, n, startFileNum))
                     fileParts.append("Error     = %s/%s/MyAnalysis_%s_%i.stderr\n"%(workingDir, logsDir, n, startFileNum))
                     fileParts.append("Log       = %s/%s/MyAnalysis_%s_%i.log\n"%(workingDir,    logsDir, n, startFileNum))
