@@ -69,14 +69,14 @@ file=$(printf ${filelist} | sed 's|/eos/uscms||')
 printf "\n\n xrdcp root://cmseos.fnal.gov/${file} .\n\n"
 xrdcp root://cmseos.fnal.gov/${file} .
 
-fastMode=""
-if [ $fastMode == 1 ]
+fastModeStr=""
+if [[ $fastMode -eq 1 ]]
 then
-    fastMode="-s"
+    fastModeStr="-s"
 fi
 
 printf "\n\n Attempting to run MyAnalysis executable.\n\n"
-./MyAnalysis -A ${analyzer} --condor -D ${dataset} -N ${nfiles} -M ${startfile} ${fastMode}
+./MyAnalysis -A ${analyzer} --condor -D ${dataset} -N ${nfiles} -M ${startfile} ${fastModeStr}
 
 printf "\n\n ls output\n"
 ls -l
