@@ -571,16 +571,16 @@ void Analyze2W::InitHistos() {
     my_histos.createNewHistogram("DeepAK8TagW_HasNearGenW", 5, 0, 5, "DeepAK8TagW_HasNearGenW");
     my_histos.createNewHistogram("DeepAK8TagW_MatchedEnergyRatio", 100,0,3, "DeepAK8TagW_MatchedEnergyRatio");
 
-    // Nsubjetiness of CA12 jets
-    my_histos.createNewHistogram("nCA12Jets", 15, 0, 15, "nCA12Jets");
-    my_histos.createNewHistogram("CA12Pt", 50, 0, 500, "CA12Pt ", "Events", true);
-    my_histos.createNewHistogram("CA12_NSubJettiness4", 100, 0, 1, "CA12_NSJ 4");
-    my_histos.createNewHistogram("CA12_NSubJettiness3", 100, 0, 1, "CA12_NSJ 3");
-    my_histos.createNewHistogram("CA12_NSubJettiness2", 100, 0, 1, "CA12_NSJ 2");
-    my_histos.createNewHistogram("CA12_NSubJettiness1", 100, 0, 1, "CA12_NSJ 1");
-    my_histos.createNewHistogram("CA12_NSubRatio43", 100, 0, 2, "CA12_NSR 43");
-    my_histos.createNewHistogram("CA12_NSubRatio42", 100, 0, 2, "CA12_NSR 42");
-    my_histos.createNewHistogram("CA12_NSubRatio21", 100, 0, 2, "CA12_NSR 21");
+    // Nsubjetiness of AK15 jets
+    my_histos.createNewHistogram("nAK15Jets", 15, 0, 15, "nAK15Jets");
+    my_histos.createNewHistogram("AK15Pt", 50, 0, 500, "AK15Pt ", "Events", true);
+    my_histos.createNewHistogram("AK15_NSubJettiness4", 100, 0, 1, "AK15_NSJ 4");
+    my_histos.createNewHistogram("AK15_NSubJettiness3", 100, 0, 1, "AK15_NSJ 3");
+    my_histos.createNewHistogram("AK15_NSubJettiness2", 100, 0, 1, "AK15_NSJ 2");
+    my_histos.createNewHistogram("AK15_NSubJettiness1", 100, 0, 1, "AK15_NSJ 1");
+    my_histos.createNewHistogram("AK15_NSubRatio43", 100, 0, 2, "AK15_NSR 43");
+    my_histos.createNewHistogram("AK15_NSubRatio42", 100, 0, 2, "AK15_NSR 42");
+    my_histos.createNewHistogram("AK15_NSubRatio21", 100, 0, 2, "AK15_NSR 21");
 
     my_histos.createNewHistogram("AK8_NSubJettiness3", 100, 0, 1, "AK8_NSJ 3");
     my_histos.createNewHistogram("AK8_NSubJettiness2", 100, 0, 1, "AK8_NSJ 2");
@@ -634,7 +634,7 @@ void Analyze2W::InitHistos() {
 
 
 
-    // Mass difference of two leading CA12 jets
+    // Mass difference of two leading AK15 jets
     my_histos.createNewHistogram("mass_ratio", 100, 0, 1, "Mass Difference Ratio");
 
     // Jet kinematic information
@@ -653,7 +653,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
     std::cout << " FILETAG    " << filetag << "\n";
     bool is_virtual_sbottom = (filetag.find("mB-0") != std::string::npos);
     bool is_rpv_mc = (filetag.find("RPV2W") != std::string::npos);
-    bool has_ca12 = is_rpv_mc ||  (filetag.find("stealth") != std::string::npos);
+    bool has_ca12 = true;
     while (tr.getNextEvent()) {
         if (maxevents != -1 && tr.getEvtNum() >= maxevents) {
             std::cout << std::endl;
@@ -949,20 +949,20 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 #define Fill(table, var) my_histos.fill(table, weight, var)
 
 
-        //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsCA12, nsrCA12_21, nsrCA12_42, nsrCA12_43};
+        //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsAK15, nsrAK15_21, nsrAK15_42, nsrAK15_43};
         float max_gen_w_pt = 0 ;
         if(std::size(gen_w_boson)){
             max_gen_w_pt =  std::max_element(gen_w_boson.begin(), gen_w_boson.end(), [](const auto& x,const auto& y){return x.second.Pt() < y.second.Pt();})->second.Pt();
         }
         if(has_ca12){
-            makeVec(JetsCA12, utility::LorentzVector);
-            makeVec(JetsCA12_NsubjettinessTau4, float);
-            makeVec(JetsCA12_NsubjettinessTau3, float);
-            makeVec(JetsCA12_NsubjettinessTau2, float);
-            makeVec(JetsCA12_NsubjettinessTau1, float);
-            MAKE_RATIO(CA12,4, 3);
-            MAKE_RATIO(CA12,4, 2);
-            MAKE_RATIO(CA12,2, 1);
+            makeVec(JetsAK15, utility::LorentzVector);
+            makeVec(JetsAK15_NsubjettinessTau4, float);
+            makeVec(JetsAK15_NsubjettinessTau3, float);
+            makeVec(JetsAK15_NsubjettinessTau2, float);
+            makeVec(JetsAK15_NsubjettinessTau1, float);
+            MAKE_RATIO(AK15,4, 3);
+            MAKE_RATIO(AK15,4, 2);
+            MAKE_RATIO(AK15,2, 1);
             SliceData data;
             data.Ht = HT_trigger_pt30;
             data.genHt = GenHT;
@@ -970,23 +970,23 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             data.n_gen_leps = num_leps;
             data.gen_w_pt = max_gen_w_pt;
             data.Jets = JetsAK8;
-            data.nsr21 = nsrCA12_21;
-            data.nsr42 = nsrCA12_42;
-            data.nsr43 = nsrCA12_43;
+            data.nsr21 = nsrAK15_21;
+            data.nsr42 = nsrAK15_42;
+            data.nsr43 = nsrAK15_43;
             data.nbjets = NBJets;
             data.nmedw = nw_deep_tag ;
             my_histos.processCuts(data);
 
-            Fill("nCA12Jets", std::size(JetsCA12));
-            for (std::size_t i = 0; i < std::size(JetsCA12); ++i) {
-                Fill("CA12_NSubJettiness3", JetsCA12_NsubjettinessTau3[i]);
-                Fill("CA12_NSubJettiness2", JetsCA12_NsubjettinessTau2[i]);
-                Fill("CA12_NSubJettiness1", JetsCA12_NsubjettinessTau1[i]);
-                Fill("CA12_NSubJettiness4", JetsCA12_NsubjettinessTau4[i]);
-                Fill("CA12_NSubRatio42", nsrCA12_42[i]);
-                Fill("CA12_NSubRatio43", nsrCA12_43[i]);
-                Fill("CA12_NSubRatio21", nsrCA12_21[i]);
-                Fill("CA12Pt", JetsCA12[i].Pt());
+            Fill("nAK15Jets", std::size(JetsAK15));
+            for (std::size_t i = 0; i < std::size(JetsAK15); ++i) {
+                Fill("AK15_NSubJettiness3", JetsAK15_NsubjettinessTau3[i]);
+                Fill("AK15_NSubJettiness2", JetsAK15_NsubjettinessTau2[i]);
+                Fill("AK15_NSubJettiness1", JetsAK15_NsubjettinessTau1[i]);
+                Fill("AK15_NSubJettiness4", JetsAK15_NsubjettinessTau4[i]);
+                Fill("AK15_NSubRatio42", nsrAK15_42[i]);
+                Fill("AK15_NSubRatio43", nsrAK15_43[i]);
+                Fill("AK15_NSubRatio21", nsrAK15_21[i]);
+                Fill("AK15Pt", JetsAK15[i].Pt());
             }
             Fill("mass_ratio", data.mass_ratio);
         } else {
