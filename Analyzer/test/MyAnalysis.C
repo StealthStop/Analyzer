@@ -72,17 +72,17 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
         tr.registerDerivedVar("analyzer",analyzer);
         tr.registerDerivedVar("dataset",dataSets);
 
-        printf( "runtype: %s nFiles: %i startFile: %i maxEvts: %i \n",runtype.c_str(),nFiles,startFile,maxEvts ); fflush( stdout );
-
-        // Define classes/functions that add variables on the fly        
-        Config c;
-        c.setUp(tr);
-
         // Registerd event weight computed by FileSummary class, no sign information
         tr.registerDerivedVar("weightAbsVal", file.getWeight());
 
         // Determine if smart early-abort-event-module-pipeline is active
         tr.registerDerivedVar("fastMode", fastMode);
+
+        printf( "runtype: %s nFiles: %i startFile: %i maxEvts: %i \n",runtype.c_str(),nFiles,startFile,maxEvts ); fflush( stdout );
+
+        // Define classes/functions that add variables on the fly        
+        Config c;
+        c.setUp(tr);
 
         // Loop over all of the events and fill histos
         std::cout << "Starting event loop (in run)" << std::endl;

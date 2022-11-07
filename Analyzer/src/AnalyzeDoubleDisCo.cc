@@ -480,10 +480,16 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         for(const auto& myVarSuffix : my_var_suffix)
         {
-            // If event is not interesting for any channel or selection, then move on now and 
-            // do not waste any more time on it, we already filled the EventCounter histogram
+            // If an event is not interesting for any channel selection (see explanation and definition
+            // of lostCauseEvent boolean in Baseline.h), then move on here and do not waste any more 
+            // time on looping over histos or getting vars.
+            // This only matters if the user specifies -s on the command line
+            // N.B. We already filled the EventCounter histogram for our due-diligence of counting up
+            // every single event.
             const auto& lostCauseEvent = tr.getVar<bool>("lostCauseEvent" + myVarSuffix);
-            if (lostCauseEvent)
+            const auto& fastMode       = tr.getVar<bool>("fastMode");
+
+            if (lostCauseEvent and fastMode)
                 break;
 
             // Put 0L and 1L version of variables into vector
@@ -669,10 +675,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     htName   = "trigger";
                 }
 
-                std::string tag = "";// "_" + channel + "l";
-
                 Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                       + myVarSuffix));
-                Jets_cm_top6.push_back(tr.getVec<utility::LorentzVector>("Jets_cm_top6" + tag + myVarSuffix));
+                Jets_cm_top6.push_back(tr.getVec<utility::LorentzVector>("Jets_cm_top6" + myVarSuffix));
 
                 GoodJets.push_back(tr.getVec<bool>("GoodJets_pt30"                                 + myVarSuffix));
                 NGoodJets.push_back(tr.getVar<int>("NGoodJets_pt30"                                + myVarSuffix));
@@ -690,22 +694,22 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 DoubleDisCo_disc1.push_back(tr.getVar<double>("DoubleDisCo_disc1_"     + channel + "l_RPV" + myVarSuffix));
                 DoubleDisCo_disc2.push_back(tr.getVar<double>("DoubleDisCo_disc2_"     + channel + "l_RPV" + myVarSuffix));
 
-                fwm2_top6.push_back(tr.getVar<double>("fwm2_top6" + tag          + myVarSuffix));
-                fwm3_top6.push_back(tr.getVar<double>("fwm3_top6" + tag          + myVarSuffix));
-                fwm4_top6.push_back(tr.getVar<double>("fwm4_top6" + tag          + myVarSuffix));
-                fwm5_top6.push_back(tr.getVar<double>("fwm5_top6" + tag          + myVarSuffix));
-                jmt_ev0_top6.push_back(tr.getVar<double>("jmt_ev0_top6" + tag    + myVarSuffix));
-                jmt_ev1_top6.push_back(tr.getVar<double>("jmt_ev1_top6" + tag    + myVarSuffix));
-                jmt_ev2_top6.push_back(tr.getVar<double>("jmt_ev2_top6" + tag    + myVarSuffix));
-                nMVAJets.push_back(tr.getVar<unsigned int>("nMVAJets" + tag      + myVarSuffix));
-                nMVALeptons.push_back(tr.getVar<unsigned int>("nMVALeptons" + tag      + myVarSuffix));
+                fwm2_top6.push_back(tr.getVar<double>("fwm2_top6"          + myVarSuffix));
+                fwm3_top6.push_back(tr.getVar<double>("fwm3_top6"          + myVarSuffix));
+                fwm4_top6.push_back(tr.getVar<double>("fwm4_top6"          + myVarSuffix));
+                fwm5_top6.push_back(tr.getVar<double>("fwm5_top6"          + myVarSuffix));
+                jmt_ev0_top6.push_back(tr.getVar<double>("jmt_ev0_top6"    + myVarSuffix));
+                jmt_ev1_top6.push_back(tr.getVar<double>("jmt_ev1_top6"    + myVarSuffix));
+                jmt_ev2_top6.push_back(tr.getVar<double>("jmt_ev2_top6"    + myVarSuffix));
+                nMVAJets.push_back(tr.getVar<unsigned int>("nMVAJets"      + myVarSuffix));
+                nMVALeptons.push_back(tr.getVar<unsigned int>("nMVALeptons"      + myVarSuffix));
 
-                combinedNthJetPt.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_pt_cm" + tag + myVarSuffix));
-                combinedNthJetPtrHT.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + tag + myVarSuffix));
-                combinedNthJetEta.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_eta_cm" + tag + myVarSuffix));
-                combinedNthJetPhi.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_phi_cm" + tag + myVarSuffix));
-                combinedNthJetM.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_m_cm" + tag + myVarSuffix));
-                combinedNthJetE.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_E_cm" + tag + myVarSuffix));
+                combinedNthJetPt.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_pt_cm" + myVarSuffix));
+                combinedNthJetPtrHT.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + myVarSuffix));
+                combinedNthJetEta.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_eta_cm" + myVarSuffix));
+                combinedNthJetPhi.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_phi_cm" + myVarSuffix));
+                combinedNthJetM.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_m_cm" + myVarSuffix));
+                combinedNthJetE.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_E_cm" + myVarSuffix));
 
                 Stop1_pt_cm_OldSeed.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed"       + myVarSuffix));
                 Stop1_eta_cm_OldSeed.push_back(tr.getVar<double>("Stop1_eta_cm_OldSeed"     + myVarSuffix));
@@ -744,11 +748,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::vector<double> tempJets_cm_flavq;  
                 
                 for (unsigned int iJet = 1; iJet <= nMVAJets.back(); iJet++) {
-                    tempJets_cm_flavb.push_back(tr.getVar<double>("Jet_flavb_"     + std::to_string(iJet) + tag + myVarSuffix));
-                    tempJets_cm_flavc.push_back(tr.getVar<double>("Jet_flavc_"     + std::to_string(iJet) + tag + myVarSuffix));
-                    tempJets_cm_flavg.push_back(tr.getVar<double>("Jet_flavg_"     + std::to_string(iJet) + tag + myVarSuffix));
-                    tempJets_cm_flavuds.push_back(tr.getVar<double>("Jet_flavuds_" + std::to_string(iJet) + tag + myVarSuffix));
-                    tempJets_cm_flavq.push_back(tr.getVar<double>("Jet_flavq_"     + std::to_string(iJet) + tag + myVarSuffix));
+                    tempJets_cm_flavb.push_back(tr.getVar<double>("Jet_flavb_"     + std::to_string(iJet) + myVarSuffix));
+                    tempJets_cm_flavc.push_back(tr.getVar<double>("Jet_flavc_"     + std::to_string(iJet) + myVarSuffix));
+                    tempJets_cm_flavg.push_back(tr.getVar<double>("Jet_flavg_"     + std::to_string(iJet) + myVarSuffix));
+                    tempJets_cm_flavuds.push_back(tr.getVar<double>("Jet_flavuds_" + std::to_string(iJet) + myVarSuffix));
+                    tempJets_cm_flavq.push_back(tr.getVar<double>("Jet_flavq_"     + std::to_string(iJet) + myVarSuffix));
                 }
 
                 Jets_cm_flavb.push_back(tempJets_cm_flavb);
@@ -780,7 +784,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 DoubleDisCo_passRegions_CR.push_back(tempRegionMap_CR); 
 
                 Jets_CR.push_back(tr.getVec<utility::LorentzVector>("Jets"         + myVarSuffix));
-                Jets_cm_top6_CR.push_back(tr.getVec<utility::LorentzVector>(mvaName + "Jets_cm_top6" + tag+myVarSuffix));
+                Jets_cm_top6_CR.push_back(tr.getVec<utility::LorentzVector>(mvaName + "Jets_cm_top6" + myVarSuffix));
 
                 GoodJets_CR.push_back(tr.getVec<bool>(jetsName + "Jets_pt30"        + myVarSuffix));
                 NGoodJets_CR.push_back(tr.getVar<int>("N" + jetsName + "Jets_pt30" + myVarSuffix));
@@ -802,22 +806,22 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 DoubleDisCo_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_" + channel + "l_RPV"      + myVarSuffix));
                 DoubleDisCo_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_" + channel + "l_RPV"      + myVarSuffix));
 
-                fwm2_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm2_top6" + tag         + myVarSuffix));
-                fwm3_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm3_top6" + tag         + myVarSuffix));
-                fwm4_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm4_top6" + tag         + myVarSuffix));
-                fwm5_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm5_top6" + tag         + myVarSuffix));
-                jmt_ev0_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev0_top6" + tag   + myVarSuffix));
-                jmt_ev1_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev1_top6" + tag   + myVarSuffix));
-                jmt_ev2_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev2_top6" + tag   + myVarSuffix));
-                nMVAJets_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVAJets" + tag                  + myVarSuffix));
-                nMVALeptons_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVALeptons" + tag            + myVarSuffix));
+                fwm2_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm2_top6"         + myVarSuffix));
+                fwm3_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm3_top6"         + myVarSuffix));
+                fwm4_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm4_top6"         + myVarSuffix));
+                fwm5_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm5_top6"         + myVarSuffix));
+                jmt_ev0_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev0_top6"   + myVarSuffix));
+                jmt_ev1_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev1_top6"   + myVarSuffix));
+                jmt_ev2_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev2_top6"   + myVarSuffix));
+                nMVAJets_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVAJets"                  + myVarSuffix));
+                nMVALeptons_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVALeptons"            + myVarSuffix));
 
-                combinedNthJetPt_CR.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_pt_cm" + tag + myVarSuffix));
-                combinedNthJetPtrHT_CR.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + tag + myVarSuffix));
-                combinedNthJetEta_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_eta_cm" + tag + myVarSuffix));
-                combinedNthJetPhi_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_phi_cm" + tag + myVarSuffix));
-                combinedNthJetM_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_m_cm" + tag + myVarSuffix));
-                combinedNthJetE_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_E_cm" + tag + myVarSuffix));
+                combinedNthJetPt_CR.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_pt_cm" + myVarSuffix));
+                combinedNthJetPtrHT_CR.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + myVarSuffix));
+                combinedNthJetEta_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_eta_cm" + myVarSuffix));
+                combinedNthJetPhi_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_phi_cm" + myVarSuffix));
+                combinedNthJetM_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_m_cm" + myVarSuffix));
+                combinedNthJetE_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_E_cm" + myVarSuffix));
 
                 Stop1_pt_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"       + myVarSuffix));
                 Stop1_eta_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon"     + myVarSuffix));
@@ -853,11 +857,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::vector<double> tempJets_cm_flavq_CR;
 
                 for (unsigned int iJet = 1; iJet <= nMVAJets_CR.back(); iJet++) {
-                    tempJets_cm_flavb_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavb_"  +std::to_string(iJet)+ tag +myVarSuffix));
-                    tempJets_cm_flavc_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavc_"  +std::to_string(iJet)+ tag +myVarSuffix));
-                    tempJets_cm_flavg_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavg_"  +std::to_string(iJet)+ tag +myVarSuffix));
-                    tempJets_cm_flavuds_CR.push_back(tr.getVar<double>("Jet" + flavName + "_flavuds_"+std::to_string(iJet)+ tag +myVarSuffix));
-                    tempJets_cm_flavq_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavq_"  +std::to_string(iJet)+ tag +myVarSuffix));
+                    tempJets_cm_flavb_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavb_"  +std::to_string(iJet)+myVarSuffix));
+                    tempJets_cm_flavc_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavc_"  +std::to_string(iJet)+myVarSuffix));
+                    tempJets_cm_flavg_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavg_"  +std::to_string(iJet)+myVarSuffix));
+                    tempJets_cm_flavuds_CR.push_back(tr.getVar<double>("Jet" + flavName + "_flavuds_"+std::to_string(iJet)+myVarSuffix));
+                    tempJets_cm_flavq_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavq_"  +std::to_string(iJet)+myVarSuffix));
                 }
 
                 Jets_cm_flavb_CR.push_back(tempJets_cm_flavb_CR);

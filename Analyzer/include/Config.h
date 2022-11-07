@@ -141,6 +141,10 @@ public:
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
 
+        // Determines if an analyzer is compatible with fastmode
+        // If it is not, then the fastMode flag is essentially neutralized
+        bool fastModeCompatible = false;
+
         if(filetag.find("2016preVFP") != std::string::npos)
         {
             runYear                           = "2016preVFP";
@@ -362,6 +366,7 @@ public:
         }
         else if(analyzer=="AnalyzeDoubleDisCo")
         {
+            fastModeCompatible = true;
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
                 // All other necessary modules instantiated explicitly in AnalyzeDoubleDisCo !!!
@@ -507,31 +512,7 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
-                "Baseline",
-                "MakeMVAVariables",
-                "MakeMVAVariables_NonIsoMuon",
-                //"MakeMVAVariables_0l",
-                //"MakeMVAVariables_1l",
-                //"MakeMVAVariables_2l",
-                //"MakeMVAVariables_NonIsoMuon_0l",
-                //"MakeMVAVariables_NonIsoMuon_1l",
-                //"MakeMVAVariables_NonIsoMuon_2l",
-                "StopJets",
-                "MakeStopHemispheres_OldSeed",
-                "MakeStopHemispheres_OldSeed_NonIsoMuon",
-                "MakeStopHemispheres_TopSeed",
-                "MakeStopHemispheres_TopSeed_NonIsoMuon",
-                "BTagCorrector",
-                "ScaleFactors",
-                "StopGenMatch",
-                "DoubleDisCo_0l_RPV",
-                "DoubleDisCo_1l_RPV",
-                "DoubleDisCo_2l_RPV",
-                "DoubleDisCo_NonIsoMuon_0l_RPV",
-                "DoubleDisCo_NonIsoMuon_1l_RPV",
-                "DoubleDisCo_NonIsoMuon_2l_RPV",
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -552,6 +533,14 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+
+        const auto& fastMode = tr.getVar<bool>("fastMode");
+        if (fastMode and !fastModeCompatible)
+        {
+            std::cerr << utility::color("Error: Analyzer \"" + analyzer + "\" is not compatible with fast mode !!! Exiting...", "red") << std::endl;
+            exit(-1);
+        }
+    
     }
 };
 
