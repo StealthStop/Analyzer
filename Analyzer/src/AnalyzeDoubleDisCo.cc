@@ -72,9 +72,12 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_nRtops_vs_nMtops",          7, -0.5,  6.5,   7, -0.5, 6.5},
     };
 
+    channels      = {"0", "1", "2"};
     njets         = {"Incl", "6", "7", "8", "9", "10", "11", "12incl"};
     ttvars        = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
     my_var_suffix = {""                                              };
+
+    my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
 }
 
 void AnalyzeDoubleDisCo::Debug(const std::string& message, int line = 0)
@@ -210,8 +213,6 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
     // Generates a map of region to constituent subregions
     makeSubregions(regionsVec);
 
-    my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
-
     // --------------------------------------------------------------
     // loop over the cutmap
     // mycut.first : cut string, mycut.second : boolean if cut passed
@@ -273,6 +274,12 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         if (region != "Incl")
                             regionStr = "_" + region;
 
+                        if (hInfo.name.find("njets") == std::string::npos and region != "ABCD")
+                            continue;
+
+                        if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
+                            continue; 
+
                         std::string name = hInfo.name + mycut.first + njetStr + regionStr + ttvarStr;
                         my_histos.emplace(name, std::make_shared<TH1D>((name).c_str(),(name).c_str(), hInfo.nBins, hInfo.low, hInfo.high));
 
@@ -322,6 +329,15 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         std::string regionStr = "";
                         if (region != "Incl")
                             regionStr = "_" + region;
+
+                        if (region != "ABCD")
+                            continue;
+
+                        if (ttvar != "nom" and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
+                            continue;
+
+                        if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
+                            continue; 
 
                         std::string name = h2dInfo.name + mycut.first + njetStr + regionStr + ttvarStr;
                         my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
@@ -388,27 +404,23 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
         StopGenMatch        stopGenMatch(myVarSuffix);
         CommonVariables     commonVariables(myVarSuffix);
+        MakeMVAVariables    makeMVAVariables(                false,  myVarSuffix,        "GoodJets_pt30",       false, true, 7, 2, ""                                  );
+        MakeMVAVariables    makeMVAVariables_NonIsoMuon(     false,  myVarSuffix,        "NonIsoMuonJets_pt30", false, true, 7, 2, ""                                  );
         // 0l
         // note that if we make the inputs to the NN, we use just the GoodJets_pt30 collection to derive things
         // but, if we define the QCD CR selection, we use the NonIsoMuonJets_pt30 collection 
         DeepEventShape      neuralNetwork0L(           DoubleDisCo_Cfg_0l_RPV,            DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix                          );
         DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix                          );
-        MakeMVAVariables    makeMVAVariables0L(                false,  myVarSuffix,        "GoodJets_pt30", false, true, 7, 0, "_0l"                                   );
-        MakeMVAVariables    makeMVAVariables0L_NonIsoMuon(     false,  myVarSuffix,        "GoodJets_pt30", false, true, 7, 1, "_0l"                                   );
         MakeStopHemispheres stopHemispheres_TopSeed(           "StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed",            myVarSuffix, Hemisphere::TopSeed    );
         MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
         // 1l
         DeepEventShape      neuralNetwork1L(           DoubleDisCo_Cfg_1l_RPV,            DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    ); 
         DeepEventShape      neuralNetwork1L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    );
-        MakeMVAVariables    makeMVAVariables1L(                false,  myVarSuffix,           "GoodJets_pt30",        false, true, 7, 1, "_1l"                                   );
-        MakeMVAVariables    makeMVAVariables1L_NonIsoMuon(     false,  myVarSuffix,           "NonIsoMuonJets_pt30",  false, true, 7, 1, "_1l"                                   );
         MakeStopHemispheres stopHemispheres_OldSeed(           "Jets", "GoodJets_pt20",       "NGoodJets_pt20",       "_OldSeed",            myVarSuffix, Hemisphere::InvMassSeed);
         MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets", "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);        
         // 2l
-        //DeepEventShape      neuralNetwork2L(           DoubleDisCo_Cfg_2l_RPV,            DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix); 
-        //DeepEventShape      neuralNetwork2L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix);
-        //MakeMVAVariables    makeMVAVariables1L(           false, myVarSuffix, "GoodJets_pt30",        false, true, 7, 0, "_2l"               );
-        //MakeMVAVariables    makeMVAVariables2L_NonIsoMuon(false, myVarSuffix, "NonIsoMuonJets_pt30",  false, true, 7, 1, "_2l"               );
+        DeepEventShape      neuralNetwork2L(           DoubleDisCo_Cfg_2l_RPV,            DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix); 
+        DeepEventShape      neuralNetwork2L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix);
         
         // Remember, order matters here !
         // Follow what is done in Config.h
@@ -420,17 +432,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
         tr.registerFunction(baseline);
-        tr.registerFunction(makeMVAVariables0L);
-        tr.registerFunction(makeMVAVariables1L);
-        //tr.registerFunction(makeMVAVariables2L);
-        tr.registerFunction(makeMVAVariables0L_NonIsoMuon);
-        tr.registerFunction(makeMVAVariables1L_NonIsoMuon);
-        //tr.registerFunction(makeMVAVariables2L_NonIsoMuon);
+        tr.registerFunction(makeMVAVariables);
+        tr.registerFunction(makeMVAVariables_NonIsoMuon);
         tr.registerFunction(stopJets);
-        tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed);
-        tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
+        tr.registerFunction(stopHemispheres_OldSeed);
         tr.registerFunction(stopHemispheres_TopSeed_NonIsoMuon);
+        tr.registerFunction(stopHemispheres_OldSeed_NonIsoMuon);
 
         if (runtype == "MC")
         {
@@ -447,8 +455,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(neuralNetwork0L_NonIsoMuon);
         tr.registerFunction(neuralNetwork1L);
         tr.registerFunction(neuralNetwork1L_NonIsoMuon);
-        //tr.registerFunction(neuralNetwork2L);
-        //tr.registerFunction(neuralNetwork2L_NonIsoMuon);
+        tr.registerFunction(neuralNetwork2L);
+        tr.registerFunction(neuralNetwork2L_NonIsoMuon);
     }
 
     Debug("Initialized modules to run", __LINE__);
@@ -464,13 +472,19 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         if (tr.getEvtNum() % 1000 == 0)
             printf("  Event %i\n", tr.getEvtNum() );
 
-        std::vector<std::string> channels = {"0", "1"}; // "2"};
+        // Fill once per event
+        const auto& eventCounter = tr.getVar<int>("eventCounter"); 
+        my_histos["EventCounter"]->Fill(eventCounter);
 
         Debug("Initializing variables for signal and control regions", __LINE__);
 
         for(const auto& myVarSuffix : my_var_suffix)
         {
-            const auto& eventCounter = tr.getVar<int>("eventCounter");
+            // If event is not interesting for any channel or selection, then move on now and 
+            // do not waste any more time on it, we already filled the EventCounter histogram
+            const auto& lostCauseEvent = tr.getVar<bool>("lostCauseEvent" + myVarSuffix);
+            if (lostCauseEvent)
+                break;
 
             // Put 0L and 1L version of variables into vector
             // 0th position is for 0L and 1st position is for 1L for convenience in the event loop
@@ -655,7 +669,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     htName   = "trigger";
                 }
 
-                std::string tag = "_" + channel + "l";
+                std::string tag = "";// "_" + channel + "l";
 
                 Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                       + myVarSuffix));
                 Jets_cm_top6.push_back(tr.getVec<utility::LorentzVector>("Jets_cm_top6" + tag + myVarSuffix));
@@ -777,10 +791,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + myVarSuffix));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b"                 + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"                 + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"              + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"                 + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b"              + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"              + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"           + myVarSuffix));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"              + myVarSuffix));
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + myVarSuffix));
                 dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + myVarSuffix));
 
@@ -913,15 +927,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 {"_1l_bottomEdge"    , Baseline[1] && bottomEdge},                         
                 {"_1l_central"       , Baseline[1] && central},                         
                 {"_1l_outside"       , Baseline[1] && outside},                         
-                //{"_2l"               , Baseline[2]}, 
+                {"_2l"               , Baseline[2]}, 
                 {"_0l_blind"         , Baseline_blind[0]},
                 {"_1l_blind"         , Baseline_blind[1]},                         
-                //{"_2l_blind"         , Baseline_blind[2]}, 
-                {"_QCDCR"            , Baseline_CR[0]}, 
-                {"_QCDCR_1b"         , Baseline_CR[1]}, 
-                {"_QCDCR_1t"         , Baseline_CR[2]}, 
-                {"_QCDCR_1b_1t"      , Baseline_CR[3]}, 
-                {"_QCDCR_2b"         , Baseline_CR[4]},   
+                {"_2l_blind"         , Baseline_blind[2]}, 
+                {"_0l_QCDCR"         , Baseline_CR[0]}, 
+                {"_0l_QCDCR_1b"      , Baseline_CR[1]}, 
+                {"_0l_QCDCR_1t"      , Baseline_CR[2]}, 
+                {"_0l_QCDCR_1b_1t"   , Baseline_CR[3]}, 
+                {"_0l_QCDCR_2b"      , Baseline_CR[4]},   
+                {"_1l_QCDCR"         , Baseline_CR[0]}, 
+                {"_2l_QCDCR"         , Baseline_CR[0]}, 
+
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
@@ -934,14 +951,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 initHistos = true;
             }
 
-            // Fill once per event
-            my_histos["EventCounter"]->Fill(eventCounter);
-
             std::map<std::string, bool>               njetsMap;
             std::map<std::string, std::vector<bool> > ABCDmap;
 
             for(auto& kv : cut_map)
             {
+                Debug("Top of cut loop for cut: " + kv.first, __LINE__);
 
                 bool isQCD = false;
                 // Extract "0", "1", "2", or "Q" from cut string e.g. _1l
@@ -950,16 +965,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 {
                     // Take first character after assumed underscore
                     std::string chunk = kv.first.substr(1,1);
-                    
+                    channel = std::stoi(chunk);
+                   
                     // One control region for the moment, so pick any of three channels
-                    if (chunk == "Q")
+                    if (kv.first.find("QCDCR") != std::string::npos)
                     {
-                        channel = 1;
                         isQCD = true;
-                    }
-                    else
-                    {
-                        channel = std::stoi(chunk);
                     }
                 }
 
@@ -989,6 +1000,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::string name;
                 for (auto& njetsPass : njetsMap)
                 {
+                    Debug("Top of njet loop for njets: " + njetsPass.first, __LINE__);
+
                     std::string njets      = njetsPass.first;
                     bool        inNjetsBin = njetsPass.second;
                     std::string njetsStr = "";
@@ -1001,9 +1014,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     // --------------------------------------------------------------------------
                     for (const auto& ttvar : ttvars)
                     {   
+                        Debug("Top of ttvar loop for ttvar: " + ttvar, __LINE__);
+
                         std::string ttvarStr = "";
                         if (ttvar != "nom")
                             ttvarStr = "_" + ttvar; 
+
+                        if (kv.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
+                            continue;
 
                         double w = 1.0;
 
@@ -1038,6 +1056,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         // -----------------
                         for (auto& regionPass : ABCDmap)
                         {
+                            Debug("Top of region loop for region: " + regionPass.first, __LINE__);
+
                             std::string       region      = regionPass.first;
                             std::vector<bool> inRegionBin = regionPass.second;
                             bool inRegion = false;
@@ -1053,7 +1073,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             {
 
                                 name = kv.first + njetsStr + regionStr + ttvarStr;
-                                if (njets == "Incl")
+                                if (njets == "Incl" and region == "ABCD")
                                 {
 
                                     Debug("Filling event variable histograms with name: " + name, __LINE__);
@@ -1273,7 +1293,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_E"     + name]->Fill(theCombJetE,     w); 
                                 }                            
 
-                                my_2d_histos["h_nRtops_vs_nMtops"      + name]->Fill(!isQCD ? NRTops[channel] : NRTops_CR[channel], !!isQCD ? NMTops[channel] : NMTops_CR[channel], w);
+                                if (region == "ABCD" and ttvar == "nom")
+                                    my_2d_histos["h_nRtops_vs_nMtops"      + name]->Fill(!isQCD ? NRTops[channel] : NRTops_CR[channel], !isQCD ? NMTops[channel] : NMTops_CR[channel], w);
 
                                 auto& cmJets = Jets_cm_top6[channel];
                                 if (isQCD)
@@ -1281,16 +1302,19 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                 Debug("Filling 2D pt HT variable histograms with name: " + name, __LINE__);
 
-                                for(unsigned int i = 1; i <= nJets; i++)
+                                if (region == "ABCD" and ttvar == "nom")
                                 {
-                                    double pt  = static_cast<double>(cmJets.at(i-1).Pt());
-                                    my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt,    i, w);
-                                    my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
+                                    for(unsigned int i = 1; i <= nJets; i++)
+                                    {
+                                        double pt  = static_cast<double>(cmJets.at(i-1).Pt());
+                                        my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt,    i, w);
+                                        my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
+                                    }
                                 }
 
                                 Debug("Filling 2D disc1 disc2 histograms with name: " + name, __LINE__);
 
-                                if (region != "Incl" and njets != "Incl")
+                                if (region == "ABCD" and njets != "Incl")
                                     my_histos["h_DoubleDisCo_massReg" + name]->Fill(!isQCD ? DoubleDisCo_massReg[channel] : DoubleDisCo_massReg_CR[channel], w);
 
                                 auto& disc1 = DoubleDisCo_disc1[channel];
@@ -1306,7 +1330,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                 // make inputs for Validation Study
                                 //  -- it is a 2D histogram of whole ABCD region for per-njets 
                                 // -----------------------------------------------------------
-                                if (njets != "Incl")
+                                if (njets != "Incl" and region == "ABCD")
                                 {
                                     my_histos["h_DoubleDisCo_disc1" + name]->Fill(disc1, w);
                                     my_histos["h_DoubleDisCo_disc2" + name]->Fill(disc2, w);
@@ -1318,6 +1342,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             {
                                 if (kv.second and inNjetsBin and inRegion and inRegionBin[iSubRegion])
                                 {
+                                    Debug("Filling 1D njets histograms with name: " + name, __LINE__);
+
                                     name = kv.first + njetsStr + regionStr;
                                     int shift = inRegionBin[iSubRegion] ? iSubRegion : 100;
 
@@ -1328,14 +1354,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                         theGoodJets = NGoodJets_CR[channel];
                                         theMVAjets  = nMVAJets_CR[channel];
                                     }
-                                    Debug("Filling 1D njets histograms with name: " + name, __LINE__);
 
                                     // ---------------------------------------------------------
                                     // make inputs for Higgs Combine
                                     //  -- it is 1D histogram, including 4 groups A, B, C, D
                                     //  -- each of A, B, C, D has 7,8,9,10,11, 12incl Njets bins
                                     // ---------------------------------------------------------
-                                    if (njets == "Incl" and region != "Incl")
+                                    if (njets == "Incl")
                                         my_histos["h_njets_12incl" + name]->Fill(theGoodJets>=12 ? 12-theMVAjets+shift*6 : theGoodJets-theMVAjets+shift*6, w);
 
                                 }

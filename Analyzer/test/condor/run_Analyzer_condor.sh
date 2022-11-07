@@ -13,6 +13,7 @@ startfile=$3
 filelist=$4
 analyzer=$5
 CMSSW_VERSION=$6
+eosPath=$7
 base_dir=`pwd`
 printf "\n\n base dir is $base_dir\n\n"
 
@@ -73,7 +74,12 @@ printf "\n\n Attempting to run MyAnalysis executable.\n\n"
 printf "\n\n ls output\n"
 ls -l
 
-mv MyAnalysis*.root ${base_dir}
+for outfile in MyAnalysis*.root;
+do
+    xrdcp $outfile $eosPath/
+done
+
+rm -rf MyAnalysis*.root
 cd ${base_dir}
 
 printf "\n\n ls output\n"

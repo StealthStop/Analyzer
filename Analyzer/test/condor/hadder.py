@@ -48,6 +48,16 @@ def checkNumEvents(nEvents, rootFile, sampleCollection, log):
 
     return log
 
+def listFiles(inPath, query):
+
+    stub = query.split("/MyAnalysis")[0]
+
+    proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", query], stdout=subprocess.PIPE)
+    files = proc.stdout.readlines()
+    files = ["/eos/uscms" + stub + "/" + file.rstrip() for file in files]
+
+    return files
+
 def getDataSets(inPath):
     l = glob(inPath+"/*")
     print "-----------------------------------------------------------------------------" 
@@ -58,21 +68,26 @@ def getDataSets(inPath):
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser("usage: %prog [options]\n")
-    parser.add_argument('-d', dest='datasets', type=str,            default = '',               help = "Lists of datasets, comma separated")
-    parser.add_argument('-H', dest='outDir',   type=str,            default = 'rootfiles',      help = "Can pass in the output directory name")
-    parser.add_argument('-p', dest='inPath',   type=str,            default = 'output-files',   help = "Can pass in the input directory name")
-    parser.add_argument('-y', dest='year',     type=str,            default = '',               help = "Can pass in the year for this data")
-    parser.add_argument('-v',                  action='store_true',                             help = "make hadd verbose")
-    parser.add_argument('-o',                  action='store_true',                             help = "Overwrite output directory")
-    parser.add_argument('-m',                  action='store_true',                             help = "multiprocess, restricted to 4")
-    parser.add_argument('--noHadd',            action='store_true',                             help = "Dont hadd the the root files")
-    parser.add_argument('--haddOther',         action='store_true',                             help = "Do the hack to make BG_OTHER.root")
-    parser.add_argument('--haddData',          action='store_true',                             help = "Do the hack to make Data.root")
-    parser.add_argument('--haddAll',           action='store_true',                             help = "Do the hack to hadd All_Bg, All_Signal, All_Data")
+    parser.add_argument('-d', dest='datasets', type=str,            default = '',             help = "Lists of datasets, comma separated")
+    parser.add_argument('-H', dest='outDir',   type=str,            default = 'rootfiles',    help = "Can pass in the output directory name")
+    parser.add_argument('-p', dest='inPath',   type=str,            default = 'output-files', help = "Can pass in the input directory name")
+    parser.add_argument('-y', dest='year',     type=str,            default = '',             help = "Can pass in the year for this data")
+    parser.add_argument('-v',                  action='store_true',                           help = "make hadd verbose")
+    parser.add_argument('-o',                  action='store_true',                           help = "Overwrite output directory")
+    parser.add_argument('-m',                  action='store_true',                           help = "multiprocess, restricted to 4")
+    parser.add_argument('--noHadd',            action='store_true',                           help = "Dont hadd the the root files")
+    parser.add_argument('--haddOther',         action='store_true',                           help = "Do the hack to make BG_OTHER.root")
+    parser.add_argument('--haddData',          action='store_true',                           help = "Do the hack to make Data.root")
+    parser.add_argument('--haddAll',           action='store_true',                           help = "Do the hack to hadd All_Bg, All_Signal, All_Data")
     options = parser.parse_args()
 
     # Get input directory path
     inPath = options.inPath
+
+    userName = os.getenv("USER")
+
+    stubPath = "/store/user/%s/StealthStop"%(userName)
+    eosPath = "root://cmseos.fnal.gov//%s/%s"%(stubPath, inPath)
         
     # Checks if user specified a dataset(s)
     datasets = []
@@ -147,7 +162,9 @@ def main():
                     elif "_TTTo" in tempSample:
                         continue
 
-                    files = " ".join(glob("%s/%s/MyAnalysis_%s_[0-9]*.root" % (inPath, directory, tempSample)))
+                    query = "%s/%s/%s/MyAnalysis_%s_[0-9]*.root"%(stubPath, inPath, directory, tempSample)
+                    files = " ".join(listFiles(inPath, query))
+
                     outfile = "%s/%s.root" % (outDir, cleanName)
                     command = "hadd %s %s/%s.root %s" % (haddArgs, outDir, cleanName, files)
                     if not options.noHadd: subprocess.call(command.split(" "))
@@ -164,20 +181,24 @@ def main():
             # I.e. something like 2017_QCD
             else:
                 nEvents=0.0
+                files = []
                 for sample in sl:
-                    print("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1]))
-                    files += " " + " ".join(glob("%s/%s/MyAnalysis_%s_*.root" % (inPath, directory, sample[1])))
+                    query = "%s/%s/%s/MyAnalysis_%s_*.root" % (stubPath, inPath, directory, sample[1])
+                    files += listFiles(inPath, query)
                     nEvents+=float(sample[2])
     
                 outfile = "%s/%s.root" % (outDir,sampleCollection)
-                command = "hadd %s %s %s" % (haddArgs, outfile, files)
+                command = "hadd %s %s %s" % (haddArgs, outfile, " ".join(files))
                 try:
                     if not options.noHadd: 
                         process = subprocess.Popen(command, shell=True)
                         process.wait()
                 except:
                     print red("Warning: Too many files to hadd, using the exception setup")
-                    command = "hadd %s %s/%s.root %s/%s/*" % (haddArgs, outDir, sampleCollection, inPath, sampleCollection)
+                    query = "%s/%s/%s/MyAnalysis_*"%(stubPath, inPath, sampleCollection)
+                    files = " ".join(listFiles(inPath, query))
+                    
+                    command = "hadd %s %s/%s.root %s" % (haddArgs, outDir, sampleCollection, files)
                     if not options.noHadd: system(command)
                     pass
     
@@ -185,21 +206,37 @@ def main():
    
     if options.haddAll:
         for year in ['2016preVFP', '2016postVFP', '2017', '2018']:
-            files_TT = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*TTTo*.root" % (inPath, year, year))) 
+            query_TT = "%s/%s/%s_AllBg/MyAnalysis_%s*TTTo*.root" % (stubPath, inPath, year, year)
+            files_TT = " ".join(listFiles(inPath, query_TT)) 
             command = "hadd %s %s/%s_TT.root %s" % (haddArgs, outDir, year, files_TT)
             system(command)
-            files_QCD = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*QCD*.root" % (inPath, year, year)))
+
+            query_QCD = "%s/%s/%s_AllBg/MyAnalysis_%s*QCD*.root" % (stubPath, inPath, year, year)
+            files_QCD = " ".join(listFiles(inPath, query_QCD))
             command = "hadd %s %s/%s_QCD.root %s" % (haddArgs, outDir, year, files_QCD)
             system(command)
-            files_TTX = " " + " ".join(glob("%s/%s_AllBg/MyAnalysis_%s*TT[WZ][TJ]*.root" % (inPath, year, year)) + glob("%s/%s_AllBg/MyAnalysis_%s*ttH*.root" % (inPath, year, year))) 
+
+            query_TTX1 = "%s/%s/%s_AllBg/MyAnalysis_%s*TT[WZ][TJ]*.root" % (stubPath, inPath, year, year)
+            query_TTX2 = "%s/%s/%s_AllBg/MyAnalysis_%s*ttH*.root" % (stubPath,year, year)
+            files_TTX = " ".join(listFiles(inPath, query_TTX1)) + " " + " ".join(listFiles(inPath, query_TTX2))
             command = "hadd %s %s/%s_TTX.root %s" % (haddArgs, outDir, year, files_TTX)
             system(command)
-            files_NotOther = files_TT + files_QCD + files_TTX
-            files_Other = " " + " ".join([f for f in glob("%s/%s_AllBg/MyAnalysis_%s*.root" % (inPath, year, year) ) if f not in files_NotOther])
-            command = "hadd %s %s/%s_BG_OTHER.root %s" % (haddArgs, outDir, year, files_Other)
+
+            query_DY = "%s/%s/%s_AllBg/MyAnalysis_%s*DYJets*.root" % (stubPath, inPath, year, year)
+            query_2B = "%s/%s/%s_AllBg/MyAnalysis_%s_??_*.root" % (stubPath, inPath, year, year)
+            query_3B = "%s/%s/%s_AllBg/MyAnalysis_%s_???_*.root" % (stubPath, inPath, year, year)
+            query_Wj = "%s/%s/%s_AllBg/MyAnalysis_%s_WJets*.root" % (stubPath, inPath, year, year)
+
+            files_DY = " ".join(listFiles(inPath, query_DY))
+            files_2B = " ".join(listFiles(inPath, query_2B))
+            files_3B = " ".join(listFiles(inPath, query_3B))
+            files_Wj = " ".join(listFiles(inPath, query_Wj))
+
+            command = "hadd %s %s/%s_BG_OTHER.root %s" % (haddArgs, outDir, year, files_DY + " " + files_2B + " " + files_3B + " " + files_Wj)
             system(command)
 
-            files_Data = " " + " ".join(glob("%s/%s_Data/MyAnalysis_%s*.root" % (inPath, year, year)))
+            query_Data = "%s/%s/%s_Data/MyAnalysis_%s*.root" % (stubPath, inPath, year, year)
+            files_Data = " ".join(listFiles(inPath, query_Data))
             command = "hadd %s %s/%s_Data.root %s" % (haddArgs, outDir, year, files_Data)
             system(command)
 

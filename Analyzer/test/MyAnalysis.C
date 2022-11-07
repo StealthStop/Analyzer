@@ -55,7 +55,7 @@ const std::string getFullPath(const std::string& file)
 
 template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf, const std::string dataSets,
                                     const int startFile, const int nFiles, const int maxEvts, 
-                                    TFile* const outfile, const bool isQuiet, const std::string& analyzer)
+                                    TFile* const outfile, const bool isQuiet, const bool fastMode, const std::string& analyzer)
 {
     std::cout << "Initializing..." << std::endl;
     Analyze a;
@@ -80,6 +80,9 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
 
         // Registerd event weight computed by FileSummary class, no sign information
         tr.registerDerivedVar("weightAbsVal", file.getWeight());
+
+        // Determine if smart early-abort-event-module-pipeline is active
+        tr.registerDerivedVar("fastMode", fastMode);
 
         // Loop over all of the events and fill histos
         std::cout << "Starting event loop (in run)" << std::endl;
@@ -125,13 +128,14 @@ std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool 
 int main(int argc, char *argv[])
 {
     int opt, option_index = 0;
-    bool runOnCondor = false, isQuiet = true;
+    bool runOnCondor = false, isQuiet = true, fastMode = false;
     std::string histFile = "", dataSets = "", analyzer = "";
     int nFiles = -1, startFile = 0, maxEvts = -1;
 
     static struct option long_options[] = {
         {"condor",             no_argument, 0, 'c'},
         {"verbose",            no_argument, 0, 'v'},
+        {"fastMode",           no_argument, 0, 's'},
         {"analyzer",     required_argument, 0, 'A'},
         {"histFile",     required_argument, 0, 'H'},
         {"dataSets",     required_argument, 0, 'D'},
@@ -141,12 +145,13 @@ int main(int argc, char *argv[])
     };
 
     // here is the options to run the codes / can add options
-    while((opt = getopt_long(argc, argv, "cvA:H:D:N:M:E:", long_options, &option_index)) != -1)
+    while((opt = getopt_long(argc, argv, "cvsA:H:D:N:M:E:", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
             case 'c': runOnCondor       = true;              break;
             case 'v': isQuiet           = false;             break;
+            case 's': fastMode          = true;              break;
             case 'A': analyzer          = optarg;            break;
             case 'H': histFile          = optarg;            break;
             case 'D': dataSets          = optarg;            break;
@@ -166,7 +171,7 @@ int main(int argc, char *argv[])
     std::set<AnaSamples::FileSummary> vvf = setFS(dataSets, runOnCondor); 
     TFile* outfile = TFile::Open(histFile.c_str(), "RECREATE");
 
-    std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&, const std::string, const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
+    std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&, const std::string, const int,const int,const int,TFile* const,const bool,const bool,const std::string&)>>> AnalyzerPairVec = {
         {"AnalyzeDoubleDisCo",         run<AnalyzeDoubleDisCo>        },
         {"AnalyzeLepTrigger",          run<AnalyzeLepTrigger>         },
         {"AnalyzeTest",                run<AnalyzeTest>               },
@@ -196,7 +201,7 @@ int main(int argc, char *argv[])
             if(pair.first==analyzer) 
             {
                 std::cout<<"Running the " << analyzer << " Analyzer" <<std::endl;
-                pair.second(vvf,dataSets,startFile,nFiles,maxEvts,outfile,isQuiet,analyzer); 
+                pair.second(vvf,dataSets,startFile,nFiles,maxEvts,outfile,isQuiet,fastMode,analyzer); 
                 foundAnalyzer = true;
             }
         }
