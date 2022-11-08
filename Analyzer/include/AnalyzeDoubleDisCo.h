@@ -43,6 +43,7 @@ public:
     std::vector<TH2DInfo> hist2DInfos;
 
     std::vector<std::string> njets;
+    std::vector<std::string> ttvars;
     std::vector<std::string> my_var_suffix;
 
     std::map<std::string, std::vector<std::string> > subRegionsMap;

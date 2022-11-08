@@ -59,12 +59,14 @@ class Histogram:
 
         return significance**0.5
 
-    def Integral(self):
-        return self.histogram.Integral()
+    def Integral(self,*args):
+        return self.histogram.Integral(*args)
         
-    def IntegralError(self):
+    def IntegralError(self,low=None,high=None):
         error = ctypes.c_double(-999)
-        integral = self.histogram.IntegralAndError(0, self.histogram.GetNbinsX(), error)
+        low = low if low else 0
+        high = high if high else self.histogram.GetNbinsX()
+        integral = self.histogram.IntegralAndError(low, high, error)
         return error.value
 
     def Clone(self, name):
@@ -111,13 +113,13 @@ class Histogram:
             return -1
         
         if f == None:
-            print("WARNING: Skipping file \"%s\" for histo \"%s\" !"%(self.filePath, self.histoName))
+            print("\033[1;31m"+"WARNING: Skipping file \"%s\" for histo \"%s\" !"%(self.filePath, self.histoName)+"\033[0m")
             return -1
 
         histo = f.Get(self.histoName)
 
         if histo == None:
-            print("WARNING: Skipping histo \"%s\" from \"%s\""%(self.histoName, self.filePath))
+            print("\033[1;31m"+"WARNING: Skipping histo \"%s\" from \"%s\""%(self.histoName, self.filePath)+"\033[0m")
             return -1
 
         histo.SetDirectory(0)

@@ -20,10 +20,10 @@ class MCcorrectionFactor_TTvar():
         self.edges       = edges
 
         self.ttVarsModel = [
-                            #"TT_fsrUp",            
-                            #"TT_fsrDown",          
-                            #"TT_isrUp",            
-                            #"TT_isrDown",          
+                            "TT_fsrUp",            
+                            "TT_fsrDown",          
+                            "TT_isrUp",            
+                            "TT_isrDown",          
                             "TT_hdampUP",          
                             "TT_hdampDOWN",        
                             "TT_TuneCP5up",
@@ -32,10 +32,10 @@ class MCcorrectionFactor_TTvar():
         ]
 
         self.ttVarsDetect = [
-                             #"TT_JECup",            
-                             #"TT_JECdown",          
-                             #"TT_JERup",            
-                             #"TT_JERdown"          
+                             "TT_JECup",            
+                             "TT_JECdown",          
+                             "TT_JERup",            
+                             "TT_JERdown"          
         ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect
@@ -139,7 +139,23 @@ class MCcorrectionFactor_TTvar():
 
             for sample in samples:
 
-                hist_lists[sample] = files[sample].Get(histName + njet)
+                # get the fsr/isr higtograms from TT root file
+                ttvarStr = ""
+
+                if sample == "TT_fsrDown":
+                    ttvarStr = "_fsrDown"
+
+                elif sample == "TT_fsrUp":
+                    ttvarStr = "_fsrUp"
+
+                elif sample == "TT_isrDown":
+                    ttvarStr = "_isrDown"
+
+                elif sample == "TT_isrUp":
+                    ttvarStr = "_isrUp"
+
+                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
             maxEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(hist_lists["TT"].GetNbinsX()+1)
@@ -419,11 +435,11 @@ class MCcorrectionFactor_TTvar():
             if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
                 calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
             else:
-                absoluteMax = 999.0
+                absoluteMax = -999.0
                 someNjets = ["7", "8", "9"]
                 for someNjet in someNjets:
                     if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
-                    if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] < absoluteMax:
+                    if abs(1- maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMax:
                         absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
 
                 calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
