@@ -141,6 +141,10 @@ public:
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
         bool blind = true;
 
+        // Determines if an analyzer is compatible with fastmode
+        // If it is not, then the fastMode flag is essentially neutralized
+        bool fastModeCompatible = false;
+
         if(filetag.find("2016preVFP") != std::string::npos)
         {
             runYear                           = "2016preVFP";
@@ -348,7 +352,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -363,6 +366,7 @@ public:
         }
         else if(analyzer=="AnalyzeDoubleDisCo")
         {
+            fastModeCompatible = true;
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
                 // All other necessary modules instantiated explicitly in AnalyzeDoubleDisCo !!!
@@ -375,7 +379,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -395,7 +398,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "CommonVariables",
@@ -412,7 +414,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -430,7 +431,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -447,7 +447,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger_ResolvedOnly",
@@ -464,7 +463,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -487,7 +485,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -513,7 +510,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "CommonVariables",
@@ -526,7 +522,6 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
-                "Photon",
                 "Jet",
                 "BJet",
                 "RunTopTagger",
@@ -538,6 +533,14 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+
+        const auto& fastMode = tr.getVar<bool>("fastMode");
+        if (fastMode and !fastModeCompatible)
+        {
+            std::cerr << utility::color("Error: Analyzer \"" + analyzer + "\" is not compatible with fast mode !!! Exiting...", "red") << std::endl;
+            exit(-1);
+        }
+    
     }
 };
 
