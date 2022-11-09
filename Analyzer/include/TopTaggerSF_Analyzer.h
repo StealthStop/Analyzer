@@ -55,7 +55,7 @@ public:
     void InitHistos(const std::map<std::string, bool>& cutMap);
     void WriteHistos(TFile* outfile);
 
-    Double_t vecToDouble_t(const std::vector<double>& input);
+    Double_t* vecToDouble_t(const std::vector<double>& input);
 };
 
 #endif

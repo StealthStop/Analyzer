@@ -49,11 +49,11 @@ TopTaggerSF_Analyzer::TopTaggerSF_Analyzer()
     tags = {"", "numR", "numM", "denR", "denM"};
 }
 
-Double_t TopTaggerSF_Analyzer::vecToDouble_t(const std::vector<double>& input)
+Double_t* TopTaggerSF_Analyzer::vecToDouble_t(const std::vector<double>& input)
 {
     unsigned int length = input.size();
     
-    Double_t output[length];
+    Double_t* output = new Double_t[length];
 
     for (unsigned int i = 0; i < length; i++)
         output[i] = input.at(i);
@@ -75,22 +75,22 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
     const Int_t nPtBins_Njet7_R = 6;
     std::vector<double> ptBinEdges_Njet7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
 
-    const Int_t nPtBins_Njet8_R = 5;
-    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 400.0, 1500.0 };
+    const Int_t nPtBins_Njet8_R = 4;
+    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
 
     const Int_t nPtBins_Njet9_R = 3;
     std::vector<double> ptBinEdges_Njet9_R = { 0.0, 120.0, 200.0, 1500.0 };
 
-    const Int_t nPtBins_Njet6_M = 6;
+    const Int_t nPtBins_Njet6_M = 2;
     std::vector<double> ptBinEdges_Njet6_M = { 400.0, 600.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet7_M = 6;      
+    const Int_t nPtBins_Njet7_M = 2;      
     std::vector<double> ptBinEdges_Njet7_M = { 400.0, 600.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet8_M = 5;      
+    const Int_t nPtBins_Njet8_M = 1;      
     std::vector<double> ptBinEdges_Njet8_M = { 400.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet9_M = 3;      
+    const Int_t nPtBins_Njet9_M = 1;      
     std::vector<double> ptBinEdges_Njet9_M = { 400.0, 1500.0 };
 
     const Int_t nJetBins = 4;
@@ -141,6 +141,11 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                         nPtBins    = nPtBins_Njet9_R;
                         ptBinEdges = ptBinEdges_Njet9_R; 
                     }
+                    else
+                    {
+                        nPtBins    = nPtBins_Njet6_R;
+                        ptBinEdges = ptBinEdges_Njet6_R; 
+                    }
                 }
                 // Choose the binning for the merged case
                 else if (tagStr.find("M") != std::string::npos)
@@ -164,6 +169,11 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                     {
                         nPtBins    = nPtBins_Njet9_M;
                         ptBinEdges = ptBinEdges_Njet9_M; 
+                    }
+                    else
+                    {
+                        nPtBins    = nPtBins_Njet6_M;
+                        ptBinEdges = ptBinEdges_Njet6_M; 
                     }
                 }
 
@@ -563,14 +573,11 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                             my_1D_histos["Binned_nJets" + selection]->Fill(correctNjets, weight);
                             my_1D_histos["Binned_HT"    + selection]->Fill(correctHT,    weight);
                             my_1D_histos["Binned_Disc1" + selection]->Fill(disc1,        weight);
-                            my_1D_histos["Binned_Disc2" + selection]->Fill(disc1,        weight);
+                            my_1D_histos["Binned_Disc2" + selection]->Fill(disc2,        weight);
 
                             if (njetCut.first == "")
                             {
                                 my_2D_histos["Binned_topPt_vs_nJets" + selection]->Fill(correctTopPt, correctNjets, weight);
-                                my_2D_histos["Binned_topPt_vs_HT"    + selection]->Fill(correctTopPt, correctHT,    weight);
-                                my_2D_histos["Binned_topPt_vs_Disc1" + selection]->Fill(correctTopPt, disc1,        weight);
-                                my_2D_histos["Binned_topPt_vs_Disc2" + selection]->Fill(correctTopPt, disc2,        weight);
                             }
                         }
                     }

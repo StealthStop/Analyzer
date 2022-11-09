@@ -322,7 +322,8 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 if __name__ == '__main__':
 
     varTags      = [ "topPt", "nJets" ]
-    nJetCutTags  = [ "7", "8", "9", "10incl", "" ]
+    topTags      = [ "R", "M" ]
+    nJetCutTags  = [ "7", "8", "9incl", "" ]
 
     inputDir = arg.inputDir
     tag      = arg.tag
@@ -330,8 +331,6 @@ if __name__ == '__main__':
     cr       = arg.cr
 
     fullPath = inputDir
-
-    extratag = "Binned"
 
     # For pure top, we include semileptonic ttbar, single top, and tt + W/Z/H
     # Non-pure top is everything else
@@ -351,9 +350,9 @@ if __name__ == '__main__':
 
     outputFile = ROOT.TFile.Open("%s/%s"%(outputPath,outputFileName), "UPDATE")
 
-    for varTag in varTags:
-        denomTag2 = "%s_topPt_vs_nJets"%(extratag) + "_" + cr + "CR_den"
-        numerTag2 = "%s_topPt_vs_nJets"%(extratag) + "_" + cr + "CR_num"
+    for topTag in topTags:
+        denomTag2 = "Binned_topPt_vs_nJets" + "_" + cr + "CR_den%s"%(topTag)
+        numerTag2 = "Binned_topPt_vs_nJets" + "_" + cr + "CR_num%s"%(topTag)
 
         goodName = "TopTagEff" + "_" + year + "_num"
 
@@ -392,47 +391,48 @@ if __name__ == '__main__':
 
         make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, goodName, outputFile)
 
-        for nJetCutTag in nJetCutTags:
-            nJetStr = ""
-            if nJetCutTag != "":
-                nJetStr = "_Njet" + nJetCutTag
+        for varTag in varTags:
+            for nJetCutTag in nJetCutTags:
+                nJetStr = ""
+                if nJetCutTag != "":
+                    nJetStr = "_Njet" + nJetCutTag
 
-            denomTag1 = "%s_%s"%(extratag,varTag) + "_" + cr + "CR_den" + nJetStr
-            numerTag1 = "%s_%s"%(extratag,varTag) + "_" + cr + "CR_num" + nJetStr
+                denomTag1 = "Binned_%s"%(varTag) + "_" + cr + "CR_den%s"%(topTag) + nJetStr
+                numerTag1 = "Binned_%s"%(varTag) + "_" + cr + "CR_num%s"%(topTag) + nJetStr
 
-            print(denomTag1)
+                print(denomTag1)
 
-            dataFile.cd()
-            hDataNum = dataFile.Get(numerTag1)
-            hDataDen = dataFile.Get(denomTag1)
+                dataFile.cd()
+                hDataNum = dataFile.Get(numerTag1)
+                hDataDen = dataFile.Get(denomTag1)
 
-            mcFilePureTop.cd()
-            hMcTopNum = mcFilePureTop.Get(numerTag1)
-            hMcTopDen = mcFilePureTop.Get(denomTag1)
+                mcFilePureTop.cd()
+                hMcTopNum = mcFilePureTop.Get(numerTag1)
+                hMcTopDen = mcFilePureTop.Get(denomTag1)
 
-            mcFileNotPureTop.cd()
-            hMcNotPureTopNum = mcFileNotPureTop.Get(numerTag1)
-            hMcNotPureTopDen = mcFileNotPureTop.Get(denomTag1)
+                mcFileNotPureTop.cd()
+                hMcNotPureTopNum = mcFileNotPureTop.Get(numerTag1)
+                hMcNotPureTopDen = mcFileNotPureTop.Get(denomTag1)
 
-            mcNum = 0
-            mcDen = 0
-            dataNum = 0
-            dataDen = 0
-            if cr == "TTbar":
-                mcNum = hMcTopNum
-                mcDen = hMcTopDen
-                dataNum = hDataNum
-                dataNum.Add(hMcNotPureTopNum, -1.0)
-                
-                dataDen = hDataDen
-                dataDen.Add(hMcNotPureTopDen, -1.0)
-            elif cr == "QCD":
-                mcNum = hMcNotPureTopNum
-                mcDen = hMcNotPureTopDen
-                dataNum = hDataNum
-                dataNum.Add(hMcTopNum, -1.0)
-                
-                dataDen = hDataDen
-                dataDen.Add(hMcTopDen, -1.0)
+                mcNum = 0
+                mcDen = 0
+                dataNum = 0
+                dataDen = 0
+                if cr == "TTbar":
+                    mcNum = hMcTopNum
+                    mcDen = hMcTopDen
+                    dataNum = hDataNum
+                    dataNum.Add(hMcNotPureTopNum, -1.0)
+                    
+                    dataDen = hDataDen
+                    dataDen.Add(hMcNotPureTopDen, -1.0)
+                elif cr == "QCD":
+                    mcNum = hMcNotPureTopNum
+                    mcDen = hMcNotPureTopDen
+                    dataNum = hDataNum
+                    dataNum.Add(hMcTopNum, -1.0)
+                    
+                    dataDen = hDataDen
+                    dataDen.Add(hMcTopDen, -1.0)
 
-            make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr) 
+                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr) 
