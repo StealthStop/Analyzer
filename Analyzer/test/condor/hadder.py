@@ -53,8 +53,8 @@ def listFiles(inPath, query):
     stub = query.split("/MyAnalysis")[0]
 
     proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", query], stdout=subprocess.PIPE)
-    files = proc.stdout.readlines()
-    files = ["/eos/uscms" + stub + "/" + file.rstrip() for file in files]
+    payload = proc.stdout.readlines()
+    files   = ["/eos/uscms" + stub + "/" + file.rstrip() for file in payload]
 
     return files
 
@@ -162,7 +162,7 @@ def main():
                     elif "_TTTo" in tempSample:
                         continue
 
-                    query = "%s/%s/%s/MyAnalysis_%s_[0-9]*.root"%(stubPath, inPath, directory, tempSample)
+                    query = "%s/%s/%s/MyAnalysis_%s_*.root"%(stubPath, inPath, directory, tempSample)
                     files = " ".join(listFiles(inPath, query))
 
                     outfile = "%s/%s.root" % (outDir, cleanName)

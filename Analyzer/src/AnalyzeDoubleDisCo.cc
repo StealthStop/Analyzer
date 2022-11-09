@@ -25,50 +25,67 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 {
 
     histInfos = {
-        {"h_DoubleDisCo_disc1",          80,    0,    1},
-        {"h_DoubleDisCo_disc2",          80,    0,    1},
-        {"h_DoubleDisCo_massReg",       180,    0, 1800},
-        {"fwm2_top6",                    50,    0,    1},
-        {"fwm3_top6",                    50,    0,    1},
-        {"fwm4_top6",                    50,    0,    1},
-        {"fwm5_top6",                    50,    0,    1},
-        {"jmt_ev0_top6",                 50,    0,    1},
-        {"jmt_ev1_top6",                 50,    0,    1},
-        {"jmt_ev2_top6",                 50,    0,    1},
-        {"Stop1_pt_cm_OldSeed",         180,    0, 1800},
-        {"Stop1_eta_cm_OldSeed",         80,   -6,    6},
-        {"Stop1_phi_cm_OldSeed",         64,   -4,    4},
-        {"Stop1_mass_cm_OldSeed",       180,    0, 1800},
-        {"Stop2_pt_cm_OldSeed",         180,    0, 1800},
-        {"Stop2_eta_cm_OldSeed",         80,   -6,    6},
-        {"Stop2_phi_cm_OldSeed",         64,   -4,    4},
-        {"Stop2_mass_cm_OldSeed",       180,    0, 1800},
-        {"Stop1_pt_cm_TopSeed",         180,    0, 1800},
-        {"Stop1_eta_cm_TopSeed",         80,   -6,    6},
-        {"Stop1_phi_cm_TopSeed",         64,   -4,    4},
-        {"Stop1_mass_cm_TopSeed",       180,    0, 1800},
-        {"Stop2_pt_cm_TopSeed",         180,    0, 1800},
-        {"Stop2_eta_cm_TopSeed",         80,   -6,    6},
-        {"Stop2_phi_cm_TopSeed",         64,   -4,    4},
-        {"Stop2_mass_cm_TopSeed",       180,    0, 1800},
-        {"h_njets",                      21, -0.5, 20.5},
-        {"h_nbjets",                     21, -0.5, 20.5},
-        {"h_ntops",                       7, -0.5,  6.5},
-        {"h_njets_12incl",               24, -0.5, 23.5},
-        {"h_ht",                        720,    0, 7200},
-        {"h_dRbjets",                   180,    0,    6},
-        {"h_mbl",                       180,    0,  360},
-        {"Stop1_mass_PtRank_matched",   180,    0, 1800},
-        {"Stop2_mass_PtRank_matched",   180,    0, 1800},
-        {"Stop1_mass_MassRank_matched", 180,    0, 1800},
-        {"Stop2_mass_MassRank_matched", 180,    0, 1800},
-        {"Stop_mass_average_matched",   180,    0, 1800},
+        {"h_DoubleDisCo_disc1",            80,    0,    1},
+        {"h_DoubleDisCo_disc2",            80,    0,    1},
+        {"h_DoubleDisCo_massReg",         180,    0, 1800},
+        {"h_FWM2_top6",                    50,    0,    1},
+        {"h_FWM3_top6",                    50,    0,    1},
+        {"h_FWM4_top6",                    50,    0,    1},
+        {"h_FWM5_top6",                    50,    0,    1},
+        {"h_JMT_ev0_top6",                 50,    0,    1},
+        {"h_JMT_ev1_top6",                 50,    0,    1},
+        {"h_JMT_ev2_top6",                 50,    0,    1},
+        {"h_Stop1_Pt_cm_OldSeed",         360,    0, 1800},
+        {"h_Stop1_Eta_cm_OldSeed",         80,   -6,    6},
+        {"h_Stop1_Phi_cm_OldSeed",         64,   -4,    4},
+        {"h_Stop1_Mass_cm_OldSeed",       180,    0, 1800},
+        {"h_Stop2_Pt_cm_OldSeed",         360,    0, 1800},
+        {"h_Stop2_Eta_cm_OldSeed",         80,   -6,    6},
+        {"h_Stop2_Phi_cm_OldSeed",         64,   -4,    4},
+        {"h_Stop2_Mass_cm_OldSeed",       180,    0, 1800},
+        {"h_Stop1_Pt_cm_TopSeed",         360,    0, 1800},
+        {"h_Stop1_Eta_cm_TopSeed",         80,   -6,    6},
+        {"h_Stop1_Phi_cm_TopSeed",         64,   -4,    4},
+        {"h_Stop1_Mass_cm_TopSeed",       180,    0, 1800},
+        {"h_Stop2_Pt_cm_TopSeed",         360,    0, 1800},
+        {"h_Stop2_Eta_cm_TopSeed",         80,   -6,    6},
+        {"h_Stop2_Phi_cm_TopSeed",         64,   -4,    4},
+        {"h_Stop2_Mass_cm_TopSeed",       180,    0, 1800},
+        {"h_Top1_Pt_cm",                  360,    0, 1800},
+        {"h_Top1_Eta_cm",                  80,   -6,    6},
+        {"h_Top1_Phi_cm",                  64,   -4,    4},
+        {"h_Top1_Mass_cm",                180,    0, 1800},
+        {"h_Top2_Pt_cm",                  360,    0, 1800},
+        {"h_Top2_Eta_cm",                  80,   -6,    6},
+        {"h_Top2_Phi_cm",                  64,   -4,    4},
+        {"h_Top2_Mass_cm",                180,    0, 1800},
+        {"h_Top1_Pt",                     360,    0, 1800},
+        {"h_Top1_Eta",                     80,   -6,    6},
+        {"h_Top1_Phi",                     64,   -4,    4},
+        {"h_Top1_Mass",                   180,    0, 1800},
+        {"h_Top2_Pt",                     360,    0, 1800},
+        {"h_Top2_Eta",                     80,   -6,    6},
+        {"h_Top2_Phi",                     64,   -4,    4},
+        {"h_Top2_Mass",                   180,    0, 1800},
+        {"h_Njets",                        21, -0.5, 20.5},
+        {"h_Nbjets",                       21, -0.5, 20.5},
+        {"h_Ntops",                         7, -0.5,  6.5},
+        {"h_njets_12incl",                 24, -0.5, 23.5},
+        {"h_HT",                          720,    0, 7200},
+        {"h_dRbjets",                     180,    0,    6},
+        {"h_Mbl",                         180,    0,  360},
+        {"h_Mll",                         180,    0,  360},
+        {"h_Stop1_mass_PtRank_matched",   180,    0, 1800},
+        {"h_Stop2_mass_PtRank_matched",   180,    0, 1800},
+        {"h_Stop1_mass_MassRank_matched", 180,    0, 1800},
+        {"h_Stop2_mass_MassRank_matched", 180,    0, 1800},
+        {"h_Stop_mass_average_matched",   180,    0, 1800},
     };
 
     hist2DInfos = {
         {"h_DoubleDisCo_disc1_disc2", 100,    0,    1, 100,    0,   1}, 
-        {"h_cm_pt_jetRank",           150,    0, 1500,  10,    0,  10},
-        {"h_cm_ptrHT_jetRank",        150,    0,    1,  10,    0,  10},
+        {"h_pt_jetRank_cm",           150,    0, 1500,  10,    0,  10},
+        {"h_ptrHT_jetRank_cm",        150,    0,    1,  10,    0,  10},
         {"h_nRtops_vs_nMtops",          7, -0.5,  6.5,   7, -0.5, 6.5},
     };
 
@@ -139,67 +156,71 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets, unsigned int nLeptons)
     Debug("Doing pre-initialization to define jet and lepton histograms", __LINE__);
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
-        histInfos.push_back({"Jet_cm_pt_"      + std::to_string(i), 180,  0,  1800});
-        histInfos.push_back({"Jet_cm_ptrHT_"   + std::to_string(i), 180,  0,     1});
-        histInfos.push_back({"Jet_cm_eta_"     + std::to_string(i),  80, -6,     6});
-        histInfos.push_back({"Jet_cm_phi_"     + std::to_string(i),  64, -4,     4});
-        histInfos.push_back({"Jet_cm_m_"       + std::to_string(i), 180,  0,   360});
-        histInfos.push_back({"Jet_cm_E_"       + std::to_string(i), 180,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Pt"      , 360,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_PtrHT"   , 180,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Eta"     ,  80, -6,     6});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Phi"     ,  64, -4,     4});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Mass"    , 180,  0,   360});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Energy"  , 360,  0,  1800});
 
-        histInfos.push_back({"Jet_cm_flavb_"   + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"Jet_cm_flavc_"   + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"Jet_cm_flavg_"   + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"Jet_cm_flavq_"   + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"Jet_cm_flavuds_" + std::to_string(i),  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavb"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavc"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavg"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavq"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavuds" ,  80,  0,     1});
 
-        histInfos.push_back({"h_jPt_"          + std::to_string(i), 180,  0,  1800});
-        histInfos.push_back({"h_jPtrHT_"       + std::to_string(i), 180,  0,  1800});
-        histInfos.push_back({"h_jEta_"         + std::to_string(i),  80, -6,     6});
-        histInfos.push_back({"h_jPhi_"         + std::to_string(i),  64, -4,     4});
-        histInfos.push_back({"h_jM_"           + std::to_string(i), 180,  0,   360});
-        histInfos.push_back({"h_jE_"           + std::to_string(i), 180,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Pt"         , 360,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_PtrHT"      , 180,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Eta"        ,  80, -6,     6});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Phi"        ,  64, -4,     4});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Mass"       , 180,  0,   360});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Energy"     , 360,  0,  1800});
 
-        histInfos.push_back({"h_jFlavb_"       + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"h_jFlavc_"       + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"h_jFlavg_"       + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"h_jFlavq_"       + std::to_string(i),  80,  0,     1});
-        histInfos.push_back({"h_jFlavuds_"     + std::to_string(i),  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavb"      ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavc"      ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavg"      ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavq"      ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavuds"    ,  80,  0,     1});
     }
 
     // Make one-less-jet combined jet histogram
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_pt",    180,  0, 1800});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_ptrHT", 180,  0,    1});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_eta",    80, -6,    6});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_phi",    64, -4,    4});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_m",     180,  0,  360});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_E",     180,  0, 1800});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Pt",     360,  0, 1800});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_PtrHT",  180,  0,    1});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Eta",     80, -6,    6});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Phi",     64, -4,    4});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Mass",   180,  0,  360});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Energy", 360,  0, 1800});
 
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_pt",    180,  0, 1800});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_ptrHT", 180,  0,    1});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_eta",    80, -6,    6});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_phi",    64, -4,    4});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_m",     180,  0,  360});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_E",     180,  0, 1800});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Pt",     360,  0, 1800});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_PtrHT",  180,  0,    1});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Eta",     80, -6,    6});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Phi",     64, -4,    4});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Mass",   180,  0,  360});
+    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Energy", 360,  0, 1800});
 
     for(unsigned int i = 1; i <= nLeptons; i++)
     {
-        histInfos.push_back({"h_lPt_"      + std::to_string(i),  180,    0, 1800});
-        histInfos.push_back({"h_lEta_"     + std::to_string(i),   80,   -6,    6});
-        histInfos.push_back({"h_lPhi_"     + std::to_string(i),   64,   -4,    4});
-        histInfos.push_back({"h_lCharge_"  + std::to_string(i),    2,   -1,    1});
-        histInfos.push_back({"h_lMiniIso_" + std::to_string(i), 2880,    0,    5});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_cm_Pt"    ,  360,    0, 1800});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_cm_Eta"   ,   80,   -6,    6});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_cm_Phi"   ,   64,   -4,    4});
 
-        histInfos.push_back({"h_ePt_"      + std::to_string(i),  180,    0, 1800});
-        histInfos.push_back({"h_eEta_"     + std::to_string(i),   80,   -6,    6});
-        histInfos.push_back({"h_ePhi_"     + std::to_string(i),   64,   -4,    4});
-        histInfos.push_back({"h_eCharge_"  + std::to_string(i),    2,   -1,    1});
-        histInfos.push_back({"h_eMiniIso_" + std::to_string(i), 2880,    0,    5});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Pt"       ,  360,    0, 1800});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Eta"      ,   80,   -6,    6});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Phi"      ,   64,   -4,    4});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Charge"   ,    2,   -1,    1});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_MiniIso"  , 1440,    0,    5});
 
-        histInfos.push_back({"h_mPt_"      + std::to_string(i),  180,    0, 1800});
-        histInfos.push_back({"h_mPhi_"     + std::to_string(i),   80,   -4,    4});
-        histInfos.push_back({"h_mEta_"     + std::to_string(i),   64,   -6,    6});
-        histInfos.push_back({"h_mCharge_"  + std::to_string(i),    2,   -1,    1});
-        histInfos.push_back({"h_mMiniIso_" + std::to_string(i), 2880,    0,    5});
+        histInfos.push_back({"h_Electron" + std::to_string(i) + "_Pt"     ,  360,    0, 1800});
+        histInfos.push_back({"h_Electron" + std::to_string(i) + "_Eta"    ,   80,   -6,    6});
+        histInfos.push_back({"h_Electron" + std::to_string(i) + "_Phi"    ,   64,   -4,    4});
+        histInfos.push_back({"h_Electron" + std::to_string(i) + "_Charge" ,    2,   -1,    1});
+        histInfos.push_back({"h_Electron" + std::to_string(i) + "_MiniIso", 1440,    0,    5});
+
+        histInfos.push_back({"h_Muon" + std::to_string(i) + "_Pt"         ,  360,    0, 1800});
+        histInfos.push_back({"h_Muon" + std::to_string(i) + "_Phi"        ,   80,   -4,    4});
+        histInfos.push_back({"h_Muon" + std::to_string(i) + "_Eta"        ,   64,   -6,    6});
+        histInfos.push_back({"h_Muon" + std::to_string(i) + "_Charge"     ,    2,   -1,    1});
+        histInfos.push_back({"h_Muon" + std::to_string(i) + "_MiniIso"    , 1440,    0,    5});
     }
 }
 
@@ -497,6 +518,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             // For 0L things in the CR, nominal version of jets and derived quantities are used, take note !
             std::vector<std::vector<utility::LorentzVector> >       Jets_CR                        ;
             std::vector<std::vector<utility::LorentzVector> >       Jets_cm_top6_CR                ;
+            std::vector<std::vector<utility::LorentzVector> >       Tops_CR                        ;
+            std::vector<double>                                     Top1_pt_cm_CR                  ;
+            std::vector<double>                                     Top1_eta_cm_CR                 ;
+            std::vector<double>                                     Top1_mass_cm_CR                ;
+            std::vector<double>                                     Top1_phi_cm_CR                 ;
+            std::vector<double>                                     Top2_pt_cm_CR                  ;
+            std::vector<double>                                     Top2_eta_cm_CR                 ;
+            std::vector<double>                                     Top2_mass_cm_CR                ;
+            std::vector<double>                                     Top2_phi_cm_CR                 ;
 
             std::vector<bool>                                       Baseline_CR                    ;
             std::vector<double>                                     weight_CR                      ;
@@ -511,6 +541,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<int>                                        NRTops_CR                      ;
             std::vector<int>                                        NMTops_CR                      ;
             std::vector<double>                                     Mbl_CR                         ;
+            std::vector<double>                                     Mll_CR                         ;
             std::vector<double>                                     dRbjets_CR                     ;
             std::vector<double>                                     HT_pt30_CR                     ;
             std::vector<double>                                     DoubleDisCo_massReg_CR         ;
@@ -564,6 +595,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     Stop2_phi_cm_TopSeed_CR        ;
             std::vector<double>                                     Stop2_mass_cm_TopSeed_CR       ;
 
+            std::vector<double>                                     Lepton1_pt_cm_CR               ;
+            std::vector<double>                                     Lepton1_eta_cm_CR              ;
+            std::vector<double>                                     Lepton1_phi_cm_CR              ;
+            std::vector<double>                                     Lepton2_pt_cm_CR               ;
+            std::vector<double>                                     Lepton2_eta_cm_CR              ;
+            std::vector<double>                                     Lepton2_phi_cm_CR              ;
+
             std::vector<std::vector<std::pair<std::string, utility::LorentzVector> > > GoodLeptons_CR ;
             std::vector<std::vector<int> > GoodLeptonsCharge_CR                                    ;
             std::vector<std::vector<double> > GoodLeptonsMiniIso_CR                                ;
@@ -577,6 +615,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             // Setup all same set of variables for the signal region selections i.e. no _CR
             std::vector<std::vector<utility::LorentzVector> >       Jets                           ;
             std::vector<std::vector<utility::LorentzVector> >       Jets_cm_top6                   ;
+            std::vector<std::vector<utility::LorentzVector> >       Tops                           ;
+            std::vector<double>                                     Top1_pt_cm                     ;
+            std::vector<double>                                     Top1_eta_cm                    ;
+            std::vector<double>                                     Top1_mass_cm                   ;
+            std::vector<double>                                     Top1_phi_cm                    ;
+            std::vector<double>                                     Top2_pt_cm                     ;
+            std::vector<double>                                     Top2_eta_cm                    ;
+            std::vector<double>                                     Top2_mass_cm                   ;
+            std::vector<double>                                     Top2_phi_cm                    ;
 
             std::vector<bool>                                       Baseline                       ;
             std::vector<bool>                                       Baseline_blind                 ;
@@ -593,6 +640,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<int>                                        NMTops                         ;
             std::vector<double>                                     HT_pt30                        ;
             std::vector<double>                                     Mbl                            ;
+            std::vector<double>                                     Mll                            ;
             std::vector<double>                                     dRbjets                        ;
             std::vector<double>                                     DoubleDisCo_massReg            ;
             std::vector<double>                                     DoubleDisCo_disc1              ;
@@ -625,6 +673,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     combinedNthJetPhi              ;
             std::vector<double>                                     combinedNthJetM                ;
             std::vector<double>                                     combinedNthJetE                ;
+
+            std::vector<double>                                     Lepton1_pt_cm                  ;
+            std::vector<double>                                     Lepton1_eta_cm                 ;
+            std::vector<double>                                     Lepton1_phi_cm                 ;
+            std::vector<double>                                     Lepton2_pt_cm                  ;
+            std::vector<double>                                     Lepton2_eta_cm                 ;
+            std::vector<double>                                     Lepton2_phi_cm                 ;
 
             std::vector<std::map<std::string, std::vector<bool> > > DoubleDisCo_passRegions        ; 
 
@@ -677,6 +732,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                       + myVarSuffix));
                 Jets_cm_top6.push_back(tr.getVec<utility::LorentzVector>("Jets_cm_top6" + myVarSuffix));
+                Tops.push_back(tr.getVec<utility::LorentzVector>("topsLV"                     + myVarSuffix));
+                Top1_pt_cm.push_back(tr.getVar<double>("top1_pt_cm"                           + myVarSuffix));
+                Top1_eta_cm.push_back(tr.getVar<double>("top1_eta_cm"                         + myVarSuffix));
+                Top1_phi_cm.push_back(tr.getVar<double>("top1_phi_cm"                         + myVarSuffix));
+                Top1_mass_cm.push_back(tr.getVar<double>("top1_mass_cm"                       + myVarSuffix));
+                Top2_pt_cm.push_back(tr.getVar<double>("top2_pt_cm"                           + myVarSuffix));
+                Top2_eta_cm.push_back(tr.getVar<double>("top2_eta_cm"                         + myVarSuffix));
+                Top2_phi_cm.push_back(tr.getVar<double>("top2_phi_cm"                         + myVarSuffix));
+                Top2_mass_cm.push_back(tr.getVar<double>("top2_mass_cm"                       + myVarSuffix));
 
                 GoodJets.push_back(tr.getVec<bool>("GoodJets_pt30"                                 + myVarSuffix));
                 NGoodJets.push_back(tr.getVar<int>("NGoodJets_pt30"                                + myVarSuffix));
@@ -688,6 +752,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Baseline.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good"             + myVarSuffix));
                 Baseline_blind.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_blind" + myVarSuffix));
                 Mbl.push_back(tr.getVar<double>("Mbl"                                              + myVarSuffix));
+                Mll.push_back(tr.getVar<double>("mll"                                              + myVarSuffix));
                 dRbjets.push_back(tr.getVar<double>("dR_bjets"                                     + myVarSuffix));
 
                 DoubleDisCo_massReg.push_back(tr.getVar<double>("DoubleDisCo_massReg_" + channel + "l_RPV" + myVarSuffix));
@@ -727,6 +792,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Stop2_eta_cm_TopSeed.push_back(tr.getVar<double>("Stop2_eta_cm_TopSeed"     + myVarSuffix));
                 Stop2_phi_cm_TopSeed.push_back(tr.getVar<double>("Stop2_phi_cm_TopSeed"     + myVarSuffix));
                 Stop2_mass_cm_TopSeed.push_back(tr.getVar<double>("Stop2_mass_cm_TopSeed"   + myVarSuffix));
+
+                Lepton1_pt_cm.push_back(tr.getVar<double>("GoodLeptons_pt_1"       + myVarSuffix));
+                Lepton1_eta_cm.push_back(tr.getVar<double>("GoodLeptons_eta_1"     + myVarSuffix));
+                Lepton1_phi_cm.push_back(tr.getVar<double>("GoodLeptons_phi_1"     + myVarSuffix));
+                Lepton2_pt_cm.push_back(tr.getVar<double>("GoodLeptons_pt_2"       + myVarSuffix));
+                Lepton2_eta_cm.push_back(tr.getVar<double>("GoodLeptons_eta_2"     + myVarSuffix));
+                Lepton2_phi_cm.push_back(tr.getVar<double>("GoodLeptons_phi_2"     + myVarSuffix));
 
                 GoodLeptons.push_back(tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons" + myVarSuffix));
                 GoodLeptonsCharge.push_back(tr.getVec<int>("GoodLeptonsCharge"                                + myVarSuffix));
@@ -785,6 +857,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 Jets_CR.push_back(tr.getVec<utility::LorentzVector>("Jets"         + myVarSuffix));
                 Jets_cm_top6_CR.push_back(tr.getVec<utility::LorentzVector>(mvaName + "Jets_cm_top6" + myVarSuffix));
+                Tops_CR.push_back(tr.getVec<utility::LorentzVector>("topsLV"                         + myVarSuffix));
+                Top1_pt_cm_CR.push_back(tr.getVar<double>("top1_pt_cm"                               + myVarSuffix));
+                Top1_eta_cm_CR.push_back(tr.getVar<double>("top1_eta_cm"                             + myVarSuffix));
+                Top1_phi_cm_CR.push_back(tr.getVar<double>("top1_phi_cm"                             + myVarSuffix));
+                Top1_mass_cm_CR.push_back(tr.getVar<double>("top1_mass_cm"                           + myVarSuffix));
+                Top2_pt_cm_CR.push_back(tr.getVar<double>("top2_pt_cm"                               + myVarSuffix));
+                Top2_eta_cm_CR.push_back(tr.getVar<double>("top2_eta_cm"                             + myVarSuffix));
+                Top2_phi_cm_CR.push_back(tr.getVar<double>("top2_phi_cm"                             + myVarSuffix));
+                Top2_mass_cm_CR.push_back(tr.getVar<double>("top2_mass_cm"                           + myVarSuffix));
 
                 GoodJets_CR.push_back(tr.getVec<bool>(jetsName + "Jets_pt30"        + myVarSuffix));
                 NGoodJets_CR.push_back(tr.getVar<int>("N" + jetsName + "Jets_pt30" + myVarSuffix));
@@ -800,6 +881,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"           + myVarSuffix));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"              + myVarSuffix));
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + myVarSuffix));
+                Mll_CR.push_back(tr.getVar<double>("mll"                           + myVarSuffix));
                 dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + myVarSuffix));
 
                 DoubleDisCo_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_" + channel + "l_RPV"  + myVarSuffix));
@@ -839,6 +921,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Stop2_eta_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_eta_cm_TopSeed_NonIsoMuon"     + myVarSuffix));
                 Stop2_phi_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_phi_cm_TopSeed_NonIsoMuon"     + myVarSuffix));
                 Stop2_mass_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_mass_cm_TopSeed_NonIsoMuon"   + myVarSuffix));
+
+                Lepton1_pt_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_pt_1"       + myVarSuffix));
+                Lepton1_eta_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_eta_1"     + myVarSuffix));
+                Lepton1_phi_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_phi_1"     + myVarSuffix));
+                Lepton2_pt_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_pt_2"       + myVarSuffix));
+                Lepton2_eta_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_eta_2"     + myVarSuffix));
+                Lepton2_phi_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_phi_2"     + myVarSuffix));
 
                 GoodLeptons_CR.push_back(tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodNonIsoMuons" + myVarSuffix));
                 GoodLeptonsCharge_CR.push_back(tr.getVec<int>("GoodNonIsoMuonsCharge"                                + myVarSuffix));
@@ -1081,78 +1170,114 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                 {
 
                                     Debug("Filling event variable histograms with name: " + name, __LINE__);
-                                    my_histos["h_njets"      + name]->Fill(!isQCD ?    NGoodJets[channel] : NGoodJets_CR[channel],    w);
-                                    my_histos["h_nbjets"     + name]->Fill(!isQCD ?   NGoodBJets[channel] : NGoodBJets_CR[channel],   w);
-                                    my_histos["h_ntops"      + name]->Fill(!isQCD ?        NTops[channel] : NTops_CR[channel],        w);
-                                    my_histos["fwm2_top6"    + name]->Fill(!isQCD ?    fwm2_top6[channel] : fwm2_top6_CR[channel],    w);
-                                    my_histos["fwm3_top6"    + name]->Fill(!isQCD ?    fwm3_top6[channel] : fwm3_top6_CR[channel],    w);
-                                    my_histos["fwm4_top6"    + name]->Fill(!isQCD ?    fwm4_top6[channel] : fwm4_top6_CR[channel],    w);
-                                    my_histos["fwm5_top6"    + name]->Fill(!isQCD ?    fwm5_top6[channel] : fwm5_top6_CR[channel],    w);
-                                    my_histos["jmt_ev0_top6" + name]->Fill(!isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_CR[channel], w);
-                                    my_histos["jmt_ev1_top6" + name]->Fill(!isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_CR[channel], w);
-                                    my_histos["jmt_ev2_top6" + name]->Fill(!isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_CR[channel], w);
-
-                                    my_histos["h_mbl"        + name]->Fill(!isQCD ? Mbl[channel] : Mbl_CR[channel], w);
-                                    my_histos["h_dRbjets"    + name]->Fill(!isQCD ? dRbjets[channel] : dRbjets_CR[channel], w);
+                                    // ----------------------------------------------------------------------------------------------------
+                                    // Filling event-level variables
+                                    // ----------------------------------------------------------------------------------------------------
+                                    my_histos["h_Njets"        + name]->Fill(!isQCD ?    NGoodJets[channel] : NGoodJets_CR[channel],    w);
+                                    my_histos["h_Nbjets"       + name]->Fill(!isQCD ?   NGoodBJets[channel] : NGoodBJets_CR[channel],   w);
+                                    my_histos["h_Ntops"        + name]->Fill(!isQCD ?        NTops[channel] : NTops_CR[channel],        w);
+                                    my_histos["h_FWM2_top6"    + name]->Fill(!isQCD ?    fwm2_top6[channel] : fwm2_top6_CR[channel],    w);
+                                    my_histos["h_FWM3_top6"    + name]->Fill(!isQCD ?    fwm3_top6[channel] : fwm3_top6_CR[channel],    w);
+                                    my_histos["h_FWM4_top6"    + name]->Fill(!isQCD ?    fwm4_top6[channel] : fwm4_top6_CR[channel],    w);
+                                    my_histos["h_FWM5_top6"    + name]->Fill(!isQCD ?    fwm5_top6[channel] : fwm5_top6_CR[channel],    w);
+                                    my_histos["h_JMT_ev0_top6" + name]->Fill(!isQCD ? jmt_ev0_top6[channel] : jmt_ev0_top6_CR[channel], w);
+                                    my_histos["h_JMT_ev1_top6" + name]->Fill(!isQCD ? jmt_ev1_top6[channel] : jmt_ev1_top6_CR[channel], w);
+                                    my_histos["h_JMT_ev2_top6" + name]->Fill(!isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_CR[channel], w);
+                                    my_histos["h_Mbl"          + name]->Fill(!isQCD ?          Mbl[channel] : Mbl_CR[channel],          w);
+                                    my_histos["h_Mll"          + name]->Fill(!isQCD ?          Mll[channel] : Mll_CR[channel],          w);
+                                    my_histos["h_dRbjets"      + name]->Fill(!isQCD ?      dRbjets[channel] : dRbjets_CR[channel],      w);
+                                    my_histos["h_HT"           + name]->Fill(!isQCD ?      HT_pt30[channel] : HT_pt30_CR[channel],      w);
 
                                     Debug("Filling stop variable histograms with name: " + name, __LINE__);
 
-                                    // Plots of stop 4-vector are made with pt-ranked stops
-                                    if (Stop1_pt_cm_OldSeed  > Stop2_pt_cm_OldSeed)
+                                    // ----------------------------------------------------------------------------------------------------
+                                    // Filling top 4-vector and stop 4-vector variables, sort objects by transverse momentum
+                                    // ----------------------------------------------------------------------------------------------------
+                                    unsigned int leadIndex    = 0;
+                                    unsigned int subleadIndex = 1;
+                                    if ( (!isQCD and Top2_pt_cm[channel]    > Top1_pt_cm[channel]) or \
+                                         (isQCD  and Top2_pt_cm_CR[channel] > Top1_pt_cm_CR[channel]))
                                     {
-                                        my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed[channel]   : Stop1_pt_cm_OldSeed_CR[channel],   w);
-                                        my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed[channel]  : Stop1_eta_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed[channel]  : Stop1_phi_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop1_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed[channel] : Stop1_mass_cm_OldSeed_CR[channel], w);
+                                        leadIndex    = 1;
+                                        subleadIndex = 0;
+                                    }
+                                    my_histos["h_Top" + std::to_string(leadIndex+1) + "_Pt_cm"   + name]->Fill(!isQCD ? Top1_pt_cm[channel]   : Top1_pt_cm_CR[channel],   w);
+                                    my_histos["h_Top" + std::to_string(leadIndex+1) + "_Eta_cm"  + name]->Fill(!isQCD ? Top1_eta_cm[channel]  : Top1_eta_cm_CR[channel],  w);
+                                    my_histos["h_Top" + std::to_string(leadIndex+1) + "_Phi_cm"  + name]->Fill(!isQCD ? Top1_phi_cm[channel]  : Top1_phi_cm_CR[channel],  w);
+                                    my_histos["h_Top" + std::to_string(leadIndex+1) + "_Mass_cm" + name]->Fill(!isQCD ? Top1_mass_cm[channel] : Top1_mass_cm_CR[channel], w);
 
-                                        my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed[channel]   : Stop2_pt_cm_OldSeed_CR[channel],   w);
-                                        my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed[channel]  : Stop2_eta_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed[channel]  : Stop2_phi_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop2_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed[channel] : Stop2_mass_cm_OldSeed_CR[channel], w);
-                                    } else
+                                    my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Pt_cm"   + name]->Fill(!isQCD ? Top2_pt_cm[channel]   : Top2_pt_cm_CR[channel],   w);
+                                    my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Eta_cm"  + name]->Fill(!isQCD ? Top2_eta_cm[channel]  : Top2_eta_cm_CR[channel],  w);
+                                    my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Phi_cm"  + name]->Fill(!isQCD ? Top2_phi_cm[channel]  : Top2_phi_cm_CR[channel],  w);
+                                    my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Mass_cm" + name]->Fill(!isQCD ? Top2_mass_cm[channel] : Top2_mass_cm_CR[channel], w);
+
+                                    if ((!isQCD and Tops[channel].size() >= 2) or (isQCD and Tops_CR[channel].size() >= 2))
                                     {
-                                        my_histos["Stop1_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed[channel]   : Stop2_pt_cm_OldSeed_CR[channel],   w);
-                                        my_histos["Stop1_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed[channel]  : Stop2_eta_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop1_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed[channel]  : Stop2_phi_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop1_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed[channel] : Stop2_mass_cm_OldSeed_CR[channel], w);
+                                        leadIndex    = 0;
+                                        subleadIndex = 1;
+                                        if ( (!isQCD and Tops[channel].at(1).Pt()    > Tops[channel].at(0).Pt()) or \
+                                             (isQCD  and Tops_CR[channel].at(1).Pt() > Tops_CR[channel].at(0).Pt()))
+                                        {
+                                            leadIndex    = 1;
+                                            subleadIndex = 0;
+                                        }
+                                        my_histos["h_Top" + std::to_string(leadIndex+1) + "_Pt"   + name]->Fill(!isQCD ? Tops[channel].at(leadIndex).Pt()  : Tops_CR[channel].at(leadIndex).Pt(),  w);
+                                        my_histos["h_Top" + std::to_string(leadIndex+1) + "_Eta"  + name]->Fill(!isQCD ? Tops[channel].at(leadIndex).Eta() : Tops_CR[channel].at(leadIndex).Eta(), w);
+                                        my_histos["h_Top" + std::to_string(leadIndex+1) + "_Phi"  + name]->Fill(!isQCD ? Tops[channel].at(leadIndex).Phi() : Tops_CR[channel].at(leadIndex).Phi(), w);
+                                        my_histos["h_Top" + std::to_string(leadIndex+1) + "_Mass" + name]->Fill(!isQCD ? Tops[channel].at(leadIndex).M()   : Tops_CR[channel].at(leadIndex).M(),   w);
 
-                                        my_histos["Stop2_pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed[channel]   : Stop1_pt_cm_OldSeed_CR[channel],   w);
-                                        my_histos["Stop2_eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed[channel]  : Stop1_eta_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop2_phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed[channel]  : Stop1_phi_cm_OldSeed_CR[channel],  w);
-                                        my_histos["Stop2_mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed[channel] : Stop1_mass_cm_OldSeed_CR[channel], w);
+                                        my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Pt"   + name]->Fill(!isQCD ? Tops[channel].at(subleadIndex).Pt()  : Tops_CR[channel].at(subleadIndex).Pt(),  w);
+                                        my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Eta"  + name]->Fill(!isQCD ? Tops[channel].at(subleadIndex).Eta() : Tops_CR[channel].at(subleadIndex).Eta(), w);
+                                        my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Phi"  + name]->Fill(!isQCD ? Tops[channel].at(subleadIndex).Phi() : Tops_CR[channel].at(subleadIndex).Phi(), w);
+                                        my_histos["h_Top" + std::to_string(subleadIndex+1) + "_Mass" + name]->Fill(!isQCD ? Tops[channel].at(subleadIndex).M()   : Tops_CR[channel].at(subleadIndex).M(),   w);
                                     }
 
-                                    if (Stop1_pt_cm_TopSeed  > Stop2_pt_cm_TopSeed)
+                                    leadIndex    = 0;
+                                    subleadIndex = 1;
+                                    if ( (!isQCD and Stop2_pt_cm_OldSeed[channel]    > Stop1_pt_cm_OldSeed[channel]) or \
+                                         (isQCD  and Stop2_pt_cm_OldSeed_CR[channel] > Stop1_pt_cm_OldSeed_CR[channel]))
                                     {
-                                        my_histos["Stop1_pt_cm_TopSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_TopSeed[channel]   : Stop1_pt_cm_TopSeed_CR[channel],   w);
-                                        my_histos["Stop1_eta_cm_TopSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_TopSeed[channel]  : Stop1_eta_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop1_phi_cm_TopSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_TopSeed[channel]  : Stop1_phi_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop1_mass_cm_TopSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_TopSeed[channel] : Stop1_mass_cm_TopSeed_CR[channel], w);
-
-                                        my_histos["Stop2_pt_cm_TopSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_TopSeed[channel]   : Stop2_pt_cm_TopSeed_CR[channel],   w);
-                                        my_histos["Stop2_eta_cm_TopSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_TopSeed[channel]  : Stop2_eta_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop2_phi_cm_TopSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_TopSeed[channel]  : Stop2_phi_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop2_mass_cm_TopSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_TopSeed[channel] : Stop2_mass_cm_TopSeed_CR[channel], w);
-                                    } else
-                                    {
-                                        my_histos["Stop1_pt_cm_TopSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_TopSeed[channel]   : Stop2_pt_cm_TopSeed_CR[channel],   w);
-                                        my_histos["Stop1_eta_cm_TopSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_TopSeed[channel]  : Stop2_eta_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop1_phi_cm_TopSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_TopSeed[channel]  : Stop2_phi_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop1_mass_cm_TopSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_TopSeed[channel] : Stop2_mass_cm_TopSeed_CR[channel], w);
-
-                                        my_histos["Stop2_pt_cm_TopSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_TopSeed[channel]   : Stop1_pt_cm_TopSeed_CR[channel],   w);
-                                        my_histos["Stop2_eta_cm_TopSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_TopSeed[channel]  : Stop1_eta_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop2_phi_cm_TopSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_TopSeed[channel]  : Stop1_phi_cm_TopSeed_CR[channel],  w);
-                                        my_histos["Stop2_mass_cm_TopSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_TopSeed[channel] : Stop1_mass_cm_TopSeed_CR[channel], w);
+                                        leadIndex    = 1;
+                                        subleadIndex = 0; 
                                     }
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_OldSeed[channel]   : Stop1_pt_cm_OldSeed_CR[channel],   w);
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_OldSeed[channel]  : Stop1_eta_cm_OldSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_OldSeed[channel]  : Stop1_phi_cm_OldSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_OldSeed[channel] : Stop1_mass_cm_OldSeed_CR[channel], w);
 
-                                    my_histos["Stop1_mass_PtRank_matched"   + name]->Fill(!isQCD ? Stop1_mass_PtRank_matched[channel]   : Stop1_mass_PtRank_matched_CR[channel],   w);
-                                    my_histos["Stop2_mass_PtRank_matched"   + name]->Fill(!isQCD ? Stop2_mass_PtRank_matched[channel]   : Stop2_mass_PtRank_matched_CR[channel],   w);
-                                    my_histos["Stop1_mass_MassRank_matched" + name]->Fill(!isQCD ? Stop1_mass_MassRank_matched[channel] : Stop1_mass_MassRank_matched_CR[channel], w);
-                                    my_histos["Stop2_mass_MassRank_matched" + name]->Fill(!isQCD ? Stop2_mass_MassRank_matched[channel] : Stop2_mass_MassRank_matched_CR[channel], w);
-                                    my_histos["Stop_mass_average_matched"   + name]->Fill(!isQCD ? Stop_mass_average_matched[channel]   : Stop_mass_average_matched_CR[channel],   w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Pt_cm_OldSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_OldSeed[channel]   : Stop2_pt_cm_OldSeed_CR[channel],   w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Eta_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_OldSeed[channel]  : Stop2_eta_cm_OldSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Phi_cm_OldSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_OldSeed[channel]  : Stop2_phi_cm_OldSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Mass_cm_OldSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_OldSeed[channel] : Stop2_mass_cm_OldSeed_CR[channel], w);
 
-                                    auto& cmJets = Jets_cm_top6[channel];
+                                    leadIndex    = 0;
+                                    subleadIndex = 1;
+                                    if ( (!isQCD and Stop2_pt_cm_TopSeed[channel]    > Stop1_pt_cm_TopSeed[channel]) or \
+                                         (isQCD  and Stop2_pt_cm_TopSeed_CR[channel] > Stop1_pt_cm_TopSeed_CR[channel]))
+                                    {
+                                        leadIndex    = 1;
+                                        subleadIndex = 0; 
+                                    }
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Pt_cm_TopSeed"   + name]->Fill(!isQCD ? Stop1_pt_cm_TopSeed[channel]   : Stop1_pt_cm_TopSeed_CR[channel],   w);
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Eta_cm_TopSeed"  + name]->Fill(!isQCD ? Stop1_eta_cm_TopSeed[channel]  : Stop1_eta_cm_TopSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Phi_cm_TopSeed"  + name]->Fill(!isQCD ? Stop1_phi_cm_TopSeed[channel]  : Stop1_phi_cm_TopSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(leadIndex+1) + "_Mass_cm_TopSeed" + name]->Fill(!isQCD ? Stop1_mass_cm_TopSeed[channel] : Stop1_mass_cm_TopSeed_CR[channel], w);
+
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Pt_cm_TopSeed"   + name]->Fill(!isQCD ? Stop2_pt_cm_TopSeed[channel]   : Stop2_pt_cm_TopSeed_CR[channel],   w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Eta_cm_TopSeed"  + name]->Fill(!isQCD ? Stop2_eta_cm_TopSeed[channel]  : Stop2_eta_cm_TopSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Phi_cm_TopSeed"  + name]->Fill(!isQCD ? Stop2_phi_cm_TopSeed[channel]  : Stop2_phi_cm_TopSeed_CR[channel],  w);
+                                    my_histos["h_Stop" + std::to_string(subleadIndex+1) + "_Mass_cm_TopSeed" + name]->Fill(!isQCD ? Stop2_mass_cm_TopSeed[channel] : Stop2_mass_cm_TopSeed_CR[channel], w);
+
+                                    my_histos["h_Stop1_mass_PtRank_matched"   + name]->Fill(!isQCD ? Stop1_mass_PtRank_matched[channel]   : Stop1_mass_PtRank_matched_CR[channel],   w);
+                                    my_histos["h_Stop2_mass_PtRank_matched"   + name]->Fill(!isQCD ? Stop2_mass_PtRank_matched[channel]   : Stop2_mass_PtRank_matched_CR[channel],   w);
+                                    my_histos["h_Stop1_mass_MassRank_matched" + name]->Fill(!isQCD ? Stop1_mass_MassRank_matched[channel] : Stop1_mass_MassRank_matched_CR[channel], w);
+                                    my_histos["h_Stop2_mass_MassRank_matched" + name]->Fill(!isQCD ? Stop2_mass_MassRank_matched[channel] : Stop2_mass_MassRank_matched_CR[channel], w);
+                                    my_histos["h_Stop_mass_average_matched"   + name]->Fill(!isQCD ? Stop_mass_average_matched[channel]   : Stop_mass_average_matched_CR[channel],   w);
+
+                                    // -------------------------------------------------------------------------------------------------
+                                    // Fill per jet variables including 4-vector and flavor information
+                                    // -------------------------------------------------------------------------------------------------
+                                    auto& cmJets     = Jets_cm_top6[channel];
                                     auto& jetFlavb   = Jets_flavb[channel];
                                     auto& jetFlavc   = Jets_flavc[channel];
                                     auto& jetFlavg   = Jets_flavg[channel];
@@ -1172,21 +1297,41 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                     for(unsigned int i = 1; i <= nJets; i++)
                                     {
-                                        my_histos["Jet_cm_ptrHT_" + std::to_string(i) + name]->Fill(cmJets.at(i-1).Pt()/ht, w);
-                                        my_histos["Jet_cm_pt_"    + std::to_string(i) + name]->Fill(cmJets.at(i-1).Pt(),    w);
-                                        my_histos["Jet_cm_eta_"   + std::to_string(i) + name]->Fill(cmJets.at(i-1).Eta(),   w);
-                                        my_histos["Jet_cm_phi_"   + std::to_string(i) + name]->Fill(cmJets.at(i-1).Phi(),   w);
-                                        my_histos["Jet_cm_m_"     + std::to_string(i) + name]->Fill(cmJets.at(i-1).M(),     w);
-                                        my_histos["Jet_cm_E_"     + std::to_string(i) + name]->Fill(cmJets.at(i-1).E(),     w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_PtrHT"   + name]->Fill(cmJets.at(i-1).Pt()/ht, w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Pt"      + name]->Fill(cmJets.at(i-1).Pt(),    w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Eta"     + name]->Fill(cmJets.at(i-1).Eta(),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Phi"     + name]->Fill(cmJets.at(i-1).Phi(),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Mass"    + name]->Fill(cmJets.at(i-1).M(),     w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Energy"  + name]->Fill(cmJets.at(i-1).E(),     w);
 
-                                        my_histos["Jet_cm_flavb_"   + std::to_string(i) + name]->Fill(jetFlavb.at(i-1),   w);
-                                        my_histos["Jet_cm_flavc_"   + std::to_string(i) + name]->Fill(jetFlavc.at(i-1),   w);
-                                        my_histos["Jet_cm_flavg_"   + std::to_string(i) + name]->Fill(jetFlavg.at(i-1),   w);
-                                        my_histos["Jet_cm_flavq_"   + std::to_string(i) + name]->Fill(jetFlavq.at(i-1),   w);
-                                        my_histos["Jet_cm_flavuds_" + std::to_string(i) + name]->Fill(jetFlavuds.at(i-1), w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavb"   + name]->Fill(jetFlavb.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavc"   + name]->Fill(jetFlavc.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavg"   + name]->Fill(jetFlavg.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavq"   + name]->Fill(jetFlavq.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavuds" + name]->Fill(jetFlavuds.at(i-1), w);
                                     }
 
-                                    my_histos["h_ht" + name]->Fill(ht, w);
+                                    Debug("Filling lepton variable histograms with name: " + name, __LINE__);
+
+                                    // -------------------------------------------------------------------------------------------------
+                                    // Fill per lepton (cm) variables including 4-vector and flavor information
+                                    // -------------------------------------------------------------------------------------------------
+                                    leadIndex    = 0;
+                                    subleadIndex = 1;
+                                    if ( (!isQCD and Lepton2_pt_cm[channel]    > Lepton1_pt_cm[channel]) or \
+                                         (isQCD  and Lepton2_pt_cm_CR[channel] > Lepton1_pt_cm_CR[channel]))
+                                    {
+                                        leadIndex    = 1;
+                                        subleadIndex = 0; 
+                                    }
+
+                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_cm_Pt"     + name]->Fill(!isQCD ? Lepton1_pt_cm[channel]  : Lepton1_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_cm_Phi"    + name]->Fill(!isQCD ? Lepton1_phi_cm[channel] : Lepton1_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_cm_Eta"    + name]->Fill(!isQCD ? Lepton1_eta_cm[channel] : Lepton1_pt_cm_CR[channel], w);
+
+                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_cm_Pt"  + name]->Fill(!isQCD ? Lepton2_pt_cm[channel]  : Lepton2_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_cm_Phi" + name]->Fill(!isQCD ? Lepton2_phi_cm[channel] : Lepton2_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_cm_Eta" + name]->Fill(!isQCD ? Lepton2_eta_cm[channel] : Lepton2_pt_cm_CR[channel], w);
 
                                     auto& theGoodLeptons  = GoodLeptons[channel];
                                     auto& theGoodLeptonsC = GoodLeptonsCharge[channel];
@@ -1198,36 +1343,98 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                        theGoodLeptonsI = GoodLeptonsMiniIso_CR[channel]; 
                                     }
 
-                                    Debug("Filling lepton variable histograms with name: " + name, __LINE__);
-
-                                    for(std::size_t j = 0 ; j < theGoodLeptons.size(); ++j)
+                                    if (theGoodLeptons.size() == 1)
                                     {
-                                        std::string type            = theGoodLeptons[j].first;
-                                        utility::LorentzVector lvec = theGoodLeptons[j].second; 
-                                        double charge               = theGoodLeptonsC[j];
-                                        double iso                  = theGoodLeptonsI[j];
+                                        std::string type1            = theGoodLeptons[0].first;
+                                        utility::LorentzVector lvec1 = theGoodLeptons[0].second; 
+                                        double charge1               = theGoodLeptonsC[0];
+                                        double iso1                  = theGoodLeptonsI[0];
 
-                                        my_histos["h_lPt_"      + std::to_string(j+1) + name]->Fill(lvec.Pt(),  w);
-                                        my_histos["h_lPhi_"     + std::to_string(j+1) + name]->Fill(lvec.Phi(), w);
-                                        my_histos["h_lEta_"     + std::to_string(j+1) + name]->Fill(lvec.Eta(), w);
-                                        my_histos["h_lCharge_"  + std::to_string(j+1) + name]->Fill(charge ,    w);
-                                        my_histos["h_lMiniIso_" + std::to_string(j+1) + name]->Fill(iso ,       w);
+                                        my_histos["h_Lepton1_Pt"      + name]->Fill(lvec1.Pt(),  w);
+                                        my_histos["h_Lepton1_Phi"     + name]->Fill(lvec1.Phi(), w);
+                                        my_histos["h_Lepton1_Eta"     + name]->Fill(lvec1.Eta(), w);
+                                        my_histos["h_Lepton1_Charge"  + name]->Fill(charge1,     w);
+                                        my_histos["h_Lepton1_MiniIso" + name]->Fill(iso1,        w);
 
-                                        if(type == 'e'){
-                                            my_histos["h_ePt_"      + std::to_string(j+1) + name]->Fill(lvec.Pt() , w);
-                                            my_histos["h_ePhi_"     + std::to_string(j+1) + name]->Fill(lvec.Phi(), w);
-                                            my_histos["h_eEta_"     + std::to_string(j+1) + name]->Fill(lvec.Eta(), w);
-                                            my_histos["h_eCharge_"  + std::to_string(j+1) + name]->Fill(charge,     w);
-                                            my_histos["h_eMiniIso_" + std::to_string(j+1) + name]->Fill(iso,        w);
-                                        } else if (type == 'm' or type == 'n') {
-                                            my_histos["h_mPt_"      + std::to_string(j+1) + name]->Fill(lvec.Pt(),  w);
-                                            my_histos["h_mPhi_"     + std::to_string(j+1) + name]->Fill(lvec.Phi(), w);
-                                            my_histos["h_mEta_"     + std::to_string(j+1) + name]->Fill(lvec.Eta(), w);
-                                            my_histos["h_mCharge_"  + std::to_string(j+1) + name]->Fill(charge,     w);
-                                            my_histos["h_mMiniIso_" + std::to_string(j+1) + name]->Fill(iso,        w);
+                                        if(type1 == 'e'){
+                                            my_histos["h_Electron1_Pt"      + name]->Fill(lvec1.Pt() , w);
+                                            my_histos["h_Electron1_Phi"     + name]->Fill(lvec1.Phi(), w);
+                                            my_histos["h_Electron1_Eta"     + name]->Fill(lvec1.Eta(), w);
+                                            my_histos["h_Electron1_Charge"  + name]->Fill(charge1,     w);
+                                            my_histos["h_Electron1_MiniIso" + name]->Fill(iso1,        w);
+                                        } else if (type1 == 'm' or type1 == 'n') {
+                                            my_histos["h_Muon1_Pt"      + name]->Fill(lvec1.Pt(),  w);
+                                            my_histos["h_Muon1_Phi"     + name]->Fill(lvec1.Phi(), w);
+                                            my_histos["h_Muon1_Eta"     + name]->Fill(lvec1.Eta(), w);
+                                            my_histos["h_Muon1_Charge"  + name]->Fill(charge1,     w);
+                                            my_histos["h_Muon1_MiniIso" + name]->Fill(iso1,        w);
                                         }
+
+                                    } else if (theGoodLeptons.size() == 2)
+                                    {
+                                        unsigned int leadIndex    = 0;
+                                        unsigned int subleadIndex = 1;
+                                        if (theGoodLeptons[1].second.Pt() > theGoodLeptons[0].second.Pt())
+                                        {
+                                            leadIndex    = 1;
+                                            subleadIndex = 0;
+                                        }
+
+                                        std::string type1            = theGoodLeptons[leadIndex].first;
+                                        utility::LorentzVector lvec1 = theGoodLeptons[leadIndex].second; 
+                                        double charge1               = theGoodLeptonsC[leadIndex];
+                                        double iso1                  = theGoodLeptonsI[leadIndex];
+
+                                        std::string type2            = theGoodLeptons[subleadIndex].first;
+                                        utility::LorentzVector lvec2 = theGoodLeptons[subleadIndex].second; 
+                                        double charge2               = theGoodLeptonsC[subleadIndex];
+                                        double iso2                  = theGoodLeptonsI[subleadIndex];
+
+                                        my_histos["h_Lepton1_Pt"      + name]->Fill(lvec1.Pt(),  w);
+                                        my_histos["h_Lepton1_Phi"     + name]->Fill(lvec1.Phi(), w);
+                                        my_histos["h_Lepton1_Eta"     + name]->Fill(lvec1.Eta(), w);
+                                        my_histos["h_Lepton1_Charge"  + name]->Fill(charge1,     w);
+                                        my_histos["h_Lepton1_MiniIso" + name]->Fill(iso1,        w);
+
+                                        if(type2 == 'e'){
+                                            my_histos["h_Electron1_Pt"      + name]->Fill(lvec1.Pt() , w);
+                                            my_histos["h_Electron1_Phi"     + name]->Fill(lvec1.Phi(), w);
+                                            my_histos["h_Electron1_Eta"     + name]->Fill(lvec1.Eta(), w);
+                                            my_histos["h_Electron1_Charge"  + name]->Fill(charge1,     w);
+                                            my_histos["h_Electron1_MiniIso" + name]->Fill(iso1,        w);
+                                        } else if (type2 == 'm' or type2 == 'n') {
+                                            my_histos["h_Muon1_Pt"      + name]->Fill(lvec1.Pt(),  w);
+                                            my_histos["h_Muon1_Phi"     + name]->Fill(lvec1.Phi(), w);
+                                            my_histos["h_Muon1_Eta"     + name]->Fill(lvec1.Eta(), w);
+                                            my_histos["h_Muon1_Charge"  + name]->Fill(charge1,     w);
+                                            my_histos["h_Muon1_MiniIso" + name]->Fill(iso1,        w);
+                                        }
+
+                                        my_histos["h_Lepton2_Pt"      + name]->Fill(lvec2.Pt(),  w);
+                                        my_histos["h_Lepton2_Phi"     + name]->Fill(lvec2.Phi(), w);
+                                        my_histos["h_Lepton2_Eta"     + name]->Fill(lvec2.Eta(), w);
+                                        my_histos["h_Lepton2_Charge"  + name]->Fill(charge2,     w);
+                                        my_histos["h_Lepton2_MiniIso" + name]->Fill(iso2,        w);
+
+                                        if(type2 == 'e'){
+                                            my_histos["h_Electron2_Pt"      + name]->Fill(lvec2.Pt() , w);
+                                            my_histos["h_Electron2_Phi"     + name]->Fill(lvec2.Phi(), w);
+                                            my_histos["h_Electron2_Eta"     + name]->Fill(lvec2.Eta(), w);
+                                            my_histos["h_Electron2_Charge"  + name]->Fill(charge2,     w);
+                                            my_histos["h_Electron2_MiniIso" + name]->Fill(iso2,        w);
+                                        } else if (type2 == 'm' or type2 == 'n') {
+                                            my_histos["h_Muon2_Pt"      + name]->Fill(lvec2.Pt(),  w);
+                                            my_histos["h_Muon2_Phi"     + name]->Fill(lvec2.Phi(), w);
+                                            my_histos["h_Muon2_Eta"     + name]->Fill(lvec2.Eta(), w);
+                                            my_histos["h_Muon2_Charge"  + name]->Fill(charge2,     w);
+                                            my_histos["h_Muon2_MiniIso" + name]->Fill(iso2,        w);
+                                        }
+
                                     }
 
+                                    // -------------------------------------------------------------------------------------------------
+                                    // Fill per jet (non-cm) variables including 4-vector and flavor informatiom
+                                    // -------------------------------------------------------------------------------------------------
                                     auto& theJets         = Jets[channel];
                                     auto& theGoodJets     = GoodJets[channel];
                                     auto& theJetsFlavb    = Jets_flavb[channel];
@@ -1269,17 +1476,17 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     {
 
                                         if(!theGoodJets[j]) continue;
-                                        my_histos["h_jPt_"  + std::to_string(iGoodJet) + name]->Fill(theJets.at(j).Pt(),  w); 
-                                        my_histos["h_jEta_" + std::to_string(iGoodJet) + name]->Fill(theJets.at(j).Eta(), w); 
-                                        my_histos["h_jPhi_" + std::to_string(iGoodJet) + name]->Fill(theJets.at(j).Phi(), w); 
-                                        my_histos["h_jM_"   + std::to_string(iGoodJet) + name]->Fill(theJets.at(j).M(),   w); 
-                                        my_histos["h_jE_"   + std::to_string(iGoodJet) + name]->Fill(theJets.at(j).E(),   w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Pt"     + name]->Fill(theJets.at(j).Pt(),  w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Eta"    + name]->Fill(theJets.at(j).Eta(), w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Phi"    + name]->Fill(theJets.at(j).Phi(), w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Mass"   + name]->Fill(theJets.at(j).M(),   w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Energy" + name]->Fill(theJets.at(j).E(),   w); 
 
-                                        my_histos["h_jFlavb_"   + std::to_string(iGoodJet) + name]->Fill(theJetsFlavb.at(j),   w); 
-                                        my_histos["h_jFlavc_"   + std::to_string(iGoodJet) + name]->Fill(theJetsFlavc.at(j),   w); 
-                                        my_histos["h_jFlavg_"   + std::to_string(iGoodJet) + name]->Fill(theJetsFlavg.at(j),   w); 
-                                        my_histos["h_jFlavuds_" + std::to_string(iGoodJet) + name]->Fill(theJetsFlavuds.at(j), w); 
-                                        my_histos["h_jFlavq_"   + std::to_string(iGoodJet) + name]->Fill(theJetsFlavq.at(j),   w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Flavb"   + name]->Fill(theJetsFlavb.at(j),   w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Flavc"   + name]->Fill(theJetsFlavc.at(j),   w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Flavg"   + name]->Fill(theJetsFlavg.at(j),   w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Flavuds" + name]->Fill(theJetsFlavuds.at(j), w); 
+                                        my_histos["h_Jet" + std::to_string(iGoodJet) + "_Flavq"   + name]->Fill(theJetsFlavq.at(j),   w); 
 
                                         iGoodJet++;
 
@@ -1289,14 +1496,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                     Debug("Filling combined jet variable histograms with name: " + name, __LINE__);
 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_pt"    + name]->Fill(theCombJetPt,    w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_ptrHT" + name]->Fill(theCombJetPtrHT, w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_eta"   + name]->Fill(theCombJetEta,   w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_phi"   + name]->Fill(theCombJetPhi,   w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_m"     + name]->Fill(theCombJetM,     w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_E"     + name]->Fill(theCombJetE,     w); 
+                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Pt"     + name]->Fill(theCombJetPt,    w); 
+                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_PtrHT"  + name]->Fill(theCombJetPtrHT, w); 
+                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Eta"    + name]->Fill(theCombJetEta,   w); 
+                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Phi"    + name]->Fill(theCombJetPhi,   w); 
+                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Mass"   + name]->Fill(theCombJetM,     w); 
+                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Energy" + name]->Fill(theCombJetE,     w); 
                                 }                            
 
+
+                                // -------------------------------------------------------------------------------------------------
+                                // Fill 2D event-level varaibles
+                                // -------------------------------------------------------------------------------------------------
                                 if (region == "ABCD" and ttvar == "nom")
                                     my_2d_histos["h_nRtops_vs_nMtops"      + name]->Fill(!isQCD ? NRTops[channel] : NRTops_CR[channel], !isQCD ? NMTops[channel] : NMTops_CR[channel], w);
 
@@ -1311,8 +1522,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     for(unsigned int i = 1; i <= nJets; i++)
                                     {
                                         double pt  = static_cast<double>(cmJets.at(i-1).Pt());
-                                        my_2d_histos["h_cm_pt_jetRank"    + name]->Fill(pt,    i, w);
-                                        my_2d_histos["h_cm_ptrHT_jetRank" + name]->Fill(pt/ht, i, w);
+                                        my_2d_histos["h_pt_jetRank_cm"    + name]->Fill(pt,    i, w);
+                                        my_2d_histos["h_ptrHT_jetRank_cm" + name]->Fill(pt/ht, i, w);
                                     }
                                 }
 
