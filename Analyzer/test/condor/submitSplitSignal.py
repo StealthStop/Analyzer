@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     fullInputPath = "%s/%s/%s/"%(args.eosPath, args.era, model)
 
-    USER = os.getenv("USER")
+    USER = "lpcsusyhad"
     outputDir = "/eos/uscms/store/user/%s/%s/%s"%(USER, args.outPath, args.era)
     for mass in masses:
         temp = ("%s/%s/"%(outputDir, model)).replace("300to1400", str(mass))
