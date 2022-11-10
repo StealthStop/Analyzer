@@ -17,6 +17,20 @@ def cyan(string):
      CEND = "\033[0m"
      return CRED + str(string) + CEND
 
+def orange(string):
+     CRED = "\033[93m"
+     CEND = "\033[0m"
+     return CRED + str(string) + CEND
+
+def eosCompatible(query):
+
+    compatible = True
+    if "[" in query or "]" in query or "?" in query:
+        print cyan("Running in EOS compatiblity mode with \"ls\" rather than \"eosls\"")
+        compatible = False
+
+    return compatible
+
 def printError(log):
     if len(log) > 0:
          print red("------------------------------------------------------------------------------------------------")
@@ -51,10 +65,10 @@ def checkNumEvents(nEvents, rootFile, sampleCollection, log):
 
     return log
 
-def listFiles(inPath, query, eosCompatible=True):
+def listFiles(inPath, query):
 
     files = None
-    if eosCompatible:
+    if eosCompatible(query):
         stub = query.split("/MyAnalysis")[0]
         commandList = ["eos", "root://cmseos.fnal.gov", "ls", query]
 
@@ -109,6 +123,7 @@ def main():
     if options.v:
         haddArgs = "-v 99"
     if options.m:
+        print cyan("Running hadd multithreaded with 4 threads")
         haddArgs += " -j 4"
     
     # Check if output directory exits and makes it if not
@@ -124,6 +139,8 @@ def main():
         elif not useSameDir:
             print red("Error: Output directory %s already exits ! Use option -f to OK writing into existing folder." % ('"'+outDir+'"'))
             exit(0)    
+        else:
+            print orange("User OK'd writing hadded output to existing folder: \"%s\" !"%(outDir))
     else:
         os.makedirs(outDir) 
 
@@ -174,8 +191,7 @@ def main():
 
                     query = "%s/%s/%s/MyAnalysis_%s_[0-9]*.root"%(stubPath, inPath, directory, tempSample)
 
-                    eosCompatibility = "[" not in query and "]" not in query
-                    files = " ".join(listFiles(inPath, query, eosCompatibility))
+                    files = " ".join(listFiles(inPath, query))
 
                     outfile = "%s/%s.root" % (outDir, cleanName)
                     command = "hadd %s %s/%s.root %s" % (haddArgs, outDir, cleanName, files)
