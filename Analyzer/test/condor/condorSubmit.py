@@ -8,6 +8,11 @@ from samples import SampleCollection
 import optparse 
 import subprocess
 
+def red(string):
+     CRED = "\033[91m"
+     CEND = "\033[0m"
+     return CRED + str(string) + CEND
+
 def removeCopies(x):
   return list(dict.fromkeys(x))
 
@@ -49,6 +54,10 @@ def main():
 
     workingDir = options.outPath
     eosDir     = "root://cmseos.fnal.gov///store/user/%s/StealthStop/%s"%(userName, options.outPath)
+
+    if os.path.isdir(workingDir):
+        print red("Job directory already exists and cannot proceed safely ! Exiting...")
+        exit(0)
 
     # Prepare the list of files to transfer
     mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)
