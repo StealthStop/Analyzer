@@ -5,38 +5,38 @@ import ROOT
 from collections import OrderedDict
 
 selections = [
-        #"",
-        #"_1mu",
-        #"_1mu_6j",
-        #"_1mu_6j_0el",
-        #"_1mu_6j_0el_1b",
-        #"_1mu_6j_0el_1b_jMETdPhi",
-        #"_1mu_6j_0el_1b_jMETdPhi_1bl",
-        #"_1mu_6j_0el_1b_jMETdPhi_1bl_mubdR_mubM",
-        #"_1mu_6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi",
-        #"_1mu_6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT",
-        #"_1mu_6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT_HT200_pt30",
-        #"_1mu_6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT_HT200_pt30_MET50",
-        #"_TTbarCR",
-        "_QCDCR"
+        "",
+        "_1mu",
+        "_1mu_ge6j",
+        "_1mu_ge6j_0el",
+        "_1mu_ge6j_0el_1b",
+        "_1mu_ge6j_0el_1b_jMETdPhi",
+        "_1mu_ge6j_0el_1b_jMETdPhi_1bl",
+        "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM",
+        "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi",
+        "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT",
+        "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT_HT200_pt30",
+        "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT_HT200_pt30_MET50",
+        "_TTbarCR",
+        #"_QCDCR"
 ]
 
 histograms = {
-    "h_jet1METdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(jet 1, MET)",          "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
-    "h_jet2METdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(jet 2, MET)",          "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
-    "h_jet3METdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(jet 3, MET)",          "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
-    "h_met?"          : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "E_{T}^{miss} [GeV]",              "rebin" :  6, "min" :     0, "max" : 1500}},
-    "h_ht?"           : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "H_{T} [GeV]",                     "rebin" : 15, "min" :     0, "max" : 5000}},
-    "h_muonBjetDR?"   : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "min #DeltaR(muon, loose b jet)",  "rebin" :  3, "min" :     0, "max" :    5}},
-    "h_muonBjetMass?" : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "m(muon, loose b jet) [GeV]",      "rebin" :  6, "min" :     0, "max" : 500}},
-    "h_muonMETdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(muon, E_{T}^{miss})",  "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
-    "h_muonMETmT?"    : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "m_{T}(muon, E_{T}^{miss}) [GeV]", "rebin" :  3, "min" :     0, "max" : 200}},
-    "h_nJets?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{jets}",                        "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
-    "h_nBJets?"       : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{b jets}",                      "rebin" :  1, "min" :  -0.5, "max" : 10.5}},
-    "h_nElectrons?"   : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{electrons}",                   "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
-    "h_nMuons?"       : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{muons}",                       "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
-    "h_topPt?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "Best Candidate top p_{T} [GeV]",  "rebin" : 12, "min" :     0, "max" : 2000}},
-    "h_topPt?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "Best Candidate top p_{T} [GeV]",  "rebin" : 12, "min" :     0, "max" : 2000}},
+    "jet1METdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(jet 1, MET)",          "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
+    "jet2METdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(jet 2, MET)",          "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
+    "jet3METdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(jet 3, MET)",          "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
+    "met?"          : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "E_{T}^{miss} [GeV]",              "rebin" :  6, "min" :     0, "max" : 1500}},
+    "ht?"           : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "H_{T} [GeV]",                     "rebin" : 15, "min" :     0, "max" : 5000}},
+    "muonBjetDR?"   : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "min #DeltaR(muon, loose b jet)",  "rebin" :  3, "min" :     0, "max" :    5}},
+    "muonBjetMass?" : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "m(muon, loose b jet) [GeV]",      "rebin" :  6, "min" :     0, "max" : 500}},
+    "muonMETdPhi?"  : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "#Delta#phi(muon, E_{T}^{miss})",  "rebin" :  2, "min" :  -4.0, "max" :  4.0}},
+    "muonMETmT?"    : {"logY" : False, "Y" : {"title" : "Weighted Events", "min" : 0.2},  "X" : {"title" : "m_{T}(muon, E_{T}^{miss}) [GeV]", "rebin" :  3, "min" :     0, "max" : 200}},
+    "nJets?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{jets}",                        "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
+    "nBJets?"       : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{b jets}",                      "rebin" :  1, "min" :  -0.5, "max" : 10.5}},
+    "nElectrons?"   : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{electrons}",                   "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
+    "nMuons?"       : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{muons}",                       "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
+    "topPt?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "Best Candidate top p_{T} [GeV]",  "rebin" : 12, "min" :     0, "max" : 2000}},
+    "topPt?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "Best Candidate top p_{T} [GeV]",  "rebin" : 12, "min" :     0, "max" : 2000}},
 
 
 }
@@ -59,6 +59,6 @@ signals = OrderedDict({
 })
 
 data = {
-    "Data_JetHT" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
+    "Data_SingleMuon" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
     #"pseudoDataS" : {"name" : "pseudoDataS", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
 }

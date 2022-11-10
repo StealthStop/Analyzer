@@ -54,7 +54,11 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr):
     dataMcRatio.Divide(dataRatio, mcRatio)
     dataMcRatio.SetTitle("")
 
-    dataRatio.GetXaxis().SetRangeUser(0,1000); mcRatio.GetXaxis().SetRangeUser(0,1000); dataMcRatio.GetXaxis().SetRangeUser(0,1000)
+    if "ratioR" in theName:
+        dataRatio.GetXaxis().SetRangeUser(0,1000); mcRatio.GetXaxis().SetRangeUser(0,1000); dataMcRatio.GetXaxis().SetRangeUser(0,1000)
+    else:
+        dataRatio.GetXaxis().SetRangeUser(400,1000); mcRatio.GetXaxis().SetRangeUser(400,1000); dataMcRatio.GetXaxis().SetRangeUser(400,1000)
+
     if "nJets" in theName:
         dataRatio.GetXaxis().SetRangeUser(6.5,10.5); mcRatio.GetXaxis().SetRangeUser(6.5,10.5); dataMcRatio.GetXaxis().SetRangeUser(6.5,10.5)
         dataMcRatio.GetXaxis().SetBinLabel(1, "7")
