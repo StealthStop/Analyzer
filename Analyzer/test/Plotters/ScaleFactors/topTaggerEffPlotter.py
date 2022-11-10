@@ -149,7 +149,7 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, goodName, outputFile):
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
 
-    if "topPt" in goodName:
+    if "topPt" in goodName and "Njets" in goodName:
         if "QCD" in goodName:
             goodName = goodName.replace("Binned", "MisTagSF_vs").replace("_QCDCR", "")
         else:
