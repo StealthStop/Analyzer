@@ -34,7 +34,7 @@ def setMinimumErrors(dataMcRatio):
                 newerror = content*0.03
                 dataMcRatio.SetBinError(xbin,ybin,newerror)
 
-def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr):
+def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, goodName, outputFile):
 
     theName = dataNum.GetName().replace("num","ratio")
 
@@ -63,8 +63,7 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr):
         dataRatio.GetXaxis().SetRangeUser(6.5,10.5); mcRatio.GetXaxis().SetRangeUser(6.5,10.5); dataMcRatio.GetXaxis().SetRangeUser(6.5,10.5)
         dataMcRatio.GetXaxis().SetBinLabel(1, "7")
         dataMcRatio.GetXaxis().SetBinLabel(2, "8")
-        dataMcRatio.GetXaxis().SetBinLabel(3, "9")
-        dataMcRatio.GetXaxis().SetBinLabel(4, "#geq 10")
+        dataMcRatio.GetXaxis().SetBinLabel(3, "#geq 9")
 
     dataRatio.SetLineColor(ROOT.kBlack); mcRatio.SetLineColor(ROOT.kRed)
     dataRatio.SetMarkerColor(ROOT.kBlack); mcRatio.SetMarkerColor(ROOT.kRed)
@@ -150,6 +149,17 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr):
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
 
+    if "topPt" in goodName:
+        if "QCD" in goodName:
+            goodName = goodName.replace("Binned", "MisTagSF_vs").replace("_QCDCR", "")
+        else:
+            goodName = goodName.replace("Binned", "TagRateSF_vs").replace("_TTbarCR", "")
+
+        goodName = goodName.replace("numR", "Resolved").replace("numM", "Merged")
+        outputFile.cd()
+        dataMcRatio.SetName(goodName)
+        dataMcRatio.Write(goodName)
+
     dataMcRatio.SetMinimum(0.4)
     dataMcRatio.SetMaximum(1.6)
     dataMcRatio.GetYaxis().SetNdivisions(-304)
@@ -221,11 +231,6 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
     setMinimumErrors(dataMcRatio)
 
-    if "datamc" in aName:
-        outputFile.cd()
-        dataMcRatio.SetName(aName)
-        dataMcRatio.Write(aName)
-
     theName = dataNum.GetName().replace("num","ratio")
 
     aCanvas = ROOT.TCanvas("c_data_%s"%(theName), "c_data_%s"%(theName), 1400, 1400)
@@ -262,7 +267,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     mark.SetTextAlign(31)
     mark.DrawLatex(1 - RightMargin, 1 - (TopMargin - 0.017), "%s (13 TeV)"%(year))
 
-    #aCanvas.SaveAs("Studies/TopTaggerSF/%s/%s_%s.pdf"%(tag,year,"data_"+theName))
+    aCanvas.SaveAs("Studies/TopTaggerSF/%s/%s_%s.pdf"%(tag,year,"data_"+theName))
 
     aCanvas = ROOT.TCanvas("c_mc_%s"%(theName), "c_mc_%s"%(theName), 1500, 1200)
     ROOT.gPad.Clear()
@@ -291,7 +296,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     mark.SetTextAlign(31)
     mark.DrawLatex(1 - RightMargin, 1 - (TopMargin - 0.017), "%s (13 TeV)"%(year))
 
-    #aCanvas.SaveAs("Studies/TopTaggerSF/%s/%s_%s.pdf"%(tag,year,"mc_"+theName))
+    aCanvas.SaveAs("Studies/TopTaggerSF/%s/%s_%s.pdf"%(tag,year,"mc_"+theName))
 
     aCanvas = ROOT.TCanvas("c_datamc_%s"%(theName), "c_datamc_%s"%(theName), 1400, 1400)
     ROOT.gPad.Clear()
@@ -342,16 +347,15 @@ if __name__ == '__main__':
     mcFileNotPureTop = ROOT.TFile.Open(fullPath + "/" + year + "_NotPureTop.root")
     dataFile         = 0
     if   cr == "TTbar":
-        dataFile  = ROOT.TFile.Open(fullPath.replace("MC", "Data") + "/" + year + "_Data_SingleMuon.root")
+        dataFile  = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleMuon.root")
     elif cr == "QCD":
-        dataFile = ROOT.TFile.Open(fullPath.replace("MC", "Data") + "/" + year + "_Data_JetHT.root")
+        dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_JetHT.root")
 
     outputPath = "./Studies/TopTaggerSF/%s/%s"%(tag,arg.year)
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
-    outputFileName = "%s_TopTagEff.root"%(year)
-
+    outputFileName = "%s_TopTaggerSF.root"%(year)
     outputFile = ROOT.TFile.Open("%s/%s"%(outputPath,outputFileName), "UPDATE")
 
     for topTag in topTags:
@@ -399,12 +403,10 @@ if __name__ == '__main__':
             for nJetCutTag in nJetCutTags:
                 nJetStr = ""
                 if nJetCutTag != "":
-                    nJetStr = "_Njet" + nJetCutTag
+                    nJetStr = "_Njets" + nJetCutTag
 
                 denomTag1 = "Binned_%s"%(varTag) + "_" + cr + "CR_den%s"%(topTag) + nJetStr
                 numerTag1 = "Binned_%s"%(varTag) + "_" + cr + "CR_num%s"%(topTag) + nJetStr
-
-                print(denomTag1)
 
                 dataFile.cd()
                 hDataNum = dataFile.Get(numerTag1)
@@ -439,4 +441,4 @@ if __name__ == '__main__':
                     dataDen = hDataDen
                     dataDen.Add(hMcTopDen, -1.0)
 
-                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr) 
+                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, numerTag1, outputFile) 
