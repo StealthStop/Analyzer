@@ -1,11 +1,9 @@
-import sys, os
-from os import system, environ
+import os
 import subprocess
 
 from samples import SampleCollection
 import argparse
-from glob import glob
-import datetime
+import glob
 import shutil
 import ROOT
 
@@ -13,6 +11,25 @@ def red(string):
      CRED = "\033[91m"
      CEND = "\033[0m"
      return CRED + str(string) + CEND
+
+def cyan(string):
+     CRED = "\033[96m"
+     CEND = "\033[0m"
+     return CRED + str(string) + CEND
+
+def orange(string):
+     CRED = "\033[93m"
+     CEND = "\033[0m"
+     return CRED + str(string) + CEND
+
+def eosCompatible(query):
+
+    compatible = True
+    if "[" in query or "]" in query or "?" in query:
+        print cyan("Running in EOS compatiblity mode with \"ls\" rather than \"eosls\"")
+        compatible = False
+
+    return compatible
 
 def printError(log):
     if len(log) > 0:
@@ -50,20 +67,25 @@ def checkNumEvents(nEvents, rootFile, sampleCollection, log):
 
 def listFiles(inPath, query):
 
-    stub = query.split("/MyAnalysis")[0]
+    files = None
+    if eosCompatible(query):
+        stub = query.split("/MyAnalysis")[0]
+        commandList = ["eos", "root://cmseos.fnal.gov", "ls", query]
 
-    proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", query], stdout=subprocess.PIPE)
-    payload = proc.stdout.readlines()
-    files   = ["/eos/uscms" + stub + "/" + file.rstrip() for file in payload]
+        proc = subprocess.Popen(commandList, stdout=subprocess.PIPE)
+        payload = proc.stdout.readlines()
+        files   = ["/eos/uscms" + stub + "/" + file.rstrip() for file in payload]
+    else:
+        files = glob.glob("/eos/uscms" + query)
 
     return files
 
 def getDataSets(inPath):
-    l = glob(inPath+"/*")
-    print "-----------------------------------------------------------------------------" 
-    print red("Warning: No dataset specified: using all directory names in input path")
-    print "-----------------------------------------------------------------------------\n" 
-    return list(s[len(inPath)+1:] for s in l)
+    l = glob.glob(inPath+"/*")
+    print "-------------------------------------------------------" 
+    print cyan("Automatically hadding all directory names in input path")
+    print "-------------------------------------------------------\n" 
+    return list(path.split("/")[-1] for path in l)
 
 def main():
     # Parse command line arguments
@@ -72,6 +94,7 @@ def main():
     parser.add_argument('-H', dest='outDir',   type=str,            default = 'rootfiles',    help = "Can pass in the output directory name")
     parser.add_argument('-p', dest='inPath',   type=str,            default = 'output-files', help = "Can pass in the input directory name")
     parser.add_argument('-y', dest='year',     type=str,            default = '',             help = "Can pass in the year for this data")
+    parser.add_argument('-f',                  action='store_true',                           help = "ok to write in existing folder")
     parser.add_argument('-v',                  action='store_true',                           help = "make hadd verbose")
     parser.add_argument('-o',                  action='store_true',                           help = "Overwrite output directory")
     parser.add_argument('-m',                  action='store_true',                           help = "multiprocess, restricted to 4")
@@ -94,26 +117,30 @@ def main():
     if options.datasets:
         datasets = options.datasets.split(',')
     else:
-        datasets = getDataSets(inPath)
+        datasets = getDataSets("/eos/uscms" + stubPath + "/" + inPath)
 
     haddArgs = "-v 0"
     if options.v:
         haddArgs = "-v 99"
     if options.m:
+        print cyan("Running hadd multithreaded with 4 threads")
         haddArgs += " -j 4"
     
     # Check if output directory exits and makes it if not
     outDir = options.outDir
     overwrite = options.o
+    useSameDir = options.f
     if os.path.exists(outDir):
         if overwrite: 
-            print red("Warning: Overwriting output directory")
+            print red("Warning: Overwriting output directory !")
             shutil.rmtree(outDir)
             os.makedirs(outDir)
             pass
-        else:
-            print red("Error: Output directory %s already exits" % ('"'+outDir+'"'))
+        elif not useSameDir:
+            print red("Error: Output directory %s already exits ! Use option -f to OK writing into existing folder." % ('"'+outDir+'"'))
             exit(0)    
+        else:
+            print orange("User OK'd writing hadded output to existing folder: \"%s\" !"%(outDir))
     else:
         os.makedirs(outDir) 
 
@@ -162,7 +189,8 @@ def main():
                     elif "_TTTo" in tempSample:
                         continue
 
-                    query = "%s/%s/%s/MyAnalysis_%s_*.root"%(stubPath, inPath, directory, tempSample)
+                    query = "%s/%s/%s/MyAnalysis_%s_[0-9]*.root"%(stubPath, inPath, directory, tempSample)
+
                     files = " ".join(listFiles(inPath, query))
 
                     outfile = "%s/%s.root" % (outDir, cleanName)
@@ -199,7 +227,7 @@ def main():
                     files = " ".join(listFiles(inPath, query))
                     
                     command = "hadd %s %s/%s.root %s" % (haddArgs, outDir, sampleCollection, files)
-                    if not options.noHadd: system(command)
+                    if not options.noHadd: os.system(command)
                     pass
     
                 log = checkNumEvents(nEvents=nEvents, rootFile=outfile, sampleCollection=sampleCollection, log=log)
@@ -209,18 +237,18 @@ def main():
             query_TT = "%s/%s/%s_AllBg/MyAnalysis_%s*TTTo*.root" % (stubPath, inPath, year, year)
             files_TT = " ".join(listFiles(inPath, query_TT)) 
             command = "hadd %s %s/%s_TT.root %s" % (haddArgs, outDir, year, files_TT)
-            system(command)
+            os.system(command)
 
             query_QCD = "%s/%s/%s_AllBg/MyAnalysis_%s*QCD*.root" % (stubPath, inPath, year, year)
             files_QCD = " ".join(listFiles(inPath, query_QCD))
             command = "hadd %s %s/%s_QCD.root %s" % (haddArgs, outDir, year, files_QCD)
-            system(command)
+            os.system(command)
 
             query_TTX1 = "%s/%s/%s_AllBg/MyAnalysis_%s*TT[WZ][TJ]*.root" % (stubPath, inPath, year, year)
             query_TTX2 = "%s/%s/%s_AllBg/MyAnalysis_%s*ttH*.root" % (stubPath,year, year)
             files_TTX = " ".join(listFiles(inPath, query_TTX1)) + " " + " ".join(listFiles(inPath, query_TTX2))
             command = "hadd %s %s/%s_TTX.root %s" % (haddArgs, outDir, year, files_TTX)
-            system(command)
+            os.system(command)
 
             query_DY = "%s/%s/%s_AllBg/MyAnalysis_%s*DYJets*.root" % (stubPath, inPath, year, year)
             query_2B = "%s/%s/%s_AllBg/MyAnalysis_%s_??_*.root" % (stubPath, inPath, year, year)
@@ -233,12 +261,12 @@ def main():
             files_Wj = " ".join(listFiles(inPath, query_Wj))
 
             command = "hadd %s %s/%s_BG_OTHER.root %s" % (haddArgs, outDir, year, files_DY + " " + files_2B + " " + files_3B + " " + files_Wj)
-            system(command)
+            os.system(command)
 
             query_Data = "%s/%s/%s_Data/MyAnalysis_%s*.root" % (stubPath, inPath, year, year)
             files_Data = " ".join(listFiles(inPath, query_Data))
             command = "hadd %s %s/%s_Data.root %s" % (haddArgs, outDir, year, files_Data)
-            system(command)
+            os.system(command)
 
     #Print log of hadd at the end
     printError(log)    
@@ -264,7 +292,7 @@ def main():
         print "-----------------------------------------------------------"
         print command
         print "-----------------------------------------------------------"
-        system(command)
+        os.system(command)
         
     if options.haddData:
         # Hack to make the Data.root file (hadd all the data together)
@@ -283,7 +311,7 @@ def main():
         print "-----------------------------------------------------------"
         print command
         print "-----------------------------------------------------------"
-        system(command)
+        os.system(command)
 
 if __name__ == "__main__":
     main()
