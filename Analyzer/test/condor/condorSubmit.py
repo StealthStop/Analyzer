@@ -52,8 +52,9 @@ def main():
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
 
+    redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
-    eosDir     = "root://cmseos.fnal.gov///store/user/%s/StealthStop/%s"%(userName, options.outPath)
+    eosDir     = redirector + "/store/user/%s/StealthStop/%s"%(userName, options.outPath)
 
     if os.path.isdir(workingDir):
         print red("Job directory already exists and cannot proceed safely ! Exiting...")
@@ -103,6 +104,7 @@ def main():
                        testDir + "/wp_deepCSV_106XUL16preVFP_v2.csv",
                        testDir + "/wp_deepCSV_106XUL17_v3.csv",
                        testDir + "/wp_deepCSV_106XUL18_v2.csv",
+                       testDir + "/filelists",
                        # Holding a place for using the reshaping btag SFs if we need them later
                        #testDir + "/reshaping_deepJet_106XUL16postVFP_v3.csv",
                        #testDir + "/reshaping_deepJet_106XUL16preVFP_v2.csv",
@@ -151,12 +153,11 @@ def main():
         logsDir = "log-files/%s"%(ds)
         # create the directory
         if not os.path.isdir("%s/%s" %(workingDir, logsDir)):
-            subprocess.call(["eos", "root://cmseos.fnal.gov", "mkdir", "-p", eosDir[23:] + "/" + stubDir])
             system('mkdir -p %s/%s' %(workingDir, logsDir))
    
         for s, n, e in sc.sampleList(ds):
             print "SampleSet:", n, ", nEvents:", e
-            f = open(s)
+            f = open("../" + s)
             if not f == None:
                 count = 0
                 for l in f:

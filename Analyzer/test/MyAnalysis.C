@@ -95,7 +95,7 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
     a.WriteHistos(outfile);
 }
 
-std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool isCondor)
+std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool isCondor = false)
 {
     AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor);
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
         histFile = thistFile;
     }
 
-    std::set<AnaSamples::FileSummary> vvf = setFS(dataSets, runOnCondor); 
+    std::set<AnaSamples::FileSummary> vvf = setFS(dataSets); 
     TFile* outfile = TFile::Open(histFile.c_str(), "RECREATE");
 
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&, const std::string, const int,const int,const int,TFile* const,const bool,const bool,const std::string&)>>> AnalyzerPairVec = {

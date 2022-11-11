@@ -32,9 +32,11 @@ then
     getSamplesCfg.sh
 fi
 
+redirector="root://cmseos.fnal.gov/"
+
 # Check needed SF files and ensure local file matches with EOS file
 # Only copy down from EOS if necessary
-sfPath="root://cmseos.fnal.gov//store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2_UL"
+sfPath="$redirector/store/user/lpcsusyhad/StealthStop/ScaleFactorHistograms/FullRun2_UL"
 sfFiles=("wp_deepCSV_106XUL16preVFP_v2.csv" "wp_deepCSV_106XUL16postVFP_v3.csv" "wp_deepCSV_106XUL17_v3.csv" "wp_deepCSV_106XUL18_v2.csv" "allInOne_leptonSF_UL.root" "allInOne_hadronicSF_UL.root" "allInOne_BTagEff_UL.root" "allInOne_SFMean_UL.root")
 for i in ${!sfFiles[@]};
 do
@@ -58,6 +60,15 @@ do
         xrdcp -f $sfPath/$sfFile .
     fi 
 done
+
+fileListPath="$redirector/store/user/jhiltb/StealthStop"
+fileLists="filelists_Kevin_V20"
+if [[ ! -d filelists ]]
+then
+    echo "Copying filelists: $fileLists"
+    xrdcp --silent -r $fileListPath/$fileLists .
+    mv $fileLists filelists
+fi
 
 # Check repos for updates
 if [[ "$1" == "-s" ]] 
