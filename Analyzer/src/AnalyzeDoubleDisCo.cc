@@ -5,7 +5,6 @@
 
 #include "Framework/Framework/include/Muon.h"
 #include "Framework/Framework/include/Electron.h"
-#include "Framework/Framework/include/Photon.h"
 #include "Framework/Framework/include/Jet.h"
 #include "Framework/Framework/include/BJet.h"
 #include "Framework/Framework/include/CommonVariables.h"
@@ -418,7 +417,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         Jet                 jet(myVarSuffix);
         BJet                bjet(myVarSuffix);
         Muon                muon(myVarSuffix);
-        Photon              photon(myVarSuffix);
         Baseline            baseline(myVarSuffix);
         Electron            electron(myVarSuffix);
         StopJets            stopJets(myVarSuffix);
@@ -447,7 +445,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         // Follow what is done in Config.h
         tr.registerFunction(muon);
         tr.registerFunction(electron);
-        tr.registerFunction(photon);
         tr.registerFunction(jet);
         tr.registerFunction(bjet);
         tr.registerFunction(topTagger);
