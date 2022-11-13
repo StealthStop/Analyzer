@@ -62,7 +62,7 @@ do
 done
 
 fileListPath="/store/user/lpcsusystealth/StealthStop"
-fileLists="filelists_Kevin_V20"
+fileLists="filelists_Kevin_V20_2"
 localFileLists="filelists"
 
 xrdcp -s -r --parallel 4 --streams 8 $redirector/$fileListPath/$fileLists .
