@@ -8,17 +8,25 @@ from collections import defaultdict, OrderedDict
 
 class FileLister:
 
-    def __init__(self, production, tag):
+    def __init__(self, production, tag, forSkim=False):
 
         self.production   = production
         self.tag          = tag
 
-        self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s"%(production)
-        self.ttreePath    = "TreeMaker2/PreSelection"
-        self.ttreePathSig = "PreSelection"
-        self.tempFileName = "tmp.txt"
-        self.fileListsDir = "filelists_Kevin_%s/"%(production)
-        self.eosPath      = "/eos/uscms/store/user/jhiltbra/StealthStop/"
+        if not forSkim:
+            self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s"%(production)
+            self.ttreePath    = "TreeMaker2/PreSelection"
+            self.ttreePathSig = "PreSelection"
+            self.tempFileName = "tmp.txt"
+            self.workingDir   = "filelists_Kevin_%s/"%(production)
+            self.fileListPath = "filelists/"
+        else:
+            self.filesDir     = "/store/user/lpcsusystealth/Skims"%(production)
+            self.ttreePath    = "SkimmedTree"
+            self.ttreePathSig = "SkimmedTree"
+            self.tempFileName = "tmp.txt"
+            self.workingDir   = "filelists_Kevin_%s_skim/"%(production)
+            self.fileListPath = "filelists_skim/"
 
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -37,8 +45,8 @@ class FileLister:
 
         self.wroteHeader = False
 
-        if not os.path.isdir(self.fileListsDir):
-            os.mkdir(self.fileListsDir)
+        if not os.path.isdir(self.workingDir):
+            os.mkdir(self.workingDir)
 
         # Get listing of all available ROOT files
         self.collectFiles()
@@ -53,10 +61,24 @@ class FileLister:
         self.writeFileLists()
 
     # Wrapper to list things in an EOS path
-    def listEOS(self, path):
+    # Specifically, find all files that were modified within the last 30 days
+    def listFilesEOS(self, path):
+        proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "find", "-mtime", "-30", path], stdout=subprocess.PIPE)
+        payload = proc.stdout.readlines()
+        lines = []
+        for line in payload:
+            if ".root" not in line:
+                continue
+            temp = line.decode("utf8").strip()
+            fileName = temp.split(" ")[0].split("/")[-1]
+            lines.append(fileName)    
+
+        return self.naturalSort(lines)
+
+    def listDirsEOS(self, path):
         proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", path], stdout=subprocess.PIPE)
-        lines = proc.stdout.readlines()
-        lines = [line.decode("utf8").strip() for line in lines]
+        payload = proc.stdout.readlines()
+        lines = [line.decode("utf8").strip() for line in payload]
 
         return lines
 
@@ -225,7 +247,7 @@ class FileLister:
 
         # Will get a list of folders corresponding to data and MC eras
         # i.e. Summer20UL16 or Run2017D-UL2017-v2
-        eraDirs = self.listEOS("%s/*UL*"%(self.filesDir))
+        eraDirs = self.listDirsEOS("%s/*UL*"%(self.filesDir))
         for eraDir in eraDirs:
 
             # Skip any ROOT file at this level
@@ -233,10 +255,13 @@ class FileLister:
 
             # Within each eraDir, get the list of folders, each corresponding
             # to a single unique sample i.e. ZZZ_TuneCP5_13TeV-amcatnlo-pythia8
-            sampleDirs = self.listEOS("%s/%s"%(self.filesDir, eraDir))
+            sampleDirs = self.listDirsEOS("%s/%s"%(self.filesDir, eraDir))
             for sampleDir in sampleDirs:
 
-                fileList = self.listEOS("%s/%s/%s"%(self.filesDir, eraDir, sampleDir))
+                if "300to1400" in sampleDir:
+                    continue
+
+                fileList = self.listFilesEOS("%s/%s/%s"%(self.filesDir, eraDir, sampleDir))
                 
                 # Finally within each sampleDir is a set of ROOT files
                 for aFile in fileList:
@@ -264,7 +289,7 @@ class FileLister:
     def writeFileLists(self):
     
         sampleGroups = ["Data", "TTJets", "DYJetsToLL", "TTToSemiLeptonic", "TTTo2L2Nu", "TTToHadronic", 
-                        "WJetsToLNu|WJetsToQQ", "QCD_HT", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH",
+                        "WJetsToLNu|WJetsToQQ", "QCD_HT", "TTTT|TTTJ|TTTW|TTTZ|TTTH|TTWW|TTWZ|TTZZ|TTHH|TTWH|TTZH", "ST|tZq",
                         "WWW|WWG|WWZ|WZZ|ZZZ|WZG", "WW|WZ|ZZ", "TTZTo", "TTWJets", "WWTo|ZZTo|WZTo", "ttHJet", "RPV|StealthSYY|StealthSHH"
         ]
 
@@ -278,7 +303,8 @@ class FileLister:
             for sample in theSamples:
 
                 # Some samples we do not care about at this time
-                if "GJets" in sample or "TGamma" in sample or "QCD_Pt" in sample or "ZJetsToNuNu" in sample:
+                if "GJets" in sample or "TGamma" in sample or "QCD_Pt" in sample or "ZJetsToNuNu" in sample  or \
+                   "MET" in sample or "HTMHT" in sample or "SinglePhoton" in sample or "genMET" in sample:
                     continue
 
                 newfile = open("filelists_Kevin_%s/"%(self.production) + sample + ".txt", 'w')
@@ -293,10 +319,6 @@ class FileLister:
                 name    = self.makeNiceName(sample)
                 auxName = name.partition("_")[-1]
 
-                # Do not care about these data sets
-                if "SinglePhoton" in name or "MET" in name or "MHT" in name or "TTZToNuNu" in name:
-                    continue
-        
                 # For the inclusive W + jets and DY + jets samples add "Incl" string to name
                 if ("_WJetsToLNu" in name or "_DYJetsToLL" in name or "_TTJets" in name) and "HT" not in name:
                     name += "_Incl"
@@ -312,7 +334,7 @@ class FileLister:
                     continue
         
                 # Special case in some boson samples to remove extra string
-                name = name.replace("_4F", "").replace("_4f", "").replace("_M125", "")
+                name = name.replace("_4F", "").replace("_4f", "").replace("_M125", "").replace("_5f_InclusiveDecays", "_Incl").replace("_5f_inclusiveDecays", "_Incl")
         
                 for f in sampleLists[sample]:
                     newfile.write(f)
@@ -344,7 +366,7 @@ class FileLister:
                     name = name.replace("_mSo-100", "") \
                                .replace("_mN1-100", "")
 
-                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(40), self.eosPath + self.fileListsDir, sample.ljust(85), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(45), self.fileListPath, sample.ljust(85), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
             self.writeSampleSet(finalDict)
 
@@ -355,7 +377,7 @@ class FileLister:
         sampleSet = open("sampleSets_%s.cfg"%(self.tag), "a")
 
         if not self.wroteHeader:
-            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(40), "/eos/path/to/filelists/,".rjust(len(self.eosPath+self.fileListsDir)+1), "Sample_file_list.txt,".ljust(85), "TTree Name,".rjust(len(self.ttreePath)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
+            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(45), "filelists,".rjust(len(self.fileListPath)+1), "Sample_file_list.txt,".ljust(85), "TTree Name,".rjust(len(self.ttreePath)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
             self.wroteHeader = True
 
         sortedGroups = dictionary.keys()
@@ -378,8 +400,9 @@ class FileLister:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prod", dest="prod", help="Unique tag for output", type=str, default="V20")
-    parser.add_argument("--tag" , dest="tag" , help="Path to PU file"      , type=str, default="UL_v1")
+    parser.add_argument("--prod", dest="prod", help="Unique tag for output", type=str,            default="V20")
+    parser.add_argument("--tag" , dest="tag" , help="Path to PU file"      , type=str,            default="UL_v1")
+    parser.add_argument("--skim", dest="skim", help="Make for skim"        , action="store_true", default=False)
     args = parser.parse_args()
     
-    theLister = FileLister(args.prod, args.tag)
+    theLister = FileLister(args.prod, args.tag, args.skim)

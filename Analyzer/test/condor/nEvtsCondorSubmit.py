@@ -31,6 +31,7 @@ filestoTransfer  = [
                          testDir + "/condor/nEvts.py",
                          testDir + "/%s.cfg"%(sampleSets),
                          testDir + "/condor/samples.py",
+                         testDir + "/filelists",
                          testDir + "/obj/samplesModule.so"
                    ]
 
