@@ -30,7 +30,7 @@ class Common_Calculations_Plotters:
     def cal_simpleClosure_ABCD(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
 
         if nEvents_D == 0.0:
-            return -999.0, -999.0
+            return -999.0, 0.0
 
         nPred_A    = (nEvents_B * nEvents_C) / nEvents_D
         nPred_Aunc = ((nEvents_C * nEventsErr_B / nEvents_D)**2.0 + (nEventsErr_C * nEvents_B / nEvents_D)**2.0 + (nEvents_C * nEvents_B * nEventsErr_D / nEvents_D**2.0)**2.0)**0.5
