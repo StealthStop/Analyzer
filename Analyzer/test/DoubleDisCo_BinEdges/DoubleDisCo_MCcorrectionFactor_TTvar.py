@@ -309,7 +309,7 @@ class MCcorrectionFactor_TTvar():
                     for boundaryValue, MC_corrected_dataClosure in boundaryDictionary.items(): 
 
                         # get the average values of MC corrected data
-                        if MC_corrected_dataClosure[0] != -999.0:
+                        if (MC_corrected_dataClosure[0] != -999.0) and (MC_corrected_dataClosure[0] != 0.0):
 
                             summedCorrectedDataValues_forAllRegions[region]       += (1.0 / MC_corrected_dataClosure[0])
                             summedCorrectedDataValues_forAllRegions_count[region] += 1.0
