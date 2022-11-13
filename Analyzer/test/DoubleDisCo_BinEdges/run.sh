@@ -32,7 +32,7 @@ command=$1
 YEARS=("Run2UL") # "2016" "2017" "2018")
 MODELS=("RPV") # "SYY")
 MASSES=("550")
-CHANNELS=("0l" "1l")
+CHANNELS=("1l" "2l")
 DISC1s=("0.6") 
 DISC2s=("0.6") 
 
