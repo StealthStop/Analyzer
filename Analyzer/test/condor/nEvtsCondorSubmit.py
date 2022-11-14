@@ -9,7 +9,7 @@ def makeExeAndFriendsTarrball(filestoTransfer, path):
     for fn in filestoTransfer:
         system("cd exestuff; ln -s %s" % fn)
     
-    tarallinputs = "tar czvf %s/exestuff.tar.gz exestuff --dereference"%(path)
+    tarallinputs = "tar czf %s/exestuff.tar.gz exestuff --dereference"%(path)
     system(tarallinputs)
     system("rm -r exestuff")
 
