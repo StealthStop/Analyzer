@@ -1,6 +1,3 @@
-#!/cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_3_3/external/slc6_amd64_gcc630/bin/python
-####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
-
 import sys, os
 from os import system, environ
 
@@ -52,8 +49,14 @@ def main():
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
 
+    hostName = environ["HOSTNAME"]
+
+    if "uscms.org" in hostName:
+        system("source /etc/ciconnect/set_condor_sites.sh \"T[1-2]_US_*\"") 
+
+    redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
-    eosDir     = "root://cmseos.fnal.gov///store/user/%s/StealthStop/%s"%(userName, options.outPath)
+    eosDir     = "%s//store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
 
     if os.path.isdir(workingDir):
         print red("Job directory already exists and cannot proceed safely ! Exiting...")
@@ -103,6 +106,7 @@ def main():
                        testDir + "/wp_deepCSV_106XUL16preVFP_v2.csv",
                        testDir + "/wp_deepCSV_106XUL17_v3.csv",
                        testDir + "/wp_deepCSV_106XUL18_v2.csv",
+                       testDir + "/filelists",
                        # Holding a place for using the reshaping btag SFs if we need them later
                        #testDir + "/reshaping_deepJet_106XUL16postVFP_v3.csv",
                        #testDir + "/reshaping_deepJet_106XUL16preVFP_v2.csv",
@@ -151,12 +155,11 @@ def main():
         logsDir = "log-files/%s"%(ds)
         # create the directory
         if not os.path.isdir("%s/%s" %(workingDir, logsDir)):
-            subprocess.call(["eos", "root://cmseos.fnal.gov", "mkdir", "-p", eosDir[23:] + "/" + stubDir])
             system('mkdir -p %s/%s' %(workingDir, logsDir))
    
         for s, n, e in sc.sampleList(ds):
             print "SampleSet:", n, ", nEvents:", e
-            f = open(s)
+            f = open(environ["CMSSW_BASE"] + "/src/Analyzer/Analyzer/test/" + s)
             if not f == None:
                 count = 0
                 for l in f:
