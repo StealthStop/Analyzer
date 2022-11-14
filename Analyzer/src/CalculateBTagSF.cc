@@ -120,10 +120,4 @@ void CalculateBTagSF::WriteHistos( TFile* outfile )
         p.second->SetDirectory(outfile);
         p.second->Write();
     }
-    
-    for( const auto& p : my_efficiencies ) 
-    {
-        p.second->SetDirectory(outfile);
-        p.second->Write();
-    }   
 }

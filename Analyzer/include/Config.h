@@ -392,7 +392,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateBTagSF" || analyzer=="CalculateSFMean")
+        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -405,6 +405,20 @@ public:
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="CalculateBTagSF")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger",
+                "Baseline",
             };
             registerModules(tr, std::move(modulesList));
         }
