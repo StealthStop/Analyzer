@@ -49,8 +49,9 @@ def main():
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
 
+    redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
-    eosDir     = "root://cmseos.fnal.gov///store/user/%s/StealthStop/%s"%(userName, options.outPath)
+    eosDir     = "%s//store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
 
     if os.path.isdir(workingDir):
         print red("Job directory already exists and cannot proceed safely ! Exiting...")
