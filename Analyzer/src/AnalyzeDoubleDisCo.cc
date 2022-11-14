@@ -1583,7 +1583,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                 {
                                     Debug("Filling 1D njets histograms with name: " + name, __LINE__);
 
-                                    name = kv.first + njetsStr + regionStr;
                                     int shift = inRegionBin[iSubRegion] ? iSubRegion : 100;
 
                                     auto& theGoodJets = NGoodJets[channel];
