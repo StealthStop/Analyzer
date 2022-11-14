@@ -34,8 +34,6 @@ then
     getSamplesCfg.sh
 fi
 
-redirector="root://cmseos.fnal.gov/"
-
 # Check needed SF files and ensure local file matches with EOS file
 # Only copy down from EOS if necessary
 sfPath="$redirector/store/user/lpcsusystealth/StealthStop/ScaleFactorHistograms/FullRun2_UL"

@@ -49,6 +49,11 @@ def main():
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
 
+    hostName = environ["HOSTNAME"]
+
+    if "uscms.org" in hostName:
+        system("source /etc/ciconnect/set_condor_sites.sh \"T[3]_US_*\"") 
+
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
     eosDir     = "%s//store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
