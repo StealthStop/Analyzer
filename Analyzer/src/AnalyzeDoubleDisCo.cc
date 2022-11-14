@@ -1187,10 +1187,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             if (region != "Incl")
                                 regionStr = "_" + region;
 
+                            name = kv.first + njetsStr + regionStr + ttvarStr + jecStr;
+
                             if (kv.second and inNjetsBin and inRegion)
                             {
-
-                                name = kv.first + njetsStr + regionStr + ttvarStr + jecStr;
                                 if (njets == "Incl" and region == "ABCD" and jecvar == "" and ttvar == "nom")
                                 {
 
