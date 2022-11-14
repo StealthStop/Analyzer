@@ -67,17 +67,6 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             // Jets
             "Jets",
-            "Jets_origIndex",
-            "JetsJECup_origIndex",
-            "JetsJECdown_origIndex",
-            "JetsJERup_origIndex",
-            "JetsJERdown_origIndex",
-            "Jets_jerFactor",
-            "Jets_jecUnc",
-            "JetsJECup_jerFactor",
-            "JetsJECdown_jerFactor",
-            "Jets_jerFactorUp",
-            "Jets_jerFactorDown",
             "Jets_bDiscriminatorCSV" ,
             "Jets_bJetTagDeepCSVprobb",
             "Jets_bJetTagDeepCSVprobbb",
@@ -113,17 +102,6 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             // JetsAK8
             "JetsAK8",
-            "JetsAK8_origIndex",
-            "JetsAK8JECup_origIndex",
-            "JetsAK8JECdown_origIndex",
-            "JetsAK8JERup_origIndex",
-            "JetsAK8JERdown_origIndex",
-            "JetsAK8_jerFactor",
-            "JetsAK8_jecUnc",
-            "JetsAK8JECup_jerFactor",
-            "JetsAK8JECdown_jerFactor",
-            "JetsAK8_jerFactorUp",
-            "JetsAK8_jerFactorDown",
             "JetsAK8_NsubjettinessTau1",
             "JetsAK8_NsubjettinessTau2",
             "JetsAK8_NsubjettinessTau3",
@@ -168,7 +146,28 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
             variables.insert("NonPrefiringProb");
             variables.insert("NonPrefiringProbUp");
             variables.insert("NonPrefiringProbDown");
-
+            variables.insert("Jets_origIndex");
+            variables.insert("JetsJECup_origIndex");
+            variables.insert("JetsJECdown_origIndex");
+            variables.insert("JetsJERup_origIndex");
+            variables.insert("JetsJERdown_origIndex");
+            variables.insert("Jets_jerFactor");
+            variables.insert("Jets_jecUnc");
+            variables.insert("JetsJECup_jerFactor");
+            variables.insert("JetsJECdown_jerFactor");
+            variables.insert("Jets_jerFactorUp");
+            variables.insert("Jets_jerFactorDown");
+            variables.insert("JetsAK8_origIndex");
+            variables.insert("JetsAK8JECup_origIndex");
+            variables.insert("JetsAK8JECdown_origIndex");
+            variables.insert("JetsAK8JERup_origIndex");
+            variables.insert("JetsAK8JERdown_origIndex");
+            variables.insert("JetsAK8_jerFactor");
+            variables.insert("JetsAK8_jecUnc");
+            variables.insert("JetsAK8JECup_jerFactor");
+            variables.insert("JetsAK8JECdown_jerFactor");
+            variables.insert("JetsAK8_jerFactorUp");
+            variables.insert("JetsAK8_jerFactorDown");
         }
 
         if( tr.isFirstEvent() ) {
@@ -182,7 +181,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-----------------------------------
         //-- Fill Histograms Below
         //-----------------------------------
-        if( true ) {
+        if( HT_trigger_pt30 > 400.0 ) {
             eventCounter->Fill(-1.0);
             myMiniTuple->fill();
         }
