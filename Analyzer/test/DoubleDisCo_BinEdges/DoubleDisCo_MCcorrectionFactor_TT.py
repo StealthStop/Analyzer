@@ -25,14 +25,6 @@ class MCcorrectionFactor_TT():
 
         self.regionGridWidth = 0.05
 
-        # ------------------------------------------------
-        # make the lists for rightBoundary and topBoundary
-        # ------------------------------------------------
-        self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, self.regionGridWidth),
-                                "Val_CD" : np.arange(0.40, 1.05, self.regionGridWidth),
-                                "Val_D"  : np.arange(0.60, 1.05, self.regionGridWidth)
-        }
-
     # -------------
     # main function
     # ------------- 
@@ -47,6 +39,29 @@ class MCcorrectionFactor_TT():
         files             = kwargs["files"]
         plotVars2D        = kwargs["plotVars2D"]
         plotVarVsBoundary = kwargs["plotVarVsBoundary"]
+
+        # ------------------------------------------------
+        # make the lists for rightBoundary and topBoundary
+        # ------------------------------------------------
+
+        # Special list of boundaries for Val D region
+        unevenFactor = (1.0 - disc1edge) / (1.0 - disc2edge)
+
+        d1gridWidth = self.regionGridWidth
+        d2gridWidth = self.regionGridWidth
+
+        if disc1edge < disc2edge:
+            d1gridWidth *= unevenFactor
+        elif disc2edge < disc1ege:
+            d2gridWidth /= unevenFactor
+         
+        temp1 = np.unique(np.round(np.clip(np.arange(float(disc1edge), 1.05, d1gridWidth), 0.0, 1.0), 2))
+        temp2 = np.unique(np.round(np.clip(np.arange(float(disc2edge), 1.05, d2gridWidth), 0.0, 1.0), 2))
+
+        self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, self.regionGridWidth),
+                                "Val_CD" : np.arange(0.40, 1.05, self.regionGridWidth),
+                                "Val_D"  : np.array(list(zip(temp1, temp2)))
+        }
 
         # Will hold the pair of final edge values for the full ABCD region
         abcdFinalEdges = None
@@ -134,10 +149,10 @@ class MCcorrectionFactor_TT():
 
                     for d in self.list_boundaries[region]:            
 
-                        disc1 = (float(abcdFinalEdges[0]) - (float(abcdFinalEdges[0]) / 2.0)) / (1.0 - float(abcdFinalEdges[0])) * (float(d) - float(abcdFinalEdges[0])) + (float(abcdFinalEdges[0]) / 2.0)
-                        disc2 = (float(abcdFinalEdges[1]) - (float(abcdFinalEdges[1]) / 2.0)) / (1.0 - float(abcdFinalEdges[1])) * (float(d) - float(abcdFinalEdges[1])) + (float(abcdFinalEdges[1]) / 2.0)
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=d, topBoundary=d, disc1Edge=float(disc1), disc2Edge=float(disc2), fastMode=fastMode)
-                        theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
+                        disc1 = (float(abcdFinalEdges[0]) - (float(abcdFinalEdges[0]) / 2.0)) / (1.0 - float(abcdFinalEdges[0])) * (float(d[0]) - float(abcdFinalEdges[0])) + (float(abcdFinalEdges[0]) / 2.0)
+                        disc2 = (float(abcdFinalEdges[1]) - (float(abcdFinalEdges[1]) / 2.0)) / (1.0 - float(abcdFinalEdges[1])) * (float(d[1]) - float(abcdFinalEdges[1])) + (float(abcdFinalEdges[1]) / 2.0)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=d[0], topBoundary=d[1], disc1Edge=float(disc1), disc2Edge=float(disc2), fastMode=fastMode)
+                        theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d[0])
 
             # ---------------------------
             # Plot variable vs Disc1Disc2
@@ -148,7 +163,14 @@ class MCcorrectionFactor_TT():
                     continue
 
                 for b in self.list_boundaries[region]:
-                    kwgs = {"region" : region, "njet" : njet, "boundary" : b}
+
+                    boundary = None
+                    if region == "Val_D":
+                        boundary = b[0]
+                    else:
+                        boundary = b
+
+                    kwgs = {"region" : region, "njet" : njet, "boundary" : boundary}
   
                     edges                 = np.array(theAggy.get("edges", **kwgs), dtype=float)
                     finalEdges            = theAggy.get("finalEdges",                        **kwgs)
@@ -157,12 +179,12 @@ class MCcorrectionFactor_TT():
                     closureCorr_TTinData  = theAggy.get("closureCorrs", sample = "TTinData", **kwgs)
 
                     if plotVars2D:
-                        plotter["TT"].plot_Var_vsDisc1Disc2(closures[:,0],               edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=region+"_%.2f"%(b), variable="NonClosure"             )
-                        plotter["TT"].plot_Var_vsDisc1Disc2(closures[:,1],               edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=region+"_%.2f"%(b), variable="NonClosureUnc"          )
-                        plotter["TT"].plot_Var_vsDisc1Disc2(closureCorr_TT[:,0],         edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(b), variable="closureCorr_TT"         )
-                        plotter["TT"].plot_Var_vsDisc1Disc2(closureCorr_TT[:,1],         edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(b), variable="closureCorrUnc_TT"      )
-                        plotter["Data"].plot_Var_vsDisc1Disc2(closureCorr_TTinData[:,0], edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(b), variable="closureCorr_TTinData"   )
-                        plotter["Data"].plot_Var_vsDisc1Disc2(closureCorr_TTinData[:,1], edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(b), variable="closureCorrUnc_TTinData")
+                        plotter["TT"].plot_Var_vsDisc1Disc2(closures[:,0],               edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=region+"_%.2f"%(boundary), variable="NonClosure"             )
+                        plotter["TT"].plot_Var_vsDisc1Disc2(closures[:,1],               edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=region+"_%.2f"%(boundary), variable="NonClosureUnc"          )
+                        plotter["TT"].plot_Var_vsDisc1Disc2(closureCorr_TT[:,0],         edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(boundary), variable="closureCorr_TT"         )
+                        plotter["TT"].plot_Var_vsDisc1Disc2(closureCorr_TT[:,1],         edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(boundary), variable="closureCorrUnc_TT"      )
+                        plotter["Data"].plot_Var_vsDisc1Disc2(closureCorr_TTinData[:,0], edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(boundary), variable="closureCorr_TTinData"   )
+                        plotter["Data"].plot_Var_vsDisc1Disc2(closureCorr_TTinData[:,1], edges, float(finalEdges[0]), float(finalEdges[1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.7,  1.3, njet, name=region+"_%.2f"%(boundary), variable="closureCorrUnc_TTinData")
  
         # -----------------------------------
         # Plot bkg subtracted data-MC closure
@@ -172,17 +194,23 @@ class MCcorrectionFactor_TT():
                 continue
 
             for b in self.list_boundaries[region]:
+                boundary = None
+                if region == "Val_D":
+                    boundary = b[0]
+                else:
+                    boundary = b
+
                 eventsTT = {}; eventsData = {}; edgesPerNjets = {}
                 for njet in njets:
 
-                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = b, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
-                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = b, sample = "Data") for subregion in ["A", "B", "C", "D"]}
+                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = boundary, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
+                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = boundary, sample = "Data") for subregion in ["A", "B", "C", "D"]}
 
                     eventsTT.setdefault(njet,      {}).setdefault(region, nEventsTT)
                     eventsData.setdefault(njet,    {}).setdefault(region, nEventsData)
-                    edgesPerNjets.setdefault(njet, {}).setdefault(region, theAggy.get("finalEdges", region = region, njet = njet, boundary = b                 ))
+                    edgesPerNjets.setdefault(njet, {}).setdefault(region, theAggy.get("finalEdges", region = region, njet = njet, boundary = boundary             ))
 
-                plotter["Data"].make_allClosures(edgesPerNjets, eventsTT, None, None, eventsData, njets, name = region, closureTag = "b_%.2f"%(b), bkgTag = "forTT")
+                plotter["Data"].make_allClosures(edgesPerNjets, eventsTT, None, None, eventsData, njets, name = region, closureTag = "b_%.2f"%(boundary), bkgTag = "forTT")
 
         # ----------------------------------------
         # Plot non-closure as function of boundary
