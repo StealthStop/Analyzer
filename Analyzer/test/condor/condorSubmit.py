@@ -57,7 +57,7 @@ def main():
 
     if os.path.isdir(workingDir):
         print red("Job directory already exists and cannot proceed safely ! Exiting...")
-        exit(0)
+        #exit(0)
 
     # Prepare the list of files to transfer
     mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)

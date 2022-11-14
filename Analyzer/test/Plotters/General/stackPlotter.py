@@ -383,9 +383,9 @@ class StackPlotter:
             for order in orders:
                 for selection in self.selections:
          
-                    newName = hname.replace("@", order).replace("?", "%s"%(selection))
+                    newName = hname.replace("@", str(order)).replace("?", "%s"%(selection))
                     newInfo = copy.deepcopy(hinfo)
-                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", order)
+                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", str(order))
 
                     canvas               = self.makeCanvas(newInfo["logY"])
                     if self.noRatio:
@@ -636,7 +636,7 @@ class StackPlotter:
 
                         ratio.Draw("E0P")
 
-                    canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
+                    canvas.SaveAs("%s/%s.pdf"%(self.outpath, newName))
 
 if __name__ == "__main__":
 

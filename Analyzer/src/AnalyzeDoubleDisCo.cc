@@ -91,7 +91,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 
     channels      = {"0", "1", "2"};
     njets         = {"Incl", "6", "7", "8", "9", "10", "11", "12incl"};
-    ttvars        = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
+    ttvars        = {"nom"};//, "fsrUp", "fsrDown", "isrUp", "isrDown"   };
     my_var_suffix = {""                                              };
 
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
@@ -1016,10 +1016,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             {
                 {"_0l"               , Baseline[0]},
                 {"_1l"               , Baseline[1]},                         
-                {"_1l_leftEdge"      , Baseline[1] && leftEdge},                         
-                {"_1l_bottomEdge"    , Baseline[1] && bottomEdge},                         
-                {"_1l_central"       , Baseline[1] && central},                         
-                {"_1l_outside"       , Baseline[1] && outside},                         
+                //{"_1l_leftEdge"      , Baseline[1] && leftEdge},                         
+                //{"_1l_bottomEdge"    , Baseline[1] && bottomEdge},                         
+                //{"_1l_central"       , Baseline[1] && central},                         
+                //{"_1l_outside"       , Baseline[1] && outside},                         
                 {"_2l"               , Baseline[2]}, 
                 {"_0l_blind"         , Baseline_blind[0]},
                 {"_1l_blind"         , Baseline_blind[1]},                         
