@@ -285,11 +285,12 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         // ------------------------------------------------------
                         for (const auto& regionPair : subRegionsMap)
                         {
+                            std::string region = regionPair.first; 
+
                             std::string regionStr = "";
                             if (region != "Incl")
                                 regionStr = "_" + region;
 
-                            std::string region = regionPair.first; 
                             // Only make mass reg histos for per-njets scenarios not inclusive
                             if (hInfo.name.find("massReg") != std::string::npos and (Njet == "Incl" or region == "Incl"))
                                 continue;
