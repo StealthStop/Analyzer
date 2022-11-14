@@ -5,7 +5,6 @@
 
 #include "Framework/Framework/include/Muon.h"
 #include "Framework/Framework/include/Electron.h"
-#include "Framework/Framework/include/Photon.h"
 #include "Framework/Framework/include/Jet.h"
 #include "Framework/Framework/include/BJet.h"
 #include "Framework/Framework/include/CommonVariables.h"
@@ -89,10 +88,10 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_nRtops_vs_nMtops",          7, -0.5,  6.5,   7, -0.5, 6.5},
     };
 
-    channels      = {"0", "1", "2"};
-    njets         = {"Incl", "6", "7", "8", "9", "10", "11", "12incl"};
-    ttvars        = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
-    my_var_suffix = {""                                              };
+    channels = {"0", "1", "2"};
+    njets    = {"Incl", "6", "7", "8", "9", "10", "11", "12incl"};
+    ttvars   = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
+    jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
 
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
 }
@@ -266,46 +265,65 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (ttvar != "nom")
                         ttvarStr = "_" + ttvar; 
                 
-                    // ------------------------------------------------------
-                    // loop over the regions    
-                    // regions : a vector of region string names for 0L or 1L
-                    // ------------------------------------------------------
-                    for (const auto& regionPair : subRegionsMap)
+                    // -------------------------------------------------------------
+                    // loop over jecvars to pick up different JEC and JER variations 
+                    // -------------------------------------------------------------
+                    for (const auto& jecvar : jecvars)
                     {
-                        std::string region = regionPair.first; 
-                        // Only make mass reg histos for per-njets scenarios not inclusive
-                        if (hInfo.name.find("massReg") != std::string::npos and (Njet == "Incl" or region == "Incl"))
+
+                        // We don't do double variations
+                        if (jecvar != "" and ttvar != "nom")
                             continue;
 
-                        // Only make njets histos for njets-inclusive scenarios
-                        if (hInfo.name.find("njets") != std::string::npos and Njet != "Incl")
-                            continue;
+                        std::string jecStr = "";
+                        if (jecvar != "")
+                            jecStr = "_" + jecvar;
 
-                        // For Combine njets histos, skip those for the inclusive region
-                        if (hInfo.name.find("njets") != std::string::npos and hInfo.name.find("incl") != std::string::npos and region == "Incl")
-                            continue;
+                        // ------------------------------------------------------
+                        // loop over the regions    
+                        // regions : a vector of region string names for 0L or 1L
+                        // ------------------------------------------------------
+                        for (const auto& regionPair : subRegionsMap)
+                        {
+                            std::string region = regionPair.first; 
 
-                        if (hInfo.name.find("DoubleDisCo") == std::string::npos and Njet != "Incl")
-                            continue;
+                            std::string regionStr = "";
+                            if (region != "Incl")
+                                regionStr = "_" + region;
 
-                        if (hInfo.name.find("disc") != std::string::npos and Njet == "Incl")
-                            continue;
+                            // Only make mass reg histos for per-njets scenarios not inclusive
+                            if (hInfo.name.find("massReg") != std::string::npos and (Njet == "Incl" or region == "Incl"))
+                                continue;
 
-                        std::string regionStr = "";
-                        if (region != "Incl")
-                            regionStr = "_" + region;
+                            // Only make njets histos for njets-inclusive scenarios
+                            if (hInfo.name.find("njets") != std::string::npos and Njet != "Incl")
+                                continue;
 
-                        if (hInfo.name.find("njets") == std::string::npos and region != "ABCD")
-                            continue;
+                            // For Combine njets histos, skip those for the inclusive region
+                            if (hInfo.name.find("njets") != std::string::npos and hInfo.name.find("incl") != std::string::npos and region == "Incl")
+                                continue;
 
-                        if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
-                            continue; 
+                            if (hInfo.name.find("DoubleDisCo") == std::string::npos and Njet != "Incl")
+                                continue;
 
-                        std::string name = hInfo.name + mycut.first + njetStr + regionStr + ttvarStr;
-                        my_histos.emplace(name, std::make_shared<TH1D>((name).c_str(),(name).c_str(), hInfo.nBins, hInfo.low, hInfo.high));
+                            if (hInfo.name.find("disc") != std::string::npos and Njet == "Incl")
+                                continue;
 
-                        Debug("Initializing histogram with name: " + name, __LINE__);
-                    } 
+                            if (hInfo.name.find("njets") == std::string::npos and region != "ABCD")
+                                continue;
+
+                            if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
+                                continue; 
+
+                            if ((ttvar != "nom" or jecvar != "") and hInfo.name.find("njets") == std::string::npos and hInfo.name.find("DoubleDisCo") == std::string::npos)
+                                continue;
+
+                            std::string name = hInfo.name + mycut.first + njetStr + regionStr + ttvarStr + jecStr;
+                            my_histos.emplace(name, std::make_shared<TH1D>((name).c_str(),(name).c_str(), hInfo.nBins, hInfo.low, hInfo.high));
+
+                            Debug("Initializing histogram with name: " + name, __LINE__);
+                        } 
+                    }
                 } 
             } 
         } 
@@ -339,32 +357,50 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (ttvar != "nom")
                         ttvarStr = "_" + ttvar;
 
-                    // ---------------------
-                    // loop over the regions
-                    // ---------------------
-                    for (const auto& regionPair : subRegionsMap)
+                    // -------------------------------------------------------------
+                    // loop over jecvars to pick up different JEC and JER variations 
+                    // -------------------------------------------------------------
+                    for (const auto& jecvar : jecvars)
                     {
-                        std::string region = regionPair.first;
-                        std::vector<std::string> subregions = regionPair.second;
 
-                        std::string regionStr = "";
-                        if (region != "Incl")
-                            regionStr = "_" + region;
-
-                        if (region != "ABCD")
+                        // We don't do double variations
+                        if (jecvar != "" and ttvar != "nom")
                             continue;
 
-                        if (ttvar != "nom" and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
-                            continue;
+                        std::string jecStr = "";
+                        if (jecvar != "")
+                            jecStr = "_" + jecvar;
 
-                        if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
-                            continue; 
+                        // ---------------------
+                        // loop over the regions
+                        // ---------------------
+                        for (const auto& regionPair : subRegionsMap)
+                        {
+                            std::string region = regionPair.first;
+                            std::vector<std::string> subregions = regionPair.second;
 
-                        std::string name = h2dInfo.name + mycut.first + njetStr + regionStr + ttvarStr;
-                        my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
+                            std::string regionStr = "";
+                            if (region != "Incl")
+                                regionStr = "_" + region;
 
-                        Debug("Initializing histogram with name: " + name, __LINE__);
-                    } 
+                            if (region != "ABCD")
+                                continue;
+
+                            if (ttvar != "nom" and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
+                                continue;
+
+                            if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
+                                continue; 
+
+                            if ((ttvar != "nom" or jecvar != "") and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
+                                continue;
+
+                            std::string name = h2dInfo.name + mycut.first + njetStr + regionStr + ttvarStr + jecStr;
+                            my_2d_histos.emplace(name, std::make_shared<TH2D>((name).c_str(),(name).c_str(), h2dInfo.nBinsX, h2dInfo.lowX, h2dInfo.highX, h2dInfo.nBinsY, h2dInfo.lowY, h2dInfo.highY));
+
+                            Debug("Initializing histogram with name: " + name, __LINE__);
+                        } 
+                    }
                 } 
             } 
         } 
@@ -377,7 +413,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
     Debug("Entering the Loop function", __LINE__);
 
-    const auto& dataset                           = tr.getVar<std::string>("dataset"                          ); // to check the collection name for JEC/JER 
     const auto& filetag                           = tr.getVar<std::string>("filetag"                          );
     const auto& runtype                           = tr.getVar<std::string>("runtype"                          );    
     const auto& runYear                           = tr.getVar<std::string>("runYear"                          );
@@ -397,57 +432,40 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
     const auto& DoubleDisCo_Model_2l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_2l_RPV"         );    
     const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_RPV");
 
-    // -------------------------------------
-    // check the collection name for JEC/JER
-    // ------------------------------------- 
-    if (dataset.find("JECup") != std::string::npos)
-        my_var_suffix = {"JECup"};
-
-    else if (dataset.find("JECdown") != std::string::npos)
-        my_var_suffix = {"JECdown"};
-        
-    else if (dataset.find("JERup") != std::string::npos)
-        my_var_suffix = {"JERup"};
-
-    else if (dataset.find("JERdown") != std::string::npos)
-        my_var_suffix = {"JERdown"};
-
-    for(const auto& myVarSuffix : my_var_suffix)
+    for(const auto& jecvar : jecvars)
     {
 
-        Jet                 jet(myVarSuffix);
-        BJet                bjet(myVarSuffix);
-        Muon                muon(myVarSuffix);
-        Photon              photon(myVarSuffix);
-        Baseline            baseline(myVarSuffix);
-        Electron            electron(myVarSuffix);
-        StopJets            stopJets(myVarSuffix);
-        RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
-        StopGenMatch        stopGenMatch(myVarSuffix);
-        CommonVariables     commonVariables(myVarSuffix);
-        MakeMVAVariables    makeMVAVariables(                false,  myVarSuffix,        "GoodJets_pt30",       false, true, 7, 2, ""                                  );
-        MakeMVAVariables    makeMVAVariables_NonIsoMuon(     false,  myVarSuffix,        "NonIsoMuonJets_pt30", false, true, 7, 2, ""                                  );
+        Jet                 jet(jecvar);
+        BJet                bjet(jecvar);
+        Muon                muon(jecvar);
+        Baseline            baseline(jecvar);
+        Electron            electron(jecvar);
+        StopJets            stopJets(jecvar);
+        RunTopTagger        topTagger(TopTaggerCfg, jecvar);
+        StopGenMatch        stopGenMatch(jecvar);
+        CommonVariables     commonVariables(jecvar);
+        MakeMVAVariables    makeMVAVariables(                false,  jecvar,        "GoodJets_pt30",       false, true, 7, 2, ""                                  );
+        MakeMVAVariables    makeMVAVariables_NonIsoMuon(     false,  jecvar,        "NonIsoMuonJets_pt30", false, true, 7, 2, ""                                  );
         // 0l
         // note that if we make the inputs to the NN, we use just the GoodJets_pt30 collection to derive things
         // but, if we define the QCD CR selection, we use the NonIsoMuonJets_pt30 collection 
-        DeepEventShape      neuralNetwork0L(           DoubleDisCo_Cfg_0l_RPV,            DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix                          );
-        DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, myVarSuffix                          );
-        MakeStopHemispheres stopHemispheres_TopSeed(           "StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed",            myVarSuffix, Hemisphere::TopSeed    );
-        MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);
+        DeepEventShape      neuralNetwork0L(           DoubleDisCo_Cfg_0l_RPV,            DoubleDisCo_Model_0l_RPV, "Info", true, jecvar                          );
+        DeepEventShape      neuralNetwork0L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV, "Info", true, jecvar                          );
+        MakeStopHemispheres stopHemispheres_TopSeed(           "StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed",            jecvar, Hemisphere::TopSeed    );
+        MakeStopHemispheres stopHemispheres_TopSeed_NonIsoMuon("StopJets", "GoodStopJets", "NGoodStopJets", "_TopSeed_NonIsoMuon", jecvar, Hemisphere::InvMassSeed);
         // 1l
-        DeepEventShape      neuralNetwork1L(           DoubleDisCo_Cfg_1l_RPV,            DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    ); 
-        DeepEventShape      neuralNetwork1L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, myVarSuffix                                    );
-        MakeStopHemispheres stopHemispheres_OldSeed(           "Jets", "GoodJets_pt20",       "NGoodJets_pt20",       "_OldSeed",            myVarSuffix, Hemisphere::InvMassSeed);
-        MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets", "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", myVarSuffix, Hemisphere::InvMassSeed);        
+        DeepEventShape      neuralNetwork1L(           DoubleDisCo_Cfg_1l_RPV,            DoubleDisCo_Model_1l_RPV, "Info", true, jecvar                                    ); 
+        DeepEventShape      neuralNetwork1L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV, "Info", true, jecvar                                    );
+        MakeStopHemispheres stopHemispheres_OldSeed(           "Jets", "GoodJets_pt20",       "NGoodJets_pt20",       "_OldSeed",            jecvar, Hemisphere::InvMassSeed);
+        MakeStopHemispheres stopHemispheres_OldSeed_NonIsoMuon("Jets", "NonIsoMuonJets_pt20", "NNonIsoMuonJets_pt30", "_OldSeed_NonIsoMuon", jecvar, Hemisphere::InvMassSeed);        
         // 2l
-        DeepEventShape      neuralNetwork2L(           DoubleDisCo_Cfg_2l_RPV,            DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix); 
-        DeepEventShape      neuralNetwork2L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, myVarSuffix);
+        DeepEventShape      neuralNetwork2L(           DoubleDisCo_Cfg_2l_RPV,            DoubleDisCo_Model_2l_RPV, "Info", true, jecvar); 
+        DeepEventShape      neuralNetwork2L_NonIsoMuon(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV, "Info", true, jecvar);
         
         // Remember, order matters here !
         // Follow what is done in Config.h
         tr.registerFunction(muon);
         tr.registerFunction(electron);
-        tr.registerFunction(photon);
         tr.registerFunction(jet);
         tr.registerFunction(bjet);
         tr.registerFunction(topTagger);
@@ -463,9 +481,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         if (runtype == "MC")
         {
-            ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, meanFileName, myVarSuffix);
+            ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, meanFileName, jecvar);
             BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, "", filetag);
-            bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+myVarSuffix, "GoodJets_pt30"+myVarSuffix, "Jets"+myVarSuffix+"_bJetTagDeepCSVtotb", "Jets"+myVarSuffix+"_partonFlavor", myVarSuffix);
+            bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+jecvar, "GoodJets_pt30"+jecvar, "Jets"+jecvar+"_bJetTagDeepCSVtotb", "Jets"+jecvar+"_partonFlavor", jecvar);
 
             tr.registerFunction(bTagCorrector);
             tr.registerFunction(scaleFactors);
@@ -499,15 +517,19 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         Debug("Initializing variables for signal and control regions", __LINE__);
 
-        for(const auto& myVarSuffix : my_var_suffix)
+        for(const auto& jecvar : jecvars)
         {
+            std::string jecStr = "";
+            if (jecvar != "")
+                jecStr = "_" + jecvar;
+
             // If an event is not interesting for any channel selection (see explanation and definition
             // of lostCauseEvent boolean in Baseline.h), then move on here and do not waste any more 
             // time on looping over histos or getting vars.
             // This only matters if the user specifies -s on the command line
             // N.B. We already filled the EventCounter histogram for our due-diligence of counting up
             // every single event.
-            const auto& lostCauseEvent = tr.getVar<bool>("lostCauseEvent" + myVarSuffix);
+            const auto& lostCauseEvent = tr.getVar<bool>("lostCauseEvent" + jecvar);
             const auto& fastMode       = tr.getVar<bool>("fastMode");
 
             if (lostCauseEvent and fastMode)
@@ -730,85 +752,85 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     htName   = "trigger";
                 }
 
-                Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                       + myVarSuffix));
-                Jets_cm_top6.push_back(tr.getVec<utility::LorentzVector>("Jets_cm_top6" + myVarSuffix));
-                Tops.push_back(tr.getVec<utility::LorentzVector>("topsLV"                     + myVarSuffix));
-                Top1_pt_cm.push_back(tr.getVar<double>("top1_pt_cm"                           + myVarSuffix));
-                Top1_eta_cm.push_back(tr.getVar<double>("top1_eta_cm"                         + myVarSuffix));
-                Top1_phi_cm.push_back(tr.getVar<double>("top1_phi_cm"                         + myVarSuffix));
-                Top1_mass_cm.push_back(tr.getVar<double>("top1_mass_cm"                       + myVarSuffix));
-                Top2_pt_cm.push_back(tr.getVar<double>("top2_pt_cm"                           + myVarSuffix));
-                Top2_eta_cm.push_back(tr.getVar<double>("top2_eta_cm"                         + myVarSuffix));
-                Top2_phi_cm.push_back(tr.getVar<double>("top2_phi_cm"                         + myVarSuffix));
-                Top2_mass_cm.push_back(tr.getVar<double>("top2_mass_cm"                       + myVarSuffix));
+                Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                       + jecvar));
+                Jets_cm_top6.push_back(tr.getVec<utility::LorentzVector>("Jets_cm_top6"       + jecvar));
+                Tops.push_back(tr.getVec<utility::LorentzVector>("topsLV"                     + jecvar));
+                Top1_pt_cm.push_back(tr.getVar<double>("top1_pt_cm"                           + jecvar));
+                Top1_eta_cm.push_back(tr.getVar<double>("top1_eta_cm"                         + jecvar));
+                Top1_phi_cm.push_back(tr.getVar<double>("top1_phi_cm"                         + jecvar));
+                Top1_mass_cm.push_back(tr.getVar<double>("top1_mass_cm"                       + jecvar));
+                Top2_pt_cm.push_back(tr.getVar<double>("top2_pt_cm"                           + jecvar));
+                Top2_eta_cm.push_back(tr.getVar<double>("top2_eta_cm"                         + jecvar));
+                Top2_phi_cm.push_back(tr.getVar<double>("top2_phi_cm"                         + jecvar));
+                Top2_mass_cm.push_back(tr.getVar<double>("top2_mass_cm"                       + jecvar));
 
-                GoodJets.push_back(tr.getVec<bool>("GoodJets_pt30"                                 + myVarSuffix));
-                NGoodJets.push_back(tr.getVar<int>("NGoodJets_pt30"                                + myVarSuffix));
-                NGoodBJets.push_back(tr.getVar<int>("NGoodBJets_pt30"                              + myVarSuffix));
-                NTops.push_back(tr.getVar<int>("ntops"                                             + myVarSuffix));
-                NRTops.push_back(tr.getVar<int>("ntops_3jet"                                       + myVarSuffix));
-                NMTops.push_back(tr.getVar<int>("ntops_1jet"                                       + myVarSuffix));
-                HT_pt30.push_back(tr.getVar<double>("HT_trigger_pt30"                              + myVarSuffix));
-                Baseline.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good"             + myVarSuffix));
-                Baseline_blind.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_blind" + myVarSuffix));
-                Mbl.push_back(tr.getVar<double>("Mbl"                                              + myVarSuffix));
-                Mll.push_back(tr.getVar<double>("mll"                                              + myVarSuffix));
-                dRbjets.push_back(tr.getVar<double>("dR_bjets"                                     + myVarSuffix));
+                GoodJets.push_back(tr.getVec<bool>("GoodJets_pt30"                                 + jecvar));
+                NGoodJets.push_back(tr.getVar<int>("NGoodJets_pt30"                                + jecvar));
+                NGoodBJets.push_back(tr.getVar<int>("NGoodBJets_pt30"                              + jecvar));
+                NTops.push_back(tr.getVar<int>("ntops"                                             + jecvar));
+                NRTops.push_back(tr.getVar<int>("ntops_3jet"                                       + jecvar));
+                NMTops.push_back(tr.getVar<int>("ntops_1jet"                                       + jecvar));
+                HT_pt30.push_back(tr.getVar<double>("HT_trigger_pt30"                              + jecvar));
+                Baseline.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good"             + jecvar));
+                Baseline_blind.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_blind" + jecvar));
+                Mbl.push_back(tr.getVar<double>("Mbl"                                              + jecvar));
+                Mll.push_back(tr.getVar<double>("mll"                                              + jecvar));
+                dRbjets.push_back(tr.getVar<double>("dR_bjets"                                     + jecvar));
 
-                DoubleDisCo_massReg.push_back(tr.getVar<double>("DoubleDisCo_massReg_" + channel + "l_RPV" + myVarSuffix));
-                DoubleDisCo_disc1.push_back(tr.getVar<double>("DoubleDisCo_disc1_"     + channel + "l_RPV" + myVarSuffix));
-                DoubleDisCo_disc2.push_back(tr.getVar<double>("DoubleDisCo_disc2_"     + channel + "l_RPV" + myVarSuffix));
+                DoubleDisCo_massReg.push_back(tr.getVar<double>("DoubleDisCo_massReg_" + channel + "l_RPV" + jecvar));
+                DoubleDisCo_disc1.push_back(tr.getVar<double>("DoubleDisCo_disc1_"     + channel + "l_RPV" + jecvar));
+                DoubleDisCo_disc2.push_back(tr.getVar<double>("DoubleDisCo_disc2_"     + channel + "l_RPV" + jecvar));
 
-                fwm2_top6.push_back(tr.getVar<double>("fwm2_top6"          + myVarSuffix));
-                fwm3_top6.push_back(tr.getVar<double>("fwm3_top6"          + myVarSuffix));
-                fwm4_top6.push_back(tr.getVar<double>("fwm4_top6"          + myVarSuffix));
-                fwm5_top6.push_back(tr.getVar<double>("fwm5_top6"          + myVarSuffix));
-                jmt_ev0_top6.push_back(tr.getVar<double>("jmt_ev0_top6"    + myVarSuffix));
-                jmt_ev1_top6.push_back(tr.getVar<double>("jmt_ev1_top6"    + myVarSuffix));
-                jmt_ev2_top6.push_back(tr.getVar<double>("jmt_ev2_top6"    + myVarSuffix));
-                nMVAJets.push_back(tr.getVar<unsigned int>("nMVAJets"      + myVarSuffix));
-                nMVALeptons.push_back(tr.getVar<unsigned int>("nMVALeptons"      + myVarSuffix));
+                fwm2_top6.push_back(tr.getVar<double>("fwm2_top6"          + jecvar));
+                fwm3_top6.push_back(tr.getVar<double>("fwm3_top6"          + jecvar));
+                fwm4_top6.push_back(tr.getVar<double>("fwm4_top6"          + jecvar));
+                fwm5_top6.push_back(tr.getVar<double>("fwm5_top6"          + jecvar));
+                jmt_ev0_top6.push_back(tr.getVar<double>("jmt_ev0_top6"    + jecvar));
+                jmt_ev1_top6.push_back(tr.getVar<double>("jmt_ev1_top6"    + jecvar));
+                jmt_ev2_top6.push_back(tr.getVar<double>("jmt_ev2_top6"    + jecvar));
+                nMVAJets.push_back(tr.getVar<unsigned int>("nMVAJets"      + jecvar));
+                nMVALeptons.push_back(tr.getVar<unsigned int>("nMVALeptons"      + jecvar));
 
-                combinedNthJetPt.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_pt_cm" + myVarSuffix));
-                combinedNthJetPtrHT.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + myVarSuffix));
-                combinedNthJetEta.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_eta_cm" + myVarSuffix));
-                combinedNthJetPhi.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_phi_cm" + myVarSuffix));
-                combinedNthJetM.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_m_cm" + myVarSuffix));
-                combinedNthJetE.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_E_cm" + myVarSuffix));
+                combinedNthJetPt.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combinedNthJetPtrHT.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combinedNthJetEta.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combinedNthJetPhi.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combinedNthJetM.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_m_cm" + jecvar));
+                combinedNthJetE.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_E_cm" + jecvar));
 
-                Stop1_pt_cm_OldSeed.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed"       + myVarSuffix));
-                Stop1_eta_cm_OldSeed.push_back(tr.getVar<double>("Stop1_eta_cm_OldSeed"     + myVarSuffix));
-                Stop1_phi_cm_OldSeed.push_back(tr.getVar<double>("Stop1_phi_cm_OldSeed"     + myVarSuffix));
-                Stop1_mass_cm_OldSeed.push_back(tr.getVar<double>("Stop1_mass_cm_OldSeed"   + myVarSuffix));
-                Stop2_pt_cm_OldSeed.push_back(tr.getVar<double>("Stop2_pt_cm_OldSeed"       + myVarSuffix));
-                Stop2_eta_cm_OldSeed.push_back(tr.getVar<double>("Stop2_eta_cm_OldSeed"     + myVarSuffix));
-                Stop2_phi_cm_OldSeed.push_back(tr.getVar<double>("Stop2_phi_cm_OldSeed"     + myVarSuffix));
-                Stop2_mass_cm_OldSeed.push_back(tr.getVar<double>("Stop2_mass_cm_OldSeed"   + myVarSuffix));
-                Stop1_pt_cm_TopSeed.push_back(tr.getVar<double>("Stop1_pt_cm_TopSeed"       + myVarSuffix));
-                Stop1_eta_cm_TopSeed.push_back(tr.getVar<double>("Stop1_eta_cm_TopSeed"     + myVarSuffix));
-                Stop1_phi_cm_TopSeed.push_back(tr.getVar<double>("Stop1_phi_cm_TopSeed"     + myVarSuffix));
-                Stop1_mass_cm_TopSeed.push_back(tr.getVar<double>("Stop1_mass_cm_TopSeed"   + myVarSuffix));
-                Stop2_pt_cm_TopSeed.push_back(tr.getVar<double>("Stop2_pt_cm_TopSeed"       + myVarSuffix));
-                Stop2_eta_cm_TopSeed.push_back(tr.getVar<double>("Stop2_eta_cm_TopSeed"     + myVarSuffix));
-                Stop2_phi_cm_TopSeed.push_back(tr.getVar<double>("Stop2_phi_cm_TopSeed"     + myVarSuffix));
-                Stop2_mass_cm_TopSeed.push_back(tr.getVar<double>("Stop2_mass_cm_TopSeed"   + myVarSuffix));
+                Stop1_pt_cm_OldSeed.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed"       + jecvar));
+                Stop1_eta_cm_OldSeed.push_back(tr.getVar<double>("Stop1_eta_cm_OldSeed"     + jecvar));
+                Stop1_phi_cm_OldSeed.push_back(tr.getVar<double>("Stop1_phi_cm_OldSeed"     + jecvar));
+                Stop1_mass_cm_OldSeed.push_back(tr.getVar<double>("Stop1_mass_cm_OldSeed"   + jecvar));
+                Stop2_pt_cm_OldSeed.push_back(tr.getVar<double>("Stop2_pt_cm_OldSeed"       + jecvar));
+                Stop2_eta_cm_OldSeed.push_back(tr.getVar<double>("Stop2_eta_cm_OldSeed"     + jecvar));
+                Stop2_phi_cm_OldSeed.push_back(tr.getVar<double>("Stop2_phi_cm_OldSeed"     + jecvar));
+                Stop2_mass_cm_OldSeed.push_back(tr.getVar<double>("Stop2_mass_cm_OldSeed"   + jecvar));
+                Stop1_pt_cm_TopSeed.push_back(tr.getVar<double>("Stop1_pt_cm_TopSeed"       + jecvar));
+                Stop1_eta_cm_TopSeed.push_back(tr.getVar<double>("Stop1_eta_cm_TopSeed"     + jecvar));
+                Stop1_phi_cm_TopSeed.push_back(tr.getVar<double>("Stop1_phi_cm_TopSeed"     + jecvar));
+                Stop1_mass_cm_TopSeed.push_back(tr.getVar<double>("Stop1_mass_cm_TopSeed"   + jecvar));
+                Stop2_pt_cm_TopSeed.push_back(tr.getVar<double>("Stop2_pt_cm_TopSeed"       + jecvar));
+                Stop2_eta_cm_TopSeed.push_back(tr.getVar<double>("Stop2_eta_cm_TopSeed"     + jecvar));
+                Stop2_phi_cm_TopSeed.push_back(tr.getVar<double>("Stop2_phi_cm_TopSeed"     + jecvar));
+                Stop2_mass_cm_TopSeed.push_back(tr.getVar<double>("Stop2_mass_cm_TopSeed"   + jecvar));
 
-                Lepton1_pt_cm.push_back(tr.getVar<double>("GoodLeptons_pt_1"       + myVarSuffix));
-                Lepton1_eta_cm.push_back(tr.getVar<double>("GoodLeptons_eta_1"     + myVarSuffix));
-                Lepton1_phi_cm.push_back(tr.getVar<double>("GoodLeptons_phi_1"     + myVarSuffix));
-                Lepton2_pt_cm.push_back(tr.getVar<double>("GoodLeptons_pt_2"       + myVarSuffix));
-                Lepton2_eta_cm.push_back(tr.getVar<double>("GoodLeptons_eta_2"     + myVarSuffix));
-                Lepton2_phi_cm.push_back(tr.getVar<double>("GoodLeptons_phi_2"     + myVarSuffix));
+                Lepton1_pt_cm.push_back(tr.getVar<double>("GoodLeptons_pt_1"       + jecvar));
+                Lepton1_eta_cm.push_back(tr.getVar<double>("GoodLeptons_eta_1"     + jecvar));
+                Lepton1_phi_cm.push_back(tr.getVar<double>("GoodLeptons_phi_1"     + jecvar));
+                Lepton2_pt_cm.push_back(tr.getVar<double>("GoodLeptons_pt_2"       + jecvar));
+                Lepton2_eta_cm.push_back(tr.getVar<double>("GoodLeptons_eta_2"     + jecvar));
+                Lepton2_phi_cm.push_back(tr.getVar<double>("GoodLeptons_phi_2"     + jecvar));
 
-                GoodLeptons.push_back(tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons" + myVarSuffix));
-                GoodLeptonsCharge.push_back(tr.getVec<int>("GoodLeptonsCharge"                                + myVarSuffix));
-                GoodLeptonsMiniIso.push_back(tr.getVec<double>("GoodLeptonsMiniIso"                           + myVarSuffix));
+                GoodLeptons.push_back(tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons" + jecvar));
+                GoodLeptonsCharge.push_back(tr.getVec<int>("GoodLeptonsCharge"                                + jecvar));
+                GoodLeptonsMiniIso.push_back(tr.getVec<double>("GoodLeptonsMiniIso"                           + jecvar));
 
-                Stop1_mass_PtRank_matched.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass"+myVarSuffix));
-                Stop2_mass_PtRank_matched.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass"+myVarSuffix));
-                Stop1_mass_MassRank_matched.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass" +myVarSuffix));
-                Stop2_mass_MassRank_matched.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass" +myVarSuffix));
-                Stop_mass_average_matched.push_back(  runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"    +myVarSuffix));
+                Stop1_mass_PtRank_matched.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass"+jecvar));
+                Stop2_mass_PtRank_matched.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass"+jecvar));
+                Stop1_mass_MassRank_matched.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass" +jecvar));
+                Stop2_mass_MassRank_matched.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass" +jecvar));
+                Stop_mass_average_matched.push_back(  runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"    +jecvar));
 
                 // ---------------------------------------------------------
                 // Here assume number cm jets is same in CR and SR selection
@@ -820,11 +842,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::vector<double> tempJets_cm_flavq;  
                 
                 for (unsigned int iJet = 1; iJet <= nMVAJets.back(); iJet++) {
-                    tempJets_cm_flavb.push_back(tr.getVar<double>("Jet_flavb_"     + std::to_string(iJet) + myVarSuffix));
-                    tempJets_cm_flavc.push_back(tr.getVar<double>("Jet_flavc_"     + std::to_string(iJet) + myVarSuffix));
-                    tempJets_cm_flavg.push_back(tr.getVar<double>("Jet_flavg_"     + std::to_string(iJet) + myVarSuffix));
-                    tempJets_cm_flavuds.push_back(tr.getVar<double>("Jet_flavuds_" + std::to_string(iJet) + myVarSuffix));
-                    tempJets_cm_flavq.push_back(tr.getVar<double>("Jet_flavq_"     + std::to_string(iJet) + myVarSuffix));
+                    tempJets_cm_flavb.push_back(tr.getVar<double>("Jet_flavb_"     + std::to_string(iJet) + jecvar));
+                    tempJets_cm_flavc.push_back(tr.getVar<double>("Jet_flavc_"     + std::to_string(iJet) + jecvar));
+                    tempJets_cm_flavg.push_back(tr.getVar<double>("Jet_flavg_"     + std::to_string(iJet) + jecvar));
+                    tempJets_cm_flavuds.push_back(tr.getVar<double>("Jet_flavuds_" + std::to_string(iJet) + jecvar));
+                    tempJets_cm_flavq.push_back(tr.getVar<double>("Jet_flavq_"     + std::to_string(iJet) + jecvar));
                 }
 
                 Jets_cm_flavb.push_back(tempJets_cm_flavb);
@@ -833,11 +855,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Jets_cm_flavuds.push_back(tempJets_cm_flavuds);
                 Jets_cm_flavq.push_back(tempJets_cm_flavq);
 
-                Jets_flavb.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourtotb"));
-                Jets_flavc.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourprobc"));
-                Jets_flavg.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourprobg"));
-                Jets_flavuds.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourprobuds"));
-                Jets_flavq.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourtotq"));
+                Jets_flavb.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourtotb"));
+                Jets_flavc.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourprobc"));
+                Jets_flavg.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourprobg"));
+                Jets_flavuds.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourprobuds"));
+                Jets_flavq.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourtotq"));
 
                 std::map<std::string, std::vector<bool> > tempRegionMap;
                 std::map<std::string, std::vector<bool> > tempRegionMap_CR;
@@ -845,8 +867,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 regions.push_back(tr.getVec<std::string>("regions_" + channel + "l_RPV"));
                 for (const std::string& region : regions.back())
                 {
-                    tempRegionMap[region]    = tr.getVec<bool>("DoubleDisCo_" + region + "_"            + channel + "l_RPV" + myVarSuffix); 
-                    tempRegionMap_CR[region] = tr.getVec<bool>("DoubleDisCo_" + region + "_NonIsoMuon_" + channel + "l_RPV" + myVarSuffix); 
+                    tempRegionMap[region]    = tr.getVec<bool>("DoubleDisCo_" + region + "_"            + channel + "l_RPV" + jecvar); 
+                    tempRegionMap_CR[region] = tr.getVec<bool>("DoubleDisCo_" + region + "_NonIsoMuon_" + channel + "l_RPV" + jecvar); 
                 }
 
                 // --------------------------------------
@@ -855,89 +877,89 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 DoubleDisCo_passRegions.push_back(tempRegionMap); 
                 DoubleDisCo_passRegions_CR.push_back(tempRegionMap_CR); 
 
-                Jets_CR.push_back(tr.getVec<utility::LorentzVector>("Jets"         + myVarSuffix));
-                Jets_cm_top6_CR.push_back(tr.getVec<utility::LorentzVector>(mvaName + "Jets_cm_top6" + myVarSuffix));
-                Tops_CR.push_back(tr.getVec<utility::LorentzVector>("topsLV"                         + myVarSuffix));
-                Top1_pt_cm_CR.push_back(tr.getVar<double>("top1_pt_cm"                               + myVarSuffix));
-                Top1_eta_cm_CR.push_back(tr.getVar<double>("top1_eta_cm"                             + myVarSuffix));
-                Top1_phi_cm_CR.push_back(tr.getVar<double>("top1_phi_cm"                             + myVarSuffix));
-                Top1_mass_cm_CR.push_back(tr.getVar<double>("top1_mass_cm"                           + myVarSuffix));
-                Top2_pt_cm_CR.push_back(tr.getVar<double>("top2_pt_cm"                               + myVarSuffix));
-                Top2_eta_cm_CR.push_back(tr.getVar<double>("top2_eta_cm"                             + myVarSuffix));
-                Top2_phi_cm_CR.push_back(tr.getVar<double>("top2_phi_cm"                             + myVarSuffix));
-                Top2_mass_cm_CR.push_back(tr.getVar<double>("top2_mass_cm"                           + myVarSuffix));
+                Jets_CR.push_back(tr.getVec<utility::LorentzVector>("Jets"         + jecvar));
+                Jets_cm_top6_CR.push_back(tr.getVec<utility::LorentzVector>(mvaName + "Jets_cm_top6" + jecvar));
+                Tops_CR.push_back(tr.getVec<utility::LorentzVector>("topsLV"                         + jecvar));
+                Top1_pt_cm_CR.push_back(tr.getVar<double>("top1_pt_cm"                               + jecvar));
+                Top1_eta_cm_CR.push_back(tr.getVar<double>("top1_eta_cm"                             + jecvar));
+                Top1_phi_cm_CR.push_back(tr.getVar<double>("top1_phi_cm"                             + jecvar));
+                Top1_mass_cm_CR.push_back(tr.getVar<double>("top1_mass_cm"                           + jecvar));
+                Top2_pt_cm_CR.push_back(tr.getVar<double>("top2_pt_cm"                               + jecvar));
+                Top2_eta_cm_CR.push_back(tr.getVar<double>("top2_eta_cm"                             + jecvar));
+                Top2_phi_cm_CR.push_back(tr.getVar<double>("top2_phi_cm"                             + jecvar));
+                Top2_mass_cm_CR.push_back(tr.getVar<double>("top2_mass_cm"                           + jecvar));
 
-                GoodJets_CR.push_back(tr.getVec<bool>(jetsName + "Jets_pt30"        + myVarSuffix));
-                NGoodJets_CR.push_back(tr.getVar<int>("N" + jetsName + "Jets_pt30" + myVarSuffix));
-                NGoodBJets_CR.push_back(tr.getVar<int>("NGoodBJets_pt30" + myVarSuffix));
-                NTops_CR.push_back(tr.getVar<int>("ntops" + myVarSuffix));
-                NRTops_CR.push_back(tr.getVar<int>("ntops_3jet" + myVarSuffix));
-                NMTops_CR.push_back(tr.getVar<int>("ntops_1jet" + myVarSuffix));
+                GoodJets_CR.push_back(tr.getVec<bool>(jetsName + "Jets_pt30"        + jecvar));
+                NGoodJets_CR.push_back(tr.getVar<int>("N" + jetsName + "Jets_pt30" + jecvar));
+                NGoodBJets_CR.push_back(tr.getVar<int>("NGoodBJets_pt30" + jecvar));
+                NTops_CR.push_back(tr.getVar<int>("ntops" + jecvar));
+                NRTops_CR.push_back(tr.getVar<int>("ntops_3jet" + jecvar));
+                NMTops_CR.push_back(tr.getVar<int>("ntops_1jet" + jecvar));
 
-                HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b"              + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"              + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"           + myVarSuffix));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"              + myVarSuffix));
-                Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + myVarSuffix));
-                Mll_CR.push_back(tr.getVar<double>("mll"                           + myVarSuffix));
-                dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + myVarSuffix));
+                HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b"              + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"              + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"           + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"              + jecvar));
+                Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + jecvar));
+                Mll_CR.push_back(tr.getVar<double>("mll"                           + jecvar));
+                dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + jecvar));
 
-                DoubleDisCo_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_" + channel + "l_RPV"  + myVarSuffix));
-                DoubleDisCo_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_" + channel + "l_RPV"      + myVarSuffix));
-                DoubleDisCo_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_" + channel + "l_RPV"      + myVarSuffix));
+                DoubleDisCo_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_" + channel + "l_RPV"  + jecvar));
+                DoubleDisCo_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
+                DoubleDisCo_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
 
-                fwm2_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm2_top6"         + myVarSuffix));
-                fwm3_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm3_top6"         + myVarSuffix));
-                fwm4_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm4_top6"         + myVarSuffix));
-                fwm5_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm5_top6"         + myVarSuffix));
-                jmt_ev0_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev0_top6"   + myVarSuffix));
-                jmt_ev1_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev1_top6"   + myVarSuffix));
-                jmt_ev2_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev2_top6"   + myVarSuffix));
-                nMVAJets_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVAJets"                  + myVarSuffix));
-                nMVALeptons_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVALeptons"            + myVarSuffix));
+                fwm2_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm2_top6"         + jecvar));
+                fwm3_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm3_top6"         + jecvar));
+                fwm4_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm4_top6"         + jecvar));
+                fwm5_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm5_top6"         + jecvar));
+                jmt_ev0_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev0_top6"   + jecvar));
+                jmt_ev1_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev1_top6"   + jecvar));
+                jmt_ev2_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev2_top6"   + jecvar));
+                nMVAJets_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVAJets"                  + jecvar));
+                nMVALeptons_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVALeptons"            + jecvar));
 
-                combinedNthJetPt_CR.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_pt_cm" + myVarSuffix));
-                combinedNthJetPtrHT_CR.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + myVarSuffix));
-                combinedNthJetEta_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_eta_cm" + myVarSuffix));
-                combinedNthJetPhi_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_phi_cm" + myVarSuffix));
-                combinedNthJetM_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_m_cm" + myVarSuffix));
-                combinedNthJetE_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_E_cm" + myVarSuffix));
+                combinedNthJetPt_CR.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combinedNthJetPtrHT_CR.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combinedNthJetEta_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combinedNthJetPhi_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combinedNthJetM_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_m_cm" + jecvar));
+                combinedNthJetE_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_E_cm" + jecvar));
 
-                Stop1_pt_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"       + myVarSuffix));
-                Stop1_eta_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon"     + myVarSuffix));
-                Stop1_phi_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_phi_cm_OldSeed_NonIsoMuon"     + myVarSuffix));
-                Stop1_mass_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_mass_cm_OldSeed_NonIsoMuon"   + myVarSuffix));
-                Stop2_pt_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_pt_cm_OldSeed_NonIsoMuon"       + myVarSuffix));
-                Stop2_eta_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_eta_cm_OldSeed_NonIsoMuon"     + myVarSuffix));
-                Stop2_phi_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon"     + myVarSuffix));
-                Stop2_mass_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon"   + myVarSuffix));
-                Stop1_pt_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_pt_cm_TopSeed_NonIsoMuon"       + myVarSuffix));
-                Stop1_eta_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_eta_cm_TopSeed_NonIsoMuon"     + myVarSuffix));
-                Stop1_phi_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_phi_cm_TopSeed_NonIsoMuon"     + myVarSuffix));
-                Stop1_mass_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_mass_cm_TopSeed_NonIsoMuon"   + myVarSuffix));
-                Stop2_pt_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_pt_cm_TopSeed_NonIsoMuon"       + myVarSuffix));
-                Stop2_eta_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_eta_cm_TopSeed_NonIsoMuon"     + myVarSuffix));
-                Stop2_phi_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_phi_cm_TopSeed_NonIsoMuon"     + myVarSuffix));
-                Stop2_mass_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_mass_cm_TopSeed_NonIsoMuon"   + myVarSuffix));
+                Stop1_pt_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"       + jecvar));
+                Stop1_eta_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_eta_cm_OldSeed_NonIsoMuon"     + jecvar));
+                Stop1_phi_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_phi_cm_OldSeed_NonIsoMuon"     + jecvar));
+                Stop1_mass_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_mass_cm_OldSeed_NonIsoMuon"   + jecvar));
+                Stop2_pt_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_pt_cm_OldSeed_NonIsoMuon"       + jecvar));
+                Stop2_eta_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_eta_cm_OldSeed_NonIsoMuon"     + jecvar));
+                Stop2_phi_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_phi_cm_OldSeed_NonIsoMuon"     + jecvar));
+                Stop2_mass_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop2_mass_cm_OldSeed_NonIsoMuon"   + jecvar));
+                Stop1_pt_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_pt_cm_TopSeed_NonIsoMuon"       + jecvar));
+                Stop1_eta_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_eta_cm_TopSeed_NonIsoMuon"     + jecvar));
+                Stop1_phi_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_phi_cm_TopSeed_NonIsoMuon"     + jecvar));
+                Stop1_mass_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop1_mass_cm_TopSeed_NonIsoMuon"   + jecvar));
+                Stop2_pt_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_pt_cm_TopSeed_NonIsoMuon"       + jecvar));
+                Stop2_eta_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_eta_cm_TopSeed_NonIsoMuon"     + jecvar));
+                Stop2_phi_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_phi_cm_TopSeed_NonIsoMuon"     + jecvar));
+                Stop2_mass_cm_TopSeed_CR.push_back(tr.getVar<double>("Stop2_mass_cm_TopSeed_NonIsoMuon"   + jecvar));
 
-                Lepton1_pt_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_pt_1"       + myVarSuffix));
-                Lepton1_eta_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_eta_1"     + myVarSuffix));
-                Lepton1_phi_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_phi_1"     + myVarSuffix));
-                Lepton2_pt_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_pt_2"       + myVarSuffix));
-                Lepton2_eta_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_eta_2"     + myVarSuffix));
-                Lepton2_phi_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_phi_2"     + myVarSuffix));
+                Lepton1_pt_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_pt_1"       + jecvar));
+                Lepton1_eta_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_eta_1"     + jecvar));
+                Lepton1_phi_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_phi_1"     + jecvar));
+                Lepton2_pt_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_pt_2"       + jecvar));
+                Lepton2_eta_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_eta_2"     + jecvar));
+                Lepton2_phi_cm_CR.push_back(tr.getVar<double>("GoodNonIsoMuons_phi_2"     + jecvar));
 
-                GoodLeptons_CR.push_back(tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodNonIsoMuons" + myVarSuffix));
-                GoodLeptonsCharge_CR.push_back(tr.getVec<int>("GoodNonIsoMuonsCharge"                                + myVarSuffix));
-                GoodLeptonsMiniIso_CR.push_back(tr.getVec<double>("GoodNonIsoMuonsMiniIso"                           + myVarSuffix));
+                GoodLeptons_CR.push_back(tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodNonIsoMuons" + jecvar));
+                GoodLeptonsCharge_CR.push_back(tr.getVec<int>("GoodNonIsoMuonsCharge"                                + jecvar));
+                GoodLeptonsMiniIso_CR.push_back(tr.getVec<double>("GoodNonIsoMuonsMiniIso"                           + jecvar));
                
-                Stop1_mass_PtRank_matched_CR.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass" + myVarSuffix));
-                Stop2_mass_PtRank_matched_CR.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass" + myVarSuffix));
-                Stop1_mass_MassRank_matched_CR.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass"  + myVarSuffix));
-                Stop2_mass_MassRank_matched_CR.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass"  + myVarSuffix));
-                Stop_mass_average_matched_CR.push_back(  runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"     + myVarSuffix));
+                Stop1_mass_PtRank_matched_CR.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_ptrank_mass" + jecvar));
+                Stop2_mass_PtRank_matched_CR.push_back(  runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_ptrank_mass" + jecvar));
+                Stop1_mass_MassRank_matched_CR.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop1_mrank_mass"  + jecvar));
+                Stop2_mass_MassRank_matched_CR.push_back(runtype == "Data" ? -999.0 : tr.getVar<float>("stop2_mrank_mass"  + jecvar));
+                Stop_mass_average_matched_CR.push_back(  runtype == "Data" ? -999.0 : tr.getVar<double>("stop_avemass"     + jecvar));
 
                 std::vector<double> tempJets_cm_flavb_CR;
                 std::vector<double> tempJets_cm_flavc_CR;
@@ -946,11 +968,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::vector<double> tempJets_cm_flavq_CR;
 
                 for (unsigned int iJet = 1; iJet <= nMVAJets_CR.back(); iJet++) {
-                    tempJets_cm_flavb_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavb_"  +std::to_string(iJet)+myVarSuffix));
-                    tempJets_cm_flavc_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavc_"  +std::to_string(iJet)+myVarSuffix));
-                    tempJets_cm_flavg_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavg_"  +std::to_string(iJet)+myVarSuffix));
-                    tempJets_cm_flavuds_CR.push_back(tr.getVar<double>("Jet" + flavName + "_flavuds_"+std::to_string(iJet)+myVarSuffix));
-                    tempJets_cm_flavq_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavq_"  +std::to_string(iJet)+myVarSuffix));
+                    tempJets_cm_flavb_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavb_"  +std::to_string(iJet)+jecvar));
+                    tempJets_cm_flavc_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavc_"  +std::to_string(iJet)+jecvar));
+                    tempJets_cm_flavg_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavg_"  +std::to_string(iJet)+jecvar));
+                    tempJets_cm_flavuds_CR.push_back(tr.getVar<double>("Jet" + flavName + "_flavuds_"+std::to_string(iJet)+jecvar));
+                    tempJets_cm_flavq_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavq_"  +std::to_string(iJet)+jecvar));
                 }
 
                 Jets_cm_flavb_CR.push_back(tempJets_cm_flavb_CR);
@@ -959,11 +981,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Jets_cm_flavuds_CR.push_back(tempJets_cm_flavuds_CR);
                 Jets_cm_flavq_CR.push_back(tempJets_cm_flavq_CR);
 
-                Jets_flavb_CR.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourtotb"));
-                Jets_flavc_CR.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourprobc"));
-                Jets_flavg_CR.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourprobg"));
-                Jets_flavuds_CR.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourprobuds"));
-                Jets_flavq_CR.push_back(tr.getVec<float>("Jets" + myVarSuffix + "_bJetTagDeepFlavourtotq"));
+                Jets_flavb_CR.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourtotb"));
+                Jets_flavc_CR.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourprobc"));
+                Jets_flavg_CR.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourprobg"));
+                Jets_flavuds_CR.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourprobuds"));
+                Jets_flavq_CR.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourtotq"));
 
                 // ---------------------------------------------------------------------------
                 // Calculate the event weights for tt and ttvars fsrUp/Down, isrUp/Down
@@ -977,13 +999,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 if(runtype == "MC" )
                 {
                     // tt event weight
-                    auto totalWeight = tr.getVar<double>("TotalWeight" + myVarSuffix);
+                    auto totalWeight = tr.getVar<double>("TotalWeight" + jecvar);
                     theWeight *= totalWeight;
                     // ttvars fsrUp/Down, isrUp/Down event weights
-                    const auto& PSweight_fsrUp   = tr.getVar<double>("PSweight_FSRUp"   + myVarSuffix);
-                    const auto& PSweight_fsrDown = tr.getVar<double>("PSweight_FSRDown" + myVarSuffix);
-                    const auto& PSweight_isrUp   = tr.getVar<double>("PSweight_ISRUp"   + myVarSuffix);
-                    const auto& PSweight_isrDown = tr.getVar<double>("PSweight_ISRDown" + myVarSuffix);
+                    const auto& PSweight_fsrUp   = tr.getVar<double>("PSweight_FSRUp"   + jecvar);
+                    const auto& PSweight_fsrDown = tr.getVar<double>("PSweight_FSRDown" + jecvar);
+                    const auto& PSweight_isrUp   = tr.getVar<double>("PSweight_ISRUp"   + jecvar);
+                    const auto& PSweight_isrDown = tr.getVar<double>("PSweight_ISRDown" + jecvar);
                     theWeight_fsrUp   *= totalWeight * PSweight_fsrUp;
                     theWeight_fsrDown *= totalWeight * PSweight_fsrDown;
                     theWeight_isrUp   *= totalWeight * PSweight_isrUp;
@@ -1113,6 +1135,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         if (ttvar != "nom")
                             ttvarStr = "_" + ttvar; 
 
+                        if (ttvar != "nom" and jecvar != "")
+                            continue;
+
                         if (kv.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
                             continue;
 
@@ -1162,11 +1187,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             if (region != "Incl")
                                 regionStr = "_" + region;
 
+                            name = kv.first + njetsStr + regionStr + ttvarStr + jecStr;
+
                             if (kv.second and inNjetsBin and inRegion)
                             {
-
-                                name = kv.first + njetsStr + regionStr + ttvarStr;
-                                if (njets == "Incl" and region == "ABCD")
+                                if (njets == "Incl" and region == "ABCD" and jecvar == "" and ttvar == "nom")
                                 {
 
                                     Debug("Filling event variable histograms with name: " + name, __LINE__);
@@ -1504,11 +1529,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Energy" + name]->Fill(theCombJetE,     w); 
                                 }                            
 
-
                                 // -------------------------------------------------------------------------------------------------
                                 // Fill 2D event-level varaibles
                                 // -------------------------------------------------------------------------------------------------
-                                if (region == "ABCD" and ttvar == "nom")
+                                if (region == "ABCD" and ttvar == "nom" and jecvar == "")
                                     my_2d_histos["h_nRtops_vs_nMtops"      + name]->Fill(!isQCD ? NRTops[channel] : NRTops_CR[channel], !isQCD ? NMTops[channel] : NMTops_CR[channel], w);
 
                                 auto& cmJets = Jets_cm_top6[channel];
@@ -1517,7 +1541,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                 Debug("Filling 2D pt HT variable histograms with name: " + name, __LINE__);
 
-                                if (region == "ABCD" and ttvar == "nom")
+                                if (region == "ABCD" and ttvar == "nom" and jecvar == "")
                                 {
                                     for(unsigned int i = 1; i <= nJets; i++)
                                     {
@@ -1559,7 +1583,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                 {
                                     Debug("Filling 1D njets histograms with name: " + name, __LINE__);
 
-                                    name = kv.first + njetsStr + regionStr;
                                     int shift = inRegionBin[iSubRegion] ? iSubRegion : 100;
 
                                     auto& theGoodJets = NGoodJets[channel];

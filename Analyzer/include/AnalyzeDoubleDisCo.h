@@ -45,7 +45,7 @@ public:
     std::vector<std::string> channels;
     std::vector<std::string> njets;
     std::vector<std::string> ttvars;
-    std::vector<std::string> my_var_suffix;
+    std::vector<std::string> jecvars;
 
     std::map<std::string, std::vector<std::string> > subRegionsMap;
 
