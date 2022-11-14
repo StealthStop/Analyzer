@@ -64,11 +64,6 @@ printf "\n\n LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}\n\n"
 printf "\n\n ls output\n"
 ls -l
 
-printf "Copy over the needed filelist"
-file=$(printf ${filelist} | sed 's|/eos/uscms||')
-printf "\n\n xrdcp root://cmseos.fnal.gov/${file} .\n\n"
-xrdcp root://cmseos.fnal.gov/${file} .
-
 fastModeStr=""
 if [[ $fastMode -eq 1 ]]
 then
@@ -83,7 +78,7 @@ ls -l
 
 for outfile in MyAnalysis*.root;
 do
-    xrdcp $outfile $eosPath/
+    xrdcp -f $outfile $eosPath/$outfile
 done
 
 rm -rf MyAnalysis*.root

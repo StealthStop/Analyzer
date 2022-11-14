@@ -1,15 +1,14 @@
 import numpy as np
-from pyxrootd import client
 from functools import partial
 import concurrent.futures
 
 def getFiles(fileList):
     # If multiprocessing is used this must also be run in a seperate thread from the master thread
     try:
-        with client.File() as fl:
-            # Why is the client written like this????
-            fl.open(fileList)
-            files = [f.strip("\n") for f in fl]
+        # Why is the client written like this????
+        f = open(fileList)
+        payload = f.readlines()
+        files = [line.strip("\n") for line in payload]
     except ValueError:
         print "Filelist not found: ", fileList
         return None
