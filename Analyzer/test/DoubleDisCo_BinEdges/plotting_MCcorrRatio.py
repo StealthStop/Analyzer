@@ -105,11 +105,10 @@ def main():
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
 
-    labels = [ "0l_0.6_0.6",
+    labels = [ #"0l_0.6_0.6",
                "1l_0.6_0.6", 
-               #"0l_0.71_0.65",
-               #"1l_0.57_0.65"
-    ]
+               "2l_0.6_0.6",
+             ]
 
     path = "year_TT_TTvar_Syst_label.root"
     
