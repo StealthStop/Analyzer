@@ -95,9 +95,9 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
     a.WriteHistos(outfile);
 }
 
-std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool isCondor = false)
+std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets)
 {
-    AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor);
+    AnaSamples::SampleSet        ss("sampleSets.cfg");
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;

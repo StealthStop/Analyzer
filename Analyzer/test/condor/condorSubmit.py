@@ -1,6 +1,3 @@
-#!/cvmfs/cms.cern.ch/slc6_amd64_gcc630/cms/cmssw/CMSSW_9_3_3/external/slc6_amd64_gcc630/bin/python
-####!${SRT_CMSSW_RELEASE_BASE_SCRAMRTDEL}/external/${SCRAM_ARCH}/bin/python
-
 import sys, os
 from os import system, environ
 
@@ -54,7 +51,7 @@ def main():
 
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
-    eosDir     = redirector + "/store/user/%s/StealthStop/%s"%(userName, options.outPath)
+    eosDir     = "%s//store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
 
     if os.path.isdir(workingDir):
         print red("Job directory already exists and cannot proceed safely ! Exiting...")
@@ -157,7 +154,7 @@ def main():
    
         for s, n, e in sc.sampleList(ds):
             print "SampleSet:", n, ", nEvents:", e
-            f = open("../" + s)
+            f = open(environ["CMSSW_BASE"] + "/src/Analyzer/Analyzer/test/" + s)
             if not f == None:
                 count = 0
                 for l in f:

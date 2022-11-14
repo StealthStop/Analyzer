@@ -227,7 +227,7 @@ def main():
                     files = " ".join(listFiles(inPath, query))
                     
                     command = "hadd %s %s/%s.root %s" % (haddArgs, outDir, sampleCollection, files)
-                    if not options.noHadd: os.system(command)
+                    if not options.noHadd: subprocess.call(command.split(" "))
                     pass
     
                 log = checkNumEvents(nEvents=nEvents, rootFile=outfile, sampleCollection=sampleCollection, log=log)
