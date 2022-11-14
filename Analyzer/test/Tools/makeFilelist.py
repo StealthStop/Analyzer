@@ -19,14 +19,14 @@ class FileLister:
             self.ttreePathSig = "PreSelection"
             self.tempFileName = "tmp.txt"
             self.workingDir   = "filelists_Kevin_%s/"%(production)
-            self.fileListPath = "filelists/"
+            self.fileListPath = "filelists"
         else:
             self.filesDir     = "/store/user/lpcsusystealth/Skims"%(production)
             self.ttreePath    = "SkimmedTree"
             self.ttreePathSig = "SkimmedTree"
             self.tempFileName = "tmp.txt"
             self.workingDir   = "filelists_Kevin_%s_skim/"%(production)
-            self.fileListPath = "filelists_skim/"
+            self.fileListPath = "filelists_skim"
 
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
@@ -366,7 +366,7 @@ class FileLister:
                     name = name.replace("_mSo-100", "") \
                                .replace("_mN1-100", "")
 
-                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(45), self.fileListPath, sample.ljust(85), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(45), self.fileListPath, sample.ljust(90), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
     
             self.writeSampleSet(finalDict)
 
@@ -377,7 +377,7 @@ class FileLister:
         sampleSet = open("sampleSets_%s.cfg"%(self.tag), "a")
 
         if not self.wroteHeader:
-            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(45), "filelists,".rjust(len(self.fileListPath)+1), "Sample_file_list.txt,".ljust(85), "TTree Name,".rjust(len(self.ttreePath)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
+            sampleSet.write("%s %s %s %s %s %s %s %s\n\n"%("# Sample name,".ljust(45), "filelists,".rjust(len(self.fileListPath)+1), "Sample_file_list.txt,".ljust(90), "TTree Name,".rjust(len(self.ttreePath)+1), "Xsec,".rjust(14), "+evt cnts,".rjust(12), "-evt cnts,".rjust(12), "kfact".rjust(6)))
             self.wroteHeader = True
 
         sortedGroups = dictionary.keys()

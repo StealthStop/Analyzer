@@ -73,19 +73,31 @@ if __name__ == '__main__':
         # Make corrections to the line if the nEvts do not match up
         # Do some fancy string stuff to preserve the nice formatting in sampleSet.cfg
         newLine = line
-        if int(obsPos) != int(predPos):
-            print("%s: Expected %s positive weight events but measured %s"%(sampleName.ljust(40), predPos, obsPos))
-            if posDiffLen >= 0:
-                newLine = newLine.replace(" "+predPos+",", " "*(posDiffLen+1)+obsPos+",")
-            else:
-                newLine = newLine.replace(" "*abs(posDiffLen)+predPos+",", obsPos+",")
-
         if int(obsNeg) != int(predNeg):
             print("%s: Expected %s negative weight events but measured %s"%(sampleName.ljust(40), predNeg, obsNeg))
+            old = ""
+            new = ""
             if negDiffLen >= 0:
-                newLine = newLine.replace(" "+predNeg+",", " "*(negDiffLen+1)+obsNeg+",")
+                old = " "+predNeg+","
+                new = " "*(negDiffLen+1)+obsNeg+","
             else:
-                newLine = newLine.replace(" "*abs(negDiffLen)+predNeg+",", obsNeg+",")
-       
+                old = " "*abs(negDiffLen)+predNeg+","
+                new = obsNeg+","
+
+            newLine = new.join(newLine.rsplit(old, 1))
+
+        if int(obsPos) != int(predPos):
+            print("%s: Expected %s positive weight events but measured %s"%(sampleName.ljust(40), predPos, obsPos))
+            old = ""
+            new = ""
+            if posDiffLen >= 0:
+                old = " "+predPos+","
+                new = " "*(posDiffLen+1)+obsPos+","
+            else:
+                old = " "*abs(posDiffLen)+predPos+","
+                new = obsPos+","
+
+            newLine = new.join(newLine.rsplit(old, 1))
+
         newSampleSet.write(newLine)
     newSampleSet.close()
