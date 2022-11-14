@@ -82,8 +82,8 @@ class Aggregator:
                 self.data[self.makeKey(variable = "pull",           sample = sample, **kwargs)] = regionObj.getFinal("pull",                    sample)
                 self.data[self.makeKey(variable = "closureCorr",    sample = sample, **kwargs)] = regionObj.getFinal("closureCorr",             sample) # vars with the final choice of bin edges
                 if sample == "TTinData":
-                    self.data[self.makeKey(variable = "MC_corrected_dataClosure",       sample = sample,                                **kwargs)] = regionObj.getFinal("MC_corrected_dataClosure",       sample)
-                    self.data[self.makeKey(variable = "MC_ttVar_corrected_dataClosure", sample = sample+"_"+regionObj.get_ttVar_Name(), **kwargs)] = regionObj.getFinal("MC_ttVar_corrected_dataClosure", sample)
+                    self.data[self.makeKey(variable = "CorrectedDataClosure",       sample = sample,                                **kwargs)] = regionObj.getFinal("CorrectedDataClosure",       sample)
+                    self.data[self.makeKey(variable = "ttVar_CorrectedDataClosure", sample = sample+"_"+regionObj.get_ttVar_Name(), **kwargs)] = regionObj.getFinal("ttVar_CorrectedDataClosure", sample)
 
             if "TT_" in sample:
                 self.data[self.makeKey(variable = "MCcorrRatio_MC", sample = sample, **kwargs)] = regionObj.getFinal("MCcorrRatio_MC",          sample)

@@ -249,6 +249,7 @@ class maximumCorrectedData_ttSyst(TableWriter):
 
     def writeHeader(self):
         self.f.write("\\centering")
+        self.f.write("\n")
         self.f.write("\\resizebox{0.6\linewidth}{!}{%")
         self.f.write("\n")
         self.f.write("    \def\\arraystretch{0.7}")
@@ -257,7 +258,7 @@ class maximumCorrectedData_ttSyst(TableWriter):
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
-        self.f.write("        \\textbf{\\njets} & \\textbf{maxi MC Corrected Data} & \\textbf{\\ttbar syst.} \\\\")
+        self.f.write("        \\textbf{\\njets} & \\textbf{maxi Corrected Data Closure} & \\textbf{\\ttbar syst.} \\\\")
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
@@ -269,4 +270,4 @@ class maximumCorrectedData_ttSyst(TableWriter):
         self.f.write("\n")
 
 
-
+ 
