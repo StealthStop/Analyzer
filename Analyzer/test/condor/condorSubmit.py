@@ -52,7 +52,7 @@ def main():
     hostName = environ["HOSTNAME"]
 
     if "uscms.org" in hostName:
-        system("source /etc/ciconnect/set_condor_sites.sh \"T[3]_US_*\"") 
+        system("source /etc/ciconnect/set_condor_sites.sh \"T[1-2]_US_*\"") 
 
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
