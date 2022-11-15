@@ -434,6 +434,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
     for(const auto& jecvar : jecvars)
     {
+        // Cannot do JEC and JER variations for data
+        if (jecvar != "" and runtype == "Data")
+            continue;
 
         Jet                 jet(jecvar);
         BJet                bjet(jecvar);
@@ -519,6 +522,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         for(const auto& jecvar : jecvars)
         {
+            // Cannot do JEC and JER variations for data
+            if (jecvar != "" and runtype == "Data")
+                continue;
+
             std::string jecStr = "";
             if (jecvar != "")
                 jecStr = "_" + jecvar;
