@@ -507,18 +507,18 @@ class All_Regions:
             # MC corrected Data Closure for TT
             #   -- using MC correction factor to calculate Data Closure
             # ---------------------------------------------------------
-            MC_corrected_dataClosure             = (Closure_TTinData * closureCorr_TT)
-            MC_corrected_dataClosure_Unc         = math.sqrt((Closure_TTinData * closureCorrUnc_TT)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
-            MC_corrected_dataClosure_Unc_withSys = math.sqrt((Closure_TTinData * closureCorrUnc_TT_withSys)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
-            self.add("MC_corrected_dataClosure", disc1Key, disc2Key, (MC_corrected_dataClosure, MC_corrected_dataClosure_Unc, MC_corrected_dataClosure_Unc_withSys), "TTinData")
+            CorrectedDataClosure             = (Closure_TTinData * closureCorr_TT)
+            CorrectedDataClosure_Unc         = math.sqrt((Closure_TTinData * closureCorrUnc_TT)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
+            CorrectedDataClosure_Unc_withSys = math.sqrt((Closure_TTinData * closureCorrUnc_TT_withSys)**2.0 + (ClosureUnc_TTinData * closureCorr_TT)**2.0)
+            self.add("CorrectedDataClosure", disc1Key, disc2Key, (CorrectedDataClosure, CorrectedDataClosure_Unc, CorrectedDataClosure_Unc_withSys), "TTinData")
 
             # ----------------------------------------------------
             # MC corrected Data Closure for TTvar
             # using MC correction factor to calculate Data Closure
             # ----------------------------------------------------
-            MC_ttVar_corrected_dataClosure     = (Closure_TTinData * closureCorr_TTvar)
-            MC_ttVar_corrected_dataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TTvar)**2.0 + (ClosureUnc_TTinData * closureCorr_TTvar)**2.0)
-            self.add("MC_ttVar_corrected_dataClosure", disc1Key, disc2Key, (MC_ttVar_corrected_dataClosure, MC_ttVar_corrected_dataClosure_Unc), "TTinData")
+            ttVar_CorrectedDataClosure     = (Closure_TTinData * closureCorr_TTvar)
+            ttVar_CorrectedDataClosure_Unc = math.sqrt((Closure_TTinData * closureCorrUnc_TTvar)**2.0 + (ClosureUnc_TTinData * closureCorr_TTvar)**2.0)
+            self.add("ttVar_CorrectedDataClosure", disc1Key, disc2Key, (ttVar_CorrectedDataClosure, ttVar_CorrectedDataClosure_Unc), "TTinData")
 
             # ----------------------------------------------------
             # significance for optimization metric for only TT !!! 
