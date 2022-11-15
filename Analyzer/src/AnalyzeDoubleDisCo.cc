@@ -373,7 +373,6 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     // -------------------------------------------------------------
                     for (const auto& jecvar : jecvars)
                     {
-
                        // Variations irrelevant for data
                        if (jecvar != "" and runtype == "Data")
                            continue;
@@ -1156,6 +1155,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         std::string ttvarStr = "";
                         if (ttvar != "nom")
                             ttvarStr = "_" + ttvar; 
+
+                        if (ttvar != "nom" and runtype == "Data")
+                            continue;
 
                         if (ttvar != "nom" and jecvar != "")
                             continue;
