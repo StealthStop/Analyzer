@@ -40,7 +40,6 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         std::set<std::string> variables = {
             // Event-level
             "RunNum",
-            "Weight",
             "TriggerPass",
     
             // Electrons
@@ -126,6 +125,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         if( runtype == "MC" )
         {
+            variables.insert("Weight");
             variables.insert("madHT");
             variables.insert("GenElectrons");
             variables.insert("GenMuons");
@@ -157,6 +157,10 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
             variables.insert("JetsJECdown_jerFactor");
             variables.insert("Jets_jerFactorUp");
             variables.insert("Jets_jerFactorDown");
+            variables.insert("JetIDJECdown");
+            variables.insert("JetIDJECup");
+            variables.insert("JetIDJERdown");
+            variables.insert("JetIDJERup");
             variables.insert("JetsAK8_origIndex");
             variables.insert("JetsAK8JECup_origIndex");
             variables.insert("JetsAK8JECdown_origIndex");
@@ -181,7 +185,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-----------------------------------
         //-- Fill Histograms Below
         //-----------------------------------
-        if( HT_trigger_pt30 > 400.0 ) {
+        if( NGoodJets_pt30 >= 5 and HT_trigger_pt30 > 400.0 ) {
             eventCounter->Fill(-1.0);
             myMiniTuple->fill();
         }
