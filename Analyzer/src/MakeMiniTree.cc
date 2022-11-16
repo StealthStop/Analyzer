@@ -41,6 +41,8 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
             // Event-level
             "RunNum",
             "TriggerPass",
+            "fixedGridRhoFastjetAll",
+            "NVtx",
     
             // Electrons
             "Electrons",
@@ -71,6 +73,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
             "Jets_bJetTagDeepCSVprobbb",
             "Jets_bJetTagDeepFlavourprobb",
             "Jets_bJetTagDeepFlavourprobbb",
+            "Jets_bJetTagDeepFlavourproblepb",
             "Jets_bJetTagDeepFlavourprobc",
             "Jets_bJetTagDeepFlavourprobuds",
             "Jets_bJetTagDeepFlavourprobg",
