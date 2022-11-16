@@ -545,6 +545,19 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="MakeMiniTree")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else
         {
             const std::vector<std::string> modulesList = {
