@@ -392,7 +392,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateBTagSF" || analyzer=="CalculateSFMean")
+        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -405,6 +405,35 @@ public:
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="CalculateBTagSF")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger",
+                "Baseline",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="CalculateSFMean")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger",
+                "Baseline",
+                "ScaleFactors",
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -510,6 +539,19 @@ public:
                 "PrepNTupleVars",
                 "Muon",
                 "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="MakeMiniTree")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
                 "Jet",
                 "BJet",
                 "CommonVariables",
