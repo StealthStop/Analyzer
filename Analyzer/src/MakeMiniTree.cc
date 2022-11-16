@@ -27,7 +27,8 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( tr.getEvtNum() % 1000 == 0 )
             printf( " Event %i\n", tr.getEvtNum() );
 
-        eventCounter->Fill(1.0);
+        const auto& evtCounter = tr.getVar<int>("eventCounter");
+        eventCounter->Fill(evtCounter);
 
         const auto& runtype         = tr.getVar<std::string>("runtype");
 
@@ -189,7 +190,6 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-- Fill Histograms Below
         //-----------------------------------
         if( NGoodJets_pt30 >= 5 and HT_trigger_pt30 > 400.0 ) {
-            eventCounter->Fill(-1.0);
             myMiniTuple->fill();
         }
     } 
