@@ -179,7 +179,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         }
 
         if( tr.isFirstEvent() ) {
-            std::string myTreeName = "SkimmedTree";
+            std::string myTreeName = "PreSelection";
             myTree = new TTree( (myTreeName).c_str() , (myTreeName).c_str() );
             myMiniTuple = new MiniTupleMaker( myTree );
             myMiniTuple->setTupleVars(variables);
