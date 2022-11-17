@@ -485,8 +485,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(electron);
         tr.registerFunction(jet);
         tr.registerFunction(bjet);
-        tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
+        tr.registerFunction(topTagger);
         tr.registerFunction(baseline);
         tr.registerFunction(makeMVAVariables);
         tr.registerFunction(makeMVAVariables_NonIsoMuon);
