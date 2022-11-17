@@ -41,6 +41,7 @@ def main():
     parser.add_option ('-L',        dest='dataCollectionslong',     action='store_true', default = False,         help="List all datacollections and sub collections")
     parser.add_option ('-c',        dest='noSubmit',                action='store_true', default = False,         help="Do not submit jobs.  Only create condor_submit.txt.")
     parser.add_option ('-s',        dest='fastMode',                action='store_true', default = False,         help="Run Analyzer in fast mode")
+    parser.add_option ('-u',        dest='userOverride',  type='string',                 default = '',            help="Override username with something else")
     parser.add_option ('--output',  dest='outPath',  type='string',                      default = '.',           help="Name of directory where output of each condor job goes")
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
@@ -48,6 +49,11 @@ def main():
     srcDir   = environ["CMSSW_BASE"] + "/src"
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
+
+    if options.userOverride != "":
+        userName = options.userOverride
+
+    hostName = environ["HOSTNAME"]
 
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
@@ -150,7 +156,6 @@ def main():
         logsDir = "log-files/%s"%(ds)
         # create the directory
         if not os.path.isdir("%s/%s" %(workingDir, logsDir)):
-            subprocess.call(["eos", "root://cmseos.fnal.gov", "mkdir", "-p", eosDir[23:] + "/" + stubDir])
             system('mkdir -p %s/%s' %(workingDir, logsDir))
    
         for s, n, e in sc.sampleList(ds):

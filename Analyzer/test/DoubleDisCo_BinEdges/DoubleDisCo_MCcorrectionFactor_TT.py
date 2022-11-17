@@ -43,7 +43,6 @@ class MCcorrectionFactor_TT():
         # ------------------------------------------------
         # make the lists for rightBoundary and topBoundary
         # ------------------------------------------------
-
         # Special list of boundaries for Val D region
         unevenFactor = (1.0 - disc1edge) / (1.0 - disc2edge)
 
@@ -52,7 +51,7 @@ class MCcorrectionFactor_TT():
 
         if disc1edge < disc2edge:
             d1gridWidth *= unevenFactor
-        elif disc2edge < disc1ege:
+        elif disc2edge < disc1edge:
             d2gridWidth /= unevenFactor
          
         temp1 = np.unique(np.round(np.clip(np.arange(float(disc1edge), 1.05, d1gridWidth), 0.0, 1.0), 2))
@@ -224,8 +223,8 @@ class MCcorrectionFactor_TT():
             closureCorrPerBoundaryTTvar       = {}
 
             # TTinData = Data - NonTT
-            weighted_nTTEventsA_PerBoundaryTTinData = {}; nonClosurePerBoundaryTTinData = {}; closurePerBoundaryTTinData = {}; MC_corrected_dataClosure_PerBoundaryTTinData = {} 
-            MC_ttVar_corrected_dataClosure_PerBoundaryTTinData = {} 
+            weighted_nTTEventsA_PerBoundaryTTinData = {}; nonClosurePerBoundaryTTinData = {}; closurePerBoundaryTTinData = {}; CorrectedDataClosure_PerBoundaryTTinData = {} 
+            ttVar_CorrectedDataClosure_PerBoundaryTTinData = {} 
 
             for region in regions:
                 if "Val_" not in region:
@@ -242,11 +241,11 @@ class MCcorrectionFactor_TT():
                 closureCorrPerBoundaryTTvar[region]       = theAggy.getPerBoundary(variable = "closureCorr", sample = self.ttVar, region = region, njet = njet)            
 
                 # TTinData = Data - NonTT
-                weighted_nTTEventsA_PerBoundaryTTinData[region]            = theAggy.getPerBoundary(variable = "nEventsA",                       sample = "TTinData", region = region, njet = njet)
-                nonClosurePerBoundaryTTinData[region]                      = theAggy.getPerBoundary(variable = "nonClosure",                     sample = "TTinData", region = region, njet = njet)
-                closurePerBoundaryTTinData[region]                         = theAggy.getPerBoundary(variable = "Closure",                        sample = "TTinData", region = region, njet = njet)
-                MC_corrected_dataClosure_PerBoundaryTTinData[region]       = theAggy.getPerBoundary(variable = "MC_corrected_dataClosure",       sample = "TTinData", region = region, njet = njet)
-                MC_ttVar_corrected_dataClosure_PerBoundaryTTinData[region] = theAggy.getPerBoundary(variable = "MC_ttVar_corrected_dataClosure", sample = "TTinData", region = region, njet = njet)
+                weighted_nTTEventsA_PerBoundaryTTinData[region]        = theAggy.getPerBoundary(variable = "nEventsA",                   sample = "TTinData", region = region, njet = njet)
+                nonClosurePerBoundaryTTinData[region]                  = theAggy.getPerBoundary(variable = "nonClosure",                 sample = "TTinData", region = region, njet = njet)
+                closurePerBoundaryTTinData[region]                     = theAggy.getPerBoundary(variable = "Closure",                    sample = "TTinData", region = region, njet = njet)
+                CorrectedDataClosure_PerBoundaryTTinData[region]       = theAggy.getPerBoundary(variable = "CorrectedDataClosure",       sample = "TTinData", region = region, njet = njet)
+                ttVar_CorrectedDataClosure_PerBoundaryTTinData[region] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
 
             # set y axis for higher njets bins
             yMin = None; yMax = None
@@ -270,6 +269,6 @@ class MCcorrectionFactor_TT():
                 # TTinData = Data - NonTT
                 #plotter["Data"].plot_VarVsBoundary(weighted_nTTEventsA_PerBoundaryTTinData,            self.regionGridWidth/2.0, None, None, None, "Weighted Events in A [Data]",  "TTinData_weighted_nTTeventsA_PerBoundary",     njet, self.valColors)
                 #plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,                      self.regionGridWidth/2.0, 0.0, 0.3,   None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",              njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                         self.regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",      "TTinData_DataClosure_PerBoundary",                         njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(MC_corrected_dataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_corrected_dataClosure_PerBoundary",            njet, self.valColors)
-                #plotter["Data"].plot_VarVsBoundary(MC_ttVar_corrected_dataClosure_PerBoundaryTTinData, self.regionGridWidth/2.0, yMin, yMax,  1.0, "MC Corrected Data", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)
+                plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                     self.regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",           "TTinData_DataClosure_PerBoundary",                     njet, self.valColors)
+                plotter["Data"].plot_VarVsBoundary(CorrectedDataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary",            njet, self.valColors)
+                #plotter["Data"].plot_VarVsBoundary(ttVar_CorrectedDataClosure_PerBoundaryTTinData, self.regionGridWidth/2.0, yMin, yMax,  1.0, "Corrected Data Closure", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)

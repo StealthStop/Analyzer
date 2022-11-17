@@ -57,7 +57,7 @@ public:
     void makeSubregions(const std::vector<std::vector<std::string>>& regionsVec);
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
     void Preinit(unsigned int, unsigned int);
-    void InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec);
+    void InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec, const std::string& runtype);
     void WriteHistos(TFile* outfile);
     void Debug(const std::string& message, int line);
 

@@ -11,7 +11,7 @@ CalculateBTagSF::CalculateBTagSF() : initHistos(false)
 {
 }
 
-void CalculateBTagSF::InitHistos(std::string histoFileTag)
+void CalculateBTagSF::InitHistos(const std::string& histoFileTag)
 {
     TH1::SetDefaultSumw2();
     TH2::SetDefaultSumw2();
@@ -120,10 +120,4 @@ void CalculateBTagSF::WriteHistos( TFile* outfile )
         p.second->SetDirectory(outfile);
         p.second->Write();
     }
-    
-    for( const auto& p : my_efficiencies ) 
-    {
-        p.second->SetDirectory(outfile);
-        p.second->Write();
-    }   
 }

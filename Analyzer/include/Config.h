@@ -354,8 +354,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "MakeMVAVariables",
                 "DeepEventShape",
@@ -381,8 +381,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "MakeMVAVariables",
                 "StopJets",
@@ -392,7 +392,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateBTagSF" || analyzer=="CalculateSFMean")
+        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
@@ -408,6 +408,31 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="CalculateBTagSF")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+        else if(analyzer=="CalculateSFMean")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "ScaleFactors",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else if(analyzer=="HEM_Analyzer")
         {
             const std::vector<std::string> modulesList = {
@@ -416,8 +441,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",        
@@ -433,8 +458,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
@@ -453,8 +478,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger_ResolvedOnly",
                 "CommonVariables",
+                "RunTopTagger_ResolvedOnly",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"
@@ -469,8 +494,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",
@@ -491,8 +516,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "MakeMVAVariables_0l",
                 "ISRJets",
@@ -520,6 +545,19 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="MakeMiniTree")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else
         {
             const std::vector<std::string> modulesList = {
@@ -528,8 +566,8 @@ public:
                 "Electron",
                 "Jet",
                 "BJet",
-                "RunTopTagger",
                 "CommonVariables",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors",

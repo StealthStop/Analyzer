@@ -223,7 +223,7 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets, unsigned int nLeptons)
     }
 }
 
-void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec)
+void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec, const std::string& runtype)
 {
 
     Debug("Initializing all histograms", __LINE__);
@@ -261,6 +261,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                 // --------------------------------------------------------------------------
                 for (const auto& ttvar : ttvars)
                 {
+                    // Variations irrelevant for data
+                    if (ttvar != "nom" and runtype == "Data")
+                        continue;
+
                     std::string ttvarStr = "";
                     if (ttvar != "nom")
                         ttvarStr = "_" + ttvar; 
@@ -270,6 +274,9 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     // -------------------------------------------------------------
                     for (const auto& jecvar : jecvars)
                     {
+                        // Variations irrelevant for data
+                        if (jecvar != "" and runtype == "Data")
+                            continue;
 
                         // We don't do double variations
                         if (jecvar != "" and ttvar != "nom")
@@ -353,6 +360,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                 // --------------------------------------------------------------------------
                 for (const auto& ttvar : ttvars)
                 {   
+                    // Variations irrelevant for data
+                    if (ttvar != "nom" and runtype == "Data")
+                        continue;
+
                     std::string ttvarStr = "";
                     if (ttvar != "nom")
                         ttvarStr = "_" + ttvar;
@@ -362,8 +373,11 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     // -------------------------------------------------------------
                     for (const auto& jecvar : jecvars)
                     {
+                       // Variations irrelevant for data
+                       if (jecvar != "" and runtype == "Data")
+                           continue;
 
-                        // We don't do double variations
+                       // We don't do double variations
                         if (jecvar != "" and ttvar != "nom")
                             continue;
 
@@ -434,6 +448,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
     for(const auto& jecvar : jecvars)
     {
+        // Cannot do JEC and JER variations for data
+        if (jecvar != "" and runtype == "Data")
+            continue;
 
         Jet                 jet(jecvar);
         BJet                bjet(jecvar);
@@ -468,8 +485,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         tr.registerFunction(electron);
         tr.registerFunction(jet);
         tr.registerFunction(bjet);
-        tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
+        tr.registerFunction(topTagger);
         tr.registerFunction(baseline);
         tr.registerFunction(makeMVAVariables);
         tr.registerFunction(makeMVAVariables_NonIsoMuon);
@@ -519,6 +536,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         for(const auto& jecvar : jecvars)
         {
+            // Cannot do JEC and JER variations for data
+            if (jecvar != "" and runtype == "Data")
+                continue;
+
             std::string jecStr = "";
             if (jecvar != "")
                 jecStr = "_" + jecvar;
@@ -1062,7 +1083,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Debug("Initializing the histograms", __LINE__);
 
                 Preinit(7, 2);
-                InitHistos(cut_map, regions);
+                InitHistos(cut_map, regions, runtype);
                 initHistos = true;
             }
 
@@ -1134,6 +1155,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         std::string ttvarStr = "";
                         if (ttvar != "nom")
                             ttvarStr = "_" + ttvar; 
+
+                        if (ttvar != "nom" and runtype == "Data")
+                            continue;
 
                         if (ttvar != "nom" and jecvar != "")
                             continue;

@@ -57,8 +57,8 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
         tr.registerFunction(photon);
         tr.registerFunction(jet);
         tr.registerFunction(bjet);
-        tr.registerFunction(topTagger);
         tr.registerFunction(commonVariables);
+        tr.registerFunction(topTagger);
         tr.registerFunction(baseline);
         tr.registerFunction(makeMVAVariables);
         tr.registerFunction(stopJets);
