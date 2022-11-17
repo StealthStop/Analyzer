@@ -149,9 +149,15 @@ public:
         {
             runYear                           = "2016preVFP";
             Lumi                              = 19520.0;
+
+            // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16preVFP
+            
             deepCSV_WP_loose                  = 0.2027;
             deepCSV_WP_medium                 = 0.6001;
             deepCSV_WP_tight                  = 0.8819;           
+            deepFlavour_WP_loose              = 0.0508;
+            deepFlavour_WP_medium             = 0.2598;
+            deepFlavour_WP_tight              = 0.6502;           
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg"; 
@@ -176,7 +182,7 @@ public:
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
             bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepCSV_106XUL16preVFP_v2.csv";
+            bjetCSVFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
             //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
@@ -189,9 +195,15 @@ public:
         {
             runYear                           = "2016postVFP";
             Lumi                              = 16810.0;
+
+            // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
+            
             deepCSV_WP_loose                  = 0.1918;
             deepCSV_WP_medium                 = 0.5847;
             deepCSV_WP_tight                  = 0.8767;           
+            deepFlavour_WP_loose              = 0.0480;
+            deepFlavour_WP_medium             = 0.2489;
+            deepFlavour_WP_tight              = 0.6377;           
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
@@ -217,7 +229,7 @@ public:
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
             bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepCSV_106XUL16postVFP_v3.csv";
+            bjetCSVFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
             //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
@@ -229,9 +241,15 @@ public:
         { 
             runYear                           = "2017";
             Lumi                              = 41480.0;
+
+            // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
+            
             deepCSV_WP_loose                  = 0.1355;
             deepCSV_WP_medium                 = 0.4506;       
             deepCSV_WP_tight                  = 0.7738;
+            deepFlavour_WP_loose              = 0.0532;
+            deepFlavour_WP_medium             = 0.3040;       
+            deepFlavour_WP_tight              = 0.7476;
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
@@ -257,7 +275,7 @@ public:
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
             bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepCSV_106XUL17_v3.csv";
+            bjetCSVFileName                   = "wp_deepJet_106XUL17_v3.csv";
             //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
@@ -271,9 +289,15 @@ public:
             Lumi                              = 59830.0;
             Lumi_preHEM                       = 21071.0;
             Lumi_postHEM                      = 38654.0;
+
+            // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
+            
             deepCSV_WP_loose                  = 0.1208;
             deepCSV_WP_medium                 = 0.4168;       
             deepCSV_WP_tight                  = 0.7665;
+            deepFlavour_WP_loose              = 0.0490;
+            deepFlavour_WP_medium             = 0.2783;       
+            deepFlavour_WP_tight              = 0.7100;
             DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
@@ -299,7 +323,7 @@ public:
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
             bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepCSV_106XUL18_v2.csv";
+            bjetCSVFileName                   = "wp_deepJet_106XUL18_v2.csv";
             //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
@@ -315,6 +339,9 @@ public:
         tr.registerDerivedVar("deepCSV_WP_loose",                  deepCSV_WP_loose                 );
         tr.registerDerivedVar("deepCSV_WP_medium",                 deepCSV_WP_medium                );
         tr.registerDerivedVar("deepCSV_WP_tight",                  deepCSV_WP_tight                 );
+        tr.registerDerivedVar("deepFlavour_WP_loose",              deepFlavour_WP_loose             );
+        tr.registerDerivedVar("deepFlavour_WP_medium",             deepFlavour_WP_medium            );
+        tr.registerDerivedVar("deepFlavour_WP_tight",              deepFlavour_WP_tight             );
         tr.registerDerivedVar("isSignal",                          isSignal                         );
         tr.registerDerivedVar("DoubleDisCo_Cfg_0l_RPV",            DoubleDisCo_Cfg_0l_RPV           );
         tr.registerDerivedVar("DoubleDisCo_Model_0l_RPV",          DoubleDisCo_Model_0l_RPV         );
