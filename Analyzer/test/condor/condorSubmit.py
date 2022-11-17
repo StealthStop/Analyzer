@@ -41,6 +41,7 @@ def main():
     parser.add_option ('-L',        dest='dataCollectionslong',     action='store_true', default = False,         help="List all datacollections and sub collections")
     parser.add_option ('-c',        dest='noSubmit',                action='store_true', default = False,         help="Do not submit jobs.  Only create condor_submit.txt.")
     parser.add_option ('-s',        dest='fastMode',                action='store_true', default = False,         help="Run Analyzer in fast mode")
+    parser.add_option ('-u',        dest='userOverride',  type='string',                 default = '',            help="Override username with something else")
     parser.add_option ('--output',  dest='outPath',  type='string',                      default = '.',           help="Name of directory where output of each condor job goes")
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
@@ -49,10 +50,10 @@ def main():
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
 
-    hostName = environ["HOSTNAME"]
+    if options.userOverride != "":
+        userName = options.userOverride
 
-    if "uscms.org" in hostName:
-        system("source /etc/ciconnect/set_condor_sites.sh \"T[1-2]_US_*\"") 
+    hostName = environ["HOSTNAME"]
 
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
