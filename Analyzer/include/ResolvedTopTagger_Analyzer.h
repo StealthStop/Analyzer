@@ -13,7 +13,7 @@ class NTupleReader;
 class ResolvedTopTagger_Analyzer
 {
 private:
-   HistoContainer<NTupleReader> hists, histNjet7, histNjet8, histNjet9, histNjet10, histNjet11, histNjet12, histNjet12inc; 
+   HistoContainer<NTupleReader> hists, histNjet7, histNjet8, histNjet9, histNjet10, histNjet11, histNjet12, histNjet12incl; 
 public:
    std::map<std::string, std::shared_ptr<TH1D>>  my_histos;
    std::map<std::string, std::shared_ptr<TH2D>>  my_2d_histos;

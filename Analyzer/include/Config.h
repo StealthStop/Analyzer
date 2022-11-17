@@ -62,7 +62,7 @@ private:
         {
             if     (module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
             else if(module=="RunTopTagger")                          tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
-            else if(module=="RunTopTagger_ResolvedOnly")             tr.emplaceModule<RunTopTagger>(TopTaggerCfg_ResolvedOnly);
+            else if(module=="RunTopTagger_ResolvedOnly")             tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
             else if(module=="Muon")                                  tr.emplaceModule<Muon>();
             else if(module=="Electron")                              tr.emplaceModule<Electron>();
             else if(module=="Photon")                                tr.emplaceModule<Photon>();
