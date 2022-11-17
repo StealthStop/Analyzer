@@ -138,7 +138,7 @@ public:
         std::string leptonFileName, hadronicFileName, bjetFileName, bjetCSVFileName, bjetCSVFileNameReshape, meanFileName, TopTaggerCfg, TopTaggerCfg_ResolvedOnly;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
-        double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0;
+        double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
         bool blind = true;
 
         // Determines if an analyzer is compatible with fastmode
