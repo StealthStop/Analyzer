@@ -281,7 +281,6 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                     "Jet_flavc_1"+myVarSuffix,     "Jet_flavc_2"+myVarSuffix,     "Jet_flavc_3"+myVarSuffix,     "Jet_flavc_4"+myVarSuffix,     "Jet_flavc_5"+myVarSuffix,     "Jet_flavc_6"+myVarSuffix,     "Jet_flavc_7"+myVarSuffix,
                     "Jet_flavuds_1"+myVarSuffix,   "Jet_flavuds_2"+myVarSuffix,   "Jet_flavuds_3"+myVarSuffix,   "Jet_flavuds_4"+myVarSuffix,   "Jet_flavuds_5"+myVarSuffix,   "Jet_flavuds_6"+myVarSuffix,   "Jet_flavuds_7"+myVarSuffix,
                     "Jet_flavq_1"+myVarSuffix,     "Jet_flavq_2"+myVarSuffix,     "Jet_flavq_3"+myVarSuffix,     "Jet_flavq_4"+myVarSuffix,     "Jet_flavq_5"+myVarSuffix,     "Jet_flavq_6"+myVarSuffix,     "Jet_flavq_7"+myVarSuffix,
-                    "Jet_CSVb_1"+myVarSuffix,      "Jet_CSVb_2"+myVarSuffix,      "Jet_CSVb_3"+myVarSuffix,      "Jet_CSVb_4"+myVarSuffix,      "Jet_CSVb_5"+myVarSuffix,      "Jet_CSVb_6"+myVarSuffix,      "Jet_CSVb_7"+myVarSuffix,
                 };            
 
                 for (std::string channel : my_channels)
