@@ -7,7 +7,7 @@
 #include <iostream>
 
 ResolvedTopTagger_Analyzer::ResolvedTopTagger_Analyzer() : hists("histos"), histNjet7("Njet7"), histNjet8("Njet8"), histNjet9("Njet9"), 
-                                                           histNjet10("Njet10"), histNjet11("Njet11"), histNjet12("Njet12"), histNjet12inc("Njet12inc")
+                                                           histNjet10("Njet10"), histNjet11("Njet11"), histNjet12("Njet12"), histNjet12incl("Njet12incl")
 {
     InitHistos();
 }
@@ -172,12 +172,12 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         // baseline cuts + Njets >= 12
         // ---------------------------
 
-        std::vector<std::pair<std::string, bool>> Njets12inc =
+        std::vector<std::pair<std::string, bool>> Njets12incl =
         {
             {"pass_newResolved" , pass_newResolved    },
-            {"Njet12inc"        , NGoodJets_pt30 >= 12},
+            {"Njet12incl"        , NGoodJets_pt30 >= 12},
         };
-        histNjet12inc.fillWithCutFlow(Njets12inc, tr, weight, &rand);
+        histNjet12incl.fillWithCutFlow(Njets12incl, tr, weight, &rand);
 
     }
 }
@@ -201,7 +201,7 @@ void ResolvedTopTagger_Analyzer::WriteHistos(TFile* outfile)
     histNjet10.save(outfile);
     histNjet11.save(outfile);
     histNjet12.save(outfile);
-    histNjet12inc.save(outfile); 
+    histNjet12incl.save(outfile); 
     //outfile->Write();
     outfile->Close();
 }
