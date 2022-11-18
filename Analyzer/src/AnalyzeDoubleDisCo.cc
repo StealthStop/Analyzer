@@ -430,8 +430,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
     const auto& filetag                           = tr.getVar<std::string>("filetag"                          );
     const auto& runtype                           = tr.getVar<std::string>("runtype"                          );    
     const auto& runYear                           = tr.getVar<std::string>("runYear"                          );
-    const auto& bjetFileName                      = tr.getVar<std::string>("bjetFileName"                     );
-    const auto& bjetCSVFileName                   = tr.getVar<std::string>("bjetCSVFileName"                  );
+    const auto& btagEffFileName                   = tr.getVar<std::string>("btagEffFileName"                  );
+    const auto& bjetTagFileName                   = tr.getVar<std::string>("bjetTagFileName"                  );
     const auto& leptonFileName                    = tr.getVar<std::string>("leptonFileName"                   );
     const auto& hadronicFileName                  = tr.getVar<std::string>("hadronicFileName"                 );
     const auto& meanFileName                      = tr.getVar<std::string>("meanFileName"                     );
@@ -499,7 +499,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         if (runtype == "MC")
         {
             ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, meanFileName, jecvar);
-            BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, "", filetag);
+            BTagCorrector       bTagCorrector(btagEffFileName, "", bjetTagFileName, "", filetag);
             bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+jecvar, "GoodJets_pt30"+jecvar, "Jets"+jecvar+"_bJetTagDeepFlavourtotb", "Jets"+jecvar+"_partonFlavor", jecvar);
 
             tr.registerFunction(bTagCorrector);
