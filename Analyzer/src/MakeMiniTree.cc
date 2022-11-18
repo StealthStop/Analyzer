@@ -69,6 +69,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             // Jets
             "Jets",
+            "Jets_pileupId",
             "Jets_bDiscriminatorCSV" ,
             "Jets_bJetTagDeepCSVprobb",
             "Jets_bJetTagDeepCSVprobbb",
@@ -190,7 +191,7 @@ void MakeMiniTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-- Fill Histograms Below
         //-----------------------------------
         if( NGoodJets_pt30 >= 5 and HT_trigger_pt30 > 400.0 ) {
-            myMiniTuple->fill();
+            myMiniTuple->fill(tr);
         }
     } 
 }
