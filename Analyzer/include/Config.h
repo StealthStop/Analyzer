@@ -110,7 +110,7 @@ private:
                 {
                     std::string bjetCSVFileNameReshape = "";
                     auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, bjetCSVFileNameReshape, filetag);
-                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
+                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepFlavourtotb", "Jets_partonFlavor");
                 }
             }
         }

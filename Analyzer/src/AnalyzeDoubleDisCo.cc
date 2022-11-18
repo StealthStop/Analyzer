@@ -500,7 +500,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
         {
             ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, meanFileName, jecvar);
             BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, "", filetag);
-            bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+jecvar, "GoodJets_pt30"+jecvar, "Jets"+jecvar+"_bJetTagDeepCSVtotb", "Jets"+jecvar+"_partonFlavor", jecvar);
+            bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+jecvar, "GoodJets_pt30"+jecvar, "Jets"+jecvar+"_bJetTagDeepFlavourtotb", "Jets"+jecvar+"_partonFlavor", jecvar);
 
             tr.registerFunction(bTagCorrector);
             tr.registerFunction(scaleFactors);
