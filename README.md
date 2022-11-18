@@ -40,9 +40,9 @@ Last step is to get the cfg and model files for the top tagger, deepESM, and mas
 Note: DeepESM tested but showing weird behavior when running AnalyzeDoubleDisCo
 ```
 cmsenv
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2598_DeepResolvedwp0.95_DeepAK8wp0.937_2016preVFPUL -f TopTaggerCfg_2018.cfg -o
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2489_DeepResolvedwp0.95_DeepAK8wp0.937_2016postVFPUL -f TopTaggerCfg_2018.cfg -o
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.3040_DeepResolvedwp0.95_DeepAK8wp0.895_2017UL -f TopTaggerCfg_2018.cfg -o
+getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2598_DeepResolvedwp0.95_DeepAK8wp0.937_2016preVFPUL -f TopTaggerCfg_2016preVFP.cfg -o
+getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2489_DeepResolvedwp0.95_DeepAK8wp0.937_2016postVFPUL -f TopTaggerCfg_2016postVFP.cfg -o
+getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.3040_DeepResolvedwp0.95_DeepAK8wp0.895_2017UL -f TopTaggerCfg_2017.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2783_DeepResolvedwp0.95_DeepAK8wp0.895_2018UL -f TopTaggerCfg_2018.cfg -o
 getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_v2.3 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
 getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_v2.2 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
