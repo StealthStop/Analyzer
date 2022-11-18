@@ -71,9 +71,9 @@ void CalculateBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
         {
             const auto& Jets           = tr.getVec<utility::LorentzVector>("Jets");
             const auto& GoodJets_pt30  = tr.getVec<bool>("GoodJets_pt30");
-            const auto& recoJetsBtag   = tr.getVec<float>("Jets_bJetTagDeepCSVtotb");
+            const auto& recoJetsBtag   = tr.getVec<float>("Jets_bJetTagDeepFlavourtotb");
             const auto& recoJetsFlavor = tr.getVec<int>("Jets_hadronFlavor");
-            const auto& deepCSV_WP_medium = tr.getVar<double>("deepCSV_WP_medium");
+            const auto& deepFlavour_WP_medium = tr.getVar<double>("deepFlavour_WP_medium");
 
             const auto& Weight = tr.getVar<float>("Weight");
             const auto& Lumi   = tr.getVar<double>("FinalLumi");
@@ -83,22 +83,22 @@ void CalculateBTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
             {                
                 if(!GoodJets_pt30[ij]) continue;
                 const int myJetFlavor = std::abs( recoJetsFlavor.at( ij ) );
-                const double myJetDeepCSV = recoJetsBtag.at( ij );
+                const double myJetDeepFlavour = recoJetsBtag.at( ij );
     
                 if( myJetFlavor == 5 ) 
                 {
                     my_2d_histos["d_eff_b_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight );
-                    if( myJetDeepCSV > deepCSV_WP_medium ) my_2d_histos["n_eff_b_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight ); 
+                    if( myJetDeepFlavour > deepFlavour_WP_medium ) my_2d_histos["n_eff_b_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight ); 
                 }
                 else if( myJetFlavor == 4 ) 
                 {
                     my_2d_histos["d_eff_c_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight );
-                    if( myJetDeepCSV > deepCSV_WP_medium ) my_2d_histos["n_eff_c_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight ); 
+                    if( myJetDeepFlavour > deepFlavour_WP_medium ) my_2d_histos["n_eff_c_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight ); 
                 }
                 else if( myJetFlavor < 4 || myJetFlavor == 21 ) 
                 {
                     my_2d_histos["d_eff_udsg_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight );
-                    if( myJetDeepCSV > deepCSV_WP_medium ) my_2d_histos["n_eff_udsg_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight ); 
+                    if( myJetDeepFlavour > deepFlavour_WP_medium ) my_2d_histos["n_eff_udsg_"+filetag]->Fill( Jets.at( ij ).Pt(), Jets.at( ij ).Eta(), eventweight ); 
                 }
             }
         }

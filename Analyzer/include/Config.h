@@ -49,9 +49,9 @@ private:
         const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY");
         const auto& leptonFileName            = tr.getVar<std::string>("leptonFileName"              );
         const auto& hadronicFileName          = tr.getVar<std::string>("hadronicFileName"            );
-        const auto& bjetFileName              = tr.getVar<std::string>("bjetFileName"                );
-        const auto& bjetCSVFileName           = tr.getVar<std::string>("bjetCSVFileName"             );
-        //const auto& bjetCSVFileNameReshape    = tr.getVar<std::string>("bjetCSVFileNameReshape"      );
+        const auto& btagEffFileName           = tr.getVar<std::string>("btagEffFileName"             );
+        const auto& bjetTagFileName           = tr.getVar<std::string>("bjetTagFileName"             );
+        //const auto& bjetTagFileNameReshape    = tr.getVar<std::string>("bjetTagFileNameReshape"      );
         const auto& filetag                   = tr.getVar<std::string>("filetag"                     );
         const auto& meanFileName              = tr.getVar<std::string>("meanFileName"                );
         const auto& TopTaggerCfg              = tr.getVar<std::string>("TopTaggerCfg"                );
@@ -108,9 +108,9 @@ private:
                 if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, hadronicFileName, meanFileName);
                 else if(module=="BTagCorrector")
                 {
-                    std::string bjetCSVFileNameReshape = "";
-                    auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(bjetFileName, "", bjetCSVFileName, bjetCSVFileNameReshape, filetag);
-                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepCSVtotb", "Jets_partonFlavor");
+                    std::string bjetTagFileNameReshape = "";
+                    auto& bTagCorrector = tr.emplaceModule<BTagCorrector>(btagEffFileName, "", bjetTagFileName, bjetTagFileNameReshape, filetag);
+                    bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets", "GoodJets_pt30", "Jets_bJetTagDeepFlavourtotb", "Jets_partonFlavor");
                 }
             }
         }
@@ -135,7 +135,7 @@ public:
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
         std::string DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY, DoubleDisCo_Cfg_NonIsoMuon_2l_SYY; 
-        std::string leptonFileName, hadronicFileName, bjetFileName, bjetCSVFileName, bjetCSVFileNameReshape, meanFileName, TopTaggerCfg, TopTaggerCfg_ResolvedOnly;
+        std::string leptonFileName, hadronicFileName, btagEffFileName, bjetTagFileName, bjetTagFileNameReshape, meanFileName, TopTaggerCfg, TopTaggerCfg_ResolvedOnly;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
@@ -181,9 +181,9 @@ public:
 
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
-            //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
+            btagEffFileName                   = "allInOne_BTagEff_UL.root";
+            bjetTagFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
+            //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016preVFP.cfg";
@@ -228,9 +228,9 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
-            //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
+            btagEffFileName                   = "allInOne_BTagEff_UL.root";
+            bjetTagFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
+            //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016postVFP.cfg";
@@ -274,9 +274,9 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepJet_106XUL17_v3.csv";
-            //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
+            btagEffFileName                   = "allInOne_BTagEff_UL.root";
+            bjetTagFileName                   = "wp_deepJet_106XUL17_v3.csv";
+            //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2017.cfg";
@@ -322,9 +322,9 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            bjetFileName                      = "allInOne_BTagEff_UL.root";
-            bjetCSVFileName                   = "wp_deepJet_106XUL18_v2.csv";
-            //bjetCSVFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";
+            btagEffFileName                   = "allInOne_BTagEff_UL.root";
+            bjetTagFileName                   = "wp_deepJet_106XUL18_v2.csv";
+            //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2018.cfg";
@@ -363,9 +363,9 @@ public:
         tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY", DoubleDisCo_Cfg_NonIsoMuon_2l_SYY);
         tr.registerDerivedVar("leptonFileName",                    leptonFileName                   );       
         tr.registerDerivedVar("hadronicFileName",                  hadronicFileName                 ); 
-        tr.registerDerivedVar("bjetFileName",                      bjetFileName                     );        
-        tr.registerDerivedVar("bjetCSVFileName",                   bjetCSVFileName                  );        
-        //tr.registerDerivedVar("bjetCSVFileNameReshape",            bjetCSVFileNameReshape           );        
+        tr.registerDerivedVar("btagEffFileName",                   btagEffFileName                  );        
+        tr.registerDerivedVar("bjetTagFileName",                   bjetTagFileName                  );        
+        //tr.registerDerivedVar("bjetTagFileNameReshape",            bjetTagFileNameReshape           );        
         tr.registerDerivedVar("meanFileName",                      meanFileName                     );        
         tr.registerDerivedVar("etaCut",                            2.4                              ); 
         tr.registerDerivedVar("blind",                             blind                            );
