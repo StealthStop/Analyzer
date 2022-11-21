@@ -118,7 +118,9 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
             const auto& bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             const auto& prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
 
-            theweight = lumi*Weight*puWeight*leptonScaleFactor*bTagScaleFactor*prefiringScaleFactor;            
+            const auto& topPtScaleFactor  = tr.getVar<double>("topPtScaleFactor");
+
+            theweight = lumi*Weight*puWeight*leptonScaleFactor*bTagScaleFactor*prefiringScaleFactor*topPtScaleFactor;
         }
 
         bool passMuonTriggers       = tr.getVar<bool>("passTriggerMuon");
