@@ -288,7 +288,7 @@ class StackPlotter:
 
         bkgXmin = 0.70 - self.RightMargin
         if self.printNEvents:
-            bkgXmin = 0.60 - self.RightMargin
+            bkgXmin = 0.50 - self.RightMargin
         if tooManyBkgds:
             bkgXmin = self.LeftMargin + 0.05
             

@@ -467,7 +467,11 @@ public:
                 "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "StopJets",
+                "MakeMVAVariables",
+                "MakeStopHemispheres_TopSeed",
+                "DoubleDisCo_0l_RPV"
             };
             registerModules(tr, std::move(modulesList));
         }
