@@ -416,6 +416,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         double prefiringScaleFactor   = 1.0;
         double puScaleFactor          = 1.0;
         double totGoodMuonScaleFactor = 1.0;
+        double topPtScaleFactor       = 1.0;
         if(runtype == "MC")
         {
             // Define Lumi weight
@@ -427,8 +428,9 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             prefiringScaleFactor   = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor          = tr.getVar<double>("puWeightCorr");
             totGoodMuonScaleFactor = tr.getVar<double>("totGoodMuonSF");
+            topPtScaleFactor       = tr.getVar<double>("topPtScaleFactor");
 
-            weightTTbar *= eventweight * totGoodMuonScaleFactor * puScaleFactor * bTagScaleFactor * prefiringScaleFactor;
+            weightTTbar *= eventweight * totGoodMuonScaleFactor * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
             weightQCD   *= eventweight /* jetTrigSF ? */        * puScaleFactor * bTagScaleFactor * prefiringScaleFactor;
         }
     
