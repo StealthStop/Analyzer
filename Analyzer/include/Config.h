@@ -380,6 +380,7 @@ public:
         }
         else if(analyzer=="MakeNNVariables")
         {
+            fastModeCompatible = true;
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
                 "Muon",
