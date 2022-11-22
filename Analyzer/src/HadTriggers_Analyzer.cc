@@ -156,6 +156,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         double bTagScaleFactor      = 1.0;
         double prefiringScaleFactor = 1.0;
         double puScaleFactor        = 1.0;
+        double topPtScaleFactor     = 1.0;
         if(runtype == "MC")
         {
             // Define Lumi weight
@@ -166,8 +167,9 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            topPtScaleFactor     = tr.getVar<double>("topPtScaleFactor");
 
-            weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
+            weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor*topPtScaleFactor;
         }
         
         // ---------------------------------------------------------

@@ -201,7 +201,7 @@ def main():
                     individualSamples += " %s/%s.root"%(outDir, cleanName)
 
                 # After hadding all the little guys individually, put them together into the big sampleCollection (if desired)
-                if "TTX" in sampleCollection:
+                if "TTX" in sampleCollection or "_TT" in sampleCollection:
                     command = "hadd %s %s/%s.root%s"%(haddArgs, outDir, sampleCollection, individualSamples)
                     if not options.noHadd: subprocess.call(command.split(" "))
     

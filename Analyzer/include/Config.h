@@ -41,28 +41,26 @@ private:
         const auto& DoubleDisCo_Cfg_1l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_SYY"           );  
         const auto& DoubleDisCo_Model_1l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_1l_SYY"         );    
         const auto& DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_1l_SYY");
-        const auto& DoubleDisCo_Cfg_2l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_RPV"   ); 
-        const auto& DoubleDisCo_Model_2l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_2l_RPV" );
+        const auto& DoubleDisCo_Cfg_2l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_RPV"           ); 
+        const auto& DoubleDisCo_Model_2l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_2l_RPV"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_RPV");
-        const auto& DoubleDisCo_Cfg_2l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_SYY"   ); 
-        const auto& DoubleDisCo_Model_2l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_2l_SYY" );
+        const auto& DoubleDisCo_Cfg_2l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_SYY"           ); 
+        const auto& DoubleDisCo_Model_2l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_2l_SYY"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY");
-        const auto& leptonFileName            = tr.getVar<std::string>("leptonFileName"              );
-        const auto& hadronicFileName          = tr.getVar<std::string>("hadronicFileName"            );
-        const auto& btagEffFileName           = tr.getVar<std::string>("btagEffFileName"             );
-        const auto& bjetTagFileName           = tr.getVar<std::string>("bjetTagFileName"             );
-        //const auto& bjetTagFileNameReshape    = tr.getVar<std::string>("bjetTagFileNameReshape"      );
-        const auto& filetag                   = tr.getVar<std::string>("filetag"                     );
-        const auto& meanFileName              = tr.getVar<std::string>("meanFileName"                );
-        const auto& TopTaggerCfg              = tr.getVar<std::string>("TopTaggerCfg"                );
-        const auto& TopTaggerCfg_ResolvedOnly = tr.getVar<std::string>("TopTaggerCfg_ResolvedOnly"   );
+        const auto& leptonFileName                    = tr.getVar<std::string>("leptonFileName"                    );
+        const auto& hadronicFileName                  = tr.getVar<std::string>("hadronicFileName"                  );
+        const auto& btagEffFileName                   = tr.getVar<std::string>("btagEffFileName"                   );
+        const auto& bjetTagFileName                   = tr.getVar<std::string>("bjetTagFileName"                   );
+        //const auto& bjetTagFileNameReshape            = tr.getVar<std::string>("bjetTagFileNameReshape"            );
+        const auto& filetag                           = tr.getVar<std::string>("filetag"                           );
+        const auto& meanFileName                      = tr.getVar<std::string>("meanFileName"                      );
+        const auto& TopTaggerCfg                      = tr.getVar<std::string>("TopTaggerCfg"                      );
 
  
         for(const auto& module : modules)
         {
             if     (module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
             else if(module=="RunTopTagger")                          tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
-            else if(module=="RunTopTagger_ResolvedOnly")             tr.emplaceModule<RunTopTagger>(TopTaggerCfg);
             else if(module=="Muon")                                  tr.emplaceModule<Muon>();
             else if(module=="Electron")                              tr.emplaceModule<Electron>();
             else if(module=="Photon")                                tr.emplaceModule<Photon>();
@@ -135,7 +133,7 @@ public:
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
         std::string DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY, DoubleDisCo_Cfg_NonIsoMuon_2l_SYY; 
-        std::string leptonFileName, hadronicFileName, btagEffFileName, bjetTagFileName, bjetTagFileNameReshape, meanFileName, TopTaggerCfg, TopTaggerCfg_ResolvedOnly;
+        std::string leptonFileName, hadronicFileName, btagEffFileName, bjetTagFileName, bjetTagFileNameReshape, meanFileName, TopTaggerCfg;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
@@ -149,9 +147,7 @@ public:
         {
             runYear                           = "2016preVFP";
             Lumi                              = 19520.0;
-
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16preVFP
-            
             deepCSV_WP_loose                  = 0.2027;
             deepCSV_WP_medium                 = 0.6001;
             deepCSV_WP_tight                  = 0.8819;           
@@ -167,7 +163,6 @@ public:
             DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // Use RPV config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
@@ -178,7 +173,7 @@ public:
             DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
+            // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
             btagEffFileName                   = "allInOne_BTagEff_UL.root";
@@ -187,7 +182,6 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016preVFP.cfg";
-            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2016preVFP.cfg";
 
         }
 
@@ -195,9 +189,7 @@ public:
         {
             runYear                           = "2016postVFP";
             Lumi                              = 16810.0;
-
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
-            
             deepCSV_WP_loose                  = 0.1918;
             deepCSV_WP_medium                 = 0.5847;
             deepCSV_WP_tight                  = 0.8767;           
@@ -213,7 +205,6 @@ public:
             DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // SYY config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
@@ -224,7 +215,6 @@ public:
             DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
@@ -234,16 +224,13 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016postVFP.cfg";
-            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2016postVFP.cfg";
 
         }
         else if(filetag.find("2017") != std::string::npos)
         { 
             runYear                           = "2017";
             Lumi                              = 41480.0;
-
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
-            
             deepCSV_WP_loose                  = 0.1355;
             deepCSV_WP_medium                 = 0.4506;       
             deepCSV_WP_tight                  = 0.7738;
@@ -259,7 +246,6 @@ public:
             DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // Use RPV config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
@@ -270,7 +256,6 @@ public:
             DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
@@ -280,7 +265,6 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2017.cfg";
-            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2017.cfg";
 
         }
         else if(filetag.find("2018") != std::string::npos) 
@@ -289,9 +273,7 @@ public:
             Lumi                              = 59830.0;
             Lumi_preHEM                       = 21071.0;
             Lumi_postHEM                      = 38654.0;
-
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
-            
             deepCSV_WP_loose                  = 0.1208;
             deepCSV_WP_medium                 = 0.4168;       
             deepCSV_WP_tight                  = 0.7665;
@@ -307,7 +289,6 @@ public:
             DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // Use RPV config for now --- switch to SYY with dedicated training
             DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
             DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
@@ -318,7 +299,6 @@ public:
             DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
             DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
             DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
@@ -328,7 +308,6 @@ public:
             meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2018.cfg";
-            TopTaggerCfg_ResolvedOnly         = "TopTaggerCfg_ResolvedOnly_2018.cfg";
 
         }
 
@@ -370,7 +349,6 @@ public:
         tr.registerDerivedVar("etaCut",                            2.4                              ); 
         tr.registerDerivedVar("blind",                             blind                            );
         tr.registerDerivedVar("TopTaggerCfg",                      TopTaggerCfg                     );
-        tr.registerDerivedVar("TopTaggerCfg_ResolvedOnly",         TopTaggerCfg_ResolvedOnly        );
 
         // Register Modules that are needed for each Analyzer
         if(analyzer=="MakeNJetDists") // for legacy 1l
@@ -490,7 +468,11 @@ public:
                 "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
-                "ScaleFactors"
+                "ScaleFactors",
+                "StopJets",
+                "MakeMVAVariables",
+                "MakeStopHemispheres_TopSeed",
+                "DoubleDisCo_0l_RPV"
             };
             registerModules(tr, std::move(modulesList));
         }
@@ -503,7 +485,7 @@ public:
                 "Jet",
                 "BJet",
                 "CommonVariables",
-                "RunTopTagger_ResolvedOnly",
+                "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
                 "ScaleFactors"

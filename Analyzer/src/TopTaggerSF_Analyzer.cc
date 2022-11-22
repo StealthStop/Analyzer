@@ -1,87 +1,289 @@
 #define TopTaggerSF_Analyzer_cxx
 #include "Analyzer/Analyzer/include/TopTaggerSF_Analyzer.h"
-#include "Framework/Framework/include/SetUpTopTagger.h"
 #include "Framework/Framework/include/Utility.h"
 #include "NTupleReader/include/NTupleReader.h"
 
 #include <iostream>
 
-TopTaggerSF_Analyzer::TopTaggerSF_Analyzer() : ttHistsNjetIncl("NjetIncl_tt"), ttHistsNjetIncl_Joe("NjetIncl_tt_joe"), ttHistsNjet7("Njet7_tt"), ttHistsNjet8("Njet8_tt"), ttHistsNjet9("Njet9_tt"), ttHistsNjet10("Njet10_tt"), ttHistsNjet11("Njet11_tt"), ttHistsNjet12incl("Njet12incl_tt"), qcdHistsNjetIncl("NjetIncl_qcd"), qcdHistsNjetIncl_Joe("NjetIncl_qcd_joe"), qcdHistsNjet7("Njet7_qcd"), qcdHistsNjet8("Njet8_qcd"), qcdHistsNjet9("Njet9_qcd"), qcdHistsNjet10("Njet10_qcd"), qcdHistsNjet11("Njet11_qcd"), qcdHistsNjet12incl("Njet12incl_qcd")
+TopTaggerSF_Analyzer::TopTaggerSF_Analyzer()
 {
-
     initHistos = false;
 
-    histInfos = {
-        {"h_nElectrons",           6,   -0.5,    5.5},
-        {"h_nMuons",               6,   -0.5,    5.5},
-        {"h_nJets",                21,  -0.5,   20.5},
-        {"h_nBJets",               21,  -0.5,   20.5},
-        {"h_nBJetsLoose",          21,  -0.5,   20.5},
-        {"h_ht",                  500,     0,   5000},
-        {"h_met",                 200,     0,   1500},
-        {"h_jet1METdPhi",          80,  -4.0,    4.0},
-        {"h_jet2METdPhi",          80,  -4.0,    4.0},
-        {"h_jet3METdPhi",          80,  -4.0,    4.0},
-        {"h_muonBjetDR",          200,   0.0,   10.0},
-        {"h_muonBjetMass",        500,   0.0, 1000.0},
-        {"h_muonMETdPhi",          80,  -4.0,    4.0},
-        {"h_muonMETmT",          1000,   0.0, 1000.0},
+    hist1Dinfos = {
+        {"nElectrons",     6,   -0.5,    5.5},
+        {"nMuons",         6,   -0.5,    5.5},
+        {"nJets",          22,  -0.5,   21.5},
+        {"nBJets",         22,  -0.5,   21.5},
+        {"nBJetsLoose",    22,  -0.5,   21.5},
+        {"ht",            720,   0.0, 7200.0},
+        {"met",           360,   0.0, 1440.0},
+        {"jet1METdPhi",    80,  -4.0,    4.0},
+        {"jet2METdPhi",    80,  -4.0,    4.0},
+        {"jet3METdPhi",    80,  -4.0,    4.0},
+        {"muonBjetDR",    360,   0.0,   10.0},
+        {"muonBjetMass",  720,   0.0, 1440.0},
+        {"muonMETdPhi",    80,  -4.0,    4.0},
+        {"muonMETmT",     720,   0.0, 1440.0},
+        {"topPt",         360,   0.0, 1440.0},
+
+        // Override the binning in InitHistos for variable bin widths
+        {"Binned_topPt", -1, -1.0, -1.0},
+        {"Binned_nJets", -1, -1.0, -1.0},
+        {"Binned_HT",    -1, -1.0, -1.0},
+        {"Binned_Disc1", -1, -1.0, -1.0},
+        {"Binned_Disc2", -1, -1.0, -1.0},
     };
+
+    hist2Dinfos = {
+
+        // We will override the binning inside of InitHistos in order to variable bin widths
+        {"Binned_topPt_vs_nJets", -1, -1.0, -1.0, -1, -1.0, -1.0},
+
+        {"topPt_vs_nJets",    120, 0.0, 1500.0,   5, 5.5,   10.5},
+        {"topPt_vs_HT",       120, 0.0, 1500.0, 120, 0.0, 3000.0},
+    };
+
+    njets = {"", "6", "7", "8", "9incl"};
+    
+    // For setting histograms of events passing numerator and denominator selections
+    tags = {"", "numR", "numM", "denR", "denM"};
+}
+
+Double_t* TopTaggerSF_Analyzer::vecToDouble_t(const std::vector<double>& input)
+{
+    unsigned int length = input.size();
+    
+    Double_t* output = new Double_t[length];
+
+    for (unsigned int i = 0; i < length; i++)
+        output[i] = input.at(i);
+
+    return output;
 }
 
 void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
 {
     TH1::SetDefaultSumw2();
+    TH2::SetDefaultSumw2();
 
-    my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
+    my_1D_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
 
-    for(auto& mycut : cutMap)
+    //Define binning for the histograms
+    const Int_t nPtBins_Njet6_R = 6;
+    std::vector<double> ptBinEdges_Njet6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+
+    const Int_t nPtBins_Njet7_R = 6;
+    std::vector<double> ptBinEdges_Njet7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+
+    const Int_t nPtBins_Njet8_R = 4;
+    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
+
+    const Int_t nPtBins_Njet9_R = 3;
+    std::vector<double> ptBinEdges_Njet9_R = { 0.0, 120.0, 200.0, 1500.0 };
+
+    const Int_t nPtBins_Njet6_M = 2;
+    std::vector<double> ptBinEdges_Njet6_M = { 400.0, 600.0, 1500.0 };
+                                          
+    const Int_t nPtBins_Njet7_M = 2;      
+    std::vector<double> ptBinEdges_Njet7_M = { 400.0, 600.0, 1500.0 };
+                                          
+    const Int_t nPtBins_Njet8_M = 1;      
+    std::vector<double> ptBinEdges_Njet8_M = { 400.0, 1500.0 };
+                                          
+    const Int_t nPtBins_Njet9_M = 1;      
+    std::vector<double> ptBinEdges_Njet9_M = { 400.0, 1500.0 };
+
+    const Int_t nJetBins = 4;
+    Double_t njetBinEdges[ nJetBins + 1 ] = { 5.5, 6.5, 7.5, 8.5, 9.5 };
+
+    const Int_t nHTBins = 4;
+    Double_t htBinEdges[ nHTBins + 1 ] = { 200.0, 450.0, 600.0, 850.0, 3000.0 };
+
+    const Int_t nDiscBins = 7;
+    Double_t discBinEdges[ nDiscBins + 1 ] = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0 };
+
+    for(auto& cutVar : cutMap)
     {
-        for(const auto& hInfo : histInfos)
-        { 
-            my_histos.emplace(hInfo.name+mycut.first, std::make_shared<TH1D>((hInfo.name+mycut.first).c_str(),(hInfo.name+mycut.first).c_str(), hInfo.nBins, hInfo.low, hInfo.high));
+        for (auto& njet : njets)
+        {
+            for (auto& tag : tags)
+            {
+                std::string njetStr = "";
+                if (njet != "")
+                    njetStr = "_Njet" + njet;
+
+                std::string tagStr = "";
+                if (tag != "")
+                    tagStr = "_" + tag;
+
+                Int_t nPtBins;
+                std::vector<double> ptBinEdges;
+                // Choose binning for resolved case
+                if (tagStr.find("R") != std::string::npos)
+                {
+                    if (njetStr.find("6") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet6_R;
+                        ptBinEdges = ptBinEdges_Njet6_R; 
+                    }
+                    else if (njetStr.find("7") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet7_R;
+                        ptBinEdges = ptBinEdges_Njet7_R; 
+                    }
+                    else if (njetStr.find("8") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet8_R;
+                        ptBinEdges = ptBinEdges_Njet8_R; 
+                    }
+                    else if (njetStr.find("9") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet9_R;
+                        ptBinEdges = ptBinEdges_Njet9_R; 
+                    }
+                    else
+                    {
+                        nPtBins    = nPtBins_Njet6_R;
+                        ptBinEdges = ptBinEdges_Njet6_R; 
+                    }
+                }
+                // Choose the binning for the merged case
+                else if (tagStr.find("M") != std::string::npos)
+                {
+                    if (njetStr.find("6") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet6_M;
+                        ptBinEdges = ptBinEdges_Njet6_M; 
+                    }
+                    else if (njetStr.find("7") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet7_M;
+                        ptBinEdges = ptBinEdges_Njet7_M; 
+                    }
+                    else if (njetStr.find("8") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet8_M;
+                        ptBinEdges = ptBinEdges_Njet8_M; 
+                    }
+                    else if (njetStr.find("9") != std::string::npos)
+                    {
+                        nPtBins    = nPtBins_Njet9_M;
+                        ptBinEdges = ptBinEdges_Njet9_M; 
+                    }
+                    else
+                    {
+                        nPtBins    = nPtBins_Njet6_M;
+                        ptBinEdges = ptBinEdges_Njet6_M; 
+                    }
+                }
+
+                for(const auto& h1Dinfo : hist1Dinfos)
+                { 
+                    std::string name = h1Dinfo.name + cutVar.first + tagStr + njetStr;
+
+                    // Only make the 1D specially-binned histograms for specifically numerator and denominator
+                    // and only for the fully formed CRs (not partial selections)
+                    if      (name.find("Binned") != std::string::npos and tag != "" and name.find("CR") != std::string::npos)
+                    {
+                        if      (name.find("topPt") != std::string::npos)
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nPtBins,   vecToDouble_t(ptBinEdges)));
+                        else if (name.find("nJets") != std::string::npos)
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nJetBins,  njetBinEdges));
+                        else if (name.find("HT") != std::string::npos)
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nHTBins,   htBinEdges));
+                        else if (name.find("Disc") != std::string::npos)
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nDiscBins, discBinEdges));
+                    }
+            
+                    // For a 1D histo of the selection variables, make for any version except for specific numerator/denominator
+                    else if (name.find("Binned") == std::string::npos and tag == "" and njet == "")
+                        my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), h1Dinfo.nBins, h1Dinfo.low, h1Dinfo.high));
+                }
+                for(const auto& h2Dinfo : hist2Dinfos)
+                { 
+                    std::string name = h2Dinfo.name + cutVar.first + tagStr + njetStr;
+
+                    // No 2D histos are made for any partial selection, just the full CR selections
+                    if (name.find("CR") == std::string::npos)
+                        continue;
+
+                    if      (njet == "" and name.find("Binned") == std::string::npos)
+                    {
+                        if (name.find("HT") != std::string::npos)
+                            my_2D_histos.emplace(name, std::make_shared<TH2D>(name.c_str(), name.c_str(), h2Dinfo.nBinsX, h2Dinfo.lowX, h2Dinfo.highX, h2Dinfo.nBinsY, h2Dinfo.lowY, h2Dinfo.highY));
+                        else if (name.find("nJets") != std::string::npos)
+                            my_2D_histos.emplace(name, std::make_shared<TH2D>(name.c_str(), name.c_str(), h2Dinfo.nBinsX, h2Dinfo.lowX, h2Dinfo.highX, h2Dinfo.nBinsY, h2Dinfo.lowY, h2Dinfo.highY));
+                    }
+                    else if (njet == "" and tag != "" and name.find("Binned") != std::string::npos)
+                    {
+                        if (name.find("nJets") != std::string::npos)
+                            my_2D_histos.emplace(name, std::make_shared<TH2D>(name.c_str(), name.c_str(), nPtBins, vecToDouble_t(ptBinEdges), nJetBins,  njetBinEdges));
+                    }
+                }
+            }
         }
     }
 }
 
 void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
-    TRandom3 rand(123);
-   
     while (tr.getNextEvent())
     {
-        const auto& eventCounter           = tr.getVar<int>("eventCounter");
+        const auto& eventCounter = tr.getVar<int>("eventCounter");
 
-        if ( maxevents != -1 && tr.getEvtNum() >= maxevents )   
+        if ( maxevents != -1 && tr.getEvtNum() > maxevents )   
             break;
 
         if ( tr.getEvtNum() % 1000 == 0)
             printf( " Event %i\n", tr.getEvtNum() );        
 
-        const auto& runtype          = tr.getVar<std::string>("runtype");
+        const auto& runtype = tr.getVar<std::string>("runtype");
+        const auto& runyear = tr.getVar<std::string>("runYear");
 
-        // Event booleans
-        const auto& passMETFilters   = tr.getVar<bool>("passMETFilters");
-        const auto& passMadHT        = tr.getVar<bool>("passMadHT");
+        // Top canddiate pt and disc
+        const auto& bestTopPt     = tr.getVar<double>("bestTopPt");
+        const auto& bestTopDisc   = tr.getVar<double>("bestTopDisc");
+        const auto& bestTopNconst = tr.getVar<int>("bestTopNconst");
+
+        // Distinguish if the best top candidate is resolved or merged
+        bool pass_TightResolvedTop = bestTopDisc > 0.95 and bestTopNconst == 3;
+        bool pass_AnyResolvedTop   = bestTopDisc > 0.0  and bestTopNconst == 3;
+       
+        bool pass_TightMergedTop   = bestTopDisc > 0.937 and bestTopNconst == 1;
+        bool pass_AnyMergedTop     = bestTopDisc > 0.0   and bestTopNconst == 1;
+        if (runyear.find("2016") == std::string::npos)
+            pass_TightMergedTop    = bestTopDisc > 0.895 and bestTopNconst == 1;
+
+        // Event-level booleans (triggers, filters, etc.)
+        const auto& pass_METFilters  = tr.getVar<bool>("passMETFilters");
+        const auto& pass_MadHT       = tr.getVar<bool>("passMadHT");
+        const auto& pass_MuonTrigger = tr.getVar<bool>("passTriggerMuon");
+        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerQCD");
+        const auto& pass_HEMveto     = tr.getVar<bool>("passElectronHEMveto");
+        const auto& pass_JetID       = tr.getVar<bool>("JetID");        
+
+        const auto& disc1            = tr.getVar<double>("DoubleDisCo_disc1_0l_RPV");
+        const auto& disc2            = tr.getVar<double>("DoubleDisCo_disc2_0l_RPV");
+
+        bool pass_DataQuality = pass_METFilters && pass_HEMveto && pass_JetID;
 
         // Lepton quantities
-        const auto& Muons            = tr.getVec<utility::LorentzVector>("Muons");
-        const auto& GoodMuons        = tr.getVec<bool>("GoodMuons");
-        const auto& NGoodMuons       = tr.getVar<int>("NGoodMuons");
-        const auto& NGoodElectrons   = tr.getVar<int>("NGoodElectrons");
+        const auto& Muons          = tr.getVec<utility::LorentzVector>("Muons");
+        const auto& GoodMuons      = tr.getVec<bool>("GoodMuons");
+        const auto& NGoodMuons     = tr.getVar<int>("NGoodMuons");
+        const auto& NGoodElectrons = tr.getVar<int>("NGoodElectrons");
 
         // Jet quantities
         const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
-        const auto& JetID                 = tr.getVar<bool>("JetID");        
         const auto& GoodJets_pt30         = tr.getVec<bool>("GoodJets_pt30");
         const auto& NGoodJets_pt30        = tr.getVar<int>("NGoodJets_pt30");
         const auto& NGoodBJets_pt30       = tr.getVar<int>("NGoodBJets_pt30");
         const auto& GoodBJets_pt30_loose  = tr.getVec<bool>("GoodBJets_pt30_loose");
+        const auto& GoodBJets_pt30        = tr.getVec<bool>("GoodBJets_pt30");
         const auto& NGoodBJets_pt30_loose = tr.getVar<int>("NBJets_pt30_loose");
 
         // Event-level quantities
         const auto& HT_trigger_pt30 = tr.getVar<double>("HT_trigger_pt30");
-        const auto& HT              = tr.getVar<float>("HT");
         const auto& MET             = tr.getVar<float>("MET"); 
         const auto& METPhi          = tr.getVar<float>("METPhi");
 
@@ -94,14 +296,25 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
         bool pass_SingleMuon    = NGoodMuons            == 1;
         bool pass_ExtraLepVeto  = NGoodElectrons        == 0;
-        bool pass_4jets         = NGoodJets_pt30        >= 4;
-        bool pass_7jets         = NGoodJets_pt30        >= 7;
+        bool pass_ge6jets       = NGoodJets_pt30        >= 6;
+        bool pass_ge9jets       = NGoodJets_pt30        >= 9;
         bool pass_1bjet         = NGoodBJets_pt30       >= 1;
-        bool pass_1bjetLoose    = NGoodBJets_pt30_loose >= 1;
-        bool pass_HT200         = HT                     > 200.0;
-        bool pass_HT500         = HT_trigger_pt30        > 500.0;
-        bool pass_HT1000        = HT                     > 1000.0;
+
+        // The medium b jet (above) also passes the loose working point
+        // So if we want an additional b jet that is loose we will have at least 2 loose b
+        bool pass_1bjetLoose    = NGoodBJets_pt30_loose >= 2;
+        bool pass_HT200         = HT_trigger_pt30        > 200.0;
+        bool pass_HT1000        = HT_trigger_pt30        > 1000.0;
+        bool pass_HT1200        = HT_trigger_pt30        > 1200.0;
         bool pass_MET50         = MET                    > 50.0;
+
+        // To stay above HT turn for HT trigger for QCD CR selection
+        // Bump up the HT for 2017 and 2018
+        bool pass_HT_QCDCR = false;
+        if (runyear.find("2016") != std::string::npos)
+            pass_HT_QCDCR = pass_HT1000;
+        else
+            pass_HT_QCDCR = pass_HT1200; 
 
         // Here pt ordered jet collection is assumed...
         // Calculate dPhi between MET and leading three jets
@@ -114,13 +327,10 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         bool pass_MuonBjetdR     = false; double MuonBjetdR   = 9999.0;
         bool pass_MuonBjetMass   = false; double MuonBjetMass = -1.0;
         bool pass_MuonBjetdRMass = false;
-        auto& goodjets_pt30 = tr.createDerivedVec<TLorentzVector>("GoodJets_pt30_tlv");
         for (unsigned int iJet = 0; iJet < Jets.size(); iJet++)
         {
             if (GoodJets_pt30.at(iJet))
             {
-                goodjets_pt30.emplace_back(utility::convertLV<TLorentzVector>(Jets.at(iJet)));
-
                 if (jetOrder == 1)
                 {
                     Jet1METdPhi      = utility::DeltaPhi(Jets.at(iJet), lvMET);
@@ -141,7 +351,8 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 }
             } 
 
-            if (GoodBJets_pt30_loose.at(iJet))
+            // Check for another b jet that is loose but not also just the medium one
+            if (GoodBJets_pt30_loose.at(iJet) && !GoodBJets_pt30.at(iJet))
             {
                 for (unsigned int iMuon = 0; iMuon < Muons.size(); iMuon++)
                 {
@@ -150,29 +361,30 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                     double tempMuonBjetdR = utility::DeltaR(Jets.at(iJet), Muons.at(iMuon));
 
-                    // At least one loose Bjet be within a dR of 1.5
+                    // At least one loose b jet be within a dR of 1.5
                     pass_MuonBjetdR |= (tempMuonBjetdR < 1.5);
     
-                    auto combinedMuonBjet = Jets.at(iJet) + Muons.at(iMuon);
+                    auto combinedMuonBjet   = Jets.at(iJet) + Muons.at(iMuon);
                     double tempMuonBjetMass = combinedMuonBjet.M();
     
+                    // Save the dR and mass for the loose b + muon combination with smallest dR
                     if (tempMuonBjetdR < MuonBjetdR)
                     {
-                        MuonBjetdR = tempMuonBjetdR;
+                        MuonBjetdR   = tempMuonBjetdR;
                         MuonBjetMass = tempMuonBjetMass;
                     }
 
-                    // At least one loose Bjet + muon combination to give inv mass inside window around top---the tag
-                    pass_MuonBjetMass |= (tempMuonBjetMass >= 30.0 && tempMuonBjetMass <= 180.0);
+                    // At least one loose b jet + muon combination to give inv mass inside window around top---the tag
+                    pass_MuonBjetMass |= (tempMuonBjetMass > 30.0 && tempMuonBjetMass < 180.0);
 
                     // Require that the loose b jet satisfies both criteria at same time
                     // E.g. one loose b cannot satisfy dR while another loose b satisfies invariant mass 
-                    pass_MuonBjetdRMass |= ((tempMuonBjetdR < 1.5) && (tempMuonBjetMass >= 30.0 && tempMuonBjetMass <= 180.0));
+                    pass_MuonBjetdRMass |= (pass_MuonBjetdR && pass_MuonBjetMass);
                 }
             }
         }
 
-        pass_JetMETdPhi = (pass_Jet1METdPhi && pass_Jet2METdPhi && pass_Jet3METdPhi);
+        pass_JetMETdPhi = pass_Jet1METdPhi && pass_Jet2METdPhi && pass_Jet3METdPhi;
 
         // Put the good muon together with MET to calculate dPhi and transverse mass 
         bool pass_MuonMETdPhi = false; double MuonMETdPhi = 9999.0;
@@ -182,10 +394,8 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             if (!GoodMuons.at(iMuon))
                 continue;
 
-            auto combinedMuonMET = Muons.at(iMuon) + lvMET;
-
             double tempMuonMETdPhi  = utility::DeltaPhi(Muons.at(iMuon), lvMET);
-            double tempMuonMETmT    = utility::calcMT(Muons.at(iMuon), lvMET);
+            double tempMuonMETmT    = utility::calcMT(Muons.at(iMuon),   lvMET);
 
             if (fabs(tempMuonMETdPhi) < fabs(MuonMETdPhi))
                 MuonMETdPhi = tempMuonMETdPhi;
@@ -193,37 +403,43 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                 MuonMETmT = tempMuonMETmT;
 
             pass_MuonMETdPhi |= (fabs(tempMuonMETdPhi) < 0.8);
-            pass_MuonMETmT   |= (tempMuonMETmT < 100.0);
+            pass_MuonMETmT   |= (tempMuonMETmT         < 100.0);
         }
 
         // -------------------
         // -- Define weight
         // -------------------
-        double weight               = 1.0;
-        double eventweight          = 1.0;
-        double bTagScaleFactor      = 1.0;
-        double prefiringScaleFactor = 1.0;
-        double puScaleFactor        = 1.0;
+        double weightQCD              = 1.0;
+        double weightTTbar            = 1.0;
+        double eventweight            = 1.0;
+        double bTagScaleFactor        = 1.0;
+        double prefiringScaleFactor   = 1.0;
+        double puScaleFactor          = 1.0;
+        double totGoodMuonScaleFactor = 1.0;
+        double topPtScaleFactor       = 1.0;
         if(runtype == "MC")
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<float>("Weight");
             const auto& lumi   = tr.getVar<double>("FinalLumi");
-            eventweight        = lumi*Weight;
+            eventweight        = lumi * Weight;
 
-            bTagScaleFactor      = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor        = tr.getVar<double>("puWeightCorr");
+            bTagScaleFactor        = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            prefiringScaleFactor   = tr.getVar<double>("prefiringScaleFactor");
+            puScaleFactor          = tr.getVar<double>("puWeightCorr");
+            totGoodMuonScaleFactor = tr.getVar<double>("totGoodMuonSF");
+            topPtScaleFactor       = tr.getVar<double>("topPtScaleFactor");
 
-            weight *= eventweight*puScaleFactor;
+            weightTTbar *= eventweight * totGoodMuonScaleFactor * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
+            weightQCD   *= eventweight /* jetTrigSF ? */        * puScaleFactor * bTagScaleFactor * prefiringScaleFactor;
         }
-
+    
         // To be used with Single-Muon-triggered data and measuring tagging efficiency SF
-        bool pass_SemiLepTTbarCR = JetID                                                    &&
-                                   passMETFilters                                           &&
-                                   passMadHT                                                &&
+        bool pass_SemiLepTTbarCR = pass_DataQuality                                         &&
+                                   pass_MadHT                                               &&
+                                   pass_MuonTrigger                                         &&
                                    pass_SingleMuon                                          &&
-                                   pass_7jets                                               &&
+                                   pass_ge6jets                                             &&
                                    pass_ExtraLepVeto                                        &&
                                    pass_1bjet                                               &&
                                    //pass_Jet1METdPhi && pass_Jet2METdPhi && pass_Jet3METdPhi &&
@@ -231,56 +447,39 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                                    pass_MuonBjetdRMass                                      &&
                                    pass_MuonMETdPhi                                         &&
                                    pass_MuonMETmT                                           &&
-                                   pass_HT500                                               &&
-                                   pass_MET50                                               ;
-
-        bool pass_SemiLepTTbarCR_Joe = JetID                                                    &&
-                                       passMETFilters                                           &&
-                                       passMadHT                                                &&
-                                       pass_SingleMuon                                          &&
-                                       pass_4jets                                               &&
-                                       pass_ExtraLepVeto                                        &&
-                                       pass_1bjet                                               &&
-                                       pass_Jet1METdPhi && pass_Jet2METdPhi && pass_Jet3METdPhi &&
-                                       pass_1bjetLoose                                          &&
-                                       pass_MuonBjetdRMass                                      &&
-                                       pass_MuonMETdPhi                                         &&
-                                       pass_MuonMETmT                                           &&
-                                       pass_HT200                                               &&
-                                       pass_MET50                                               ;
+                                   pass_HT200                                                ; 
+                                   //pass_MET50                                               ;
 
         // For use with JetHT-triggered data and measuring mistag SF
-        bool pass_QCDCR = JetID              && 
-                          passMETFilters     &&
-                          passMadHT          &&
-                          pass_7jets         &&
+        bool pass_QCDCR = pass_DataQuality   && 
+                          pass_QCDTrigger    &&
+                          pass_MadHT         &&
+                          pass_ge6jets       &&
                           pass_ZeroMuons     &&
                           pass_ZeroElectrons &&
-                          pass_HT500;
-
-        bool pass_QCDCR_Joe = JetID              && 
-                              passMETFilters     &&
-                              passMadHT          &&
-                              pass_4jets         &&
-                              pass_ZeroMuons     &&
-                              pass_ZeroElectrons &&
-                              pass_HT1000;
+                          pass_HT_QCDCR       ;
 
         const std::map<std::string, bool> cut_map
         {
-            {                                                                  "", true},
-            {                                                              "_1mu", pass_SingleMuon},
-            {                                                           "_1mu_7j", pass_SingleMuon && pass_7jets},
-            {                                                       "_1mu_7j_0el", pass_SingleMuon && pass_7jets && pass_ExtraLepVeto},
-            {                                                    "_1mu_7j_0el_1b", pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet},
-            {                                            "_1mu_7j_0el_1b",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/},
-            {                                        "_1mu_7j_0el_1b_1bl",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/ && pass_1bjetLoose},
-            {                             "_1mu_7j_0el_1b_1bl_mubdR_mubM",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/ && pass_1bjetLoose && pass_MuonBjetdRMass},
-            {                    "_1mu_7j_0el_1b_1bl_mubdR_mubM_muMETphi",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/ && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi},
-            {            "_1mu_7j_0el_1b_1bl_mubdR_mubM_muMETphi_muMETmT",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/ && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi && pass_MuonMETmT},
-            {      "_1mu_7j_0el_1b_1bl_mubdR_mubM_muMETphi_muMETmT_HT500",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/ && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi && pass_MuonMETmT && pass_HT500},
-            {"_1mu_7j_0el_1b_1bl_mubdR_mubM_muMETphi_muMETmT_HT500_MET50",         pass_SingleMuon && pass_7jets && pass_ExtraLepVeto && pass_1bjet /*&& pass_JetMETdPhi*/ && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi && pass_MuonMETmT && pass_HT500 && pass_MET50},
-        };
+            {                                                                          "", pass_DataQuality && pass_MadHT},
+            {                                                                      "_1mu", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon},
+            {                                                                 "_1mu_ge6j", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets},
+            {                                                             "_1mu_ge6j_0el", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto},
+            {                                                          "_1mu_ge6j_0el_1b", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet},
+            {                                                 "_1mu_ge6j_0el_1b_jMETdPhi", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi},
+            {                                             "_1mu_ge6j_0el_1b_jMETdPhi_1bl", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi && pass_1bjetLoose},
+            {                                  "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi && pass_1bjetLoose && pass_MuonBjetdRMass},
+            {                         "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi},
+            {                 "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi && pass_MuonMETmT},
+            {      "_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT_HT200_pt30", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi && pass_MuonMETmT && pass_HT200},
+            {"_1mu_ge6j_0el_1b_jMETdPhi_1bl_mubdR_mubM_muMETphi_muMETmT_HT200_pt30_MET50", pass_DataQuality && pass_MadHT && pass_MuonTrigger && pass_SingleMuon && pass_ge6jets && pass_ExtraLepVeto && pass_1bjet && pass_JetMETdPhi && pass_1bjetLoose && pass_MuonBjetdRMass && pass_MuonMETdPhi && pass_MuonMETmT && pass_HT200 && pass_MET50},
+
+            {"_QCDCR"                                                           , pass_QCDCR},
+            {"_TTbarCR"                                                         , pass_SemiLepTTbarCR},
+            {"_QCDCR_ge9j"                                                      , pass_QCDCR          && pass_ge9jets},
+            {"_TTbarCR_ge9j"                                                    , pass_SemiLepTTbarCR && pass_ge9jets},
+
+       };
 
         // Initialize Histograms
         if(!initHistos)
@@ -289,155 +488,104 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             initHistos = true;
         }
 
-        my_histos["EventCounter"]->Fill(eventCounter);
+        my_1D_histos["EventCounter"]->Fill(eventCounter);
 
-        for(auto& kv : cut_map)
+        std::map<std::string, bool> njetsMap =
         {
-            if(kv.second)
+            {"",       true},
+            {"6",      NGoodJets_pt30 == 6},
+            {"7",      NGoodJets_pt30 == 7},
+            {"8",      NGoodJets_pt30 == 8},
+            {"9incl",  NGoodJets_pt30 >= 9},
+        };
+
+        std::map<std::string, bool> numDenMap =
+        {
+            {"",    true},
+            {"numR", pass_AnyResolvedTop && pass_TightResolvedTop},
+            {"denR", pass_AnyResolvedTop},
+            {"numM", pass_AnyMergedTop && pass_TightMergedTop},
+            {"denM", pass_AnyMergedTop},
+        };
+
+        for (auto& kv : cut_map)
+        {
+            for (auto& njetCut : njetsMap)
             {
-                my_histos["h_nElectrons"   + kv.first]->Fill(NGoodElectrons,        weight);
-                my_histos["h_nMuons"       + kv.first]->Fill(NGoodMuons,            weight);
-                my_histos["h_nJets"        + kv.first]->Fill(NGoodJets_pt30,        weight);
-                my_histos["h_nBJets"       + kv.first]->Fill(NGoodBJets_pt30,       weight);
-                my_histos["h_nBJetsLoose"  + kv.first]->Fill(NGoodBJets_pt30_loose, weight);
-                my_histos["h_ht"           + kv.first]->Fill(HT_trigger_pt30,       weight);
-                my_histos["h_met"          + kv.first]->Fill(MET,                   weight);
-                my_histos["h_jet1METdPhi"  + kv.first]->Fill(Jet1METdPhi,           weight);
-                my_histos["h_jet2METdPhi"  + kv.first]->Fill(Jet2METdPhi,           weight);
-                my_histos["h_jet3METdPhi"  + kv.first]->Fill(Jet3METdPhi,           weight);
-                my_histos["h_muonBjetDR"   + kv.first]->Fill(MuonBjetdR,            weight);
-                my_histos["h_muonBjetMass" + kv.first]->Fill(MuonBjetMass,          weight);
-                my_histos["h_muonMETdPhi"  + kv.first]->Fill(MuonMETdPhi,           weight);
-                my_histos["h_muonMETmT"    + kv.first]->Fill(MuonMETmT,             weight);
+                for (auto& numDen : numDenMap)
+                {
+                    if (kv.second && njetCut.second && numDen.second)
+                    {
+                        double weight = weightQCD;
+                        if (kv.first.find("QCD") == std::string::npos)
+                            weight = weightTTbar;
+
+                        std::string tagStr = "";
+                        if (numDen.first != "")
+                            tagStr = "_" + numDen.first;
+
+                        std::string njetStr = "";
+                        if (njetCut.first != "")
+                            njetStr = "_Njet" + njetCut.first;
+
+                        std::string selection = kv.first + tagStr + njetStr;
+
+                        if (njetCut.first == "" and numDen.first == "")
+                        {
+                            my_1D_histos["nElectrons"   + selection]->Fill(NGoodElectrons,        weight);
+                            my_1D_histos["nMuons"       + selection]->Fill(NGoodMuons,            weight);
+                            my_1D_histos["nJets"        + selection]->Fill(NGoodJets_pt30,        weight);
+                            my_1D_histos["nBJets"       + selection]->Fill(NGoodBJets_pt30,       weight);
+                            my_1D_histos["nBJetsLoose"  + selection]->Fill(NGoodBJets_pt30_loose, weight);
+                            my_1D_histos["ht"           + selection]->Fill(HT_trigger_pt30,       weight);
+                            my_1D_histos["met"          + selection]->Fill(MET,                   weight);
+                            my_1D_histos["jet1METdPhi"  + selection]->Fill(Jet1METdPhi,           weight);
+                            my_1D_histos["jet2METdPhi"  + selection]->Fill(Jet2METdPhi,           weight);
+                            my_1D_histos["jet3METdPhi"  + selection]->Fill(Jet3METdPhi,           weight);
+                            my_1D_histos["muonBjetDR"   + selection]->Fill(MuonBjetdR,            weight);
+                            my_1D_histos["muonBjetMass" + selection]->Fill(MuonBjetMass,          weight);
+                            my_1D_histos["muonMETdPhi"  + selection]->Fill(MuonMETdPhi,           weight);
+                            my_1D_histos["muonMETmT"    + selection]->Fill(MuonMETmT,             weight);
+                            my_1D_histos["topPt"        + selection]->Fill(bestTopPt,             weight);
+                        }
+
+                        // Make versions of variables if they go into overflow bin
+                        // Such that they make it into the previous bin
+                        double correctTopPt = bestTopPt;
+                        if (correctTopPt >= 1500.0)
+                            correctTopPt = 1499.0;
+
+                        double correctHT = HT_trigger_pt30;
+                        if (correctHT >= 3000.0)
+                            correctHT = 2999.0;
+
+                        int correctNjets = NGoodJets_pt30;
+                        if (correctNjets >= 10)
+                            correctNjets = 10;
+
+                        if (njetCut.first == "" and selection.find("CR") != std::string::npos)
+                        {
+                            my_2D_histos["topPt_vs_nJets" + selection]->Fill(correctTopPt, correctNjets, weight);
+                            my_2D_histos["topPt_vs_HT"    + selection]->Fill(correctTopPt, correctHT,    weight);
+                        }
+
+                        if (numDen.first != "" and selection.find("CR") != std::string::npos)
+                        {
+                            my_1D_histos["Binned_topPt" + selection]->Fill(correctTopPt, weight);
+                            my_1D_histos["Binned_nJets" + selection]->Fill(correctNjets, weight);
+                            my_1D_histos["Binned_HT"    + selection]->Fill(correctHT,    weight);
+                            my_1D_histos["Binned_Disc1" + selection]->Fill(disc1,        weight);
+                            my_1D_histos["Binned_Disc2" + selection]->Fill(disc2,        weight);
+
+                            if (njetCut.first == "")
+                            {
+                                my_2D_histos["Binned_topPt_vs_nJets" + selection]->Fill(correctTopPt, correctNjets, weight);
+                            }
+                        }
+                    }
+                }
             }
         }
-
-        // -------------------------------------------------
-        // -- Fill the histograms for the ttbar CR selection
-        // -------------------------------------------------
-        std::vector<std::pair<std::string, bool>> ttbarCuts =
-        {   
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-        };
-        ttHistsNjetIncl.fillWithCutFlow(ttbarCuts, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> ttbarCuts_Joe =
-        {   
-            {"pass_SemiLepTTbarCR_Joe", pass_SemiLepTTbarCR_Joe},
-        };
-        ttHistsNjetIncl_Joe.fillWithCutFlow(ttbarCuts_Joe, tr, weight, &rand);
-
-        // baseline cuts + ttNjets == 7
-        std::vector<std::pair<std::string, bool>> ttNjets7 =
-        {
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-            {"Njet7"              , NGoodJets_pt30 == 7},
-        };
-        ttHistsNjet7.fillWithCutFlow(ttNjets7, tr, weight, &rand);
-
-        // baseline cuts + ttNjets == 8
-        std::vector<std::pair<std::string, bool>> ttNjets8 =
-        {
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-            {"Njet8"              , NGoodJets_pt30 == 8},
-        };
-        ttHistsNjet8.fillWithCutFlow(ttNjets8, tr, weight, &rand);
-
-        // baseline cuts + ttNjets == 9
-        std::vector<std::pair<std::string, bool>> ttNjets9 =
-        {
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-            {"Njet9"              , NGoodJets_pt30 == 9},
-        };
-        ttHistsNjet9.fillWithCutFlow(ttNjets9, tr, weight, &rand);        
-        
-        // baseline cuts + ttNjets == 10
-        std::vector<std::pair<std::string, bool>> ttNjets10 =
-        {   
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-            {"Njet10"             , NGoodJets_pt30 == 10},
-        };
-        ttHistsNjet10.fillWithCutFlow(ttNjets10, tr, weight, &rand);
-
-        // baseline cuts + ttNjets == 11
-        std::vector<std::pair<std::string, bool>> ttNjets11 =
-        {
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-            {"Njet11"             , NGoodJets_pt30 == 11},
-        };
-        ttHistsNjet11.fillWithCutFlow(ttNjets11, tr, weight, &rand);
-
-        // baseline cuts + ttNjets == 12
-        std::vector<std::pair<std::string, bool>> ttNjets12incl =
-        {
-            {"pass_SemiLepTTbarCR", pass_SemiLepTTbarCR},
-            {"Njet12incl"         , NGoodJets_pt30 >= 12},
-        };
-        ttHistsNjet12incl.fillWithCutFlow(ttNjets12incl, tr, weight, &rand);
-
-
-        // -------------------------------------------------
-        // -- Fill the histograms for the QCD CR selection
-        // -------------------------------------------------
-        std::vector<std::pair<std::string, bool>> qcdCuts_Joe =
-        {   
-            {"pass_QCDCR_Joe", pass_QCDCR_Joe},
-        };
-        qcdHistsNjetIncl_Joe.fillWithCutFlow(qcdCuts_Joe, tr, weight, &rand);
-
-        std::vector<std::pair<std::string, bool>> qcdCuts =
-        {   
-            {"pass_QCDCR", pass_QCDCR},
-        };
-        qcdHistsNjetIncl.fillWithCutFlow(qcdCuts, tr, weight, &rand);
-
-        // baseline cuts + Njets == 7
-        std::vector<std::pair<std::string, bool>> qcdNjets7 =
-        {
-            {"pass_QCDCR", pass_QCDCR},
-            {"Njet7"     , NGoodJets_pt30 == 7},
-        };
-        qcdHistsNjet7.fillWithCutFlow(qcdNjets7, tr, weight, &rand);
-
-        // baseline cuts + qcdNjets == 8
-        std::vector<std::pair<std::string, bool>> qcdNjets8 =
-        {
-            {"pass_QCDCR", pass_QCDCR},
-            {"Njet8"     , NGoodJets_pt30 == 8},
-        };
-        qcdHistsNjet8.fillWithCutFlow(qcdNjets8, tr, weight, &rand);
-
-        // baseline cuts + qcdNjets == 9
-        std::vector<std::pair<std::string, bool>> qcdNjets9 =
-        {
-            {"pass_QCDCR", pass_QCDCR},
-            {"Njet9"     , NGoodJets_pt30 == 9},
-        };
-        qcdHistsNjet9.fillWithCutFlow(qcdNjets9, tr, weight, &rand);        
-        
-        // baseline cuts + qcdNjets == 10
-        std::vector<std::pair<std::string, bool>> qcdNjets10 =
-        {   
-            {"pass_QCDCR", pass_QCDCR},
-            {"Njet10"    , NGoodJets_pt30 == 10},
-        };
-        qcdHistsNjet10.fillWithCutFlow(qcdNjets10, tr, weight, &rand);
-
-        // baseline cuts + qcdNjets == 11
-        std::vector<std::pair<std::string, bool>> qcdNjets11 =
-        {
-            {"pass_QCDCR", pass_QCDCR},
-            {"Njet11"    , NGoodJets_pt30 == 11},
-        };
-        qcdHistsNjet11.fillWithCutFlow(qcdNjets11, tr, weight, &rand);
-
-        // baseline cuts + qcdNjets == 12
-        std::vector<std::pair<std::string, bool>> qcdNjets12incl =
-        {
-            {"pass_QCDCR", pass_QCDCR},
-            {"Njet12incl", NGoodJets_pt30 >= 12},
-        };
-        qcdHistsNjet12incl.fillWithCutFlow(qcdNjets12incl, tr, weight, &rand);
     }
 }
 
@@ -445,27 +593,13 @@ void TopTaggerSF_Analyzer::WriteHistos(TFile* outfile)
 {
     outfile->cd();
 
-    for (const auto &p : my_histos) {
+    for (const auto &p : my_1D_histos) {
         p.second->Write();
     }
     
-    ttHistsNjetIncl_Joe.save(outfile);
-    ttHistsNjetIncl.save(outfile);
-    ttHistsNjet7.save(outfile);
-    ttHistsNjet8.save(outfile);
-    ttHistsNjet9.save(outfile);
-    ttHistsNjet10.save(outfile);
-    ttHistsNjet11.save(outfile);
-    ttHistsNjet12incl.save(outfile);
-
-    qcdHistsNjetIncl_Joe.save(outfile);
-    qcdHistsNjetIncl.save(outfile);
-    qcdHistsNjet7.save(outfile);
-    qcdHistsNjet8.save(outfile);
-    qcdHistsNjet9.save(outfile);
-    qcdHistsNjet10.save(outfile);
-    qcdHistsNjet11.save(outfile);
-    qcdHistsNjet12incl.save(outfile);
+    for (const auto &p : my_2D_histos) {
+        p.second->Write();
+    }
 
     outfile->Close();
 }
