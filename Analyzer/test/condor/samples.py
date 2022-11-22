@@ -13,7 +13,6 @@ class SampleCollection:
         self.obj = self.lib.SC_new(self.ss, scfile)
         self.lib.SC_samples.restype = POINTER(c_char_p)
         self.lib.SC_samples_names.restype = POINTER(c_char_p)
-        self.lib.SC_samples_nGenEvts.restype = POINTER(c_int)
         self.lib.SC_samples_nActEvts.restype = POINTER(c_int)
         self.lib.SS_samples.restype = POINTER(c_char_p)
         self.lib.SS_samples_names.restype = POINTER(c_char_p)
@@ -25,7 +24,6 @@ class SampleCollection:
     def sampleList(self, name):
         files = self.lib.SC_samples(self.obj, name)
         names = self.lib.SC_samples_names(self.obj, name)
-        nGenEvts = self.lib.SC_samples_nGenEvts(self.obj, name)
         nActEvts = self.lib.SC_samples_nActEvts(self.obj, name)
         list = [(files[i],names[i],nActEvts[i]) for i in xrange(self.lib.SC_samples_size(self.obj, name))]
         return list
