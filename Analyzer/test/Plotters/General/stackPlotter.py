@@ -274,6 +274,63 @@ class StackPlotter:
 
     # Some customized sizes and distances but scaled
     # when going between ratio plot and pure stack with no ratio
+    def makeLegends2Col(self, nBkgs, nSigs, doLogY, theMin, theMax):
+
+        textSize = 0.040 / self.upperSplit
+        maxLegendFrac = 0.25 * (1.0 - self.TopMargin - self.BottomMargin)
+
+        space    = 0.015
+
+        bkgXmin = 0.25 - self.RightMargin
+        if self.printNEvents:
+            bkgXmin = 0.15 - self.RightMargin
+            
+        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
+        bkgXmax = 0.55-self.RightMargin-0.01
+        bkgYmin = bkgYmax-(float(nBkgs))*(1.2*textSize+space)
+        
+        if self.printInfo:
+            bkgYmax -= 0.025
+
+        bkgYFrac = (1.0-self.TopMargin-bkgYmin) / (1.0 - self.TopMargin - self.BottomMargin)
+
+        bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
+        bkgLegend.SetBorderSize(0)
+        bkgLegend.SetTextSize(textSize)
+
+        sigXmin = bkgXmax + 0.01
+            
+        sigYmax = bkgYmax
+        sigXmax = 1.0-self.RightMargin-0.01
+        sigYmin = sigYmax-(float(nSigs))*(1.2*textSize+space)
+        #sigXmin = self.LeftMargin+0.03
+        #sigYmax = bkgYmax
+        #sigXmax = bkgXmin
+        #sigYmin = bkgYmax-nSigs*(textSize+space) 
+
+        if self.printInfo:
+            bkgYmax -= 0.025
+
+        sigYFrac = (1.0-self.TopMargin-sigYmin) / (1.0 - self.TopMargin - self.BottomMargin)
+
+        sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
+        sigLegend.SetBorderSize(0)
+        sigLegend.SetMargin(0.10)
+        sigLegend.SetTextSize(textSize/1.2)
+
+        yMax = 1.0; factor = 1.0; power = 1.0
+        if doLogY and theMax != 0.0 and theMin != 0.0:
+            power = math.log10(theMax / theMin) * 3.0
+
+        theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
+
+        if self.printInfo:
+            yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
+        else:                             
+            yMax = (theMax-theMin) * (0.95 - theFrac)**(-power) * factor
+
+        return bkgLegend, sigLegend, yMax
+
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
         textSize = 0.040 / self.upperSplit
@@ -307,10 +364,19 @@ class StackPlotter:
         if tooManyBkgds:
             bkgLegend.SetNColumns(nColumns)
 
-        sigXmin = self.LeftMargin+0.03
-        sigYmax = bkgYmax
-        sigXmax = bkgXmin
-        sigYmin = bkgYmax-nSigs*(textSize+space) 
+        sigXmin = 0.70 - self.RightMargin
+        if self.printNEvents:
+            sigXmin = 0.60 - self.RightMargin
+        if tooManyBkgds:
+            sigXmin = self.LeftMargin + 0.05
+            
+        sigYmax = bkgYmin-0.01
+        sigXmax = 1.0-self.RightMargin-0.01
+        sigYmin = sigYmax-(float(nSigs)/float(nColumns-1))*(1.2*textSize+space)
+        #sigXmin = self.LeftMargin+0.03
+        #sigYmax = bkgYmax
+        #sigXmax = bkgXmin
+        #sigYmin = bkgYmax-nSigs*(textSize+space) 
 
         if self.printInfo:
             bkgYmax -= 0.025
@@ -320,7 +386,9 @@ class StackPlotter:
         sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
         sigLegend.SetBorderSize(0)
         sigLegend.SetMargin(0.10)
-        sigLegend.SetTextSize(textSize)
+        sigLegend.SetTextSize(textSize/1.2)
+        if tooManyBkgds:
+            sigLegend.SetNColumns(nColumns-1)
 
         yMax = 1.0; factor = 1.0; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
@@ -539,7 +607,7 @@ class StackPlotter:
                         theMin /= mcScale
 
                     # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
-                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], theMin, theMax)
+                    bkgLegend, sigLegend, yMax = self.makeLegends2Col(len(self.backgrounds), len(self.signals), newInfo["logY"], theMin, theMax)
 
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=True):
                         lname = h[0]

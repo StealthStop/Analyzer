@@ -7,6 +7,7 @@ from collections import OrderedDict
 selections = [
     "0l_ABCD",
     "1l_ABCD",
+    "1l_QCDCR_ABCD",
     "2l_ABCD",
     #"_0l_loose",
     #"_1l_loose",
@@ -15,6 +16,7 @@ selections = [
 ]
 
 histograms = {
+    "h_Njets_?"           : {"logY" : True, "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "N_{Jets}",    "rebin" : 1, "min" :  0,  "max" : 20}},
     "h_Jet@_cm_PtrHT_?"           : {"logY" : True,  "orders" : list(xrange(1,8)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet @ p_{T}/H_{T} [GeV]",    "rebin" : 2, "min" :  0,  "max" : 1500}},
     "h_Jet@_cm_Pt_?"           : {"logY" : True,  "orders" : list(xrange(1,8)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet @ p_{T} [GeV]",    "rebin" : 5, "min" :  0,  "max" : 1500}},
     "h_Jet@_cm_Eta_?"          : {"logY" : False, "orders" : list(xrange(1,8)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet @ #eta",           "rebin" : 1, "min" : -4,  "max" :    4}},
@@ -29,7 +31,7 @@ histograms = {
     #"h_Jet@_cm_CSVb_?"        : {"logY" : True,  "orders" : list(xrange(1,8)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet @ DeepCSV b",   "rebin" : 1, "min" :  0,  "max" :    1}},
     #"h_Jet@_cm_CSVc_?"        : {"logY" : True,  "orders" : list(xrange(1,8)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet @ DeepCSV c",   "rebin" : 1, "min" :  0,  "max" :    1}},
     #"h_Jet@_cm_CSVudsg_?"      : {"logY" : True,  "orders" : list(xrange(1,8)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet @ DeepCSV udsg", "rebin" : 1, "min" :  0,  "max" :    1}},
-    "h_HT_?"                  : {"logY" : True,                                "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "H_{T} [GeV]",          "rebin" : 20, "min" :  0,  "max" : 3500}},
+    "h_HT_?"                  : {"logY" : True,                                "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "H_{T} [GeV]",          "rebin" : 10, "min" :  0,  "max" : 3500}},
     "h_FWM@_top6_?"             : {"logY" : False, "orders" : list(xrange(2,6)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Fox-Wolfram Moment @", "rebin" : 1, "min" :  0,  "max" :    1}},
     "h_JMT_ev@_top6_?"          : {"logY" : False, "orders" : list(xrange(0,3)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Jet p-E Eigenvalue @", "rebin" : 1, "min" :  0,  "max" :    1}},
     "h_Stop@_Pt_cm_OldSeed_?"   : {"logY" : True,  "orders" : list(xrange(1,3)), "Y" : {"title" : "A.U.", "min" : 0.2}, "X" : {"title" : "Stop @ p_{T} [GeV]",   "rebin" : 1, "min" :  0,  "max" : 1500}},
@@ -50,7 +52,7 @@ histograms = {
 
 backgrounds = {
     "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+    #"QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
     "TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
     "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0}
 }
