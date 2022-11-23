@@ -46,6 +46,19 @@ def main():
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
 
+    filesPerJobSkim = {"TT"              : 10,
+                       "QCD"             : 10,
+                       "WJets"           : 10,
+                       "DYJetsToLL_M-50" :  5,
+                       "Diboson"         : 90,
+                       "Triboson"        : 10,
+                       "ST"              : 20,
+                       "TTX"             :  2,
+                       "JetHT"           :  5,
+                       "SingleMuon"      : 75,
+                       "SingleElectron"  : 50,
+    }
+
     srcDir   = environ["CMSSW_BASE"] + "/src"
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
@@ -151,6 +164,17 @@ def main():
     numberOfJobs = 0
     for ds in datasets:
         ds = ds.strip()
+
+        # When running skim jobs with the MiniTreeMaker analyzer,
+        # The number of files per job is custom tuned based on skimming efficiency
+        # Custom numbers for each main collection are in filesPerJobSkim
+        if options.analyze == "MakeMiniTree":
+            proc = ds.partition("_")[-1]
+
+            if proc in filesPerJobSkim:
+                nFilesPerJob = filesPerJobSkim[proc]
+            else:
+                nFilesPerJob = options.numfile
 
         stubDir = "output-files/%s"%(ds)
         logsDir = "log-files/%s"%(ds)
