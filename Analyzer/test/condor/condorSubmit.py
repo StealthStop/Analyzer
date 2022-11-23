@@ -170,7 +170,7 @@ def main():
         # The number of files per job is custom tuned based on skimming efficiency
         # Custom numbers for each main collection are in filesPerJobSkim
         if options.analyze == "MakeMiniTree":
-            proc = ds.rpartition("_")[-1]
+            proc = ds.partition("_")[-1]
 
             if proc in filesPerJobSkim:
                 nFilesPerJob = filesPerJobSkim[proc]
