@@ -227,4 +227,5 @@ PlottersSUS19004
 **.bak
 obj/
 filelists_*
+**txt
 **.pcm
