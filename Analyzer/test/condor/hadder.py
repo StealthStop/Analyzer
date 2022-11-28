@@ -214,7 +214,6 @@ def main():
             else:
                 nEvents=0.0
                 files = []
-                print(sl)
                 for sample in sl:
                     query = "%s/%s/%s/MyAnalysis_%s_*.root" % (stubPath, inPath, directory, sample[1])
                     files += listFiles(inPath, query)
