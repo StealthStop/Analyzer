@@ -129,7 +129,6 @@ def main():
         print cyan("Running hadd multithreaded with 4 threads")
         haddArgs += " -j 4"
     
-    print(datasets)
     # Check if output directory exits and makes it if not
     outDir = options.outDir
     overwrite = options.o
