@@ -69,7 +69,9 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_Njets",                        21, -0.5, 20.5},
         {"h_Nbjets",                       21, -0.5, 20.5},
         {"h_Ntops",                         7, -0.5,  6.5},
+        {"h_njets_11incl",                 24, -0.5, 23.5},
         {"h_njets_12incl",                 24, -0.5, 23.5},
+        {"h_njets_13incl",                 24, -0.5, 23.5},
         {"h_HT",                          720,    0, 7200},
         {"h_dRbjets",                     180,    0,    6},
         {"h_Mbl",                         180,    0,  360},
@@ -89,7 +91,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
     };
 
     channels = {"0", "1", "2"};
-    njets    = {"Incl", "6", "7", "8", "9", "10", "11", "12incl"};
+    njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12incl", "13incl"};
     ttvars   = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
     jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
 
@@ -923,6 +925,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"              + jecvar));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"           + jecvar));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"              + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45"              + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_1b"           + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_2b"           + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_1t"           + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_2t"           + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_1b_1t"        + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_2b_1t"        + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_all"             + jecvar));
+
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + jecvar));
                 Mll_CR.push_back(tr.getVar<double>("mll"                           + jecvar));
                 dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + jecvar));
@@ -1072,9 +1083,16 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 {"_0l_QCDCR_1t"      , Baseline_CR[2]}, 
                 {"_0l_QCDCR_1b_1t"   , Baseline_CR[3]}, 
                 {"_0l_QCDCR_2b"      , Baseline_CR[4]},   
+                {"_0l_QCDCR_45"      , Baseline_CR[5]},
+                {"_0l_QCDCR_45_1b"   , Baseline_CR[6]},
+                {"_0l_QCDCR_45_2b"   , Baseline_CR[7]},
+                {"_0l_QCDCR_45_1t"   , Baseline_CR[8]},
+                {"_0l_QCDCR_45_2t"   , Baseline_CR[9]},
+                {"_0l_QCDCR_45_1b_1t", Baseline_CR[10]},
+                {"_0l_QCDCR_45_2b_1t", Baseline_CR[11]},
+                {"_0l_QCDCR_all"     , Baseline_CR[12]},
                 {"_1l_QCDCR"         , Baseline_CR[0]}, 
                 {"_2l_QCDCR"         , Baseline_CR[0]}, 
-
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
@@ -1121,7 +1139,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     {"9",      !isQCD ? NGoodJets[channel]==9  : NGoodJets_CR[channel]==9 },
                     {"10",     !isQCD ? NGoodJets[channel]==10 : NGoodJets_CR[channel]==10},
                     {"11",     !isQCD ? NGoodJets[channel]==11 : NGoodJets_CR[channel]==11},
+                    {"11incl", !isQCD ? NGoodJets[channel]>=11 : NGoodJets_CR[channel]>=11},
                     {"12incl", !isQCD ? NGoodJets[channel]>=12 : NGoodJets_CR[channel]>=12},
+                    {"13incl", !isQCD ? NGoodJets[channel]>=13 : NGoodJets_CR[channel]>=13},
                 };
 
                 ABCDmap = {};
@@ -1610,11 +1630,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     int shift = inRegionBin[iSubRegion] ? iSubRegion : 100;
 
                                     auto& theGoodJets = NGoodJets[channel];
-                                    auto& theMVAjets  = nMVAJets[channel]; 
                                     if (isQCD)
                                     {
                                         theGoodJets = NGoodJets_CR[channel];
-                                        theMVAjets  = nMVAJets_CR[channel];
                                     }
 
                                     // ---------------------------------------------------------
@@ -1623,8 +1641,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     //  -- each of A, B, C, D has 7,8,9,10,11, 12incl Njets bins
                                     // ---------------------------------------------------------
                                     if (njets == "Incl")
-                                        my_histos["h_njets_12incl" + name]->Fill(theGoodJets>=12 ? 12-theMVAjets+shift*6 : theGoodJets-theMVAjets+shift*6, w);
-
+                                    {
+                                        my_histos["h_njets_11incl" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
+                                        my_histos["h_njets_12incl" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
+                                        my_histos["h_njets_13incl" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
+                                    }
                                 }
                             }
                         }
