@@ -92,10 +92,8 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 
     channels = {"0", "1", "2"};
     njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12incl", "13incl"};
-    //ttvars   = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
-    ttvars   = {"nom"};
-    //jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
-    jecvars  = {""};
+    ttvars   = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
+    jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
 
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
 }
