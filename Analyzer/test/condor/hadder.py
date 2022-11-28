@@ -122,9 +122,9 @@ def main():
     else:
         datasets = getDataSets("/eos/uscms" + stubPath + "/" + inPath)
 
-    haddArgs = "-v 0 -T"
+    haddArgs = "-v 0"
     if options.v:
-        haddArgs = "-v 99 -T"
+        haddArgs = "-v 99"
     if options.m:
         print cyan("Running hadd multithreaded with 4 threads")
         haddArgs += " -j 4"
