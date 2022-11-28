@@ -90,24 +90,27 @@ def getDataSets(inPath):
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser("usage: %prog [options]\n")
-    parser.add_argument('-d', dest='datasets', type=str,            default = '',             help = "Lists of datasets, comma separated")
-    parser.add_argument('-H', dest='outDir',   type=str,            default = 'rootfiles',    help = "Can pass in the output directory name")
-    parser.add_argument('-p', dest='inPath',   type=str,            default = 'output-files', help = "Can pass in the input directory name")
-    parser.add_argument('-y', dest='year',     type=str,            default = '',             help = "Can pass in the year for this data")
-    parser.add_argument('-f',                  action='store_true',                           help = "ok to write in existing folder")
-    parser.add_argument('-v',                  action='store_true',                           help = "make hadd verbose")
-    parser.add_argument('-o',                  action='store_true',                           help = "Overwrite output directory")
-    parser.add_argument('-m',                  action='store_true',                           help = "multiprocess, restricted to 4")
-    parser.add_argument('--noHadd',            action='store_true',                           help = "Dont hadd the the root files")
-    parser.add_argument('--haddOther',         action='store_true',                           help = "Do the hack to make BG_OTHER.root")
-    parser.add_argument('--haddData',          action='store_true',                           help = "Do the hack to make Data.root")
-    parser.add_argument('--haddAll',           action='store_true',                           help = "Do the hack to hadd All_Bg, All_Signal, All_Data")
+    parser.add_argument('-d', dest='datasets',     type=str,            default = '',             help = "Lists of datasets, comma separated")
+    parser.add_argument('-H', dest='outDir',       type=str,            default = 'rootfiles',    help = "Can pass in the output directory name")
+    parser.add_argument('-p', dest='inPath',       type=str,            default = 'output-files', help = "Can pass in the input directory name")
+    parser.add_argument('-y', dest='year',         type=str,            default = '',             help = "Can pass in the year for this data")
+    parser.add_argument('-f',                      action='store_true',                           help = "ok to write in existing folder")
+    parser.add_argument('-v',                      action='store_true',                           help = "make hadd verbose")
+    parser.add_argument('-o',                      action='store_true',                           help = "Overwrite output directory")
+    parser.add_argument('-m',                      action='store_true',                           help = "multiprocess, restricted to 4")
+    parser.add_argument('-u', dest='userOverride', type=str,            default = '',             help = "Override username with something else")
+    parser.add_argument('--noHadd',                action='store_true',                           help = "Dont hadd the the root files")
+    parser.add_argument('--haddOther',             action='store_true',                           help = "Do the hack to make BG_OTHER.root")
+    parser.add_argument('--haddData',              action='store_true',                           help = "Do the hack to make Data.root")
+    parser.add_argument('--haddAll',               action='store_true',                           help = "Do the hack to hadd All_Bg, All_Signal, All_Data")
     options = parser.parse_args()
 
     # Get input directory path
     inPath = options.inPath
 
     userName = os.getenv("USER")
+    if options.userOverride != "":
+        userName = options.userOverride
 
     stubPath = "/store/user/%s/StealthStop"%(userName)
     eosPath = "root://cmseos.fnal.gov//%s/%s"%(stubPath, inPath)
@@ -119,13 +122,14 @@ def main():
     else:
         datasets = getDataSets("/eos/uscms" + stubPath + "/" + inPath)
 
-    haddArgs = "-v 0"
+    haddArgs = "-v 0 -T"
     if options.v:
-        haddArgs = "-v 99"
+        haddArgs = "-v 99 -T"
     if options.m:
         print cyan("Running hadd multithreaded with 4 threads")
         haddArgs += " -j 4"
     
+    print(datasets)
     # Check if output directory exits and makes it if not
     outDir = options.outDir
     overwrite = options.o
@@ -210,6 +214,7 @@ def main():
             else:
                 nEvents=0.0
                 files = []
+                print(sl)
                 for sample in sl:
                     query = "%s/%s/%s/MyAnalysis_%s_*.root" % (stubPath, inPath, directory, sample[1])
                     files += listFiles(inPath, query)
