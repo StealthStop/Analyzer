@@ -46,17 +46,46 @@ def main():
     parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
 
-    filesPerJobSkim = {"TT"              : 10,
-                       "QCD"             : 10,
-                       "WJets"           : 10,
-                       "DYJetsToLL_M-50" :  5,
-                       "Diboson"         : 90,
-                       "Triboson"        : 10,
-                       "ST"              : 20,
-                       "TTX"             :  2,
-                       "JetHT"           :  5,
-                       "SingleMuon"      : 75,
-                       "SingleElectron"  : 50,
+    filesPerJobSkim = {"TT"                            :    10,
+                       "QCD_HT50to100"                 :   200,
+                       "QCD_HT100to200"                :   100,
+                       "QCD_HT200to300"                :    50,
+                       "QCD_HT300to500"                :    20,
+                       "QCD_HT500to700"                :     5,
+                       "QCD_HT700to1000"               :     5,
+                       "QCD_HT1000to1500"              :     5,
+                       "QCD_HT1500to2000"              :     5,
+                       "QCD_HT2000toInf"               :     3,
+                       "WJetsToQQ_HT-200to400"         :   200,
+                       "WJetsToQQ_HT-400to600"         :     8,
+                       "WJetsToQQ_HT-600to800"         :     3,
+                       "WJetsToQQ_HT-800toInf"         :     2,
+                       "WJetsToLNu_Incl"               :   200,
+                       "WJetsToLNu_HT-70To100"         :   200,
+                       "WJetsToLNu_HT-100To200"        :   200,
+                       "WJetsToLNu_HT-200To400"        :   100,
+                       "WJetsToLNu_HT-400To600"        :    10,
+                       "WJetsToLNu_HT-600To800"        :     8,
+                       "WJetsToLNu_HT-800To1200"       :     5,
+                       "WJetsToLNu_HT-1200To2500"      :     3,
+                       "WJetsToLNu_HT-2500ToInf"       :     3,
+                       "DYJetsToLL_M-50_Incl"          :   200,
+                       "DYJetsToLL_M-50_HT-70to100"    :   200,
+                       "DYJetsToLL_M-50_HT-100to200"   :   200,
+                       "DYJetsToLL_M-50_HT-200to400"   :    50,
+                       "DYJetsToLL_M-50_HT-400to600"   :     8,
+                       "DYJetsToLL_M-50_HT-600to800"   :     5,
+                       "DYJetsToLL_M-50_HT-800to1200"  :     4,
+                       "DYJetsToLL_M-50_HT-1200to2500" :     3,
+                       "DYJetsToLL_M-50_HT-2500toInf"  :     3,
+                       "Diboson"                       :    90,
+                       "Triboson"                      :    10,
+                       "ST"                            :    20,
+                       "TTX"                           :     2,
+                       "TTTJ"                          :     2,
+                       "JetHT"                         :     5,
+                       "SingleMuon"                    :    75,
+                       "SingleElectron"                :    50,
     }
 
     srcDir   = environ["CMSSW_BASE"] + "/src"
@@ -165,17 +194,6 @@ def main():
     for ds in datasets:
         ds = ds.strip()
 
-        # When running skim jobs with the MiniTreeMaker analyzer,
-        # The number of files per job is custom tuned based on skimming efficiency
-        # Custom numbers for each main collection are in filesPerJobSkim
-        if options.analyze == "MakeMiniTree":
-            proc = ds.partition("_")[-1]
-
-            if proc in filesPerJobSkim:
-                nFilesPerJob = filesPerJobSkim[proc]
-            else:
-                nFilesPerJob = options.numfile
-
         stubDir = "output-files/%s"%(ds)
         logsDir = "log-files/%s"%(ds)
         # create the directory
@@ -183,6 +201,18 @@ def main():
             system('mkdir -p %s/%s' %(workingDir, logsDir))
    
         for s, n, e in sc.sampleList(ds):
+
+            # When running skim jobs with the MiniTreeMaker analyzer,
+            # The number of files per job is custom tuned based on skimming efficiency
+            # Custom numbers for each main collection are in filesPerJobSkim
+            if options.analyze == "MakeMiniTree":
+                proc = n.partition("_")[-1]
+        
+                if proc in filesPerJobSkim:
+                    nFilesPerJob = filesPerJobSkim[proc]
+                else:
+                    nFilesPerJob = options.numfile
+
             print "SampleSet:", n, ", nEvents:", e
             f = open(environ["CMSSW_BASE"] + "/src/Analyzer/Analyzer/test/" + s)
             if not f == None:
