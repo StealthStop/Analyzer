@@ -28,6 +28,8 @@ public :
    std::map<std::string, std::map<std::string, std::map<std::string, MiniTupleMaker*> > > myMiniTuple;
    std::map<std::string, std::map<std::string, std::map<std::string, TTree*> > > myTree;
 
+   std::map<std::string, bool> treeInit;
+
 };
 
 #endif
