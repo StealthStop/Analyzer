@@ -1630,11 +1630,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     int shift = inRegionBin[iSubRegion] ? iSubRegion : 100;
 
                                     auto& theGoodJets = NGoodJets[channel];
-                                    auto& theMVAjets  = nMVAJets[channel]; 
                                     if (isQCD)
                                     {
                                         theGoodJets = NGoodJets_CR[channel];
-                                        theMVAjets  = nMVAJets_CR[channel];
                                     }
 
                                     // ---------------------------------------------------------
@@ -1644,10 +1642,9 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     // ---------------------------------------------------------
                                     if (njets == "Incl")
                                     {
-                                        //theMVAjets This is basically hardcoded to be 7 always. However, in the future it shouldn't and the following lines need to be updated then
-                                        my_histos["h_njets_11incl" + name]->Fill(theGoodJets>=11 ? 11 - (theMVAjets-1) + shift*6 : theGoodJets - (theMVAjets-1) + shift*6, w);
-                                        my_histos["h_njets_12incl" + name]->Fill(theGoodJets>=12 ? 12 - (theMVAjets  ) + shift*6 : theGoodJets - (theMVAjets  ) + shift*6, w);
-                                        my_histos["h_njets_13incl" + name]->Fill(theGoodJets>=13 ? 13 - (theMVAjets+1) + shift*6 : theGoodJets - (theMVAjets+1) + shift*6, w);
+                                        my_histos["h_njets_11incl" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
+                                        my_histos["h_njets_12incl" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
+                                        my_histos["h_njets_13incl" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
                                     }
                                 }
                             }
