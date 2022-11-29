@@ -56,7 +56,7 @@ void ResolvedTopTagger_Analyzer::Loop(NTupleReader& tr, double, int maxevents, b
         const auto& NGoodBJets_pt30   = tr.getVar<int>("NGoodBJets_pt30");
         const bool pass_newResolved   = passBaseline0l_pre     
                                        && NNonIsoMuons == 0   && NGoodBJets_pt30 >= 2 
-                                       && NGoodJets_pt30 >= 7 && dR_bjets >= 1.0
+                                       && NGoodJets_pt30 >= 8 && dR_bjets >= 1.0
                                        && passElectronHEMveto;
 
         // -------------------

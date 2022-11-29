@@ -14,7 +14,8 @@ filelist=$4
 analyzer=$5
 CMSSW_VERSION=$6
 eosPath=$7
-fastMode=$8
+cmsConnect=$8
+fastMode=$9
 base_dir=`pwd`
 printf "\n\n base dir is $base_dir\n\n"
 
@@ -76,9 +77,19 @@ printf "\n\n Attempting to run MyAnalysis executable.\n\n"
 printf "\n\n ls output\n"
 ls -l
 
+HOST=$(hostname)
+
 for outfile in MyAnalysis*.root;
 do
-    xrdcp -f $outfile $eosPath/$outfile
+    if [[ ( "$HOST" == *"fnal.gov"* ) && ( "$cmsConnect" -eq 1 ) ]]; then
+        export WEBDAV_ENDPOINT="davs://cmseos.fnal.gov:9000/eos/uscms/store/user/"
+        export OUTDIR=${WEBDAV_ENDPOINT}${eosPath#root://cmseos.fnal.gov//store/user/}
+        echo "env -i X509_USER_PROXY=${X509_USER_PROXY} gfal-copy -f -p $outfile $OUTDIR/$outfile"
+        env -i X509_USER_PROXY=${X509_USER_PROXY} gfal-copy -f -p $outfile $OUTDIR/$outfile
+    else
+        echo "xrdcp -f $outfile $eosPath/$outfile"
+        xrdcp -f $outfile $eosPath/$outfile
+    fi
 done
 
 rm -rf MyAnalysis*.root

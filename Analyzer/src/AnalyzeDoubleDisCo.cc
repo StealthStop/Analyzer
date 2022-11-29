@@ -92,7 +92,12 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 
     channels = {"0", "1", "2"};
     njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12incl", "13incl"};
-    ttvars   = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   };
+    systvars = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown",
+                       "pdfUp", "pdfDown", "sclUp", "sclDown",
+                       "prfUp", "prfDown", "btgUp", "btgDown",
+                       "jetUp", "jetDown", "lepUp", "lepDown",
+                       "puUp",  "puDown"   
+    };
     jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
 
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
@@ -258,10 +263,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     njetStr = "_Njets" + Njet;
 
                 // --------------------------------------------------------------------------            
-                // loop over the tt and ttvars fsrUp/Down, isrUp/Down
-                // to make indivudual histograms with the label tt and ttvars in TT root file
+                // loop over the systvars fsrUp/Down, isrUp/Down, etc.
+                // to make indivudual histograms with the label systvars in root file
                 // --------------------------------------------------------------------------
-                for (const auto& ttvar : ttvars)
+                for (const auto& ttvar : systvars)
                 {
                     // Variations irrelevant for data
                     if (ttvar != "nom" and runtype == "Data")
@@ -357,10 +362,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     njetStr = "_Njets" + Njet;
 
                 // --------------------------------------------------------------------------            
-                // loop over the tt and ttvars fsrUp/Down, isrUp/Down
-                // to make indivudual histograms with the label tt and ttvars in TT root file
+                // loop over the systvars fsrUp/Down, isrUp/Down
+                // to make indivudual histograms with the label systvars in root file
                 // --------------------------------------------------------------------------
-                for (const auto& ttvar : ttvars)
+                for (const auto& ttvar : systvars)
                 {   
                     // Variations irrelevant for data
                     if (ttvar != "nom" and runtype == "Data")
@@ -575,10 +580,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
             std::vector<bool>                                       Baseline_CR                    ;
             std::vector<double>                                     weight_CR                      ;
-            std::vector<double>                                     weight_CR_fsrUp                ;
-            std::vector<double>                                     weight_CR_fsrDown              ;
-            std::vector<double>                                     weight_CR_isrUp                ;
-            std::vector<double>                                     weight_CR_isrDown              ;
             std::vector<std::vector<bool> >                         GoodJets_CR                    ;
             std::vector<int>                                        NGoodJets_CR                   ;
             std::vector<int>                                        NGoodBJets_CR                  ;
@@ -677,6 +678,20 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     weight_fsrDown                 ;
             std::vector<double>                                     weight_isrUp                   ;
             std::vector<double>                                     weight_isrDown                 ;            
+            std::vector<double>                                     weight_sclUp                   ;
+            std::vector<double>                                     weight_sclDown                 ;
+            std::vector<double>                                     weight_pdfUp                   ;
+            std::vector<double>                                     weight_pdfDown                 ;            
+            std::vector<double>                                     weight_prfUp                   ;
+            std::vector<double>                                     weight_prfDown                 ;
+            std::vector<double>                                     weight_btgUp                   ;
+            std::vector<double>                                     weight_btgDown                 ;            
+            std::vector<double>                                     weight_jetUp                   ;
+            std::vector<double>                                     weight_jetDown                 ;
+            std::vector<double>                                     weight_lepUp                   ;
+            std::vector<double>                                     weight_lepDown                 ;            
+            std::vector<double>                                     weight_puUp                   ;
+            std::vector<double>                                     weight_puDown                 ;            
             std::vector<std::vector<bool> >                         GoodJets                       ;
             std::vector<int>                                        NGoodJets                      ;
             std::vector<int>                                        NGoodBJets                     ;
@@ -1020,28 +1035,51 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Jets_flavq_CR.push_back(tr.getVec<float>("Jets" + jecvar + "_bJetTagDeepFlavourtotq"));
 
                 // ---------------------------------------------------------------------------
-                // Calculate the event weights for tt and ttvars fsrUp/Down, isrUp/Down
+                // Calculate the event weights for systvars fsrUp/Down, isrUp/Down, etc
                 //  -- fsr/isr are event weight based variations
                 //  -- calculate event weights for them
-                //  -- make histograms for tt and ttvars fsrUp/Down, isrUp/Down in TT root file
+                //  -- make histograms for systvars fsrUp/Down, isrUp/Down in root file
                 // ----------------------------------------------------------------------------
-                double theWeight = 1.0;
+                double theWeight       = 1.0;
+                double theWeightQCDCR  = 1.0;
                 double theWeight_fsrUp = 1.0, theWeight_fsrDown = 1.0;
                 double theWeight_isrUp = 1.0, theWeight_isrDown = 1.0;
+                double theWeight_sclUp = 1.0, theWeight_sclDown = 1.0;
+                double theWeight_pdfUp = 1.0, theWeight_pdfDown = 1.0;
+                double theWeight_prfUp = 1.0, theWeight_prfDown = 1.0;
+                double theWeight_lepUp = 1.0, theWeight_lepDown = 1.0;
+                double theWeight_jetUp = 1.0, theWeight_jetDown = 1.0;
+                double theWeight_btgUp = 1.0, theWeight_btgDown = 1.0;
+                double theWeight_puUp  = 1.0, theWeight_puDown  = 1.0;
                 if(runtype == "MC" )
                 {
-                    // tt event weight
-                    auto totalWeight = tr.getVar<double>("TotalWeight" + jecvar);
-                    theWeight *= totalWeight;
-                    // ttvars fsrUp/Down, isrUp/Down event weights
-                    const auto& PSweight_fsrUp   = tr.getVar<double>("PSweight_FSRUp"   + jecvar);
-                    const auto& PSweight_fsrDown = tr.getVar<double>("PSweight_FSRDown" + jecvar);
-                    const auto& PSweight_isrUp   = tr.getVar<double>("PSweight_ISRUp"   + jecvar);
-                    const auto& PSweight_isrDown = tr.getVar<double>("PSweight_ISRDown" + jecvar);
-                    theWeight_fsrUp   *= totalWeight * PSweight_fsrUp;
-                    theWeight_fsrDown *= totalWeight * PSweight_fsrDown;
-                    theWeight_isrUp   *= totalWeight * PSweight_isrUp;
-                    theWeight_isrDown *= totalWeight * PSweight_isrDown;
+                    theWeight         = tr.getVar<double>("TotalWeight_" + channel + "l"         + jecvar);
+                    theWeightQCDCR    = tr.getVar<double>("TotalWeight_" + channel + "l_QCDCR"   + jecvar);
+                    theWeight_fsrUp   = tr.getVar<double>("TotalWeight_" + channel + "l_FSRup"   + jecvar);
+                    theWeight_fsrDown = tr.getVar<double>("TotalWeight_" + channel + "l_FSRdown" + jecvar);
+                    theWeight_isrUp   = tr.getVar<double>("TotalWeight_" + channel + "l_ISRup"   + jecvar);
+                    theWeight_isrDown = tr.getVar<double>("TotalWeight_" + channel + "l_ISRdown" + jecvar);
+                    theWeight_sclUp   = tr.getVar<double>("TotalWeight_" + channel + "l_SclUp"   + jecvar);
+                    theWeight_sclDown = tr.getVar<double>("TotalWeight_" + channel + "l_SclDown" + jecvar);
+                    theWeight_pdfUp   = tr.getVar<double>("TotalWeight_" + channel + "l_PDFup"   + jecvar);
+                    theWeight_pdfDown = tr.getVar<double>("TotalWeight_" + channel + "l_PDFdown" + jecvar);
+                    theWeight_prfUp   = tr.getVar<double>("TotalWeight_" + channel + "l_PrfUp"   + jecvar);
+                    theWeight_prfDown = tr.getVar<double>("TotalWeight_" + channel + "l_PrfDown" + jecvar);
+                    theWeight_btgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_BtgUp"   + jecvar);
+                    theWeight_btgDown = tr.getVar<double>("TotalWeight_" + channel + "l_BtgDown" + jecvar);
+                    theWeight_puUp    = tr.getVar<double>("TotalWeight_" + channel + "l_PUup"    + jecvar);
+                    theWeight_puDown  = tr.getVar<double>("TotalWeight_" + channel + "l_PUdown"  + jecvar);
+
+                    if (channel != "0")
+                    {
+                        theWeight_lepUp   = tr.getVar<double>("TotalWeight_" + channel + "l_LepUp"   + jecvar);
+                        theWeight_lepDown = tr.getVar<double>("TotalWeight_" + channel + "l_LepDown" + jecvar);
+                    }
+                    else
+                    {
+                        theWeight_jetUp   = tr.getVar<double>("TotalWeight_" + channel + "l_JetUp"   + jecvar);
+                        theWeight_jetDown = tr.getVar<double>("TotalWeight_" + channel + "l_JetDown" + jecvar);
+                    }
                 }
                 
                 // baseline
@@ -1050,12 +1088,23 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 weight_fsrDown.push_back(theWeight_fsrDown);
                 weight_isrUp.push_back(theWeight_isrUp);
                 weight_isrDown.push_back(theWeight_isrDown);
+                weight_sclUp.push_back(theWeight_sclUp);
+                weight_sclDown.push_back(theWeight_sclDown);
+                weight_pdfUp.push_back(theWeight_pdfUp);
+                weight_pdfDown.push_back(theWeight_pdfDown);
+                weight_prfUp.push_back(theWeight_prfUp);
+                weight_prfDown.push_back(theWeight_prfDown);
+                weight_lepUp.push_back(theWeight_lepUp);
+                weight_lepDown.push_back(theWeight_lepDown);
+                weight_jetUp.push_back(theWeight_jetUp);
+                weight_jetDown.push_back(theWeight_jetDown);
+                weight_btgUp.push_back(theWeight_btgUp);
+                weight_btgDown.push_back(theWeight_btgDown);
+                weight_puUp.push_back(theWeight_puUp);
+                weight_puDown.push_back(theWeight_puDown);
+
                 // qcd cr
-                weight_CR.push_back(theWeight);
-                weight_CR_fsrUp.push_back(theWeight_fsrUp);
-                weight_CR_fsrDown.push_back(theWeight_fsrDown);
-                weight_CR_isrUp.push_back(theWeight_isrUp);
-                weight_CR_isrDown.push_back(theWeight_isrDown);
+                weight_CR.push_back(theWeightQCDCR);
             }
 
             Debug("Preparing cut map", __LINE__);
@@ -1165,10 +1214,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         njetsStr = "_Njets" + njets;
     
                     // --------------------------------------------------------------------------            
-                    // loop over the tt and ttvars fsrUp/Down, isrUp/Down
-                    // to make indivudual histograms with the label tt and ttvars in TT root file
+                    // loop over the tt and systvars fsrUp/Down, isrUp/Down
+                    // to make indivudual histograms with the label tt and systvars in TT root file
                     // --------------------------------------------------------------------------
-                    for (const auto& ttvar : ttvars)
+                    for (const auto& ttvar : systvars)
                     {   
                         Debug("Top of ttvar loop for ttvar: " + ttvar, __LINE__);
 
@@ -1187,30 +1236,82 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                         double w = 1.0;
 
-                        // get the event weights for fsrUp/Down, isrUp/Down
+                        // get the event weights for fsrUp/Down, isrUp/Down, etc.
                         if (ttvar == "nom")
                         {
                             w  = !isQCD ? weight[channel] : weight_CR[channel];
                         }
-                        
                         else if (ttvar == "fsrUp")
                         {
-                            w = !isQCD ? weight_fsrUp[channel] : weight_CR_fsrUp[channel];
+                            w = weight_fsrUp[channel];
                         }
-
                         else if (ttvar == "fsrDown")
                         {
-                            w = !isQCD ? weight_fsrDown[channel] : weight_CR_fsrDown[channel];
+                            w = weight_fsrDown[channel];
                         }
-                        
                         else if (ttvar == "isrUp")
                         {
-                            w = !isQCD ? weight_isrUp[channel] : weight_CR_isrUp[channel];
+                            w =weight_isrUp[channel];
                         }
-
                         else if (ttvar == "isrDown")
                         {
-                            w = !isQCD ? weight_isrDown[channel] : weight_CR_isrDown[channel];
+                            w = weight_isrDown[channel];
+                        }
+                        else if (ttvar == "pdfUp")
+                        {
+                            w = weight_pdfUp[channel];
+                        }
+                        else if (ttvar == "pdfDown")
+                        {
+                            w = weight_pdfDown[channel];
+                        }
+                        else if (ttvar == "prfUp")
+                        {
+                            w =weight_prfUp[channel];
+                        }
+                        else if (ttvar == "prfDown")
+                        {
+                            w = weight_prfDown[channel];
+                        }
+                        else if (ttvar == "btgUp")
+                        {
+                            w = weight_btgUp[channel];
+                        }
+                        else if (ttvar == "btgDown")
+                        {
+                            w = weight_btgDown[channel];
+                        }
+                        else if (ttvar == "jetUp")
+                        {
+                            w =weight_jetUp[channel];
+                        }
+                        else if (ttvar == "jetDown")
+                        {
+                            w = weight_jetDown[channel];
+                        }
+                        else if (ttvar == "lepUp")
+                        {
+                            w =weight_lepUp[channel];
+                        }
+                        else if (ttvar == "lepDown")
+                        {
+                            w = weight_lepDown[channel];
+                        }
+                        else if (ttvar == "puUp")
+                        {
+                            w =weight_puUp[channel];
+                        }
+                        else if (ttvar == "puDown")
+                        {
+                            w = weight_puDown[channel];
+                        }
+                        else if (ttvar == "sclUp")
+                        {
+                            w =weight_sclUp[channel];
+                        }
+                        else if (ttvar == "sclDown")
+                        {
+                            w = weight_sclDown[channel];
                         }
 
                         // -----------------

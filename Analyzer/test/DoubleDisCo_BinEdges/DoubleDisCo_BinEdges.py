@@ -50,7 +50,7 @@ class BinEdges():
 
             for sample in samples:
 
-                # get the fsr/isr higtograms from TT root file
+                # get the fsr/isr, jec/jer higtograms from TT root file
                 ttvarStr = ""
 
                 if sample == "TT_fsrDown":
@@ -64,6 +64,18 @@ class BinEdges():
                 
                 elif sample == "TT_isrUp":
                     ttvarStr = "_isrUp"
+
+                elif sample == "TT_JECdown":
+                    ttvarStr = "_JECdown"
+
+                elif sample == "TT_JECup":
+                    ttvarStr = "_JECup"
+
+                elif sample == "TT_JERdown":
+                    ttvarStr = "_JERdown"
+            
+                elif sample == "TT_JERup":
+                    ttvarStr = "_JERup"
             
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr) 
             

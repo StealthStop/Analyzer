@@ -275,20 +275,30 @@ def main():
 
     if options.haddOther:
         # Hack to make the BG_OTHER.root file
-        other_2016preVFP  = ["2016preVFP_Triboson",  "2016preVFP_Diboson.root",  "2016preVFP_DYJetsToLL_M-50.root",  "2016preVFP_WJets.root"]
-        other_2016postVFP = ["2016postVFP_Triboson", "2016postVFP_Diboson.root", "2016postVFP_DYJetsToLL_M-50.root", "2016postVFP_WJets.root"]
-        other_2017        = ["2017_Triboson",        "2017_Diboson.root",        "2017_DYJetsToLL_M-50.root",        "2017_WJets.root"]
-        other_2018        = ["2018_Triboson",        "2018_Diboson.root",        "2018_DYJetsToLL_M-50.root",        "2018_WJets.root"]
+        other_2016preVFP  = ["2016preVFP_Triboson",  "2016preVFP_Diboson",  "2016preVFP_DYJetsToLL_M-50",  "2016preVFP_WJets"]
+        other_2016postVFP = ["2016postVFP_Triboson", "2016postVFP_Diboson", "2016postVFP_DYJetsToLL_M-50", "2016postVFP_WJets"]
+        other_2017        = ["2017_Triboson",        "2017_Diboson",        "2017_DYJetsToLL_M-50",        "2017_WJets"]
+        other_2018        = ["2018_Triboson",        "2018_Diboson",        "2018_DYJetsToLL_M-50",        "2018_WJets"]
         other = other_2016preVFP + other_2016postVFP + other_2017 + other_2018
 
         files = ""
+        files_skim = ""
+
         for sampleCollection in scl:
+
             sl = sc.sampleList(sampleCollection)
             if sampleCollection in datasets and sampleCollection in other: 
                 directory = sampleCollection
                 files += " %s/%s.root " % (outDir, directory)
+
+            if sampleCollection in datasets and sampleCollection in other:
+                directory = sampleCollection
+                files_skim += " %s/%s_skim.root " % (outDir, directory)
+
         if options.year:
             command = "hadd %s %s/%s_BG_OTHER.root %s" % (haddArgs, outDir, options.year, files)
+            command = "hadd %s %s/%s_BG_OTHER_skim.root %s" % (haddArgs, outDir, options.year, files_skim)
+
         else:
             command = "hadd %s %s/BG_OTHER.root %s" % (haddArgs, outDir, files)
         print "-----------------------------------------------------------"

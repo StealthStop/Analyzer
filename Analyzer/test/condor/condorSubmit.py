@@ -96,10 +96,11 @@ def main():
         userName = options.userOverride
 
     hostName = environ["HOSTNAME"]
+    cmsConnect = "uscms.org" in hostName
 
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
-    eosDir     = "%s//store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
+    eosDir     = "%s/store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
 
     if os.path.isdir(workingDir):
         print red("Job directory already exists and cannot proceed safely ! Exiting...")
@@ -223,7 +224,7 @@ def main():
                 for startFileNum in xrange(0, count, nFilesPerJob):
                     numberOfJobs+=1
 
-                    fileParts.append("Arguments = %s %i %i %s %s %s %s %d\n"%(n, nFilesPerJob, startFileNum, s, options.analyze, environ["CMSSW_VERSION"], eosDir + "/" + stubDir, options.fastMode))
+                    fileParts.append("Arguments = %s %i %i %s %s %s %s %d %d\n"%(n, nFilesPerJob, startFileNum, s, options.analyze, environ["CMSSW_VERSION"], eosDir + "/" + stubDir, cmsConnect, options.fastMode))
                     fileParts.append("Output    = %s/%s/MyAnalysis_%s_%i.stdout\n"%(workingDir, logsDir, n, startFileNum))
                     fileParts.append("Error     = %s/%s/MyAnalysis_%s_%i.stderr\n"%(workingDir, logsDir, n, startFileNum))
                     fileParts.append("Log       = %s/%s/MyAnalysis_%s_%i.log\n"%(workingDir,    logsDir, n, startFileNum))
