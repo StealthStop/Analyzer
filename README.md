@@ -64,6 +64,11 @@ The requirements for condor submission are:
  - One or more tarballs to unpack on the worker node, these usually contain a slimmed down CMSSW area, and your executable with any needed libraries
  - A so-called jdl file that contains the condor setup and specifies the jobs to be submitted
 The last two items are produced by a python script called [condorSubmit.py](Analyzer/test/condor/condorSubmit.py). 
+An example call to the submission script would be:
+
+```
+python condorSubmit.py --analyze AnalyzeDoubleDisCo --output DisCoAnaOutput -d "2016preVFP_TT,2016preVFP_QCD" -n 20
+```
 
 ```
 [condor]$ python condorSubmit.py -h
@@ -87,6 +92,26 @@ The MyAnalysis program has been updated to have these same switches.
 MyAnalysis now also uses the samples code to keep track of datasets, their cross sections, 6nd their names. 
 To see a list of available datasets, you can call the submission script with the `-l` or `-L` options. Pass the list of datasets you want to run over to the script with the option `-d`. 
 Before submitting jobs, make sure to have called `voms-proxy-init`. 
+
+In the event that jobs fail and do not send their output to EOS, a script is provided that can resubmit these missing jobs.
+Thus, all that is required is the original job folder in `condor` as well as the corresponding output folder in EOS.
+The cleanup script compares the total possible jobs (via `.log` files) to the output `.root` files to identify jobs that did not complete correctly.
+Given the example call to `condorSubmit.py` up above, a corrsponding call to the cleanup script would be:
+
+```
+python condorSubmit.py --analyze AnalyzeDoubleDisCo --jobdir DisCoAnaOutput
+```
+Usage: cleanupSubmit.py [options]
+
+
+Options:
+  -h, --help         show this help message and exit
+  -c                 Do not submit jobs.  Only create condor_submit.txt.
+  -s                 Run Analyzer in fast mode
+  -u USEROVERRIDE    Override username with something else
+  --jobdir=JOBDIR    Name of directory where output of each condor job goes
+  --analyze=ANALYZE  AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep,
+                     Analyze1Lep, MakeNJetDists
 
 ## Making stack plots
 
