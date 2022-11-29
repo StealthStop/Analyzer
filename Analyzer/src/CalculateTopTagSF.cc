@@ -105,7 +105,7 @@ void CalculateTopTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
                     else if ( top->getType() == TopObject::MERGED_TOP )
                     {
                         my_2d_histos["d_eff_mrg_"+filetag]->Fill( top->P().Pt(), top->P().Eta(), eventweight );
-                        if( top->getDiscriminator() > resolvedWP ) my_2d_histos["n_eff_mrg_"+filetag]->Fill( top->P().Pt(), top->P().Eta(), eventweight ); 
+                        if( top->getDiscriminator() > mergedWP ) my_2d_histos["n_eff_mrg_"+filetag]->Fill( top->P().Pt(), top->P().Eta(), eventweight ); 
                     }
                 }
                 // Mistag when dealing with a fake top i.e. no GEN top present
