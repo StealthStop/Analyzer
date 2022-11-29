@@ -54,6 +54,7 @@ getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_v1.1 -o -m DoubleDisCo_Reg.cfg -M Do
 
 Analyzer modules are run via the main "controlling" script `MyAnalysis.C`, which handles several different arguments.
 
+```
 Options:
    -c : runOnCondor  An internally specified argument which is used to signify when running on a condor cluster node
    -v : isQuiet      When specified, print logging information while running (custom to a specific analyzer) 
@@ -64,6 +65,7 @@ Options:
    -N : nFiles       Number of files (per data set) to process
    -M : startFile    Which file in the data set filelist to start processing at
    -E : maxEvts      Absolute maximum number of events to process for each data set
+```
 
 An example of running MyAnalysis interactively is
 ```
@@ -74,12 +76,15 @@ cd $CMSSW_BASE/src/Analyzer/Analyzer/test/
 ## Condor submission
 
 The `condor` subdirectory contains some scripts to help submit jobs via condor on the cmslpc cluster. 
+
+```
 The requirements for condor submission are: 
- (1) A shell script to run on the worker node. This script should set up the working area, copy any needed files, call `MyAnalysis.C` with the right options, and make sure the output gets copied to the user's EOS area.
+ 1. A shell script to run on the worker node. This script should set up the working area, copy any needed files, call `MyAnalysis.C` with the right options, and make sure the output gets copied to the user's EOS area.
      - The example included here is [run_Analyzer_condor.sh](Analyzer/test/condor/run_Analyzer_condor.sh)
- (2) One or more tarballs to unpack on the worker node, these usually contain a slimmed down CMSSW area, and the `MyAnalysis` executable with any needed libraries
- (3) A so-called jdl file that contains the condor setup and specifies the jobs to be submitted
+ 2. One or more tarballs to unpack on the worker node, these usually contain a slimmed down CMSSW area, and the `MyAnalysis` executable with any needed libraries
+ 3. A so-called jdl file that contains the condor setup and specifies the jobs to be submitted
      - The last two items are produced by a python script called [condorSubmit.py](Analyzer/test/condor/condorSubmit.py). 
+```
 
 An example call to the condor submission script would be:
 
