@@ -92,7 +92,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 
     channels = {"0", "1", "2"};
     njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12incl", "13incl"};
-    systvars = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown"   
+    systvars = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown",
                        "pdfUp", "pdfDown", "sclUp", "sclDown",
                        "prfUp", "prfDown", "btgUp", "btgDown",
                        "jetUp", "jetDown", "lepUp", "lepDown",
