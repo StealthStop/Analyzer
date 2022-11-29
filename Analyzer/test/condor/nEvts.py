@@ -27,7 +27,11 @@ def getNEvtsProcess(fileURL, tree):
         print "ERROR: unable to open fileURL"
         return None
     tree = f.Get(tree)
-    isData = not bool(tree.GetBranch("GenHT"))
+
+    if not tree:
+        return np.array((0, 0))
+
+    isData = not bool(tree.GetBranch("GenParticles"))
 
     if not tree:
         print "ERROR: tree is empty"

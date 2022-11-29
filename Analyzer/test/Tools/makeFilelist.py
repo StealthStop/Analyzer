@@ -8,26 +8,30 @@ from collections import defaultdict, OrderedDict
 
 class FileLister:
 
-    def __init__(self, production, tag, forSkim=False):
+    def __init__(self, production, tag, doSkim=False):
 
         self.production   = production
         self.tag          = tag
+        self.doSkim       = doSkim
 
-        if not forSkim:
+        # Whether we are generating file lists for a TreeMaker ntuple data set or a skimmed data set
+        # created by our MakeMiniTree, we need to adjust some input paths, tree names, output folder names, etc
+        if not doSkim:
             self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s"%(production)
             self.ttreePath    = "TreeMaker2/PreSelection"
             self.ttreePathSig = "PreSelection"
             self.tempFileName = "tmp.txt"
             self.workingDir   = "filelists_Kevin_%s/"%(production)
-            self.fileListPath = "filelists"
         else:
-            self.filesDir     = "/store/user/lpcsusystealth/Skims"%(production)
-            self.ttreePath    = "SkimmedTree"
-            self.ttreePathSig = "SkimmedTree"
+            self.filesDir     = "/store/user/lpcsusystealth/StealthStop/Skims"
+            self.ttreePath    = "PreSelection"
+            self.ttreePathSig = "PreSelection"
             self.tempFileName = "tmp.txt"
             self.workingDir   = "filelists_Kevin_%s_skim/"%(production)
-            self.fileListPath = "filelists_skim"
 
+        self.fileListPath = "filelists"
+
+        # This works as long as the user jhiltb maintains a TreeMaker setup here and it is up-to-date
         self.treeMakerDir = "/uscms/home/jhiltb/nobackup/susy/ZeroAndTwoLep/CMSSW_10_6_29_patch1/src/TreeMaker/WeightProducer/python"
 
         # Dictionary for holding information about samples
@@ -69,16 +73,18 @@ class FileLister:
         for line in payload:
             if ".root" not in line:
                 continue
-            temp = line.decode("utf8").strip()
+            temp = str(line.strip())
             fileName = temp.split(" ")[0].split("/")[-1]
             lines.append(fileName)    
 
         return self.naturalSort(lines)
 
+    # Specific wrapper to summon eos command to do a simple ls
+    # Used for listing directories without needing to know modification time
     def listDirsEOS(self, path):
         proc = subprocess.Popen(["eos", "root://cmseos.fnal.gov", "ls", path], stdout=subprocess.PIPE)
         payload = proc.stdout.readlines()
-        lines = [line.decode("utf8").strip() for line in payload]
+        lines = [str(line.strip()) for line in payload]
 
         return lines
 
@@ -146,6 +152,9 @@ class FileLister:
     
         return bestGroupMatch
     
+    # Function taken from a stack overflow post which sorts a list naturally i.e.
+    # ["1_file.root", "11_file.root", "12_file.root", "2_file.root"] ===>
+    # ["1_file.root", "2_file.root", "11_file.root", "12_file.root"]
     def naturalSort(self, unsortedList): 
 
         convert      = lambda text: int(text) if text.isdigit() else text.lower() 
@@ -153,7 +162,8 @@ class FileLister:
 
         return sorted(unsortedList, key=alphanum_key)
     
-    # Extract event numbers from MCSample files in the TreeMaker area
+    # Extract event count numbers from MCSample files in the TreeMaker area
+    # The MCSample files report NposEvts+NnegEvts and NposEvts-NnegEvts
     def getEventCounts(self):
     
         for year in ["16", "16APV", "17", "18"]:
@@ -245,9 +255,13 @@ class FileLister:
 
         allFileList = []
 
+        extraSubDir = ""
+        if self.doSkim:
+            extraSubDir = "/output-files/"
+
         # Will get a list of folders corresponding to data and MC eras
         # i.e. Summer20UL16 or Run2017D-UL2017-v2
-        eraDirs = self.listDirsEOS("%s/*UL*"%(self.filesDir))
+        eraDirs = self.listDirsEOS("%s/*"%(self.filesDir))
         for eraDir in eraDirs:
 
             # Skip any ROOT file at this level
@@ -255,14 +269,14 @@ class FileLister:
 
             # Within each eraDir, get the list of folders, each corresponding
             # to a single unique sample i.e. ZZZ_TuneCP5_13TeV-amcatnlo-pythia8
-            sampleDirs = self.listDirsEOS("%s/%s"%(self.filesDir, eraDir))
+            sampleDirs = self.listDirsEOS("%s/%s%s"%(self.filesDir, eraDir, extraSubDir))
             for sampleDir in sampleDirs:
 
                 if "300to1400" in sampleDir:
                     continue
 
-                fileList = self.listFilesEOS("%s/%s/%s"%(self.filesDir, eraDir, sampleDir))
-                
+                fileList = self.listFilesEOS("%s/%s%s/%s"%(self.filesDir, eraDir, extraSubDir, sampleDir))
+
                 # Finally within each sampleDir is a set of ROOT files
                 for aFile in fileList:
         
@@ -270,20 +284,41 @@ class FileLister:
                         continue
         
                     era = ""
-                    if   ("UL2016" in eraDir and "HIPM" in eraDir) or "UL16APV" in eraDir: 
+                    if   ("UL2016" in eraDir and "HIPM" in eraDir) or "UL16APV" in eraDir or "preVFP" in eraDir: 
                         era = "2016APV"
-                    elif "UL2016" in eraDir or "UL16" in eraDir: 
+                    elif "UL2016" in eraDir or "UL16" in eraDir or "postVFP" in eraDir: 
                         era = "2016"
-                    elif "UL2017" in eraDir or "UL17" in eraDir: 
+                    elif "UL2017" in eraDir or "UL17" in eraDir or "2017" in eraDir: 
                         era = "2017"
-                    elif "UL2018" in eraDir or "UL18" in eraDir: 
+                    elif "UL2018" in eraDir or "UL18" in eraDir or "2018" in eraDir: 
                         era = "2018"
                     else:
                         continue
         
                     newName = sampleDir.replace("_ext1", "").replace("_ext2", "").replace("_ext3", "").replace("_backup", "")
-                    newline = "root://cmseos.fnal.gov/" + self.filesDir + "/" + eraDir + "/" + sampleDir + "/" + aFile + "\n"
-                    self.samples[era][era + "_" + newName].append(newline)
+                    newline = "root://cmseos.fnal.gov/" + self.filesDir + "/" + eraDir + "%s/"%(extraSubDir) + sampleDir + "/" + aFile + "\n"
+
+                    # For skims, we will extra the newName per file
+                    # This then will aline the naming with how it is setup in sampleSet.cfg
+                    # Thus, if skims are for 2016_TT, it will still separate into TTToSemiLeptonic, TTToHadronic, TTTo2L2Nu
+                    temp = None
+                    if "MyAnalysis" in aFile:
+
+                        # Start with aFile = /some/path/MyAnalysis_2016postVFP_Data_JetHT_420.root
+                        # Now temp1 = 2016postVFP_Data_JetHT_420.root
+                        temp = aFile.rpartition("MyAnalysis_")[-1]
+
+                        # Now split off year to get temp1 = JetHT_420.root
+                        temp = temp.partition("_")[-1]
+
+                        # Finally split off anything related to job number
+                        temp = temp.rpartition("_")[0]
+
+                    else:
+                        temp = newName
+ 
+                    self.samples[era][era + "_" + temp].append(newline)
+
     
     # Write out a txt file for each sample with the list of corresponding files
     def writeFileLists(self):
@@ -306,8 +341,12 @@ class FileLister:
                 if "GJets" in sample or "TGamma" in sample or "QCD_Pt" in sample or "ZJetsToNuNu" in sample  or \
                    "MET" in sample or "HTMHT" in sample or "SinglePhoton" in sample or "genMET" in sample:
                     continue
+            
+                extraText = ""
+                if self.doSkim:
+                    extraText = "_skim"
 
-                newfile = open("filelists_Kevin_%s/"%(self.production) + sample + ".txt", 'w')
+                newfile = open(self.workingDir + sample + extraText + ".txt", 'w')
         
                 xsec       = "-1,"
                 nposevents = "-1,"
@@ -324,16 +363,18 @@ class FileLister:
                     name += "_Incl"
         
                 # For any data set, insert "Data" string into name
-                name = name.replace("SingleMuon", "Data_SingleMuon").replace("SingleElectron", "Data_SingleElectron") \
-                           .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
+                if "Data" not in name:
+                    name = name.replace("SingleMuon", "Data_SingleMuon").replace("SingleElectron", "Data_SingleElectron") \
+                               .replace("JetHT", "Data_JetHT").replace("EGamma", "Data_SingleElectron")
 
+                # Use the other alias for the two 2016s...the naming conventions are terrible...
                 name = name.replace("2016_", "2016postVFP_").replace("2016APV_", "2016preVFP_")
         
                 # Restrict to madgraph DY sample
                 if "DYJetsToLL" in name and "NLO" in name:
                     continue
         
-                # Special case in some boson samples to remove extra string
+                # Special case in some boson and single top samples to remove extra string
                 name = name.replace("_4F", "").replace("_4f", "").replace("_M125", "").replace("_5f_InclusiveDecays", "_Incl").replace("_5f_inclusiveDecays", "_Incl")
         
                 for f in sampleLists[sample]:
@@ -355,6 +396,11 @@ class FileLister:
                     print("No group found for sample with name \"%s\"---skipping !"%(name))
                     continue
 
+                # For skim sample sets, append the "_skim" suffix
+                if self.doSkim:
+                    name   += "_skim"
+                    sample += "_skim"
+                
                 name   += ","
                 sample += ".txt,"
 
@@ -366,8 +412,14 @@ class FileLister:
                     name = name.replace("_mSo-100", "") \
                                .replace("_mN1-100", "")
 
-                finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(45), self.fileListPath, sample.ljust(90), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
-    
+                if self.doSkim:
+                    # Here we cannot get the number of events for the skims, because they were made outside TreeMaker
+                    # So just put in the true number of events (based on dictionary in TreeMaker)
+                    # We will run nEvts.py in any case to fix the numbers in the end
+                    finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s %s %s\n"%(name.ljust(45), self.fileListPath, sample.ljust(90), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+                else:
+                    finalDict[sampleGroup][name] = "%s %s, %s %s, %s %s %s %s\n"%(name.ljust(45), self.fileListPath, sample.ljust(90), ttreePath.rjust(len(self.ttreePath)), xsec.rjust(14), nposevents.rjust(12), nnegevents.rjust(12), kfactor.rjust(6))
+   
             self.writeSampleSet(finalDict)
 
     # Append lines to the sampleSets file for each sample
@@ -401,7 +453,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--prod", dest="prod", help="Unique tag for output", type=str,            default="V20")
-    parser.add_argument("--tag" , dest="tag" , help="Path to PU file"      , type=str,            default="UL_v1")
+    parser.add_argument("--tag" , dest="tag" , help="Path to PU file"      , type=str,            default="UL_v2")
     parser.add_argument("--skim", dest="skim", help="Make for skim"        , action="store_true", default=False)
     args = parser.parse_args()
     
