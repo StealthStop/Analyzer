@@ -4,6 +4,7 @@ ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetOptStat("")
 ROOT.gStyle.SetLineWidth(2)
 ROOT.gStyle.SetFrameLineWidth(1)
+ROOT.gStyle.SetTitleSize(0.035,"t")
 #ROOT.gStyle.SetEndErrorSize(0)
 ROOT.gStyle.SetPaintTextFormat("3.3f")
 ROOT.TH1.SetDefaultSumw2()
@@ -23,21 +24,25 @@ parser.add_argument("--dataset"  , dest="dataset"  , help="The muon or electron 
 
 arg = parser.parse_args()
 
-def setMinimumErrors(dataMcRatio):
+def updateErrors(hist,den):
 
-    xbins = dataMcRatio.GetXaxis().GetNbins()+1
-    ybins = dataMcRatio.GetYaxis().GetNbins()+1
+    xbins = hist.GetXaxis().GetNbins()+1
+    ybins = hist.GetYaxis().GetNbins()+1
 
-    for xbin in xrange(xbins):
-        for ybin in xrange(ybins):
+    for xbin in range(1,xbins):
+        for ybin in range(1,ybins):
 
-            content = dataMcRatio.GetBinContent(xbin,ybin)
-            error = dataMcRatio.GetBinError(xbin,ybin)
+            content = hist.GetBinContent(xbin,ybin)
+            error = hist.GetBinError(xbin,ybin)
 
+            # If eff = 1 (errors undefined), set conservative, symmetric errors equal to Clopper-Pearson lower interval distance
+            if content == 1.0 and error < 1e-10: 
+                error = 1.0 - (ROOT.Math.normal_cdf(-1,1,0))**(1.0 / den.GetBinContent(xbin,ybin))
+                hist.SetBinError(xbin,ybin,error)
             if error < 1e-10:
-                
-                newerror = content*0.03
-                dataMcRatio.SetBinError(xbin,ybin,newerror)
+                print('WARNING: Error in bin ({},{}) is < 1e-10. Setting error to 3% of bin content.'.format(xbin,ybin))
+                error = content*0.03
+                hist.SetBinError(xbin,ybin,error)
 
 def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
 
@@ -56,6 +61,8 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen):
 
     dataRatio = dataNum.Clone(); mcRatio = mcNum.Clone(); dataMcRatio = dataNum.Clone()
     dataRatio.Divide(dataNum, dataDen, 1, 1, "B"); mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
+    updateErrors(dataRatio,dataDen)
+    updateErrors(mcRatio,mcDen)
     dataMcRatio.Divide(dataRatio, mcRatio)
     dataMcRatio.SetTitle("")
 
@@ -163,34 +170,34 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
     dataRatio = dataNum.Clone(); mcRatio = mcNum.Clone(); dataMcRatio = dataNum.Clone()
     dataRatio.Divide(dataNum, dataDen, 1, 1, "B"); mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
+    updateErrors(dataRatio,dataDen)
+    updateErrors(mcRatio,mcDen)
     dataMcRatio.Divide(dataRatio, mcRatio)
     dataMcRatio.SetTitle("")
 
-    dataRatio.GetZaxis().SetRangeUser(0.8,1.2)
-    dataRatio.SetTitle(""); mcRatio.SetTitle("")
+    dataRatio.GetZaxis().SetRangeUser(0.5,1.0)
+    dataRatio.SetTitle("#epsilon_{{ {},Data}} for N_{{jets}} #geq {}".format("e" if "el" in dataNum.GetName() else "#mu" ,dataNum.GetName().split("jCut")[0][-1]))
     dataRatio.GetYaxis().SetTitle("#eta"); dataRatio.GetXaxis().SetTitle("p_{T} [GeV]")
     dataRatio.GetYaxis().SetTitleSize(YTitleSize); dataRatio.GetXaxis().SetTitleSize(XTitleSize)
     dataRatio.GetYaxis().SetLabelSize(YLabelSize); dataRatio.GetXaxis().SetLabelSize(XLabelSize)
     dataRatio.GetYaxis().SetTitleOffset(YTitleOffset); dataRatio.GetXaxis().SetTitleOffset(XTitleOffset)
     dataRatio.SetContour(255)
 
-    mcRatio.GetZaxis().SetRangeUser(0.80,1.2)
-    mcRatio.SetTitle(""); mcRatio.SetTitle("")
+    mcRatio.GetZaxis().SetRangeUser(0.5,1.0)
+    mcRatio.SetTitle("#epsilon_{{ {},MC}} for N_{{jets}} #geq {}".format("e" if "el" in dataNum.GetName() else "#mu" ,dataNum.GetName().split("jCut")[0][-1]))
     mcRatio.GetYaxis().SetTitle("#eta"); mcRatio.GetXaxis().SetTitle("p_{T} [GeV]")
     mcRatio.GetYaxis().SetTitleSize(YTitleSize); mcRatio.GetXaxis().SetTitleSize(XTitleSize)
     mcRatio.GetYaxis().SetLabelSize(YLabelSize); mcRatio.GetXaxis().SetLabelSize(XLabelSize)
     mcRatio.GetYaxis().SetTitleOffset(YTitleOffset); mcRatio.GetXaxis().SetTitleOffset(XTitleOffset)
     mcRatio.SetContour(255)
 
-    dataMcRatio.GetZaxis().SetRangeUser(0.65,1.05)
-    dataMcRatio.SetTitle(""); dataMcRatio.SetTitle("")
+    dataMcRatio.GetZaxis().SetRangeUser(0.5,1.1)
+    dataMcRatio.SetTitle("SF_{{{}}} for N_{{jets}} #geq {}".format("e" if "el" in dataNum.GetName() else "#mu" ,dataNum.GetName().split("jCut")[0][-1]))
     dataMcRatio.GetYaxis().SetTitle("#eta"); dataMcRatio.GetXaxis().SetTitle("p_{T} [GeV]")
     dataMcRatio.GetYaxis().SetTitleSize(YTitleSize); dataMcRatio.GetXaxis().SetTitleSize(XTitleSize)
     dataMcRatio.GetYaxis().SetLabelSize(YLabelSize); dataMcRatio.GetXaxis().SetLabelSize(XLabelSize)
     dataMcRatio.GetYaxis().SetTitleOffset(YTitleOffset); dataMcRatio.GetXaxis().SetTitleOffset(XTitleOffset)
     dataMcRatio.SetContour(255)
-
-    setMinimumErrors(dataMcRatio)
 
     if "5jCut" in aName and "trig" in aName:
         outputFile.cd()
@@ -220,14 +227,14 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     mark.SetNDC(True)
 
     mark.SetTextAlign(11)
-    mark.SetTextSize(0.055)
+    mark.SetTextSize(0.04)
     mark.SetTextFont(61)
     mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
 
     mark.SetTextFont(52)
-    mark.SetTextSize(0.045)
+    mark.SetTextSize(0.035)
 
-    mark.DrawLatex(LeftMargin + 0.13, 1 - (TopMargin - 0.017), "Work in Progress")
+    mark.DrawLatex(LeftMargin + 0.095, 1 - (TopMargin - 0.017), "Work in Progress")
 
     mark.SetTextFont(42)
     mark.SetTextAlign(31)
@@ -235,7 +242,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
     aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s/2D/%s.pdf"%(tag,year,"data_"+theName))
 
-    aCanvas = ROOT.TCanvas("c_mc_%s"%(theName), "c_mc_%s"%(theName), 1500, 1200)
+    aCanvas = ROOT.TCanvas("c_mc_%s"%(theName), "c_mc_%s"%(theName), 1400, 1400)
     ROOT.gPad.Clear()
     aCanvas.cd()
     ROOT.gPad.SetTopMargin(TopMargin)
@@ -249,14 +256,14 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     mark.SetNDC(True)
 
     mark.SetTextAlign(11)
-    mark.SetTextSize(0.050)
+    mark.SetTextSize(0.04)
     mark.SetTextFont(61)
     mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
 
     mark.SetTextFont(52)
-    mark.SetTextSize(0.040)
+    mark.SetTextSize(0.035)
 
-    mark.DrawLatex(LeftMargin + 0.14, 1 - (TopMargin - 0.017), "Work in Progress")
+    mark.DrawLatex(LeftMargin + 0.095, 1 - (TopMargin - 0.017), "Work in Progress")
 
     mark.SetTextFont(42)
     mark.SetTextAlign(31)
@@ -278,14 +285,14 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     mark.SetNDC(True)
 
     mark.SetTextAlign(11)
-    mark.SetTextSize(0.045)
+    mark.SetTextSize(0.04)
     mark.SetTextFont(61)
     mark.DrawLatex(LeftMargin, 1 - (TopMargin - 0.015), "CMS")
 
     mark.SetTextFont(52)
     mark.SetTextSize(0.035)
 
-    mark.DrawLatex(LeftMargin + 0.105, 1 - (TopMargin - 0.017), "Work in Progress")
+    mark.DrawLatex(LeftMargin + 0.095, 1 - (TopMargin - 0.017), "Work in Progress")
 
     mark.SetTextFont(42)
     mark.SetTextAlign(31)
@@ -300,7 +307,7 @@ if __name__ == '__main__':
     binTags      = [ "Eta", "Pt" ]
     ptTags       = [ "pt40" ]
     trigTags     = [ "trig" ] 
-    nJetCutTags  = [ "5" ]
+    nJetCutTags  = [ "1","2","3","4","5" ]
 
     basePath = arg.basePath
     inputDir = arg.inputDir
@@ -316,9 +323,13 @@ if __name__ == '__main__':
     if dataset == "electron": dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleElectron.root")
     elif dataset == "muon": dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleMuon.root")
 
-
     outputPath = "./triggerEfficiencySF_plots/%s/%s"%(tag,arg.year)
     outputFileName = "%s_TrigEff.root"%(year)
+
+    if not os.path.exists(outputPath): 
+      print(outputPath + '/1D')
+      os.makedirs(outputPath + '/1D')
+      os.makedirs(outputPath + '/2D')
 
     outputFile = ROOT.TFile.Open("%s/%s"%(outputPath,outputFileName), "UPDATE")
 
