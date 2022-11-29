@@ -77,8 +77,8 @@ cd $CMSSW_BASE/src/Analyzer/Analyzer/test/
 
 The `condor` subdirectory contains some scripts to help submit jobs via condor on the cmslpc cluster. 
 
-```
 The requirements for condor submission are: 
+```
  1. A shell script to run on the worker node. This script should set up the working area, copy any needed files, call `MyAnalysis.C` with the right options, and make sure the output gets copied to the user's EOS area.
      - The example included here is [run_Analyzer_condor.sh](Analyzer/test/condor/run_Analyzer_condor.sh)
  2. One or more tarballs to unpack on the worker node, these usually contain a slimmed down CMSSW area, and the `MyAnalysis` executable with any needed libraries
@@ -91,6 +91,7 @@ An example call to the condor submission script would be:
 ```
 python condorSubmit.py --analyze AnalyzeDoubleDisCo --output DisCoAnaOutput -d "2016preVFP_TT,2016preVFP_QCD" -n 20
 ```
+where possible arguments are
 
 ```
 Usage: condorSubmit.py [options]
@@ -124,6 +125,9 @@ Given the example call to `condorSubmit.py` up above, a corresponding call to th
 ```
 python condorSubmit.py --analyze AnalyzeDoubleDisCo --jobdir DisCoAnaOutput
 ```
+with available options given as
+
+```
 Usage: cleanupSubmit.py [options]
 
 Options:
@@ -134,6 +138,7 @@ Options:
   --jobdir=JOBDIR    Name of directory where output of each condor job goes
   --analyze=ANALYZE  AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep,
                      Analyze1Lep, MakeNJetDists
+```
 
 ## Making stack plots
 
