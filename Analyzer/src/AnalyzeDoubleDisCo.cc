@@ -1065,14 +1065,21 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     theWeight_pdfDown = tr.getVar<double>("TotalWeight_" + channel + "l_PDFdown" + jecvar);
                     theWeight_prfUp   = tr.getVar<double>("TotalWeight_" + channel + "l_PrfUp"   + jecvar);
                     theWeight_prfDown = tr.getVar<double>("TotalWeight_" + channel + "l_PrfDown" + jecvar);
-                    theWeight_lepUp   = tr.getVar<double>("TotalWeight_" + channel + "l_LepUp"   + jecvar);
-                    theWeight_lepDown = tr.getVar<double>("TotalWeight_" + channel + "l_LepDown" + jecvar);
-                    theWeight_jetUp   = tr.getVar<double>("TotalWeight_" + channel + "l_JetUp"   + jecvar);
-                    theWeight_jetDown = tr.getVar<double>("TotalWeight_" + channel + "l_JetDown" + jecvar);
                     theWeight_btgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_BtgUp"   + jecvar);
                     theWeight_btgDown = tr.getVar<double>("TotalWeight_" + channel + "l_BtgDown" + jecvar);
-                    theWeight_puUp    = tr.getVar<double>("TotalWeight_" + channel + "l_puUp"    + jecvar);
-                    theWeight_puDown  = tr.getVar<double>("TotalWeight_" + channel + "l_puDown"  + jecvar);
+                    theWeight_puUp    = tr.getVar<double>("TotalWeight_" + channel + "l_PUup"    + jecvar);
+                    theWeight_puDown  = tr.getVar<double>("TotalWeight_" + channel + "l_PUdown"  + jecvar);
+
+                    if (channel != "0")
+                    {
+                        theWeight_lepUp   = tr.getVar<double>("TotalWeight_" + channel + "l_LepUp"   + jecvar);
+                        theWeight_lepDown = tr.getVar<double>("TotalWeight_" + channel + "l_LepDown" + jecvar);
+                    }
+                    else
+                    {
+                        theWeight_jetUp   = tr.getVar<double>("TotalWeight_" + channel + "l_JetUp"   + jecvar);
+                        theWeight_jetDown = tr.getVar<double>("TotalWeight_" + channel + "l_JetDown" + jecvar);
+                    }
                 }
                 
                 // baseline
