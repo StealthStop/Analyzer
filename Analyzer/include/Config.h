@@ -425,6 +425,19 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="CalculateTopTagSF")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else if(analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
