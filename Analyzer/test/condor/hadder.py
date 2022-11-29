@@ -275,10 +275,19 @@ def main():
 
     if options.haddOther:
         # Hack to make the BG_OTHER.root file
-        other_2016preVFP  = ["2016preVFP_Triboson",  "2016preVFP_Diboson.root",  "2016preVFP_DYJetsToLL_M-50.root",  "2016preVFP_WJets.root"]
-        other_2016postVFP = ["2016postVFP_Triboson", "2016postVFP_Diboson.root", "2016postVFP_DYJetsToLL_M-50.root", "2016postVFP_WJets.root"]
-        other_2017        = ["2017_Triboson",        "2017_Diboson.root",        "2017_DYJetsToLL_M-50.root",        "2017_WJets.root"]
-        other_2018        = ["2018_Triboson",        "2018_Diboson.root",        "2018_DYJetsToLL_M-50.root",        "2018_WJets.root"]
+        other_2016preVFP  = ["2016preVFP_ST",      "2016preVFP_Triboson",      "2016preVFP_Diboson",      "2016preVFP_DYJetsToLL_M-50",      "2016preVFP_WJets",
+                             "2016preVFP_ST_skim", "2016preVFP_Triboson_skim", "2016preVFP_Diboson_skim", "2016preVFP_DYJetsToLL_M-50_skim", "2016preVFP_WJets_skim"
+        ]
+        other_2016postVFP  = ["2016postVFP_ST",      "2016postVFP_Triboson",      "2016postVFP_Diboson",      "2016postVFP_DYJetsToLL_M-50",      "2016postVFP_WJets",
+                              "2016postVFP_ST_skim", "2016postVFP_Triboson_skim", "2016postVFP_Diboson_skim", "2016postVFP_DYJetsToLL_M-50_skim", "2016postVFP_WJets_skim"
+        ]
+        other_2017  = ["2017_ST",      "2017_Triboson",      "2017_Diboson",      "2017_DYJetsToLL_M-50",      "2017_WJets",
+                       "2017_ST_skim", "2017_Triboson_skim", "2017_Diboson_skim", "2017_DYJetsToLL_M-50_skim", "2017_WJets_skim"
+        ]
+        other_2018  = ["2018_ST",      "2018_Triboson",      "2018_Diboson",      "2018_DYJetsToLL_M-50",      "2018_WJets",
+                       "2018_ST_skim", "2018_Triboson_skim", "2018_Diboson_skim", "2018_DYJetsToLL_M-50_skim", "2018_WJets_skim"
+        ]
+
         other = other_2016preVFP + other_2016postVFP + other_2017 + other_2018
 
         files = ""
@@ -287,10 +296,15 @@ def main():
             if sampleCollection in datasets and sampleCollection in other: 
                 directory = sampleCollection
                 files += " %s/%s.root " % (outDir, directory)
+
+        extraStr = ""
+        if "skim" in files:
+            extraStr = "_skim"
+
         if options.year:
-            command = "hadd %s %s/%s_BG_OTHER.root %s" % (haddArgs, outDir, options.year, files)
+            command = "hadd %s %s/%s_BG_OTHER%s.root %s" % (haddArgs, outDir, options.year, extraStr, files)
         else:
-            command = "hadd %s %s/BG_OTHER.root %s" % (haddArgs, outDir, files)
+            command = "hadd %s %s/BG_OTHER%s.root %s" % (haddArgs, outDir, extraStr, files)
         print "-----------------------------------------------------------"
         print command
         print "-----------------------------------------------------------"
@@ -298,11 +312,15 @@ def main():
         
     if options.haddData:
         # Hack to make the Data.root file (hadd all the data together)
-        dataFiles = ["Data_SingleMuon.root",             "Data_SingleElectron.root",             "Data_JetHT.root",
-                     "2016preVFP_Data_SingleMuon.root",  "2016preVFP_Data_SingleElectron.root",  "2016preVFP_Data_JetHT.root",
-                     "2016postVFP_Data_SingleMuon.root", "2016postVFP_Data_SingleElectron.root", "2016postVFP_Data_JetHT.root",
-                     "2017_Data_SingleMuon.root",        "2017_Data_SingleElectron.root",        "2017_Data_JetHT.root",
-                     "2018_Data_SingleMuon.root",        "2018_Data_SingleElectron.root",        "2018_Data_JetHT.root"]
+        dataFiles = ["2016preVFP_Data_SingleMuon.root",       "2016preVFP_Data_SingleElectron.root",       "2016preVFP_Data_JetHT.root",
+                     "2016postVFP_Data_SingleMuon.root",      "2016postVFP_Data_SingleElectron.root",      "2016postVFP_Data_JetHT.root",
+                     "2017_Data_SingleMuon.root",             "2017_Data_SingleElectron.root",             "2017_Data_JetHT.root",
+                     "2018_Data_SingleMuon.root",             "2018_Data_SingleElectron.root",             "2018_Data_JetHT.root",
+                     "2016preVFP_Data_SingleMuon_skim.root",  "2016preVFP_Data_SingleElectron_skim.root",  "2016preVFP_Data_JetHT_skim.root",
+                     "2016postVFP_Data_SingleMuon_skim.root", "2016postVFP_Data_SingleElectron_skim.root", "2016postVFP_Data_JetHT_skim.root",
+                     "2017_Data_SingleMuon_skim.root",        "2017_Data_SingleElectron_skim.root",        "2017_Data_JetHT_skim.root",
+                     "2018_Data_SingleMuon_skim.root",        "2018_Data_SingleElectron_skim.root",        "2018_Data_JetHT_skim.root"]
+
         if options.year:
             command = "hadd %s %s/%s_Data.root " % (haddArgs, outDir,options.year)
         else:

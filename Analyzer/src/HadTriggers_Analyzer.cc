@@ -103,7 +103,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& NGoodBJets_pt45       = tr.getVar<int>("NGoodBJets_pt45");
         const auto& HT_trigger_pt45       = tr.getVar<double>("HT_trigger_pt45");
         const auto& passBaseline0l_pt45   = tr.getVar<bool>("passBaseline0l_pt45");
-        const auto& passTriggerMuonsRefAN = tr.getVar<bool>("passTriggerMuonsRefAN");
+        const auto& passTriggerMuon       = tr.getVar<bool>("passTriggerMuon");
         const auto& passTriggerAllHad     = tr.getVar<bool>("passTriggerAllHad");
 
         bool pass_1bjetCut   = NGoodBJets_pt45 == 1;
@@ -182,21 +182,21 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             // ---------------------------------------------------------
             const std::map<std::string, bool> cut_map_combHadMuTriggers
             {
-                { "CombHadIsoMu_trig_1bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_1bjetCut   },
-                { "CombHadIsoMu_trig_ge1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge1bjetCut },
-                { "CombHadIsoMu_trig_2bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_2bjetCut   },
-                { "CombHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge2bjetCut },
-                { "CombHadIsoMu_trig_3bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_3bjetCut   },
-                { "CombHadIsoMu_trig_ge3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge3bjetCut },
-                { "CombHadIsoMu_trig_ge4bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge4bjetCut },
+                { "CombHadIsoMu_trig_1bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_1bjetCut   },
+                { "CombHadIsoMu_trig_ge1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge1bjetCut },
+                { "CombHadIsoMu_trig_2bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_2bjetCut   },
+                { "CombHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge2bjetCut },
+                { "CombHadIsoMu_trig_3bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_3bjetCut   },
+                { "CombHadIsoMu_trig_ge3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge3bjetCut },
+                { "CombHadIsoMu_trig_ge4bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge4bjetCut },
 
-                { "CombHadIsoMu_noTrig_1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_1bjetCut   },
-                { "CombHadIsoMu_noTrig_ge1bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge1bjetCut },               
-                { "CombHadIsoMu_noTrig_2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_2bjetCut   },
-                { "CombHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge2bjetCut },
-                { "CombHadIsoMu_noTrig_3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_3bjetCut   },
-                { "CombHadIsoMu_noTrig_ge3bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge3bjetCut },
-                { "CombHadIsoMu_noTrig_ge4bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge4bjetCut },
+                { "CombHadIsoMu_noTrig_1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && pass_1bjetCut   },
+                { "CombHadIsoMu_noTrig_ge1bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge1bjetCut },               
+                { "CombHadIsoMu_noTrig_2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && pass_2bjetCut   },
+                { "CombHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge2bjetCut },
+                { "CombHadIsoMu_noTrig_3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && pass_3bjetCut   },
+                { "CombHadIsoMu_noTrig_ge3bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge3bjetCut },
+                { "CombHadIsoMu_noTrig_ge4bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge4bjetCut },
             };
             fillHistosRefAN(cut_map_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
 
@@ -205,19 +205,19 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             // --------------------------------------------------------
             //const std::map<std::string, bool> cut_map2_combHadMuTriggers
             //{
-            //    { "CombHadIsoMu_trig_ge6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad                    },    
-            //    { "CombHadIsoMu_trig_6jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_6jetCut    },
-            //    { "CombHadIsoMu_trig_7jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_7jetCut    },
-            //    { "CombHadIsoMu_trig_8jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_8jetCut    },
-            //    { "CombHadIsoMu_trig_9jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_9jetCut    },
-            //    { "CombHadIsoMu_trig_ge10jetCut_pt45",   passBaseline0l_pt45 && passTriggerMuonsRefAN && passTriggerAllHad && pass_ge10jetCut },
+            //    { "CombHadIsoMu_trig_ge6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad                    },    
+            //    { "CombHadIsoMu_trig_6jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_6jetCut    },
+            //    { "CombHadIsoMu_trig_7jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_7jetCut    },
+            //    { "CombHadIsoMu_trig_8jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_8jetCut    },
+            //    { "CombHadIsoMu_trig_9jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_9jetCut    },
+            //    { "CombHadIsoMu_trig_ge10jetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge10jetCut },
 
-            //    { "CombHadIsoMu_noTrig_ge6jetCut_pt45",  passBaseline0l_pt45 && passTriggerMuonsRefAN                    },
-            //    { "CombHadIsoMu_noTrig_6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_6jetCut    },
-            //    { "CombHadIsoMu_noTrig_7jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_7jetCut    },
-            //    { "CombHadIsoMu_noTrig_8jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_8jetCut    },
-            //    { "CombHadIsoMu_noTrig_9jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_9jetCut    },
-            //    { "CombHadIsoMu_noTrig_ge10jetCut_pt45", passBaseline0l_pt45 && passTriggerMuonsRefAN && pass_ge10jetCut },
+            //    { "CombHadIsoMu_noTrig_ge6jetCut_pt45",  passBaseline0l_pt45 && passTriggerMuon                    },
+            //    { "CombHadIsoMu_noTrig_6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_6jetCut    },
+            //    { "CombHadIsoMu_noTrig_7jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_7jetCut    },
+            //    { "CombHadIsoMu_noTrig_8jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_8jetCut    },
+            //    { "CombHadIsoMu_noTrig_9jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_9jetCut    },
+            //    { "CombHadIsoMu_noTrig_ge10jetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge10jetCut },
 
             //};
             //fillHistosRefAN(cut_map2_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight); 

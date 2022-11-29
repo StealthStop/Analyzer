@@ -105,12 +105,13 @@ def main():
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
 
-    labels = [ #"0l_0.6_0.6",
+    labels = [ "0l_0.6_0.6",
                "1l_0.6_0.6", 
                "2l_0.6_0.6",
+               #"1l_0.95_0.61",
              ]
 
-    path = "year_TT_TTvar_Syst_label.root"
+    path = "year_TT_TTvar_Syst_RPV_550_label.root"
     
     years = [#"2016",
              #"2016preVFP" ,
@@ -178,12 +179,12 @@ def main():
 
         # create output directory for each year
         os.makedirs("%s_plots_MCcorrectionFactorRatio/"%(year))
-    
+
         # ----------------------
         # loop over the channels
         # ----------------------
         for label in labels:
-    
+
             # open root files
             file1 = path.replace("year", year).replace("label", label)
             f1    = ROOT.TFile.Open(file1, "READ")
