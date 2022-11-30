@@ -106,38 +106,40 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         if( maxevents != -1 && tr.getEvtNum() >= maxevents ) break;
         if( tr.getEvtNum() % 1000 == 0) printf( " Event %i\n", tr.getEvtNum() );
 
-        const auto& runtype                   = tr.getVar<std::string>("runtype");     
-        const auto& RunNum                    = tr.getVar<unsigned int>("RunNum");
-        const auto& Jets                      = tr.getVec<utility::LorentzVector>("Jets");
-        const auto& GoodLeptons               = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
-        const auto& GoodJets_pt30             = tr.getVec<bool>("GoodJets_pt30");
-        const auto& GoodBJets_pt30            = tr.getVec<bool>("GoodBJets_pt30");
-        const auto& NGoodLeptons              = tr.getVar<int>("NGoodLeptons");
-        const auto& NGoodJets_pt30            = tr.getVar<int>("NGoodJets_pt30");
-        const auto& NGoodBJets_pt30           = tr.getVar<int>("NGoodBJets_pt30");
-        const auto& HT_trigger_pt30           = tr.getVar<double>("HT_trigger_pt30");
-        const auto& met                       = tr.getVar<float>("MET");
-        const auto& lvMET_cm_m                = tr.getVar<double>("lvMET_cm_m");
-        const auto& lvMET_cm_eta              = tr.getVar<double>("lvMET_cm_eta");
-        const auto& lvMET_cm_phi              = tr.getVar<double>("lvMET_cm_phi");
-        const auto& lvMET_cm_pt               = tr.getVar<double>("lvMET_cm_pt");
-        const auto& fwm2_top6                 = tr.getVar<double>("fwm2_top6");
-        const auto& fwm3_top6                 = tr.getVar<double>("fwm3_top6");
-        const auto& fwm4_top6                 = tr.getVar<double>("fwm4_top6");
-        const auto& fwm5_top6                 = tr.getVar<double>("fwm5_top6");
-        const auto& fwm6_top6                 = tr.getVar<double>("fwm6_top6");
-        const auto& fwm7_top6                 = tr.getVar<double>("fwm7_top6");
-        const auto& fwm8_top6                 = tr.getVar<double>("fwm8_top6");
-        const auto& fwm9_top6                 = tr.getVar<double>("fwm9_top6");
-        const auto& fwm10_top6                = tr.getVar<double>("fwm10_top6");
-        const auto& jmt_ev0_top6              = tr.getVar<double>("jmt_ev0_top6");
-        const auto& jmt_ev1_top6              = tr.getVar<double>("jmt_ev1_top6");
-        const auto& jmt_ev2_top6              = tr.getVar<double>("jmt_ev2_top6");
-        const auto& event_beta_z              = tr.getVar<double>("event_beta_z");
-        const auto& passBaseline_0l           = tr.getVar<bool>("passBaseline0l_Good");
-        const auto& passBaseline_1l           = tr.getVar<bool>("passBaseline1l_Good");
-        const auto& passBaseline_0l_noHEMveto = tr.getVar<bool>("passBaseline0l_Good_noHEMveto");
-        const auto& passBaseline_1l_noHEMveto = tr.getVar<bool>("passBaseline1l_Good_noHEMveto");
+        const auto& runtype                       = tr.getVar<std::string>("runtype");     
+        const auto& RunNum                        = tr.getVar<unsigned int>("RunNum");
+        const auto& Jets                          = tr.getVec<utility::LorentzVector>("Jets"                               );
+        const auto& GoodLeptons                   = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
+        const auto& GoodJets_pt30                 = tr.getVec<bool>("GoodJets_pt30"                                        );
+        const auto& GoodBJets_pt30                = tr.getVec<bool>("GoodBJets_pt30"                                       );
+        const auto& NGoodLeptons                  = tr.getVar<int>("NGoodLeptons"                                          );
+        const auto& NGoodJets_pt30                = tr.getVar<int>("NGoodJets_pt30"                                        );
+        const auto& NGoodBJets_pt30               = tr.getVar<int>("NGoodBJets_pt30"                                       );
+        const auto& HT_trigger_pt30               = tr.getVar<double>("HT_trigger_pt30"                                    );
+        const auto& met                           = tr.getVar<float>("MET"                                                 );
+        const auto& lvMET_cm_m                    = tr.getVar<double>("lvMET_cm_m"                                         );
+        const auto& lvMET_cm_eta                  = tr.getVar<double>("lvMET_cm_eta"                                       );
+        const auto& lvMET_cm_phi                  = tr.getVar<double>("lvMET_cm_phi"                                       );
+        const auto& lvMET_cm_pt                   = tr.getVar<double>("lvMET_cm_pt"                                        );
+        const auto& fwm2_top6                     = tr.getVar<double>("fwm2_top6"                                          );
+        const auto& fwm3_top6                     = tr.getVar<double>("fwm3_top6"                                          );
+        const auto& fwm4_top6                     = tr.getVar<double>("fwm4_top6"                                          );
+        const auto& fwm5_top6                     = tr.getVar<double>("fwm5_top6"                                          );
+        const auto& fwm6_top6                     = tr.getVar<double>("fwm6_top6"                                          );
+        const auto& fwm7_top6                     = tr.getVar<double>("fwm7_top6"                                          );
+        const auto& fwm8_top6                     = tr.getVar<double>("fwm8_top6"                                          );
+        const auto& fwm9_top6                     = tr.getVar<double>("fwm9_top6"                                          );
+        const auto& fwm10_top6                    = tr.getVar<double>("fwm10_top6"                                         );
+        const auto& jmt_ev0_top6                  = tr.getVar<double>("jmt_ev0_top6"                                       );
+        const auto& jmt_ev1_top6                  = tr.getVar<double>("jmt_ev1_top6"                                       );
+        const auto& jmt_ev2_top6                  = tr.getVar<double>("jmt_ev2_top6"                                       );
+        const auto& event_beta_z                  = tr.getVar<double>("event_beta_z"                                       );
+        const auto& passBaseline0l_Good           = tr.getVar<bool>("passBaseline0l_Good"                                  );
+        const auto& passBaseline1l_Good           = tr.getVar<bool>("passBaseline1l_Good"                                  );
+        const auto& passBaseline2l_Good           = tr.getVar<bool>("passBaseline2l_Good"                                  );
+        const auto& passBaseline0l_Good_noHEMveto = tr.getVar<bool>("passBaseline0l_Good_noHEMveto"                        );
+        const auto& passBaseline1l_Good_noHEMveto = tr.getVar<bool>("passBaseline1l_Good_noHEMveto"                        );
+        const auto& passBaseline2l_Good_noHEMveto = tr.getVar<bool>("passBaseline2l_Good_noHEMveto"                        );
 
         // -------------------
         // -- Define weight
@@ -179,10 +181,12 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------------------------------------
         const std::map<std::string, bool>& cutmap
         {
-            {"passBaseline_0l",           passBaseline_0l},
-            {"passBaseline_1l",           passBaseline_1l}, 
-            {"passBaseline_0l_noHEMveto", passBaseline_0l_noHEMveto},
-            {"passBaseline_1l_noHEMveto", passBaseline_1l_noHEMveto}, 
+            {"passBaseline0l_Good",           passBaseline0l_Good          },
+            {"passBaseline1l_Good",           passBaseline1l_Good          },
+            {"passBaseline2l_Good",           passBaseline2l_Good          },  
+            {"passBaseline0l_Good_noHEMveto", passBaseline0l_Good_noHEMveto},
+            {"passBaseline1l_Good_noHEMveto", passBaseline1l_Good_noHEMveto},
+            {"passBaseline2l_Good_noHEMveto", passBaseline2l_Good_noHEMveto},
         };
 
         if (!inithisto) 
@@ -272,7 +276,7 @@ void HEM_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                         if (!GoodJets_pt30[goodJet]) { continue; }
 
-                        my_histos["h_jetPt_HEM_"          +cutVar.first]->Fill( Jets[goodJet].Pt(), weight               );
+                        my_histos["h_jetPt_HEM_"          +cutVar.first]->Fill( Jets[goodJet].Pt(),  weight                      );
                         my_2d_histos["h_jet_EtaVsPhi_HEM_"+cutVar.first]->Fill( Jets[goodJet].Eta(), Jets[goodJet].Phi(), weight ); 
 
                         if (GoodBJets_pt30[goodJet])
