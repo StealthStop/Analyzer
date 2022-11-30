@@ -392,7 +392,7 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
-        else if(analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateSFMean")
+        else if(analyzer=="Analyze2LepTrigger" || analyzer=="AnalyzeLepTrigger" || analyzer=="HadTriggers_Analyzer" || analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
