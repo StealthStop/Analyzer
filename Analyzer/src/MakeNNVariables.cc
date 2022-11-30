@@ -202,9 +202,21 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                             "stop2_ptrank_mass"+myVarSuffix,
                         };
 
-                        std::set<std::string> varLeptonic =
+                        std::set<std::string> varSemiLeptonic =
                         {
                             "Mbl"+myVarSuffix,
+                            "lvMET_cm_m"+myVarSuffix,
+                            "lvMET_cm_eta"+myVarSuffix,
+                            "lvMET_cm_phi"+myVarSuffix,
+                            "lvMET_cm_pt"+myVarSuffix,
+                            "GoodLeptons_m_1"+myVarSuffix,  
+                            "GoodLeptons_eta_1"+myVarSuffix,
+                            "GoodLeptons_phi_1"+myVarSuffix,
+                            "GoodLeptons_pt_1"+myVarSuffix, 
+                        };
+
+                        std::set<std::string> varLeptonic =
+                        {
                             "lvMET_cm_m"+myVarSuffix,
                             "lvMET_cm_eta"+myVarSuffix,
                             "lvMET_cm_phi"+myVarSuffix,
@@ -245,6 +257,15 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                             "top1_mass_cm"+myVarSuffix, "top2_mass_cm"+myVarSuffix,
                         };
 
+                        std::set<std::string> var6toLastJet =
+                        {
+                            "combined6thToLastJet_pt_cm"+myVarSuffix,
+                            "combined6thToLastJet_eta_cm"+myVarSuffix,
+                            "combined6thToLastJet_phi_cm"+myVarSuffix,
+                            "combined6thToLastJet_m_cm"+myVarSuffix,
+                            "combined6thToLastJet_E_cm"+myVarSuffix,
+                        };
+
                         std::set<std::string> var7toLastJet =
                         {
                             "combined7thToLastJet_pt_cm"+myVarSuffix,
@@ -252,6 +273,15 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                             "combined7thToLastJet_phi_cm"+myVarSuffix,
                             "combined7thToLastJet_m_cm"+myVarSuffix,
                             "combined7thToLastJet_E_cm"+myVarSuffix,
+                        };
+
+                        std::set<std::string> var8toLastJet =
+                        {
+                            "combined8thToLastJet_pt_cm"+myVarSuffix,
+                            "combined8thToLastJet_eta_cm"+myVarSuffix,
+                            "combined8thToLastJet_phi_cm"+myVarSuffix,
+                            "combined8thToLastJet_m_cm"+myVarSuffix,
+                            "combined8thToLastJet_E_cm"+myVarSuffix,
                         };
 
                         // -----------------------------------------------
@@ -298,13 +328,24 @@ void MakeNNVariables::Loop(NTupleReader& tr, double, int maxevents, bool)
                             myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varChannelSpecific);
                             myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varJets);
                             myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varOldSeed);
-                            myMiniTuple[split][channel][myVarSuffix]->setTupleVars(var7toLastJet);
-                            myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varLeptonic);
                     
                             if (channel == "0l") 
                             {
+                                myMiniTuple[split][channel][myVarSuffix]->setTupleVars(var8toLastJet);
                                 myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varTopSeed);
                                 myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varTops);
+                            }
+
+                            if (channel == "1l")
+                            {
+                                myMiniTuple[split][channel][myVarSuffix]->setTupleVars(var7toLastJet);
+                                myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varSemiLeptonic);
+                            }
+
+                            if (channel == "2l")
+                            {
+                                myMiniTuple[split][channel][myVarSuffix]->setTupleVars(var6toLastJet);
+                                myMiniTuple[split][channel][myVarSuffix]->setTupleVars(varLeptonic);
                             }
 
                             myMiniTuple[split][channel][myVarSuffix]->initBranches(tr);
