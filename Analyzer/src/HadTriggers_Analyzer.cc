@@ -17,21 +17,17 @@ void HadTriggers_Analyzer::InitHistos()
 
     my_histos.emplace( "EventCounter", std::make_shared<TH1D>( "EventCounter", "EventCounter", 2, -1.1, 1.1 ) ) ;
 
-    std::vector<std::string> effTags      { "denominator", "numerator"                                                                };
-    std::vector<std::string> combTrigTags { "CombHadIsoMu"                                                                            }; 
-    std::vector<std::string> trigTags     { "trig", "noTrig"                                                                          };
+    std::vector<std::string> effTags      { "den", "num"                                                                              };
+    std::vector<std::string> combTrigTags { "jet"                                                                                     }; 
+    std::vector<std::string> trigTags     { "trig"                                                                                    };
     std::vector<std::string> nBJetCutTags { "1bjetCut", "ge1bjetCut", "2bjetCut", "ge2bjetCut", "3bjetCut", "ge3bjetCut", "ge4bjetCut"};
-    //std::vector<std::string> nJetCutTags  { "ge6jetCut", "6jetCut", "7jetCut", "8jetCut", "9jetCut", "ge10jetCut"                     };
-    std::vector<std::string> ptTags       { "pt45"                                                                                    }; 
 
     const int htbins   = 6;
     const int ptbins   = 4;
-    const int njetbins = 9;
     const int bjetbins = 3;
     double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000};
-    double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 90};
-    double njetbinEdges[njetbins + 1] = {6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    double bjetbinEdges[bjetbins + 1] = {1.5, 2.5, 3.5, 8};
+    double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 90                };
+    double bjetbinEdges[bjetbins + 1] = {1.5, 2.5, 3.5, 8                  };
 
     // ---------------------------------------------------------
     // latest triggers and preselctions with pt45 with nbjet cut
@@ -44,46 +40,16 @@ void HadTriggers_Analyzer::InitHistos()
             {
                 for( std::string nBJetCutTag : nBJetCutTags )
                 {
-                    for( std::string ptTag : ptTags )
-                    {
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HT").c_str(), htbins, htbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NJet").c_str(), njetbins, njetbinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
+                        // 1D - Efficiency
+                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_wJetHtBin", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_wJetHtBin").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_wJetHtBin").c_str(), htbins, htbinEdges ) );
+                        my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_w6thJetPtBin", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_w6thJetPtBin").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_w6thJetPtBin").c_str(), ptbins, ptbinEdges ) );
+                        // 2D - Scale Factor
+                        my_2d_histos.emplace( "h2_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_wJetHt6thJetPtBin", std::make_shared<TH2D>( ( "h2_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_wJetHt6thJetPtBin" ).c_str(), ( "h2_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_wJetHt6thJetPtBin" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
 
-                        my_2d_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nBJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
-
-                    }
                 }
             }
         }
     }   
-
-    // --------------------------------------------------------
-    // latest triggers and preselctions with pt45 with njet cut
-    // --------------------------------------------------------
-    //for( std::string effTag : effTags )
-    //{
-    //    for( std::string combTrigTag : combTrigTags )
-    //    {
-    //        for( std::string trigTag : trigTags )
-    //        {
-    //            for( std::string nJetCutTag : nJetCutTags )
-    //            {
-    //                for( std::string ptTag : ptTags )
-    //                {
-    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HT").c_str(), htbins, htbinEdges ) );
-    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_6thJetPt").c_str(), ptbins, ptbinEdges ) );
-    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NJet").c_str(), njetbins, njetbinEdges ) );                        
-    //                    my_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet", std::make_shared<TH1D>(("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet").c_str(), ("h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_NBJet").c_str(), bjetbins, bjetbinEdges ) );
-
-    //                    my_2d_histos.emplace( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt", std::make_shared<TH2D>( ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), ( "h_"+effTag+"_"+combTrigTag+"_"+trigTag+"_"+nJetCutTag+"_"+ptTag+"_HTvs6thJetPt" ).c_str(), htbins, htbinEdges, ptbins, ptbinEdges ) );
-
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 
 } //
 
@@ -95,29 +61,23 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& eventCounter        = tr.getVar<int>("eventCounter");
         my_histos["EventCounter"]->Fill( eventCounter );
 
-        const auto& runtype               = tr.getVar<std::string>("runtype");
-        const auto& filetag               = tr.getVar<std::string>("filetag");
-        const auto& Jets                  = tr.getVec<utility::LorentzVector>("Jets");
-        const auto& GoodJets_pt45         = tr.getVec<bool>("GoodJets_pt45");
-        const auto& NGoodJets_pt45        = tr.getVar<int>("NGoodJets_pt45");
-        const auto& NGoodBJets_pt45       = tr.getVar<int>("NGoodBJets_pt45");
-        const auto& HT_trigger_pt45       = tr.getVar<double>("HT_trigger_pt45");
-        const auto& passBaseline0l_pt45   = tr.getVar<bool>("passBaseline0l_pt45");
-        const auto& passTriggerMuon       = tr.getVar<bool>("passTriggerMuon");
-        const auto& passTriggerAllHad     = tr.getVar<bool>("passTriggerAllHad");
+        const auto& runtype                = tr.getVar<std::string>("runtype");
+        const auto& filetag                = tr.getVar<std::string>("filetag");
+        const auto& Jets                   = tr.getVec<utility::LorentzVector>("Jets");
+        const auto& GoodJets_pt45          = tr.getVec<bool>("GoodJets_pt45");
+        const auto& NGoodJets_pt45         = tr.getVar<int>("NGoodJets_pt45");
+        const auto& NGoodBJets_pt45        = tr.getVar<int>("NGoodBJets_pt45");
+        const auto& HT_trigger_pt45        = tr.getVar<double>("HT_trigger_pt45");
+        const auto& passBaseline0l_trigEff = tr.getVar<bool>("passBaseline0l_trigEff");
+        const auto& passTriggerMuon        = tr.getVar<bool>("passTriggerMuon");
+        const auto& passTriggerAllHad      = tr.getVar<bool>("passTriggerAllHad");
 
         bool pass_1bjetCut   = NGoodBJets_pt45 == 1;
-        bool pass_ge1bjetCut = NGoodBJets_pt45 >= 1;
         bool pass_2bjetCut   = NGoodBJets_pt45 == 2;
         bool pass_ge2bjetCut = NGoodBJets_pt45 >= 2;
         bool pass_3bjetCut   = NGoodBJets_pt45 == 3;
         bool pass_ge3bjetCut = NGoodBJets_pt45 >= 3;
         bool pass_ge4bjetCut = NGoodBJets_pt45 >= 4;
-        //bool pass_6jetCut    = NGoodJets_pt45 == 6;
-        //bool pass_7jetCut    = NGoodJets_pt45 == 7;
-        //bool pass_8jetCut    = NGoodJets_pt45 == 8;
-        //bool pass_9jetCut    = NGoodJets_pt45 == 9;
-        //bool pass_ge10jetCut = NGoodJets_pt45 >= 10;
 
         // -----------------------------------------
         // get the 6th jet pt for reference analysis
@@ -177,51 +137,19 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // ---------------------------------------------------------
         if ( (filetag.find("Data_SingleMuon") != std::string::npos || runtype == "MC") )
         {
-            // ---------------------------------------------------------
-            // latest triggers and preselctions with pt45 with nbjet cut
-            // ---------------------------------------------------------
             const std::map<std::string, bool> cut_map_combHadMuTriggers
             {
-                { "CombHadIsoMu_trig_1bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_1bjetCut   },
-                { "CombHadIsoMu_trig_ge1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge1bjetCut },
-                { "CombHadIsoMu_trig_2bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_2bjetCut   },
-                { "CombHadIsoMu_trig_ge2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge2bjetCut },
-                { "CombHadIsoMu_trig_3bjetCut_pt45",     passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_3bjetCut   },
-                { "CombHadIsoMu_trig_ge3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge3bjetCut },
-                { "CombHadIsoMu_trig_ge4bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge4bjetCut },
+                { "jet_trig_1bjetCut"  , passBaseline0l_trigEff && passTriggerMuon && pass_1bjetCut   },
+                { "jet_trig_ge1bjetCut", passBaseline0l_trigEff && passTriggerMuon                    }, // preselection requires ge1b
+                { "jet_trig_2bjetCut"  , passBaseline0l_trigEff && passTriggerMuon && pass_2bjetCut   },
+                { "jet_trig_ge2bjetCut", passBaseline0l_trigEff && passTriggerMuon && pass_ge2bjetCut },
+                { "jet_trig_3bjetCut"  , passBaseline0l_trigEff && passTriggerMuon && pass_3bjetCut   },
+                { "jet_trig_ge3bjetCut", passBaseline0l_trigEff && passTriggerMuon && pass_ge3bjetCut },
+                { "jet_trig_ge4bjetCut", passBaseline0l_trigEff && passTriggerMuon && pass_ge4bjetCut },
 
-                { "CombHadIsoMu_noTrig_1bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && pass_1bjetCut   },
-                { "CombHadIsoMu_noTrig_ge1bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge1bjetCut },               
-                { "CombHadIsoMu_noTrig_2bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && pass_2bjetCut   },
-                { "CombHadIsoMu_noTrig_ge2bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge2bjetCut },
-                { "CombHadIsoMu_noTrig_3bjetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && pass_3bjetCut   },
-                { "CombHadIsoMu_noTrig_ge3bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge3bjetCut },
-                { "CombHadIsoMu_noTrig_ge4bjetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge4bjetCut },
             };
-            fillHistosRefAN(cut_map_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
 
-            // --------------------------------------------------------
-            // latest triggers and preselctions with pt45 with njet cut
-            // --------------------------------------------------------
-            //const std::map<std::string, bool> cut_map2_combHadMuTriggers
-            //{
-            //    { "CombHadIsoMu_trig_ge6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad                    },    
-            //    { "CombHadIsoMu_trig_6jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_6jetCut    },
-            //    { "CombHadIsoMu_trig_7jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_7jetCut    },
-            //    { "CombHadIsoMu_trig_8jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_8jetCut    },
-            //    { "CombHadIsoMu_trig_9jetCut_pt45",      passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_9jetCut    },
-            //    { "CombHadIsoMu_trig_ge10jetCut_pt45",   passBaseline0l_pt45 && passTriggerMuon && passTriggerAllHad && pass_ge10jetCut },
-
-            //    { "CombHadIsoMu_noTrig_ge6jetCut_pt45",  passBaseline0l_pt45 && passTriggerMuon                    },
-            //    { "CombHadIsoMu_noTrig_6jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_6jetCut    },
-            //    { "CombHadIsoMu_noTrig_7jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_7jetCut    },
-            //    { "CombHadIsoMu_noTrig_8jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_8jetCut    },
-            //    { "CombHadIsoMu_noTrig_9jetCut_pt45",    passBaseline0l_pt45 && passTriggerMuon && pass_9jetCut    },
-            //    { "CombHadIsoMu_noTrig_ge10jetCut_pt45", passBaseline0l_pt45 && passTriggerMuon && pass_ge10jetCut },
-
-            //};
-            //fillHistosRefAN(cut_map2_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight); 
-
+            fillHistos(cut_map_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
         }
     }
 }
@@ -256,54 +184,22 @@ bool HadTriggers_Analyzer::containsGoodHadron( const std::vector<utility::Lorent
     return false;
 }
 
-void HadTriggers_Analyzer::fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double HT, int njet, int nbjet, double weight ) 
-{
-    for( auto& kv : cutMap ) 
-    {
-        if( kv.second ) 
-        {
-            my_histos["h_denominator_"+kv.first+"_HT"]->Fill( HT, weight );
-            my_histos["h_denominator_"+kv.first+"_ht5000"]->Fill( HT, weight );
-            my_histos["h_denominator_"+kv.first+"_NJet"]->Fill( njet, weight );
-            my_histos["h_denominator_"+kv.first+"_NBJet"]->Fill( nbjet, weight );
-            my_2d_histos["h_denominator_"+kv.first+"_NJetVsHT"]->Fill( njet, HT, weight );
-            my_2d_histos["h_denominator_"+kv.first+"_NJetVsHt"]->Fill( njet, HT, weight );
-            my_2d_histos["h_denominator_"+kv.first+"_NJetVsNBJet"]->Fill( njet, nbjet, weight );
 
-            if( passTriggerAllHad ) 
-            {
-                my_histos["h_numerator_"+kv.first+"_HT"]->Fill( HT, weight );
-                my_histos["h_numerator_"+kv.first+"_ht5000"]->Fill( HT, weight );
-                my_histos["h_numerator_"+kv.first+"_NJet"]->Fill( njet, weight );
-                my_histos["h_numerator_"+kv.first+"_NBJet"]->Fill( nbjet, weight );
-                my_2d_histos["h_numerator_"+kv.first+"_NJetVsHT"]->Fill( njet, HT, weight );
-                my_2d_histos["h_numerator_"+kv.first+"_NJetVsHt"]->Fill( njet, HT, weight );
-                my_2d_histos["h_numerator_"+kv.first+"_NJetVsNBJet"]->Fill( njet, nbjet, weight );
-            }
-        }
-    }
-}
-
-// function for the reference analysis histos
-void HadTriggers_Analyzer::fillHistosRefAN( const std::map<std::string, bool>& cutMap, bool passTriggerRefAN, double HT, double pt, int njet, int nbjet, double weight )
+void HadTriggers_Analyzer::fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double HT, double pt, int njet, int nbjet, double weight )
 { 
     for( auto& kv : cutMap )
     {
         if( kv.second )
         {
-            my_histos["h_denominator_"+kv.first+"_HT"]->Fill( HT, weight );
-            my_histos["h_denominator_"+kv.first+"_6thJetPt"]->Fill( pt, weight );
-            my_histos["h_denominator_"+kv.first+"_NJet"]->Fill( njet, weight );
-            my_histos["h_denominator_"+kv.first+"_NBJet"]->Fill( nbjet, weight );
-            my_2d_histos["h_denominator_"+kv.first+"_HTvs6thJetPt"]->Fill( HT, pt, weight );
+            my_histos["h_trig_den_"+kv.first+"_wJetHtBin"]->Fill( HT, weight );
+            my_histos["h_trig_den_"+kv.first+"_w6thJetPtBin"]->Fill( pt, weight );
+            my_2d_histos["h2_trig_den_"+kv.first+"_wJetHt6thJetPtBin"]->Fill( HT, pt, weight );
             
-            if( passTriggerRefAN )
+            if( passTriggerAllHad )
             {
-                my_histos["h_numerator_"+kv.first+"_HT"]->Fill( HT, weight );
-                my_histos["h_numerator_"+kv.first+"_6thJetPt"]->Fill( pt, weight );
-                my_histos["h_numerator_"+kv.first+"_NJet"]->Fill( njet, weight );
-                my_histos["h_numerator_"+kv.first+"_NBJet"]->Fill( nbjet, weight );
-                my_2d_histos["h_numerator_"+kv.first+"_HTvs6thJetPt"]->Fill( HT, pt, weight );
+                my_histos["h_trig_num_"+kv.first+"_wJetHtBin"]->Fill( HT, weight );
+                my_histos["h_trig_num_"+kv.first+"_w6thJetPtBin"]->Fill( pt, weight );
+                my_2d_histos["h2_trig_num_"+kv.first+"_wJetHt6thJetPtBin"]->Fill( HT, pt, weight );
             }
 
         }
