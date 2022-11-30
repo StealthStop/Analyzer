@@ -69,7 +69,6 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
         double eventweight          = 1.0;
         double leptonScaleFactor    = 1.0;
         double bTagScaleFactor      = 1.0;
-        double htDerivedScaleFactor = 1.0;
         double prefiringScaleFactor = 1.0;
         double puScaleFactor        = 1.0;
         
@@ -91,11 +90,10 @@ void AnalyzeTest::Loop(NTupleReader& tr, double, int maxevents, bool)
             
             //PileupWeight = tr.getVar<float>("_PUweightFactor");
             bTagScaleFactor   = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            htDerivedScaleFactor = tr.getVar<double>("htDerivedweight");
             prefiringScaleFactor = tr.getVar<double>("prefiringScaleFactor");
             puScaleFactor = tr.getVar<double>("puWeightCorr");
             
-            weight *= eventweight*leptonScaleFactor*bTagScaleFactor*htDerivedScaleFactor*prefiringScaleFactor*puScaleFactor;
+            weight *= eventweight*leptonScaleFactor*bTagScaleFactor*prefiringScaleFactor*puScaleFactor;
         }
 
         if (passBaseline) {
