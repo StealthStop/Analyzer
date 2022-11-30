@@ -14,14 +14,6 @@ public:
         TH2::SetDefaultSumw2();
 
         my_Histos.emplace_back(new Histo1D("EventCounter", 2,  -1.1, 1.1, "eventCounter", {}, {}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_ht",           100, 0, 5, "htDerivedweightUncor",          {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_htUp",         100, 0, 5, "htScaleUpUncor",                {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_htDown",       100, 0, 5, "htScaleDownUncor",              {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_ht_MG",        100, 0, 5, "htDerivedweightMGUncor",        {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_ht_MGUp",      100, 0, 5, "htScaleUpMGUncor",              {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_ht_MGDown",    100, 0, 5, "htScaleDownMGUncor",            {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_ht_flat2000",  100, 0, 5, "htDerivedweightFlat2000Uncor",  {"passMadHT"}, {"Lumi", "Weight"}));
-        my_Histos.emplace_back(new Histo1D(filetag+"_ht_njet7",     100, 0, 5, "htDerivedweightNJet7Uncor",     {"passMadHT"}, {"Lumi", "Weight"}));
         my_Histos.emplace_back(new Histo1D(filetag+"_sclUp",        100, 0, 5, "scaleWeightUpUncor",            {"passMadHT"}, {"Lumi", "Weight"}));
         my_Histos.emplace_back(new Histo1D(filetag+"_sclDown",      100, 0, 5, "scaleWeightDownUncor",          {"passMadHT"}, {"Lumi", "Weight"}));
         my_Histos.emplace_back(new Histo1D(filetag+"_pdf_Up",       100, 0, 5, "PDFweightUpUncor",              {"passMadHT"}, {"Lumi", "Weight"}));

@@ -4,23 +4,32 @@ import ROOT
 
 selections = ["_0l",
               "_1l",
+              "_2l",
 ]
 
 histograms = {
-    "h_DoubleDisCo_massReg?_Njets@_ABCD"  : {"logY" : False,  "orders" : list(xrange(7,12)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",   "rebin" : 2, "min" : 0,  "max" : 1500}},
-    "h_DoubleDisCo_massReg?_Njets11incl_ABCD"  : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",   "rebin" : 2, "min" : 0,  "max" : 1500}},
-    "h_DoubleDisCo_massReg?_Njets12incl_ABCD"  : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",   "rebin" : 2, "min" : 0,  "max" : 1500}},
-    "h_DoubleDisCo_disc1?_Njets@"  : {"logY" : False,  "orders" : list(xrange(7,12)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1",   "rebin" : 2, "min" : 0,  "max" : 1}},
-    "h_DoubleDisCo_disc2?_Njets@"  : {"logY" : False,  "orders" : list(xrange(7,12)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2",   "rebin" : 2, "min" : 0,  "max" : 1}},
-    "h_DoubleDisCo_disc1?_Njets11incl"  : {"logY" : False,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1",   "rebin" : 2, "min" : 0,  "max" : 1}},
-    "h_DoubleDisCo_disc2?_Njets11incl"  : {"logY" : False,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2",   "rebin" : 2, "min" : 0,  "max" : 1}},
-    "h_DoubleDisCo_disc1?_Njets12incl"  : {"logY" : False,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1",   "rebin" : 2, "min" : 0,  "max" : 1}},
-    "h_DoubleDisCo_disc2?_Njets12incl"  : {"logY" : False,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2",   "rebin" : 2, "min" : 0,  "max" : 1}},
-
+    # Regression Mass
+    "h_DoubleDisCo_massReg?_Njets@_ABCD"      : {"logY" : False,  "orders" : list(xrange(6,13)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",  "rebin" : 2, "min" : 0,  "max" : 1500}},
+    "h_DoubleDisCo_massReg?_Njets@_ABCD"      : {"logY" : False,  "orders" : list(xrange(6,13)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",  "rebin" : 2, "min" : 0,  "max" : 1500}},
+    "h_DoubleDisCo_massReg?_Njets@_ABCD"      : {"logY" : False,  "orders" : list(xrange(6,13)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",  "rebin" : 2, "min" : 0,  "max" : 1500}},
+    "h_DoubleDisCo_massReg?_Njets11incl_ABCD" : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",  "rebin" : 2, "min" : 0,  "max" : 1500}},
+    "h_DoubleDisCo_massReg?_Njets12incl_ABCD" : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",  "rebin" : 2, "min" : 0,  "max" : 1500}},
+    "h_DoubleDisCo_massReg?_Njets13incl_ABCD" : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Regression Mass [GeV]",  "rebin" : 2, "min" : 0,  "max" : 1500}},
+    # NN Discs.
+    "h_DoubleDisCo_disc1?_Njets@"             : {"logY" : False,  "orders" : list(xrange(6,13)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc2?_Njets@"             : {"logY" : False,  "orders" : list(xrange(6,13)), "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc1?_Njets11incl_ABCD"        : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc2?_Njets11incl_ABCD"        : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc1?_Njets12incl_ABCD"        : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc2?_Njets12incl_ABCD"        : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc1?_Njets13incl_ABCD"        : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 1", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    "h_DoubleDisCo_disc2?_Njets13incl_ABCD"        : {"logY" : False,                                 "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "Neural Network Disc. 2", "rebin" : 2, "min" : 0,  "max" : 1   }},
+    # Stop Masses for Mass Regression Model
+    
 }
 
 backgrounds = {
-    "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    "TT_skim" : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
 }
 
 signals = {
