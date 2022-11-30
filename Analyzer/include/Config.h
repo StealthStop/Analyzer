@@ -346,6 +346,7 @@ public:
         tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY", DoubleDisCo_Cfg_NonIsoMuon_2l_SYY);
         tr.registerDerivedVar("leptonFileName",                    leptonFileName                   );       
         tr.registerDerivedVar("hadronicFileName",                  hadronicFileName                 ); 
+        tr.registerDerivedVar("toptaggerFileName",                 toptaggerFileName                ); 
         tr.registerDerivedVar("btagEffFileName",                   btagEffFileName                  );        
         tr.registerDerivedVar("bjetTagFileName",                   bjetTagFileName                  );        
         //tr.registerDerivedVar("bjetTagFileNameReshape",            bjetTagFileNameReshape           );        
