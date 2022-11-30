@@ -49,6 +49,7 @@ private:
         const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY");
         const auto& leptonFileName                    = tr.getVar<std::string>("leptonFileName"                    );
         const auto& hadronicFileName                  = tr.getVar<std::string>("hadronicFileName"                  );
+        const auto& toptaggerFileName                 = tr.getVar<std::string>("toptaggerFileName"                 );
         const auto& btagEffFileName                   = tr.getVar<std::string>("btagEffFileName"                   );
         const auto& bjetTagFileName                   = tr.getVar<std::string>("bjetTagFileName"                   );
         //const auto& bjetTagFileNameReshape            = tr.getVar<std::string>("bjetTagFileNameReshape"            );
@@ -56,7 +57,6 @@ private:
         const auto& meanFileName                      = tr.getVar<std::string>("meanFileName"                      );
         const auto& TopTaggerCfg                      = tr.getVar<std::string>("TopTaggerCfg"                      );
 
- 
         for(const auto& module : modules)
         {
             if     (module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
@@ -103,7 +103,7 @@ private:
 
             if(runtype == "MC")
             {
-                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, hadronicFileName, meanFileName);
+                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, hadronicFileName, toptaggerFileName, meanFileName, filetag);
                 else if(module=="BTagCorrector")
                 {
                     std::string bjetTagFileNameReshape = "";
@@ -133,7 +133,7 @@ public:
         std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
         std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
         std::string DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY, DoubleDisCo_Cfg_NonIsoMuon_2l_SYY; 
-        std::string leptonFileName, hadronicFileName, btagEffFileName, bjetTagFileName, bjetTagFileNameReshape, meanFileName, TopTaggerCfg;
+        std::string leptonFileName, hadronicFileName, btagEffFileName, bjetTagFileName, toptaggerFileName, bjetTagFileNameReshape, meanFileName, TopTaggerCfg;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
@@ -176,6 +176,7 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
+            toptaggerFileName                 = "allInOne_toptaggerSF_UL.root";
             btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
@@ -218,6 +219,7 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
+            toptaggerFileName                 = "allInOne_toptaggerSF_UL.root";
             btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
@@ -259,6 +261,7 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
+            toptaggerFileName                 = "allInOne_toptaggerSF_UL.root";
             btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL17_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
@@ -302,6 +305,7 @@ public:
             // SF root files
             leptonFileName                    = "allInOne_leptonSF_UL.root";
             hadronicFileName                  = "allInOne_hadronicSF_UL.root";
+            toptaggerFileName                 = "allInOne_toptaggerSF_UL.root";
             btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL18_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";

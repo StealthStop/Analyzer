@@ -173,6 +173,8 @@ public:
         const auto& bjetFileName = tr.getVar<std::string>("bjetFileName");
         const auto& bjetCSVFileName = tr.getVar<std::string>("bjetCSVFileName");
         const auto& leptonFileName = tr.getVar<std::string>("leptonFileName");
+        const auto& hadronicFileName = tr.getVar<std::string>("hadronicFileName");
+        const auto& toptaggerFileName = tr.getVar<std::string>("toptaggerFileName");
         const auto& meanFileName = tr.getVar<std::string>("meanFileName");
         const auto& TopTaggerCfg    = tr.getVar<std::string>("TopTaggerCfg");
 
@@ -192,7 +194,7 @@ public:
             JetAK8              jetAK8(myVarSuffix);
             Baseline            baseline(myVarSuffix);
             Electron            electron(myVarSuffix);
-            ScaleFactors        scaleFactors( runYear, leptonFileName, meanFileName, myVarSuffix);
+            ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, toptaggerFileName, meanFileName, filetag, myVarSuffix);
             RunTopTagger        topTagger(TopTaggerCfg, myVarSuffix);
             BTagCorrector       bTagCorrector(bjetFileName, "", bjetCSVFileName, filetag);
             DeepEventShape      deepEventShape(DeepESMCfg, ModelFile, "Info", true, myVarSuffix);

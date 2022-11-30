@@ -441,6 +441,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
     const auto& bjetTagFileName                   = tr.getVar<std::string>("bjetTagFileName"                  );
     const auto& leptonFileName                    = tr.getVar<std::string>("leptonFileName"                   );
     const auto& hadronicFileName                  = tr.getVar<std::string>("hadronicFileName"                 );
+    const auto& toptaggerFileName                 = tr.getVar<std::string>("toptaggerFileName"                );
     const auto& meanFileName                      = tr.getVar<std::string>("meanFileName"                     );
     const auto& TopTaggerCfg                      = tr.getVar<std::string>("TopTaggerCfg"                     );
     const auto& DoubleDisCo_Cfg_0l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_RPV"           );
@@ -505,7 +506,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
         if (runtype == "MC")
         {
-            ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, meanFileName, jecvar);
+            ScaleFactors        scaleFactors(runYear, leptonFileName, hadronicFileName, toptaggerFileName, meanFileName, filetag, jecvar);
             BTagCorrector       bTagCorrector(btagEffFileName, "", bjetTagFileName, "", filetag);
             bTagCorrector.SetVarNames("GenParticles_PdgId", "Jets"+jecvar, "GoodJets_pt30"+jecvar, "Jets"+jecvar+"_bJetTagDeepFlavourtotb", "Jets"+jecvar+"_partonFlavor", jecvar);
 
