@@ -14,7 +14,7 @@ ROOT.TH2.SetDefaultSumw2()
 
 class ControlRegionProducer:
 
-    def __init__(self, year, outpath, inpath, controlRegions, signalRegions, backgrounds, data):
+    def __init__(self, year, outpath, inpath, controlRegions, signalRegions, backgrounds, data, mainBG, inclBin):
 
         self.year        = year
         self.outpath     = outpath
@@ -28,7 +28,8 @@ class ControlRegionProducer:
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
 
-        self.mainBG = "QCD"
+        self.mainBG = mainBG
+        self.inclBin = inclBin
         self.dataQCDOnly = None
         self.transforFactorsHisto = {}
 
@@ -95,7 +96,7 @@ class ControlRegionProducer:
                 rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
                 dataHist = Histogram(None, rootFile, 1.0, 1.0, newName, newInfo, dinfo)
 
-            self.dataQCDOnly = dataHist.Clone("{}_Data_only_{}_{}".format(self.year, self.mainBG, hname.replace("h_njets_12incl_","").replace("_ABCD","")))
+            self.dataQCDOnly = dataHist.Clone("{}_Data_only_{}_{}".format(self.year, self.mainBG, hname.replace("h_njets_%s_"%(self.inclBin),"").replace("_ABCD","")))
             self.dataQCDOnly.Add(totalMC, -1)
 
             #Correct QCD normalization per ABCD bin
@@ -138,7 +139,7 @@ class ControlRegionProducer:
             error = Hobj.IntegralError()
             cABCD, eABCD = self.getABCDCounts(Hobj.Clone("temp"))
             print(hname, nEvents, "+/-", error)
-            den[hname.replace("h_njets_12incl_", "").replace("_ABCD","")] = (nEvents, error, Hobj, cABCD, eABCD)
+            den[hname.replace("h_njets_%s_"%(self.inclBin), "").replace("_ABCD","")] = (nEvents, error, Hobj, cABCD, eABCD)
 
         num = {}
         for hname, hinfo in self.signalRegions.items():
@@ -151,7 +152,7 @@ class ControlRegionProducer:
             error = Hobj.IntegralError()
             cABCD, eABCD = self.getABCDCounts(Hobj.Clone("temp"))
             print(hname, nEvents, "+/-", error)
-            num[hname.replace("h_njets_12incl_", "").replace("_ABCD","")] = (nEvents, error, Hobj, cABCD, eABCD)
+            num[hname.replace("h_njets_%s_"%(self.inclBin), "").replace("_ABCD","")] = (nEvents, error, Hobj, cABCD, eABCD)
 
         transferFactors = {}
         for nameNum, n in num.items():
@@ -271,14 +272,14 @@ class ControlRegionProducer:
             qcdSRMC.histogram.Draw()
             #hCRPredUp.Draw("same")
             #hCRPredDown.Draw("same")
-            hCRPred.Draw("same")
+            #hCRPred.Draw("same")
             hCRPredABCD.Draw("same")
             print(hCRPred.Integral(), qcdSRMC.histogram.Integral())
 
             leg = ROOT.TLegend(0.2, 0.75, 0.5, 0.85)
             leg.SetBorderSize(0)
             leg.SetTextSize(0.05)
-            leg.AddEntry(hCRPred,     "Scaled QCD CR Data", "p")
+            #leg.AddEntry(hCRPred,     "Scaled QCD CR Data", "p")
             leg.AddEntry(qcdSRMC.histogram,    "QCD SR MC",    "l")
             leg.AddEntry(hCRPredABCD, "ABCD Scaled QCD CR Data", "p")
             leg.Draw()
@@ -299,11 +300,11 @@ class ControlRegionProducer:
             ratio.GetYaxis().SetLabelSize(0.1)
             ratio.GetXaxis().SetLabelSize(0.1)
             ratio.Draw()
-            ratio2.Draw("same")
+            #ratio2.Draw("same")
 
             self.addCMSlogo(canvas)
 
-            canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, name))
+            canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, name))
 
 if __name__ == "__main__":
 
@@ -315,32 +316,38 @@ if __name__ == "__main__":
     parser.add_argument("--channel",      dest="channel",      help="0l, 1l, 2l",                  default="1l")
     args = parser.parse_args()
 
+    inclBin = "12incl" if args.channel == "1l" else "13incl"
+
     controlRegions = [
-        {"h_njets_12incl_%s_QCDCR_ABCD"%(args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        {"h_njets_12incl_0l_QCDCR_1b_ABCD"             : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        {"h_njets_12incl_0l_QCDCR_1t_ABCD"             : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        {"h_njets_12incl_0l_QCDCR_1b_1t_ABCD"          : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        {"h_njets_12incl_0l_QCDCR_2b_ABCD"             : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        {"h_njets_%s_%s_QCDCR_ABCD"      %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        #{"h_njets_%s_%s_QCDCR_1b_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        #{"h_njets_%s_%s_QCDCR_1t_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        #{"h_njets_%s_%s_QCDCR_1b_1t_ABCD"%(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        #{"h_njets_%s_%s_QCDCR_2b_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        #{"h_njets_%s_%s_QCDCR_45_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        #{"h_njets_%s_%s_QCDCR_45_1b_ABCD"%(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
     ]
 
     signalRegions = {
-        "h_njets_12incl_%s_ABCD"%(args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}",    "rebin" : 1,  "min" : 0,  "max" :    24}},
+        "h_njets_%s_%s_ABCD"%(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}",    "rebin" : 1,  "min" : 0,  "max" :    24}},
     }
 
     backgrounds = {
-        "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "QCD"      : {"name" : "QCD multijet",    "color" : ROOT.kRed,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "TT_skim"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "QCD_skim"      : {"name" : "QCD multijet",    "color" : ROOT.kRed,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "TTX_skim"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "BG_OTHER_skim" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
     }
 
     data = {
         "Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
     }
 
+    mainBG = "QCD" if "QCD" in backgrounds else "QCD_skim"
+
     for cr in controlRegions:
-        crName = cr.keys()[0].replace("h_njets_12incl_","").replace("_ABCD","")
-        crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data)
+        crName = cr.keys()[0].replace("h_njets_%s_"%(inclBin),"").replace("_ABCD","")
+        crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data, mainBG, inclBin)
         crProducer.getCRData()
         crProducer.getTransferFactors()
         crProducer.write(crName)

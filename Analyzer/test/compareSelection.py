@@ -95,7 +95,7 @@ class comparePlotter:
 
         tooManyBkgds = nBkgs * textSize * 1.2 > maxBkgLegendFrac
         if tooManyBkgds:
-            nColumns = 3
+            nColumns = 1
 
         space    = 0.015
 
@@ -105,7 +105,7 @@ class comparePlotter:
             
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.01
-        bkgYmin = bkgYmax-(float(nBkgs)/float(nColumns))*(1.2*textSize+space)
+        bkgYmin = bkgYmax-(float(nBkgs)/float(nColumns+5))*(1.2*textSize+space)
         bkgYFrac = (1.0-self.TopMargin-bkgYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
         bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
@@ -223,7 +223,7 @@ class comparePlotter:
                     for selection, color in self.selections:
                         newName = hname.replace("@", order).replace("?", "%s"%(selection))
                         #newName = hname.replace("?", "%s"%(selection))
-                        newInfo["color"] = color
+                        newInfo["color"] = sinfo["color"] + color
                         
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
                         if "option"  not in sinfo: sinfo["option"]  = option 
@@ -233,7 +233,8 @@ class comparePlotter:
                         if scale != 0.0: 
                             Hobj.Scale(1.0 / scale)
                         Hobj.histogram.Draw("same")
-                        sigLegend.AddEntry(Hobj.histogram, selection[1:].replace("_ABCD",""), "l")
+                        #sigLegend.AddEntry(Hobj.histogram, selection[1:].replace("_ABCD",""), "l")
+                        sigLegend.AddEntry(Hobj.histogram, selection[1:].replace("_ABCD","")+"_{}".format(sname), "l")
                         #nSigLegend, firstDraw = Hobj.Draw(canvas, False, firstDraw, nSigLegend, sigLegend)
 
                 if Hobj.IsGood():
