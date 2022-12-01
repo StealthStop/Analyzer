@@ -20,8 +20,8 @@ void CalculateTopTagSF::InitHistos(const std::string& histoFileTag)
     TH2::SetDefaultSumw2();
 
     // Pt bin edges for resolved case are directly from AN-18-273 v2, Fig. 7
-    const std::vector<double> ptBinsRes  = { 0, 150, 250, 300, 350, 400, 450, 500, 600, 1000 };
-    const std::vector<double> ptBinsMrg  = { 400, 450, 500, 600, 800, 1000 };
+    const std::vector<double> ptBinsRes  = { 0, 150, 250, 300, 350, 400, 450, 500, 600, 2000 };
+    const std::vector<double> ptBinsMrg  = { 400, 450, 500, 600, 800, 1000, 2000 };
     const std::vector<double> etaBins    = { -2.4, -1.4, 0.0, 1.4, 2.4 };
     const int nPtBinsRes = ptBinsRes.size() - 1;
     const int nPtBinsMrg = ptBinsMrg.size() - 1;
@@ -100,8 +100,8 @@ void CalculateTopTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                 // Ensure that the last pt bin is inclusive
                 double thePt = top->P().Pt();
-                if ( thePt > 1000.0 )
-                    thePt = 999.0;
+                if ( thePt > 2000.0 )
+                    thePt = 1999.0;
 
                 // Ensure the edge eta bins are inclusive
                 // Not necessary due to internal top tagger requirement of a top
