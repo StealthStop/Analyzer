@@ -608,8 +608,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     jmt_ev0_top6_CR                ;
             std::vector<double>                                     jmt_ev1_top6_CR                ;
             std::vector<double>                                     jmt_ev2_top6_CR                ;
-            std::vector<unsigned int>                               nMVAJets_CR                    ;
-            std::vector<unsigned int>                               nMVALeptons_CR                 ;
             std::vector<std::vector<double> >                       Jets_cm_flavb_CR               ;
             std::vector<std::vector<double> >                       Jets_cm_flavc_CR               ;
             std::vector<std::vector<double> >                       Jets_cm_flavg_CR               ;
@@ -733,8 +731,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     jmt_ev0_top6                   ;
             std::vector<double>                                     jmt_ev1_top6                   ;
             std::vector<double>                                     jmt_ev2_top6                   ;
-            std::vector<unsigned int>                               nMVAJets                       ;
-            std::vector<unsigned int>                               nMVALeptons                    ;
             std::vector<std::vector<double> >                       Jets_cm_flavb                  ;
             std::vector<std::vector<double> >                       Jets_cm_flavc                  ;
             std::vector<std::vector<double> >                       Jets_cm_flavg                  ;
@@ -860,8 +856,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 jmt_ev0_top6.push_back(tr.getVar<double>("jmt_ev0_top6"    + jecvar));
                 jmt_ev1_top6.push_back(tr.getVar<double>("jmt_ev1_top6"    + jecvar));
                 jmt_ev2_top6.push_back(tr.getVar<double>("jmt_ev2_top6"    + jecvar));
-                nMVAJets.push_back(tr.getVar<unsigned int>("nMVAJets"      + jecvar));
-                nMVALeptons.push_back(tr.getVar<unsigned int>("nMVALeptons"      + jecvar));
 
                 combined6thJetPt.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_pt_cm" + jecvar));
                 combined6thJetPtrHT.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
@@ -928,7 +922,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::vector<double> tempJets_cm_flavuds;
                 std::vector<double> tempJets_cm_flavq;  
                 
-                for (unsigned int iJet = 1; iJet <= nMVAJets.back(); iJet++) {
+                for (unsigned int iJet = 1; iJet <= 7; iJet++) {
                     tempJets_cm_flavb.push_back(tr.getVar<double>("Jet_flavb_"     + std::to_string(iJet) + jecvar));
                     tempJets_cm_flavc.push_back(tr.getVar<double>("Jet_flavc_"     + std::to_string(iJet) + jecvar));
                     tempJets_cm_flavg.push_back(tr.getVar<double>("Jet_flavg_"     + std::to_string(iJet) + jecvar));
@@ -1013,8 +1007,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 jmt_ev0_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev0_top6"   + jecvar));
                 jmt_ev1_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev1_top6"   + jecvar));
                 jmt_ev2_top6_CR.push_back(tr.getVar<double>(mvaName + "jmt_ev2_top6"   + jecvar));
-                nMVAJets_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVAJets"                  + jecvar));
-                nMVALeptons_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVALeptons"            + jecvar));
 
                 combined6thJetPt_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_pt_cm" + jecvar));
                 combined6thJetPtrHT_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
@@ -1078,7 +1070,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::vector<double> tempJets_cm_flavuds_CR;
                 std::vector<double> tempJets_cm_flavq_CR;
 
-                for (unsigned int iJet = 1; iJet <= nMVAJets_CR.back(); iJet++) {
+                for (unsigned int iJet = 1; iJet <= 7; iJet++) {
                     tempJets_cm_flavb_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavb_"  +std::to_string(iJet)+jecvar));
                     tempJets_cm_flavc_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavc_"  +std::to_string(iJet)+jecvar));
                     tempJets_cm_flavg_CR.push_back(  tr.getVar<double>("Jet" + flavName + "_flavg_"  +std::to_string(iJet)+jecvar));
@@ -1678,7 +1670,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     auto& theJetsFlavuds     = Jets_flavuds[channel];
                                     auto& theJetsFlavq       = Jets_flavq[channel];
 
-                                    auto& nMVAjets           = nMVAJets[channel]; 
                                     auto& theComb6thJetPt    = combined6thJetPt[channel];
                                     auto& theComb6thJetPtrHT = combined6thJetPtrHT[channel];
                                     auto& theComb6thJetEta   = combined6thJetEta[channel];
@@ -1702,7 +1693,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     {
                                         theJets            = Jets_CR[channel];
                                         theGoodJets        = GoodJets_CR[channel];
-                                        nMVAjets           = nMVAJets_CR[channel];
                                         theComb6thJetPt    = combined6thJetPt_CR[channel];
                                         theComb6thJetPtrHT = combined6thJetPtrHT_CR[channel];
                                         theComb6thJetEta   = combined6thJetEta_CR[channel];
@@ -1750,7 +1740,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                         iGoodJet++;
 
-                                        if (iGoodJet > nMVAjets)
+                                        if (iGoodJet > 7)
                                             break;
                                     }                        
 
