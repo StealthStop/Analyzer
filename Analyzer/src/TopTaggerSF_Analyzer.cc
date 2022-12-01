@@ -258,7 +258,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& pass_METFilters  = tr.getVar<bool>("passMETFilters");
         const auto& pass_MadHT       = tr.getVar<bool>("passMadHT");
         const auto& pass_MuonTrigger = tr.getVar<bool>("passTriggerMuon");
-        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerQCD");
+        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerHad");
         const auto& pass_HEMveto     = tr.getVar<bool>("passElectronHEMveto");
         const auto& pass_JetID       = tr.getVar<bool>("JetID");        
 
@@ -304,17 +304,10 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // So if we want an additional b jet that is loose we will have at least 2 loose b
         bool pass_1bjetLoose    = NGoodBJets_pt30_loose >= 2;
         bool pass_HT200         = HT_trigger_pt30        > 200.0;
-        bool pass_HT1000        = HT_trigger_pt30        > 1000.0;
-        bool pass_HT1200        = HT_trigger_pt30        > 1200.0;
+        bool pass_HT500         = HT_trigger_pt30        > 500.0;
         bool pass_MET50         = MET                    > 50.0;
 
-        // To stay above HT turn for HT trigger for QCD CR selection
-        // Bump up the HT for 2017 and 2018
-        bool pass_HT_QCDCR = false;
-        if (runyear.find("2016") != std::string::npos)
-            pass_HT_QCDCR = pass_HT1000;
-        else
-            pass_HT_QCDCR = pass_HT1200; 
+        bool pass_HT_QCDCR = pass_HT500;
 
         // Here pt ordered jet collection is assumed...
         // Calculate dPhi between MET and leading three jets
@@ -411,27 +404,20 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------
         double weightQCD              = 1.0;
         double weightTTbar            = 1.0;
-        double eventweight            = 1.0;
-        double bTagScaleFactor        = 1.0;
-        double prefiringScaleFactor   = 1.0;
-        double puScaleFactor          = 1.0;
-        double totGoodMuonScaleFactor = 1.0;
-        double topPtScaleFactor       = 1.0;
         if(runtype == "MC")
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<float>("Weight");
             const auto& lumi   = tr.getVar<double>("FinalLumi");
-            eventweight        = lumi * Weight;
+            double eventweight = lumi * Weight;
 
-            bTagScaleFactor        = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor   = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor          = tr.getVar<double>("puWeightCorr");
-            totGoodMuonScaleFactor = tr.getVar<double>("totGoodMuonSF");
-            topPtScaleFactor       = tr.getVar<double>("topPtScaleFactor");
+            double bTagScaleFactor        = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            double prefiringScaleFactor   = tr.getVar<double>("prefiringScaleFactor");
+            double puScaleFactor          = tr.getVar<double>("puWeightCorr");
+            double topPtScaleFactor       = tr.getVar<double>("topPtScaleFactor");
 
-            weightTTbar *= eventweight * totGoodMuonScaleFactor * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
-            weightQCD   *= eventweight /* jetTrigSF ? */        * puScaleFactor * bTagScaleFactor * prefiringScaleFactor;
+            weightTTbar *= eventweight * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
+            weightQCD   *= eventweight * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
         }
     
         // To be used with Single-Muon-triggered data and measuring tagging efficiency SF
