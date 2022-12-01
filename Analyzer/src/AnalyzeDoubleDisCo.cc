@@ -163,18 +163,18 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets, unsigned int nLeptons)
     Debug("Doing pre-initialization to define jet and lepton histograms", __LINE__);
     for(unsigned int i = 1; i <= nNNJets ; i++)
     {
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Pt"      , 360,  0,  1800});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_PtrHT"   , 180,  0,     1});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Eta"     ,  80, -6,     6});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Phi"     ,  64, -4,     4});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Mass"    , 180,  0,   360});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Energy"  , 360,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Pt_cm"      , 360,  0,  1800});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_PtrHT_cm"   , 180,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Eta_cm"     ,  80, -6,     6});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Phi_cm"     ,  64, -4,     4});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Mass_cm"    , 180,  0,   360});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Energy_cm"  , 360,  0,  1800});
 
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavb"   ,  80,  0,     1});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavc"   ,  80,  0,     1});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavg"   ,  80,  0,     1});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavq"   ,  80,  0,     1});
-        histInfos.push_back({"h_Jet" + std::to_string(i) + "_cm_Flavuds" ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavb_cm"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavc_cm"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavg_cm"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavq_cm"   ,  80,  0,     1});
+        histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavuds_cm" ,  80,  0,     1});
 
         histInfos.push_back({"h_Jet" + std::to_string(i) + "_Pt"         , 360,  0,  1800});
         histInfos.push_back({"h_Jet" + std::to_string(i) + "_PtrHT"      , 180,  0,  1800});
@@ -190,26 +190,33 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets, unsigned int nLeptons)
         histInfos.push_back({"h_Jet" + std::to_string(i) + "_Flavuds"    ,  80,  0,     1});
     }
 
-    // Make one-less-jet combined jet histogram
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Pt",     360,  0, 1800});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_PtrHT",  180,  0,    1});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Eta",     80, -6,    6});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Phi",     64, -4,    4});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Mass",   180,  0,  360});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets-1) + "thJet_Energy", 360,  0, 1800});
+    // Do manually 6th, 7th, and 8th combined jet
+    histInfos.push_back({"h_combined6thJet_Pt_cm",     360,  0, 1800});
+    histInfos.push_back({"h_combined6thJet_PtrHT_cm",  180,  0,    1});
+    histInfos.push_back({"h_combined6thJet_Eta_cm",     80, -6,    6});
+    histInfos.push_back({"h_combined6thJet_Phi_cm",     64, -4,    4});
+    histInfos.push_back({"h_combined6thJet_Mass_cm",   180,  0,  360});
+    histInfos.push_back({"h_combined6thJet_Energy_cm", 360,  0, 1800});
 
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Pt",     360,  0, 1800});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_PtrHT",  180,  0,    1});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Eta",     80, -6,    6});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Phi",     64, -4,    4});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Mass",   180,  0,  360});
-    histInfos.push_back({"h_combined" + std::to_string(nNNJets) + "thJet_Energy", 360,  0, 1800});
+    histInfos.push_back({"h_combined7thJet_Pt_cm",     360,  0, 1800});
+    histInfos.push_back({"h_combined7thJet_PtrHT_cm",  180,  0,    1});
+    histInfos.push_back({"h_combined7thJet_Eta_cm",     80, -6,    6});
+    histInfos.push_back({"h_combined7thJet_Phi_cm",     64, -4,    4});
+    histInfos.push_back({"h_combined7thJet_Mass_cm",   180,  0,  360});
+    histInfos.push_back({"h_combined7thJet_Energy_cm", 360,  0, 1800});
+
+    histInfos.push_back({"h_combined8thJet_Pt_cm",     360,  0, 1800});
+    histInfos.push_back({"h_combined8thJet_PtrHT_cm",  180,  0,    1});
+    histInfos.push_back({"h_combined8thJet_Eta_cm",     80, -6,    6});
+    histInfos.push_back({"h_combined8thJet_Phi_cm",     64, -4,    4});
+    histInfos.push_back({"h_combined8thJet_Mass_cm",   180,  0,  360});
+    histInfos.push_back({"h_combined8thJet_Energy_cm", 360,  0, 1800});
 
     for(unsigned int i = 1; i <= nLeptons; i++)
     {
-        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_cm_Pt"    ,  360,    0, 1800});
-        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_cm_Eta"   ,   80,   -6,    6});
-        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_cm_Phi"   ,   64,   -4,    4});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Pt_cm"    ,  360,    0, 1800});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Eta_cm"   ,   80,   -6,    6});
+        histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Phi_cm"   ,   64,   -4,    4});
 
         histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Pt"       ,  360,    0, 1800});
         histInfos.push_back({"h_Lepton" + std::to_string(i) + "_Eta"      ,   80,   -6,    6});
@@ -616,12 +623,24 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<std::vector<float> >                        Jets_flavq_CR                  ;
 
             std::vector<std::vector<std::string> >                  regions_CR                     ;
-            std::vector<double>                                     combinedNthJetPt_CR            ;
-            std::vector<double>                                     combinedNthJetPtrHT_CR         ;
-            std::vector<double>                                     combinedNthJetEta_CR           ;
-            std::vector<double>                                     combinedNthJetPhi_CR           ;
-            std::vector<double>                                     combinedNthJetM_CR             ;
-            std::vector<double>                                     combinedNthJetE_CR             ;
+            std::vector<double>                                     combined6thJetPt_CR            ;
+            std::vector<double>                                     combined6thJetPtrHT_CR         ;
+            std::vector<double>                                     combined6thJetEta_CR           ;
+            std::vector<double>                                     combined6thJetPhi_CR           ;
+            std::vector<double>                                     combined6thJetM_CR             ;
+            std::vector<double>                                     combined6thJetE_CR             ;
+            std::vector<double>                                     combined7thJetPt_CR            ;
+            std::vector<double>                                     combined7thJetPtrHT_CR         ;
+            std::vector<double>                                     combined7thJetEta_CR           ;
+            std::vector<double>                                     combined7thJetPhi_CR           ;
+            std::vector<double>                                     combined7thJetM_CR             ;
+            std::vector<double>                                     combined7thJetE_CR             ;
+            std::vector<double>                                     combined8thJetPt_CR            ;
+            std::vector<double>                                     combined8thJetPtrHT_CR         ;
+            std::vector<double>                                     combined8thJetEta_CR           ;
+            std::vector<double>                                     combined8thJetPhi_CR           ;
+            std::vector<double>                                     combined8thJetM_CR             ;
+            std::vector<double>                                     combined8thJetE_CR             ;
 
             std::vector<std::map<std::string, std::vector<bool> > > DoubleDisCo_passRegions_CR     ; 
 
@@ -729,12 +748,24 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<std::vector<float> >                        Jets_flavq                     ;
 
             std::vector<std::vector<std::string> >                  regions                        ;
-            std::vector<double>                                     combinedNthJetPt               ;
-            std::vector<double>                                     combinedNthJetPtrHT            ;
-            std::vector<double>                                     combinedNthJetEta              ;
-            std::vector<double>                                     combinedNthJetPhi              ;
-            std::vector<double>                                     combinedNthJetM                ;
-            std::vector<double>                                     combinedNthJetE                ;
+            std::vector<double>                                     combined6thJetPt               ;
+            std::vector<double>                                     combined6thJetPtrHT            ;
+            std::vector<double>                                     combined6thJetEta              ;
+            std::vector<double>                                     combined6thJetPhi              ;
+            std::vector<double>                                     combined6thJetM                ;
+            std::vector<double>                                     combined6thJetE                ;
+            std::vector<double>                                     combined7thJetPt               ;
+            std::vector<double>                                     combined7thJetPtrHT            ;
+            std::vector<double>                                     combined7thJetEta              ;
+            std::vector<double>                                     combined7thJetPhi              ;
+            std::vector<double>                                     combined7thJetM                ;
+            std::vector<double>                                     combined7thJetE                ;
+            std::vector<double>                                     combined8thJetPt               ;
+            std::vector<double>                                     combined8thJetPtrHT            ;
+            std::vector<double>                                     combined8thJetEta              ;
+            std::vector<double>                                     combined8thJetPhi              ;
+            std::vector<double>                                     combined8thJetM                ;
+            std::vector<double>                                     combined8thJetE                ;
 
             std::vector<double>                                     Lepton1_pt_cm                  ;
             std::vector<double>                                     Lepton1_eta_cm                 ;
@@ -832,12 +863,26 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 nMVAJets.push_back(tr.getVar<unsigned int>("nMVAJets"      + jecvar));
                 nMVALeptons.push_back(tr.getVar<unsigned int>("nMVALeptons"      + jecvar));
 
-                combinedNthJetPt.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_pt_cm" + jecvar));
-                combinedNthJetPtrHT.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
-                combinedNthJetEta.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_eta_cm" + jecvar));
-                combinedNthJetPhi.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_phi_cm" + jecvar));
-                combinedNthJetM.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_m_cm" + jecvar));
-                combinedNthJetE.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets.back()) + "thToLastJet" + flavName + "_E_cm" + jecvar));
+                combined6thJetPt.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combined6thJetPtrHT.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combined6thJetEta.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combined6thJetPhi.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combined6thJetM.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_m_cm" + jecvar));
+                combined6thJetE.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_E_cm" + jecvar));
+
+                combined7thJetPt.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combined7thJetPtrHT.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combined7thJetEta.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combined7thJetPhi.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combined7thJetM.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_m_cm" + jecvar));
+                combined7thJetE.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_E_cm" + jecvar));
+
+                combined8thJetPt.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combined8thJetPtrHT.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combined8thJetEta.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combined8thJetPhi.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combined8thJetM.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_m_cm" + jecvar));
+                combined8thJetE.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_E_cm" + jecvar));
 
                 Stop1_pt_cm_OldSeed.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed"       + jecvar));
                 Stop1_ptrht_cm_OldSeed.push_back(tr.getVar<double>("Stop1_ptrHT_cm_OldSeed" + jecvar));
@@ -971,12 +1016,26 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 nMVAJets_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVAJets"                  + jecvar));
                 nMVALeptons_CR.push_back(tr.getVar<unsigned int>(mvaName + "nMVALeptons"            + jecvar));
 
-                combinedNthJetPt_CR.push_back(tr.getVar<double>("combined"    + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_pt_cm" + jecvar));
-                combinedNthJetPtrHT_CR.push_back(tr.getVar<double>("combined" + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
-                combinedNthJetEta_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_eta_cm" + jecvar));
-                combinedNthJetPhi_CR.push_back(tr.getVar<double>("combined"   + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_phi_cm" + jecvar));
-                combinedNthJetM_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_m_cm" + jecvar));
-                combinedNthJetE_CR.push_back(tr.getVar<double>("combined"     + std::to_string(nMVAJets_CR.back()) + "thToLastJet" + flavName + "_E_cm" + jecvar));
+                combined6thJetPt_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combined6thJetPtrHT_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combined6thJetEta_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combined6thJetPhi_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combined6thJetM_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_m_cm" + jecvar));
+                combined6thJetE_CR.push_back(tr.getVar<double>("combined6thToLastJet" + flavName + "_E_cm" + jecvar));
+
+                combined7thJetPt_CR.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combined7thJetPtrHT_CR.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combined7thJetEta_CR.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combined7thJetPhi_CR.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combined7thJetM_CR.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_m_cm" + jecvar));
+                combined7thJetE_CR.push_back(tr.getVar<double>("combined7thToLastJet" + flavName + "_E_cm" + jecvar));
+
+                combined8thJetPt_CR.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_pt_cm" + jecvar));
+                combined8thJetPtrHT_CR.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_ptrHT_cm" + jecvar));
+                combined8thJetEta_CR.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_eta_cm" + jecvar));
+                combined8thJetPhi_CR.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_phi_cm" + jecvar));
+                combined8thJetM_CR.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_m_cm" + jecvar));
+                combined8thJetE_CR.push_back(tr.getVar<double>("combined8thToLastJet" + flavName + "_E_cm" + jecvar));
 
                 Stop1_pt_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_pt_cm_OldSeed_NonIsoMuon"       + jecvar));
                 Stop1_ptrht_cm_OldSeed_CR.push_back(tr.getVar<double>("Stop1_ptrHT_cm_OldSeed_NonIsoMuon" + jecvar));
@@ -1473,18 +1532,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                     for(unsigned int i = 1; i <= nJets; i++)
                                     {
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_PtrHT"   + name]->Fill(cmJets.at(i-1).Pt()/ht, w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Pt"      + name]->Fill(cmJets.at(i-1).Pt(),    w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Eta"     + name]->Fill(cmJets.at(i-1).Eta(),   w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Phi"     + name]->Fill(cmJets.at(i-1).Phi(),   w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Mass"    + name]->Fill(cmJets.at(i-1).M(),     w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Energy"  + name]->Fill(cmJets.at(i-1).E(),     w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_PtrHT_cm"   + name]->Fill(cmJets.at(i-1).Pt()/ht, w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Pt_cm"      + name]->Fill(cmJets.at(i-1).Pt(),    w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Eta_cm"     + name]->Fill(cmJets.at(i-1).Eta(),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Phi_cm"     + name]->Fill(cmJets.at(i-1).Phi(),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Mass_cm"    + name]->Fill(cmJets.at(i-1).M(),     w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Energy_cm"  + name]->Fill(cmJets.at(i-1).E(),     w);
 
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavb"   + name]->Fill(jetFlavb.at(i-1),   w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavc"   + name]->Fill(jetFlavc.at(i-1),   w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavg"   + name]->Fill(jetFlavg.at(i-1),   w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavq"   + name]->Fill(jetFlavq.at(i-1),   w);
-                                        my_histos["h_Jet" + std::to_string(i) + "_cm_Flavuds" + name]->Fill(jetFlavuds.at(i-1), w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Flavb_cm"   + name]->Fill(jetFlavb.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Flavc_cm"   + name]->Fill(jetFlavc.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Flavg_cm"   + name]->Fill(jetFlavg.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Flavq_cm"   + name]->Fill(jetFlavq.at(i-1),   w);
+                                        my_histos["h_Jet" + std::to_string(i) + "_Flavuds_cm" + name]->Fill(jetFlavuds.at(i-1), w);
                                     }
 
                                     Debug("Filling lepton variable histograms with name: " + name, __LINE__);
@@ -1501,13 +1560,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                         subleadIndex = 0; 
                                     }
 
-                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_cm_Pt"     + name]->Fill(!isQCD ? Lepton1_pt_cm[channel]  : Lepton1_pt_cm_CR[channel], w);
-                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_cm_Phi"    + name]->Fill(!isQCD ? Lepton1_phi_cm[channel] : Lepton1_pt_cm_CR[channel], w);
-                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_cm_Eta"    + name]->Fill(!isQCD ? Lepton1_eta_cm[channel] : Lepton1_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_Pt_cm"     + name]->Fill(!isQCD ? Lepton1_pt_cm[channel]  : Lepton1_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_Phi_cm"    + name]->Fill(!isQCD ? Lepton1_phi_cm[channel] : Lepton1_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(leadIndex+1) + "_Eta_cm"    + name]->Fill(!isQCD ? Lepton1_eta_cm[channel] : Lepton1_pt_cm_CR[channel], w);
 
-                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_cm_Pt"  + name]->Fill(!isQCD ? Lepton2_pt_cm[channel]  : Lepton2_pt_cm_CR[channel], w);
-                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_cm_Phi" + name]->Fill(!isQCD ? Lepton2_phi_cm[channel] : Lepton2_pt_cm_CR[channel], w);
-                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_cm_Eta" + name]->Fill(!isQCD ? Lepton2_eta_cm[channel] : Lepton2_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_Pt_cm"  + name]->Fill(!isQCD ? Lepton2_pt_cm[channel]  : Lepton2_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_Phi_cm" + name]->Fill(!isQCD ? Lepton2_phi_cm[channel] : Lepton2_pt_cm_CR[channel], w);
+                                    my_histos["h_Lepton" + std::to_string(subleadIndex+1) + "_Eta_cm" + name]->Fill(!isQCD ? Lepton2_eta_cm[channel] : Lepton2_pt_cm_CR[channel], w);
 
                                     auto& theGoodLeptons  = GoodLeptons[channel];
                                     auto& theGoodLeptonsC = GoodLeptonsCharge[channel];
@@ -1611,38 +1670,62 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     // -------------------------------------------------------------------------------------------------
                                     // Fill per jet (non-cm) variables including 4-vector and flavor informatiom
                                     // -------------------------------------------------------------------------------------------------
-                                    auto& theJets         = Jets[channel];
-                                    auto& theGoodJets     = GoodJets[channel];
-                                    auto& theJetsFlavb    = Jets_flavb[channel];
-                                    auto& theJetsFlavc    = Jets_flavc[channel];
-                                    auto& theJetsFlavg    = Jets_flavg[channel];
-                                    auto& theJetsFlavuds  = Jets_flavuds[channel];
-                                    auto& theJetsFlavq    = Jets_flavq[channel];
+                                    auto& theJets            = Jets[channel];
+                                    auto& theGoodJets        = GoodJets[channel];
+                                    auto& theJetsFlavb       = Jets_flavb[channel];
+                                    auto& theJetsFlavc       = Jets_flavc[channel];
+                                    auto& theJetsFlavg       = Jets_flavg[channel];
+                                    auto& theJetsFlavuds     = Jets_flavuds[channel];
+                                    auto& theJetsFlavq       = Jets_flavq[channel];
 
-                                    auto& nMVAjets        = nMVAJets[channel]; 
-                                    auto& theCombJetPt    = combinedNthJetPt[channel];
-                                    auto& theCombJetPtrHT = combinedNthJetPtrHT[channel];
-                                    auto& theCombJetEta   = combinedNthJetEta[channel];
-                                    auto& theCombJetPhi   = combinedNthJetPhi[channel];
-                                    auto& theCombJetE     = combinedNthJetE[channel];
-                                    auto& theCombJetM     = combinedNthJetM[channel];
+                                    auto& nMVAjets           = nMVAJets[channel]; 
+                                    auto& theComb6thJetPt    = combined6thJetPt[channel];
+                                    auto& theComb6thJetPtrHT = combined6thJetPtrHT[channel];
+                                    auto& theComb6thJetEta   = combined6thJetEta[channel];
+                                    auto& theComb6thJetPhi   = combined6thJetPhi[channel];
+                                    auto& theComb6thJetE     = combined6thJetE[channel];
+                                    auto& theComb6thJetM     = combined6thJetM[channel];
+                                    auto& theComb7thJetPt    = combined7thJetPt[channel];
+                                    auto& theComb7thJetPtrHT = combined7thJetPtrHT[channel];
+                                    auto& theComb7thJetEta   = combined7thJetEta[channel];
+                                    auto& theComb7thJetPhi   = combined7thJetPhi[channel];
+                                    auto& theComb7thJetE     = combined7thJetE[channel];
+                                    auto& theComb7thJetM     = combined7thJetM[channel];
+                                    auto& theComb8thJetPt    = combined8thJetPt[channel];
+                                    auto& theComb8thJetPtrHT = combined8thJetPtrHT[channel];
+                                    auto& theComb8thJetEta   = combined8thJetEta[channel];
+                                    auto& theComb8thJetPhi   = combined8thJetPhi[channel];
+                                    auto& theComb8thJetE     = combined8thJetE[channel];
+                                    auto& theComb8thJetM     = combined8thJetM[channel];
 
                                     if (isQCD)
                                     {
-                                        theJets         = Jets_CR[channel];
-                                        theGoodJets     = GoodJets_CR[channel];
-                                        nMVAjets        = nMVAJets_CR[channel];
-                                        theCombJetPt    = combinedNthJetPt_CR[channel];
-                                        theCombJetPtrHT = combinedNthJetPtrHT_CR[channel];
-                                        theCombJetEta   = combinedNthJetEta_CR[channel];
-                                        theCombJetPhi   = combinedNthJetPhi_CR[channel];
-                                        theCombJetE     = combinedNthJetE_CR[channel];
-                                        theCombJetM     = combinedNthJetM_CR[channel];
-                                        theJetsFlavb    = Jets_flavb_CR[channel];
-                                        theJetsFlavc    = Jets_flavc_CR[channel];
-                                        theJetsFlavg    = Jets_flavg_CR[channel];
-                                        theJetsFlavuds  = Jets_flavuds_CR[channel];
-                                        theJetsFlavq    = Jets_flavq_CR[channel];
+                                        theJets            = Jets_CR[channel];
+                                        theGoodJets        = GoodJets_CR[channel];
+                                        nMVAjets           = nMVAJets_CR[channel];
+                                        theComb6thJetPt    = combined6thJetPt_CR[channel];
+                                        theComb6thJetPtrHT = combined6thJetPtrHT_CR[channel];
+                                        theComb6thJetEta   = combined6thJetEta_CR[channel];
+                                        theComb6thJetPhi   = combined6thJetPhi_CR[channel];
+                                        theComb6thJetE     = combined6thJetE_CR[channel];
+                                        theComb6thJetM     = combined6thJetM_CR[channel];
+                                        theComb7thJetPt    = combined7thJetPt_CR[channel];
+                                        theComb7thJetPtrHT = combined7thJetPtrHT_CR[channel];
+                                        theComb7thJetEta   = combined7thJetEta_CR[channel];
+                                        theComb7thJetPhi   = combined7thJetPhi_CR[channel];
+                                        theComb7thJetE     = combined7thJetE_CR[channel];
+                                        theComb7thJetM     = combined7thJetM_CR[channel];
+                                        theComb8thJetPt    = combined8thJetPt_CR[channel];
+                                        theComb8thJetPtrHT = combined8thJetPtrHT_CR[channel];
+                                        theComb8thJetEta   = combined8thJetEta_CR[channel];
+                                        theComb8thJetPhi   = combined8thJetPhi_CR[channel];
+                                        theComb8thJetE     = combined8thJetE_CR[channel];
+                                        theComb8thJetM     = combined8thJetM_CR[channel];
+                                        theJetsFlavb       = Jets_flavb_CR[channel];
+                                        theJetsFlavc       = Jets_flavc_CR[channel];
+                                        theJetsFlavg       = Jets_flavg_CR[channel];
+                                        theJetsFlavuds     = Jets_flavuds_CR[channel];
+                                        theJetsFlavq       = Jets_flavq_CR[channel];
                                     }
 
                                     Debug("Filling non-cm jet variable histograms with name: " + name, __LINE__);
@@ -1673,12 +1756,25 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                     Debug("Filling combined jet variable histograms with name: " + name, __LINE__);
 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Pt"     + name]->Fill(theCombJetPt,    w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_PtrHT"  + name]->Fill(theCombJetPtrHT, w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Eta"    + name]->Fill(theCombJetEta,   w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Phi"    + name]->Fill(theCombJetPhi,   w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Mass"   + name]->Fill(theCombJetM,     w); 
-                                    my_histos["h_combined" + std::to_string(nMVAjets) + "thJet_Energy" + name]->Fill(theCombJetE,     w); 
+                                    my_histos["h_combined6thJet_Pt_cm"     + name]->Fill(theComb6thJetPt,    w); 
+                                    my_histos["h_combined6thJet_PtrHT_cm"  + name]->Fill(theComb6thJetPtrHT, w); 
+                                    my_histos["h_combined6thJet_Eta_cm"    + name]->Fill(theComb6thJetEta,   w); 
+                                    my_histos["h_combined6thJet_Phi_cm"    + name]->Fill(theComb6thJetPhi,   w); 
+                                    my_histos["h_combined6thJet_Mass_cm"   + name]->Fill(theComb6thJetM,     w); 
+                                    my_histos["h_combined6thJet_Energy_cm" + name]->Fill(theComb6thJetE,     w); 
+                                    my_histos["h_combined7thJet_Pt_cm"     + name]->Fill(theComb7thJetPt,    w); 
+                                    my_histos["h_combined7thJet_PtrHT_cm"  + name]->Fill(theComb7thJetPtrHT, w); 
+                                    my_histos["h_combined7thJet_Eta_cm"    + name]->Fill(theComb7thJetEta,   w); 
+                                    my_histos["h_combined7thJet_Phi_cm"    + name]->Fill(theComb7thJetPhi,   w); 
+                                    my_histos["h_combined7thJet_Mass_cm"   + name]->Fill(theComb7thJetM,     w); 
+                                    my_histos["h_combined7thJet_Energy_cm" + name]->Fill(theComb7thJetE,     w); 
+                                    my_histos["h_combined8thJet_Pt_cm"     + name]->Fill(theComb8thJetPt,    w); 
+                                    my_histos["h_combined8thJet_PtrHT_cm"  + name]->Fill(theComb8thJetPtrHT, w); 
+                                    my_histos["h_combined8thJet_Eta_cm"    + name]->Fill(theComb8thJetEta,   w); 
+                                    my_histos["h_combined8thJet_Phi_cm"    + name]->Fill(theComb8thJetPhi,   w); 
+                                    my_histos["h_combined8thJet_Mass_cm"   + name]->Fill(theComb8thJetM,     w); 
+                                    my_histos["h_combined8thJet_Energy_cm" + name]->Fill(theComb8thJetE,     w); 
+
                                 }                            
 
                                 // -------------------------------------------------------------------------------------------------
