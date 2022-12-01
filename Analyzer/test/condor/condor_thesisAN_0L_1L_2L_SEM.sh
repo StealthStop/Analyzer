@@ -6,8 +6,7 @@ voms-proxy-init --voms cms --hours 168
 command=$1
 
 YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
-DATE=("29.11.2022")
-
+DATE=("30.11.2022")
 
 
 for year in ${YEARS[@]}; do
@@ -25,10 +24,10 @@ for year in ${YEARS[@]}; do
     # -----------
     if [ $command == "trigger" ] || [ $command == "all" ]; then
         echo "running HadTriggers_Analyzer :---------------------------------"
-        python condorSubmit.py --analyze HadTriggers_Analyzer -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon -n 20 --output ${year}_HadronicTriggerEfficiencySF_$DATE
+        python condorSubmit.py --analyze HadTriggers_Analyzer -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon -n 40 --output ${year}_HadronicTriggerEfficiencySF_$DATE
 
         echo "running AnalyzeLepTrigger :---------------------------------"
-        python condorSubmit.py --analyze AnalyzeLepTrigger -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon,${year}_Data_SingleElectron -n 20 --output ${year}_LeptonicTriggerEfficiencySF_$DATE
+        python condorSubmit.py --analyze AnalyzeLepTrigger -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon,${year}_Data_SingleElectron -n 40 --output ${year}_LeptonicTriggerEfficiencySF_$DATE
     fi
  
     # ---------
@@ -36,8 +35,8 @@ for year in ${YEARS[@]}; do
     # ---------
     if [ $command == "hem" ] || [ $command == "all" ]; then
         echo "running HEM_Analyzer :---------------------------------"
-        if [${year} == "2018" ]; then
-            python condorSubmit.py --analyze HEM_Analyzer -d ${year}_Data_JetHT,${year}_Data_SingleElectron,${year}_Data_SingleMuon -n 20 --output ${year}_HEMissue_0l_1l_$DATE 
+        if [ ${year} == "2018" ]; then
+            python condorSubmit.py --analyze HEM_Analyzer -d ${year}_Data_JetHT,${year}_Data_SingleElectron,${year}_Data_SingleMuon -n 20 --output ${year}_HEMissue_0l_1l_2l_$DATE 
         fi
     fi
 
@@ -55,9 +54,6 @@ for year in ${YEARS[@]}; do
     # -----------------
     if [ $command == "disco" ] || [ $command == "all" ]; then
         echo "running AnalyzeDoubleDisCo :---------------------------------"
-        #python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_TT --output ${year}_DisCo_outputs_1L_2L_$DATE -s
-        #python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_AllTT,${year}_QCD,${year}_TTX,${year}_DYJetsToLL_M-50,${year}_Diboson,${year}_ST,${year}_Triboson,${year}_WJets,${year}_RPV,${year}_Data -n 40 --output ${year}_DisCo_outputs_1L_2L_$DATE -s
-        # data-MC plots
         python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_TT_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -n 5 --output ${year}_DisCo_outputs_dataMC_$DATE -s
 
     fi

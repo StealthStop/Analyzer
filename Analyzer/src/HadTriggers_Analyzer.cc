@@ -58,14 +58,13 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 {
     while( tr.getNextEvent() )
     {
-        const auto& eventCounter        = tr.getVar<int>("eventCounter");
+        const auto& eventCounter = tr.getVar<int>("eventCounter");
         my_histos["EventCounter"]->Fill( eventCounter );
 
         const auto& runtype                = tr.getVar<std::string>("runtype");
         const auto& filetag                = tr.getVar<std::string>("filetag");
         const auto& Jets                   = tr.getVec<utility::LorentzVector>("Jets");
         const auto& GoodJets_pt45          = tr.getVec<bool>("GoodJets_pt45");
-        const auto& NGoodJets_pt45         = tr.getVar<int>("NGoodJets_pt45");
         const auto& NGoodBJets_pt45        = tr.getVar<int>("NGoodBJets_pt45");
         const auto& HT_trigger_pt45        = tr.getVar<double>("HT_trigger_pt45");
         const auto& passBaseline0l_trigEff = tr.getVar<bool>("passBaseline0l_trigEff");
@@ -96,21 +95,21 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             }
         }
         
-        // ------------------------
-        // -- Print Event Number 
-        // ------------------------
+        // ------------------
+        // Print Event Number
+        // ------------------
         if(maxevents != -1 && tr.getEvtNum() >= maxevents) break;        
         //if( tr.getEvtNum() % 1000 == 0 ) printf("  Event %i\n", tr.getEvtNum() ) ;
 
-        // ----------------------------
-        // -- Print list of triggers 
-        // ----------------------------
+        // ----------------------
+        // Print list of triggers
+        // ----------------------
         //const auto& TriggerNames = tr.getVec<std::string>("TriggerNames");
         //if( tr.getEvtNum() == 1 ) printTriggerList(TriggerNames); 
 
-        // -------------------
-        // -- Define weight
-        // -------------------
+        // -------------
+        // Define weight
+        // -------------
         double weight               = 1.0;
         double eventweight          = 1.0;
         double bTagScaleFactor      = 1.0;
@@ -132,9 +131,9 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             weight *= eventweight*bTagScaleFactor*prefiringScaleFactor*puScaleFactor*topPtScaleFactor;
         }
         
-        // ---------------------------------------------------------
-        // -- Trigger Efficiency on the SingleMuon Dataset and MC
-        // ---------------------------------------------------------
+        // -------------------------------------------------------
+        // Jet Trigger Efficiency on the SingleMuon Dataset and MC
+        // -------------------------------------------------------
         if ( (filetag.find("Data_SingleMuon") != std::string::npos || runtype == "MC") )
         {
             const std::map<std::string, bool> cut_map_combHadMuTriggers
@@ -149,7 +148,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
             };
 
-            fillHistos(cut_map_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, NGoodJets_pt45, NGoodBJets_pt45, weight);
+            fillHistos(cut_map_combHadMuTriggers, passTriggerAllHad, HT_trigger_pt45, SixthJetPt45, weight);
         }
     }
 }
@@ -185,21 +184,21 @@ bool HadTriggers_Analyzer::containsGoodHadron( const std::vector<utility::Lorent
 }
 
 
-void HadTriggers_Analyzer::fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double HT, double pt, int njet, int nbjet, double weight )
+void HadTriggers_Analyzer::fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double HT, double pt, double weight )
 { 
     for( auto& kv : cutMap )
     {
         if( kv.second )
         {
-            my_histos["h_trig_den_"+kv.first+"_wJetHtBin"]->Fill( HT, weight );
-            my_histos["h_trig_den_"+kv.first+"_w6thJetPtBin"]->Fill( pt, weight );
-            my_2d_histos["h2_trig_den_"+kv.first+"_wJetHt6thJetPtBin"]->Fill( HT, pt, weight );
+            my_histos["h_den_"+kv.first+"_wJetHtBin"]->Fill( HT, weight );
+            my_histos["h_den_"+kv.first+"_w6thJetPtBin"]->Fill( pt, weight );
+            my_2d_histos["h2_den_"+kv.first+"_wJetHt6thJetPtBin"]->Fill( HT, pt, weight );
             
             if( passTriggerAllHad )
             {
-                my_histos["h_trig_num_"+kv.first+"_wJetHtBin"]->Fill( HT, weight );
-                my_histos["h_trig_num_"+kv.first+"_w6thJetPtBin"]->Fill( pt, weight );
-                my_2d_histos["h2_trig_num_"+kv.first+"_wJetHt6thJetPtBin"]->Fill( HT, pt, weight );
+                my_histos["h_num_"+kv.first+"_wJetHtBin"]->Fill( HT, weight );
+                my_histos["h_num_"+kv.first+"_w6thJetPtBin"]->Fill( pt, weight );
+                my_2d_histos["h2_num_"+kv.first+"_wJetHt6thJetPtBin"]->Fill( HT, pt, weight );
             }
 
         }
