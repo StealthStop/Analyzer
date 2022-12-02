@@ -37,7 +37,7 @@ fi
 # Check needed SF files and ensure local file matches with EOS file
 # Only copy down from EOS if necessary
 sfPath="$redirector/store/user/lpcsusystealth/StealthStop/ScaleFactorHistograms/FullRun2_UL"
-sfFiles=("wp_deepJet_106XUL16preVFP_v2.csv" "wp_deepJet_106XUL16postVFP_v3.csv" "wp_deepJet_106XUL17_v3.csv" "wp_deepJet_106XUL18_v2.csv" "allInOne_leptonSF_UL.root" "allInOne_hadronicSF_UL.root" "allInOne_BTagEff_UL.root" "allInOne_SFMean_UL.root")
+sfFiles=("wp_deepJet_106XUL16preVFP_v2.csv" "wp_deepJet_106XUL16postVFP_v3.csv" "wp_deepJet_106XUL17_v3.csv" "wp_deepJet_106XUL18_v2.csv" "allInOne_leptonSF_UL.root" "allInOne_hadronicSF_UL.root" "allInOne_BTagEff_UL.root" "allInOne_SFMean_UL.root" "allInOne_TopTagEffandSF_UL.root")
 for i in ${!sfFiles[@]};
 do
     sfFile=${sfFiles[$i]}
@@ -65,7 +65,7 @@ fileListPath="/store/user/lpcsusystealth/StealthStop"
 fileLists="filelists_Kevin_V20_2"
 localFileLists="filelists"
 
-xrdcp -s -r --parallel 4 --streams 8 $redirector/$fileListPath/$fileLists .
+xrdcp -s -r --parallel 4 --streams 2 $redirector/$fileListPath/$fileLists .
 
 if [[ ! -d $localFileLists ]]
 then
