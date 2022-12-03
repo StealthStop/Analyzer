@@ -178,8 +178,8 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
                         { "mu_pt40_trig_ge1jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers                   }, // ge1jetCut
                         { "mu_pt40_trig_ge2jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge2JetCut }, 
                         { "mu_pt40_trig_ge3jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge3JetCut }, 
-                        { "mu_pt40_trig_ge5jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge4JetCut }, 
-                        { "mu_pt40_trig_ge6jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge5JetCut }, 
+                        { "mu_pt40_trig_ge4jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge4JetCut }, 
+                        { "mu_pt40_trig_ge5jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge5JetCut }, 
                        
                     };
                 
