@@ -157,37 +157,11 @@ public:
         std::string hadronicFileName                  = "allInOne_hadronicSF_UL.root";
         std::string btagEffFileName                   = "allInOne_BTagEff_UL.root";
         std::string meanFileName                      = "allInOne_SFMean_UL.root";
+        std::string toptaggerFileName                 = "allInOne_TopTagEffandSF_UL.root";
 
         // Determines if an analyzer is compatible with fastmode
         // If it is not, then the fastMode flag is essentially neutralized
         bool fastModeCompatible = false;
-
-        // Common to all years
-        std::string DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-        std::string DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-        std::string DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-        std::string DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-        // Use RPV config for now --- switch to SYY with dedicated training
-        std::string DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-        std::string DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-        std::string DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-        std::string DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-        std::string DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-        // SF root files
-        std::string leptonFileName                    = "allInOne_leptonSF_UL.root";
-        std::string hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-        std::string toptaggerFileName                 = "allInOne_TopTagEffandSF_UL.root";
-        std::string btagEffFileName                   = "allInOne_BTagEff_UL.root";
-        std::string meanFileName                      = "allInOne_SFMean_UL.root";
 
         if(filetag.find("2016preVFP") != std::string::npos)
         {
