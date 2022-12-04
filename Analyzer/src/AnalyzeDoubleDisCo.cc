@@ -1281,7 +1281,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 ABCDmap_RPV = {};
                 ABCDmap_SYY = {};
-                // We could have equally chosen regions_SYY to get the name of the regions
                 for (const auto& region : regions)
                 {
                     ABCDmap_RPV[region] = !isQCD ? DoubleDisCo_passRegions_RPV[channel][region] : DoubleDisCo_passRegions_RPV_CR[channel][region];
@@ -1871,16 +1870,17 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                {
                                     Debug("Filling 1D njets histograms with name: " + name, __LINE__);
 
+                                    // ---------------------------------------------------------
+                                    // make inputs for Higgs Combine
+                                    //  -- it is 1D histogram, including 4 groups A, B, C, D
+                                    //  -- each of A, B, C, D has 7,8,9,10,11, 12incl Njets bins
+                                    // ---------------------------------------------------------
+
                                     int shift;
                                     if (inRegionBin_RPV[iSubRegion])
                                     {
                                         shift = inRegionBin_RPV[iSubRegion] ? iSubRegion : 100;
 
-                                        // ---------------------------------------------------------
-                                        // make inputs for Higgs Combine
-                                        //  -- it is 1D histogram, including 4 groups A, B, C, D
-                                        //  -- each of A, B, C, D has 7,8,9,10,11, 12incl Njets bins
-                                        // ---------------------------------------------------------
                                         my_histos["h_njets_11incl_RPV" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
                                         my_histos["h_njets_12incl_RPV" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
                                         my_histos["h_njets_13incl_RPV" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
