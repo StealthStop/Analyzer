@@ -871,13 +871,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Mll.push_back(tr.getVar<double>("mll"                                              + jecvar));
                 dRbjets.push_back(tr.getVar<double>("dR_bjets"                                     + jecvar));
 
-                DoubleDisCo_RPV_massReg.push_back(tr.getVar<double>("DoubleDisCo_RPV_massReg_" + channel + "l_RPV" + jecvar));
-                DoubleDisCo_RPV_disc1.push_back(tr.getVar<double>("DoubleDisCo_RPV_disc1_"     + channel + "l_RPV" + jecvar));
-                DoubleDisCo_RPV_disc2.push_back(tr.getVar<double>("DoubleDisCo_RPV_disc2_"     + channel + "l_RPV" + jecvar));
+                DoubleDisCo_RPV_massReg.push_back(tr.getVar<double>("DoubleDisCo_massReg_" + channel + "l_RPV" + jecvar));
+                DoubleDisCo_RPV_disc1.push_back(tr.getVar<double>("DoubleDisCo_disc1_"     + channel + "l_RPV" + jecvar));
+                DoubleDisCo_RPV_disc2.push_back(tr.getVar<double>("DoubleDisCo_disc2_"     + channel + "l_RPV" + jecvar));
 
-                DoubleDisCo_SYY_massReg.push_back(tr.getVar<double>("DoubleDisCo_SYY_massReg_" + channel + "l_SYY" + jecvar));
-                DoubleDisCo_SYY_disc1.push_back(tr.getVar<double>("DoubleDisCo_SYY_disc1_"     + channel + "l_SYY" + jecvar));
-                DoubleDisCo_SYY_disc2.push_back(tr.getVar<double>("DoubleDisCo_SYY_disc2_"     + channel + "l_SYY" + jecvar));
+                DoubleDisCo_SYY_massReg.push_back(tr.getVar<double>("DoubleDisCo_massReg_" + channel + "l_SYY" + jecvar));
+                DoubleDisCo_SYY_disc1.push_back(tr.getVar<double>("DoubleDisCo_disc1_"     + channel + "l_SYY" + jecvar));
+                DoubleDisCo_SYY_disc2.push_back(tr.getVar<double>("DoubleDisCo_disc2_"     + channel + "l_SYY" + jecvar));
 
                 fwm2_top6.push_back(tr.getVar<double>("fwm2_top6"          + jecvar));
                 fwm3_top6.push_back(tr.getVar<double>("fwm3_top6"          + jecvar));
@@ -1031,12 +1031,12 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Mll_CR.push_back(tr.getVar<double>("mll"                           + jecvar));
                 dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + jecvar));
 
-                DoubleDisCo_RPV_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_RPV_massReg_NonIsoMuon_" + channel + "l_RPV"  + jecvar));
-                DoubleDisCo_RPV_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_RPV_disc1_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
-                DoubleDisCo_RPV_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_RPV_disc2_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
-                DoubleDisCo_SYY_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_SYY_massReg_NonIsoMuon_" + channel + "l_SYY"  + jecvar));
-                DoubleDisCo_SYY_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_SYY_disc1_NonIsoMuon_" + channel + "l_SYY"      + jecvar));
-                DoubleDisCo_SYY_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_SYY_disc2_NonIsoMuon_" + channel + "l_SYY"      + jecvar));
+                DoubleDisCo_RPV_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_" + channel + "l_RPV"  + jecvar));
+                DoubleDisCo_RPV_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
+                DoubleDisCo_RPV_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
+                DoubleDisCo_SYY_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_" + channel + "l_SYY"  + jecvar));
+                DoubleDisCo_SYY_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_" + channel + "l_SYY"      + jecvar));
+                DoubleDisCo_SYY_disc2_CR.push_back(tr.getVar<double>("DoubleDisCo_disc2_NonIsoMuon_" + channel + "l_SYY"      + jecvar));
 
                 fwm2_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm2_top6"         + jecvar));
                 fwm3_top6_CR.push_back(tr.getVar<double>(mvaName + "fwm3_top6"         + jecvar));
