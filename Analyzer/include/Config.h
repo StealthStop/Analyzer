@@ -127,17 +127,36 @@ public:
         const bool isSignal  = (filetag.find("_stop") != std::string::npos || filetag.find("_mStop") != std::string::npos || filetag.find("VLQ_2t4b") != std::string::npos) ? true : false;
 
         std::string runYear;
-        std::string DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV, DoubleDisCo_Cfg_NonIsoMuon_0l_RPV; 
-        std::string DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV, DoubleDisCo_Cfg_NonIsoMuon_1l_RPV; 
-        std::string DoubleDisCo_Cfg_2l_RPV, DoubleDisCo_Model_2l_RPV, DoubleDisCo_Cfg_NonIsoMuon_2l_RPV; 
-        std::string DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY, DoubleDisCo_Cfg_NonIsoMuon_0l_SYY; 
-        std::string DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY, DoubleDisCo_Cfg_NonIsoMuon_1l_SYY; 
-        std::string DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY, DoubleDisCo_Cfg_NonIsoMuon_2l_SYY; 
-        std::string leptonFileName, hadronicFileName, btagEffFileName, bjetTagFileName, bjetTagFileNameReshape, meanFileName, TopTaggerCfg;
+        std::string bjetTagFileName, bjetTagFileNameReshape, TopTaggerCfg;
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
         bool blind = true;
+
+        std::string DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
+        std::string DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
+        std::string DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg"; 
+        std::string DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
+        std::string DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+        std::string DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+        // Use RPV config for now --- switch to SYY with dedicated training
+        std::string DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
+        std::string DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
+        std::string DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
+        std::string DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+        std::string DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
+        std::string DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
+        // SF root files
+        std::string leptonFileName                    = "allInOne_leptonSF_UL.root";
+        std::string hadronicFileName                  = "allInOne_hadronicSF_UL.root";
+        std::string btagEffFileName                   = "allInOne_BTagEff_UL.root";
+        std::string meanFileName                      = "allInOne_SFMean_UL.root";
 
         // Determines if an analyzer is compatible with fastmode
         // If it is not, then the fastMode flag is essentially neutralized
@@ -154,35 +173,10 @@ public:
             deepFlavour_WP_loose              = 0.0508;
             deepFlavour_WP_medium             = 0.2598;
             deepFlavour_WP_tight              = 0.6502;           
-            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg"; 
-            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // Use RPV config for now --- switch to SYY with dedicated training
-            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // SF root files
-            leptonFileName                    = "allInOne_leptonSF_UL.root";
-            hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
-            meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016preVFP.cfg";
-
         }
 
         else if(filetag.find("2016postVFP") != std::string::npos)
@@ -196,32 +190,8 @@ public:
             deepFlavour_WP_loose              = 0.0480;
             deepFlavour_WP_medium             = 0.2489;
             deepFlavour_WP_tight              = 0.6377;           
-            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // SYY config for now --- switch to SYY with dedicated training
-            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // SF root files
-            leptonFileName                    = "allInOne_leptonSF_UL.root";
-            hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
-            meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016postVFP.cfg";
 
@@ -237,32 +207,8 @@ public:
             deepFlavour_WP_loose              = 0.0532;
             deepFlavour_WP_medium             = 0.3040;       
             deepFlavour_WP_tight              = 0.7476;
-            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // Use RPV config for now --- switch to SYY with dedicated training
-            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // SF root files
-            leptonFileName                    = "allInOne_leptonSF_UL.root";
-            hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL17_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
-            meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2017.cfg";
 
@@ -280,32 +226,8 @@ public:
             deepFlavour_WP_loose              = 0.0490;
             deepFlavour_WP_medium             = 0.2783;       
             deepFlavour_WP_tight              = 0.7100;
-            DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_RPV          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_RPV          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_RPV          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // Use RPV config for now --- switch to SYY with dedicated training
-            DoubleDisCo_Cfg_0l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
-            DoubleDisCo_Model_0l_SYY          = "keras_frozen_DoubleDisCo_Reg_0l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_0l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_1l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Model_1l_SYY          = "keras_frozen_DoubleDisCo_Reg_1l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_1l_RPV_Run2.cfg";
-            DoubleDisCo_Cfg_2l_SYY            = "Keras_Tensorflow_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_RPV_Run2.pb";
-            DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_RPV_Run2.cfg";
-            // SF root files
-            leptonFileName                    = "allInOne_leptonSF_UL.root";
-            hadronicFileName                  = "allInOne_hadronicSF_UL.root";
-            btagEffFileName                   = "allInOne_BTagEff_UL.root";
             bjetTagFileName                   = "wp_deepJet_106XUL18_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";
-            meanFileName                      = "allInOne_SFMean_UL.root";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2018.cfg";
 
