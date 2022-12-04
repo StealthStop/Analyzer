@@ -62,6 +62,11 @@ for year in ${YEARS[@]}; do
 
     fi
 
+    if [ $command == "hadd" ]; then
+        echo "hadding AnalyzeDoubleDisCo :---------------------------------"
+        python hadder.py -d ${year}_TT_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -H Hadded_DoubleDisCo_$DATE -p ${year}_DisCo_outputs_dataMC_$DATE/output-files -y ${year} --haddOther -f
+    fi
+
     # -------------
     # make minitree
     # -------------
