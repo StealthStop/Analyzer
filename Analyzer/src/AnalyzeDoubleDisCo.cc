@@ -24,9 +24,12 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 {
 
     histInfos = {
-        {"h_DoubleDisCo_disc1",            80,    0,    1},
-        {"h_DoubleDisCo_disc2",            80,    0,    1},
-        {"h_DoubleDisCo_massReg",         180,    0, 1800},
+        {"h_DoubleDisCo_RPV_disc1",        80,    0,    1},
+        {"h_DoubleDisCo_RPV_disc2",        80,    0,    1},
+        {"h_DoubleDisCo_RPV_massReg",     180,    0, 1800},
+        {"h_DoubleDisCo_SYY_disc1",        80,    0,    1},
+        {"h_DoubleDisCo_SYY_disc2",        80,    0,    1},
+        {"h_DoubleDisCo_SYY_massReg",     180,    0, 1800},
         {"h_FWM2_top6",                    50,    0,    1},
         {"h_FWM3_top6",                    50,    0,    1},
         {"h_FWM4_top6",                    50,    0,    1},
@@ -73,9 +76,12 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_Njets",                        21, -0.5, 20.5},
         {"h_Nbjets",                       21, -0.5, 20.5},
         {"h_Ntops",                         7, -0.5,  6.5},
-        {"h_njets_11incl",                 24, -0.5, 23.5},
-        {"h_njets_12incl",                 24, -0.5, 23.5},
-        {"h_njets_13incl",                 24, -0.5, 23.5},
+        {"h_njets_11incl_RPV",             24, -0.5, 23.5},
+        {"h_njets_12incl_RPV",             24, -0.5, 23.5},
+        {"h_njets_13incl_RPV",             24, -0.5, 23.5},
+        {"h_njets_11incl_SYY",             24, -0.5, 23.5},
+        {"h_njets_12incl_SYY",             24, -0.5, 23.5},
+        {"h_njets_13incl_SYY",             24, -0.5, 23.5},
         {"h_HT",                          720,    0, 7200},
         {"h_dRbjets",                     180,    0,    6},
         {"h_Mbl",                         180,    0,  360},
@@ -85,10 +91,11 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
     };
 
     hist2DInfos = {
-        {"h_DoubleDisCo_disc1_disc2", 100,    0,    1, 100,    0,   1},
-        {"h_pt_jetRank_cm",           150,    0, 1500,  10,    0,  10},
-        {"h_ptrHT_jetRank_cm",        150,    0,    1,  10,    0,  10},
-        {"h_nRtops_vs_nMtops",          7, -0.5,  6.5,   7, -0.5, 6.5},
+        {"h_DoubleDisCo_RPV_disc1_disc2", 100,    0,    1, 100,    0,   1},
+        {"h_DoubleDisCo_SYY_disc1_disc2", 100,    0,    1, 100,    0,   1},
+        {"h_pt_jetRank_cm",               150,    0, 1500,  10,    0,  10},
+        {"h_ptrHT_jetRank_cm",            150,    0,    1,  10,    0,  10},
+        {"h_nRtops_vs_nMtops",              7, -0.5,  6.5,   7, -0.5, 6.5},
     };
 
     channels = {"0", "1", "2"};
