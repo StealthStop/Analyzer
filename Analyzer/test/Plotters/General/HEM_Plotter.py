@@ -20,6 +20,12 @@ import argparse
 # python HEM_Plotter.py --inputDir ./condor/HEMstudy1L_hadd --data SingleMuon     --tag ebPostVeto --ratio
 # python HEM_Plotter.py --inputDir ./condor/HEMstudy0L_hadd --data JetHT          --tag ebPostVeto --ratio
 
+# Current command to run
+# python HEM_Plotter.py --inputDir ./condor/hadd_2018UL_HEMissue_0l_1l_2l_30.11.2022 --data SingleElectron --tag 2018binned --ratio
+# python HEM_Plotter.py --inputDir ./condor/hadd_2018UL_HEMissue_0l_1l_2l_30.11.2022 --data SingleMuon --tag 2018binned --ratio
+# python HEM_Plotter.py --inputDir ./condor/hadd_2018UL_HEMissue_0l_1l_2l_30.11.2022 --data JetHT --tag 2018binned --ratio
+
+
 # -------------------------------------------------
 # make up the histograms such as rebin, title, etc.
 # -------------------------------------------------
@@ -236,7 +242,7 @@ if __name__ == '__main__':
     YCANVAS = 2400
 
     inRootDir = args.inputDir
-    outpath   = "./2018UL_HEM_Study_0l_1l_%s/%s/"%(args.tag,args.data)
+    outpath   = "./2018UL_HEM_Study_0l_1l_2l_%s/%s/"%(args.tag,args.data)
     
     if not os.path.exists(outpath): 
         os.makedirs(outpath)
@@ -253,6 +259,8 @@ if __name__ == '__main__':
 
         if "1l" in name and "JetHT" in args.data: continue
 
+        if "2l" in name and "JetHT" in args.data: continue
+
         if ("h_electron_EtaVsPhi" in name or "h_muon_EtaVsPhi" in name) and "JetHT" in args.data: continue
 
         if "h_electron_EtaVsPhi" in name and ("SingleMuon" in args.data or "JetHT" in args.data): continue
@@ -268,7 +276,7 @@ if __name__ == '__main__':
         if "TH2" in mapPFAhistos.values()[0][name].ClassName():
 
             maxRange = 0.025 
-            option = "COLZ E TEXT"
+            option = "COLZ"
             
             # -----------------------
             # 2D plots with HEM issue
