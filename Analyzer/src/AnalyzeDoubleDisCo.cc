@@ -936,7 +936,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + jecvar));
                 Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_0l"              + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1l"              + jecvar));
 
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + jecvar));
                 Mll_CR.push_back(tr.getVar<double>("mll"                           + jecvar));
