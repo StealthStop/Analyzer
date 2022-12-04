@@ -45,9 +45,12 @@ getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2598_DeepResolvedwp0.95_DeepAK8wp0.
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2489_DeepResolvedwp0.95_DeepAK8wp0.937_2016postVFPUL -f TopTaggerCfg_2016postVFP.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.3040_DeepResolvedwp0.95_DeepAK8wp0.895_2017UL -f TopTaggerCfg_2017.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2783_DeepResolvedwp0.95_DeepAK8wp0.895_2018UL -f TopTaggerCfg_2018.cfg -o
-getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_v2.3 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_v2.2 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_v1.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_RPV_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_SYY_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_RPV_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_SYY_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_RPV_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_SYY_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
 ```
 
 ## Running an Analyzer Locally

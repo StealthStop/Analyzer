@@ -92,7 +92,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
     };
 
     channels = {"0", "1", "2"};
-    njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12incl", "13incl"};
+    njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12", "12incl", "13incl"};
     systvars = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown",
                        "pdfUp", "pdfDown", "sclUp", "sclDown",
                        "prfUp", "prfDown", "btgUp", "btgDown",
@@ -1245,6 +1245,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     {"9",      !isQCD ? NGoodJets[channel]==9  : NGoodJets_CR[channel]==9 },
                     {"10",     !isQCD ? NGoodJets[channel]==10 : NGoodJets_CR[channel]==10},
                     {"11",     !isQCD ? NGoodJets[channel]==11 : NGoodJets_CR[channel]==11},
+                    {"12",     !isQCD ? NGoodJets[channel]==12 : NGoodJets_CR[channel]==12},
                     {"11incl", !isQCD ? NGoodJets[channel]>=11 : NGoodJets_CR[channel]>=11},
                     {"12incl", !isQCD ? NGoodJets[channel]>=12 : NGoodJets_CR[channel]>=12},
                     {"13incl", !isQCD ? NGoodJets[channel]>=13 : NGoodJets_CR[channel]>=13},
