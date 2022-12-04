@@ -100,6 +100,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
                        "puUp",  "puDown"
     };
     jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
+    regions  = {"ABCD", "Val_BD", "Val_CD", "Val_D"};
 
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
 }
@@ -110,9 +111,8 @@ void AnalyzeDoubleDisCo::Debug(const std::string& message, int line = 0)
         std::cout << "L" << line << ": " << message << std::endl;
 }
 
-void AnalyzeDoubleDisCo::makeSubregions(const std::vector<std::vector<std::string>>& regionVec)
+void AnalyzeDoubleDisCo::makeSubregions()
 {
-
     Debug("Creating map of subregions and regions", __LINE__);
 
     // ------------------------------------------------------------------------------------
@@ -121,38 +121,35 @@ void AnalyzeDoubleDisCo::makeSubregions(const std::vector<std::vector<std::strin
     //  -- E.g., in SubDiv-BD: "B" : A' / "D" : C' / "E" : B' / "F" : D'
     //  -- Naming conventions agreed upon with Validation code
     // ------------------------------------------------------------------------------------
-    for (auto& regions : regionVec)
+    for (auto& region : regions)
     {
-        for (auto& region : regions)
-        {
-            if (subRegionsMap.find(region) != subRegionsMap.end())
-                continue;
+        if (subRegionsMap.find(region) != subRegionsMap.end())
+            continue;
 
-            // SubDiv-BD: subregions (B,D,E,F) in BD regions
-            if (region.find("bd") != std::string::npos or region.find("_BD") != std::string::npos) {
-                subRegionsMap[region].push_back("B");
-                subRegionsMap[region].push_back("E");
-                subRegionsMap[region].push_back("D");
-                subRegionsMap[region].push_back("F");
-            // SubDiv-CD: subregions (C,D,G,H) in CD regions
-            } else if (region.find("cd") != std::string::npos or region.find("_CD") != std::string::npos) {
-                subRegionsMap[region].push_back("C");
-                subRegionsMap[region].push_back("D");
-                subRegionsMap[region].push_back("G");
-                subRegionsMap[region].push_back("H");
-            // SubDiv-D: subregions (dA, dB, dC, dD) in D region
-            } else if (region.find("subDiv") != std::string::npos or region.find("_D") != std::string::npos) {
-                subRegionsMap[region].push_back("dA");
-                subRegionsMap[region].push_back("dB");
-                subRegionsMap[region].push_back("dC");
-                subRegionsMap[region].push_back("dD");
-            // ABCD region
-            } else {
-                subRegionsMap[region].push_back("A");
-                subRegionsMap[region].push_back("B");
-                subRegionsMap[region].push_back("C");
-                subRegionsMap[region].push_back("D");
-            }
+        // SubDiv-BD: subregions (B,D,E,F) in BD regions
+        if (region.find("bd") != std::string::npos or region.find("_BD") != std::string::npos) {
+            subRegionsMap[region].push_back("B");
+            subRegionsMap[region].push_back("E");
+            subRegionsMap[region].push_back("D");
+            subRegionsMap[region].push_back("F");
+        // SubDiv-CD: subregions (C,D,G,H) in CD regions
+        } else if (region.find("cd") != std::string::npos or region.find("_CD") != std::string::npos) {
+            subRegionsMap[region].push_back("C");
+            subRegionsMap[region].push_back("D");
+            subRegionsMap[region].push_back("G");
+            subRegionsMap[region].push_back("H");
+        // SubDiv-D: subregions (dA, dB, dC, dD) in D region
+        } else if (region.find("subDiv") != std::string::npos or region.find("_D") != std::string::npos) {
+            subRegionsMap[region].push_back("dA");
+            subRegionsMap[region].push_back("dB");
+            subRegionsMap[region].push_back("dC");
+            subRegionsMap[region].push_back("dD");
+        // ABCD region
+        } else {
+            subRegionsMap[region].push_back("A");
+            subRegionsMap[region].push_back("B");
+            subRegionsMap[region].push_back("C");
+            subRegionsMap[region].push_back("D");
         }
     }
 }
@@ -238,7 +235,7 @@ void AnalyzeDoubleDisCo::Preinit(unsigned int nNNJets, unsigned int nLeptons)
     }
 }
 
-void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec, const std::string& runtype)
+void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, const std::string& runtype)
 {
 
     Debug("Initializing all histograms", __LINE__);
@@ -246,7 +243,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
     TH2::SetDefaultSumw2();
 
     // Generates a map of region to constituent subregions
-    makeSubregions(regionsVec);
+    makeSubregions();
 
     // --------------------------------------------------------------
     // loop over the cutmap
@@ -772,7 +769,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<std::vector<float> >                        Jets_flavuds                   ;
             std::vector<std::vector<float> >                        Jets_flavq                     ;
 
-            std::vector<std::vector<std::string> >                  regions                        ;
             std::vector<double>                                     combined6thJetPt               ;
             std::vector<double>                                     combined6thJetPtrHT            ;
             std::vector<double>                                     combined6thJetEta              ;
@@ -981,10 +977,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::map<std::string, std::vector<bool> > tempRegionMap_SYY;
                 std::map<std::string, std::vector<bool> > tempRegionMap_SYY_CR;
 
-                // In terms of just region names, should be identical for RPV and SYY
-                // So let's just use the RPV ones
-                regions.push_back(tr.getVec<std::string>("regions_" + channel + "l_RPV"));
-                for (const std::string& region : regions.back())
+                for (const std::string& region : regions)
                 {
                     tempRegionMap_RPV[region]    = tr.getVec<bool>("DoubleDisCo_" + region + "_"            + channel + "l_RPV" + jecvar);
                     tempRegionMap_RPV_CR[region] = tr.getVec<bool>("DoubleDisCo_" + region + "_NonIsoMuon_" + channel + "l_RPV" + jecvar);
@@ -1241,7 +1234,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Debug("Initializing the histograms", __LINE__);
 
                 Preinit(7, 2);
-                InitHistos(cut_map, regions, runtype);
+                InitHistos(cut_map, runtype);
                 initHistos = true;
             }
 
@@ -1289,7 +1282,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 ABCDmap_RPV = {};
                 ABCDmap_SYY = {};
                 // We could have equally chosen regions_SYY to get the name of the regions
-                for (const auto& region : regions[channel])
+                for (const auto& region : regions)
                 {
                     ABCDmap_RPV[region] = !isQCD ? DoubleDisCo_passRegions_RPV[channel][region] : DoubleDisCo_passRegions_RPV_CR[channel][region];
                     ABCDmap_SYY[region] = !isQCD ? DoubleDisCo_passRegions_SYY[channel][region] : DoubleDisCo_passRegions_SYY_CR[channel][region];
@@ -1415,7 +1408,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         // -----------------
                         // loop over regions
                         // -----------------
-                        for (auto& region : regions[channel])
+                        for (auto& region : regions)
                         {
                             Debug("Top of region loop for region: " + region, __LINE__);
 

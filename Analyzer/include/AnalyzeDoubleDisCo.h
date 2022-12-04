@@ -46,6 +46,7 @@ public:
     std::vector<std::string> njets;
     std::vector<std::string> systvars;
     std::vector<std::string> jecvars;
+    std::vector<std::string> regions;
 
     std::map<std::string, std::vector<std::string> > subRegionsMap;
 
@@ -54,10 +55,10 @@ public:
     AnalyzeDoubleDisCo();
     ~AnalyzeDoubleDisCo(){};
     
-    void makeSubregions(const std::vector<std::vector<std::string>>& regionsVec);
+    void makeSubregions();
     void Loop(NTupleReader& tr, double weight, int maxevents = -1, bool isQuiet = false);
     void Preinit(unsigned int, unsigned int);
-    void InitHistos(const std::map<std::string, bool>& cutMap, const std::vector<std::vector<std::string>>& regionsVec, const std::string& runtype);
+    void InitHistos(const std::map<std::string, bool>& cutMap, const std::string& runtype);
     void WriteHistos(TFile* outfile);
     void Debug(const std::string& message, int line);
 
