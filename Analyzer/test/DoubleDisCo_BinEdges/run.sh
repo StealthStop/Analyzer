@@ -60,7 +60,6 @@ for YEAR in ${YEARS[@]}; do
                         if [ $command == "BinEdges" ] || [ $command == "All" ]; then 
                             echo "running for BinEdges:---------------------------------"
                             python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVars2D --plotDisc1VsDisc2 
-                            #python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel ${CHANNEL} --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotDisc1VsDisc2 
                         fi
                                                     
                         #################################
