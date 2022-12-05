@@ -314,22 +314,17 @@ if __name__ == "__main__":
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="output_QCDCRPrediction")
     parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="/uscms_data/d3/jhiltb/PO_Boxes/shared/hadd_Run2UL_DisCo_outputs_1Lv2.2_2Lv1.2_11.11.2022")
     parser.add_argument("--channel",      dest="channel",      help="0l, 1l, 2l",                  default="1l")
+    parser.add_argument("--model",        dest="model",        help="Which NN model (RPV, SYY)",   default="RPV")
     args = parser.parse_args()
 
     inclBin = "12incl" if args.channel == "1l" else "13incl"
 
     controlRegions = [
-        {"h_njets_%s_%s_QCDCR_ABCD"      %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        #{"h_njets_%s_%s_QCDCR_1b_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        #{"h_njets_%s_%s_QCDCR_1t_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        #{"h_njets_%s_%s_QCDCR_1b_1t_ABCD"%(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        #{"h_njets_%s_%s_QCDCR_2b_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        #{"h_njets_%s_%s_QCDCR_45_ABCD"   %(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
-        #{"h_njets_%s_%s_QCDCR_45_1b_ABCD"%(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        {"h_njets_%s_%s_%s_QCDCR_ABCD"      %(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
     ]
 
     signalRegions = {
-        "h_njets_%s_%s_ABCD"%(inclBin, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}",    "rebin" : 1,  "min" : 0,  "max" :    24}},
+        "h_njets_%s_%s_%s_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}",    "rebin" : 1,  "min" : 0,  "max" :    24}},
     }
 
     backgrounds = {
