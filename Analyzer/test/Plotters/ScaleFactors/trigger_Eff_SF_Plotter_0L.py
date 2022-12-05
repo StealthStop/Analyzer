@@ -51,8 +51,8 @@ def updateErrors(hist,den):
             if content == 1.0 and error < 1e-10: 
                 error = 1.0 - (ROOT.Math.normal_cdf(-1,1,0))**(1.0 / den.GetBinContent(xbin,ybin))
                 hist.SetBinError(xbin,ybin,error)
-          
-            elif error < 1e-10:
+ 
+            if error < 1e-10:
                 print('WARNING: Error in bin ({},{}) is < 1e-10. Setting error to 3% of bin content.'.format(xbin,ybin))
                 error = content*0.03
                 hist.SetBinError(xbin,ybin,error)
@@ -102,7 +102,7 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var
     Efficiency_data.SetMarkerSize(3.0)
     Efficiency_data.SetMarkerStyle(20)
     Efficiency_data.Divide(dataNum, dataDen, 1, 1, "B")
-    Efficiency_data.GetYaxis().SetRangeUser(0.65, 1.05)
+    Efficiency_data.GetYaxis().SetRangeUser(0.4, 1.1)
     # get mc efficiency
     Efficiency_mc = mcNum.Clone()
     Efficiency_mc.SetLineWidth(3)
@@ -111,7 +111,7 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var
     Efficiency_mc.SetMarkerSize(3.0)
     Efficiency_mc.SetMarkerStyle(20)
     Efficiency_mc.Divide(mcNum, mcDen, 1, 1, "B")
-    Efficiency_mc.GetYaxis().SetRangeUser(0.65, 1.05)
+    Efficiency_mc.GetYaxis().SetRangeUser(0.4, 1.1)
     # get errors
     updateErrors(Efficiency_data, dataDen)
     updateErrors(Efficiency_mc, mcDen)
@@ -220,8 +220,8 @@ def make_ScaleFactor_Plots(dataNum, dataDen, mcNum, mcDen, year, outputFile, xTi
     # write SF histograms to the root file
     if outputFile is not None:
         outputFile.cd()
-        ScaleFactor.SetName(theName)
-        ScaleFactor.Write(theName) 
+        ScaleFactor.SetName(theName+"_TriggerSF")
+        ScaleFactor.Write(theName+"_TriggerSF") 
 
 
 # -------------
@@ -271,12 +271,12 @@ def main():
 
     varList_jetTrigSF = [
         "1bjetCut_wJetHt6thJetPtBin",
-        "2bjetCut_wJetHt6thJetPtBin",
-        "3bjetCut_wJetHt6thJetPtBin",
-        "ge1bjetCut_wJetHt6thJetPtBin",
+        #"2bjetCut_wJetHt6thJetPtBin",
+        #"3bjetCut_wJetHt6thJetPtBin",
+        #"ge1bjetCut_wJetHt6thJetPtBin",
         "ge2bjetCut_wJetHt6thJetPtBin",
-        "ge3bjetCut_wJetHt6thJetPtBin",
-        "ge4bjetCut_wJetHt6thJetPtBin",
+        #"ge3bjetCut_wJetHt6thJetPtBin",
+        #"ge4bjetCut_wJetHt6thJetPtBin",
     ]
 
     # --------------------------

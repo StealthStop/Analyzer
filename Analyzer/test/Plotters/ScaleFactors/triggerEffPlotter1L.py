@@ -59,7 +59,7 @@ def updateErrors(hist,den):
                 error = 1.0 - (ROOT.Math.normal_cdf(-1,1,0))**(1.0 / den.GetBinContent(xbin,ybin))
                 hist.SetBinError(xbin,ybin,error)
 
-            elif error < 1e-10:
+            if error < 1e-10:
                 print('WARNING: Error in bin ({},{}) is < 1e-10. Setting error to 3% of bin content.'.format(xbin,ybin))
                 error = content*0.03
                 hist.SetBinError(xbin,ybin,error)
@@ -114,7 +114,7 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen):
     dataRatio.SetMarkerSize(3.0)
     dataRatio.SetMarkerStyle(20)
     dataRatio.Divide(dataNum, dataDen, 1, 1, "B")
-    dataRatio.GetYaxis().SetRangeUser(0.7, 1.1)
+    dataRatio.GetYaxis().SetRangeUser(0.4, 1.1)
     # get mc efficiency
     mcRatio = mcNum.Clone()
     mcRatio.SetLineWidth(3)
@@ -123,15 +123,15 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen):
     mcRatio.SetMarkerSize(3.0)
     mcRatio.SetMarkerStyle(20)
     mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
-    mcRatio.GetYaxis().SetRangeUser(0.7, 1.1)
+    mcRatio.GetYaxis().SetRangeUser(0.4, 1.1)
     # get errors
     updateErrors(dataRatio,dataDen)
     updateErrors(mcRatio,mcDen)
     # get scale factor
     dataMcRatio = dataNum.Clone()
     dataMcRatio.Divide(dataRatio, mcRatio)
-    dataMcRatio.SetMinimum(0.7)
-    dataMcRatio.SetMaximum(1.1)
+    dataMcRatio.SetMinimum(0.8)
+    dataMcRatio.SetMaximum(1.2)
     dataMcRatio.GetYaxis().SetNdivisions(-304)
     dataMcRatio.SetTitle("")
     dataMcRatio.SetLineWidth(3)
@@ -244,10 +244,10 @@ def make_ScaleFactor_Plots(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
 
     #setMinimumErrors(dataMcRatio)
 
-    if "5jCut" in aName and "trig" in aName:
+    if "ge5jetCut" in aName and "trig" in aName:
         outputFile.cd()
-        dataMcRatio.SetName(aName)
-        dataMcRatio.Write(aName)
+        dataMcRatio.SetName(aName+"_TriggerSF")
+        dataMcRatio.Write(aName+"_TriggerSF")
 
     theName = dataNum.GetName().replace("h2_num","")
     TopMargin    = 0.098
