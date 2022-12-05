@@ -152,7 +152,7 @@ public:
         std::string DoubleDisCo_Model_2l_SYY          = "keras_frozen_DoubleDisCo_Reg_2l_SYY_Run2.pb";
         std::string DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = "Keras_Tensorflow_NonIsoMuon_DoubleDisCo_Reg_2l_SYY_Run2.cfg";
         // SF root files
-        std::string leptonFileName                    = "allInOne_leptonSF_UL.root";
+        std::string leptonFileName                    = "allInOne_leptonicSF_UL.root";
         std::string hadronicFileName                  = "allInOne_hadronicSF_UL.root";
         std::string btagEffFileName                   = "allInOne_BTagEff_UL.root";
         std::string meanFileName                      = "allInOne_SFMean_UL.root";
