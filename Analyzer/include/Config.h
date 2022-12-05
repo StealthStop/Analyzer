@@ -131,6 +131,7 @@ public:
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
+        double resolvedTop_WP = 0.0, mergedTop_WP = 0.0;
         bool blind = true;
 
         std::string DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
@@ -173,6 +174,8 @@ public:
             deepFlavour_WP_loose              = 0.0508;
             deepFlavour_WP_medium             = 0.2598;
             deepFlavour_WP_tight              = 0.6502;           
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.937;
             bjetTagFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
             blind                             = true;
@@ -189,6 +192,8 @@ public:
             deepFlavour_WP_loose              = 0.0480;
             deepFlavour_WP_medium             = 0.2489;
             deepFlavour_WP_tight              = 0.6377;           
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.937;
             bjetTagFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
             blind                             = true;
@@ -205,6 +210,8 @@ public:
             deepFlavour_WP_loose              = 0.0532;
             deepFlavour_WP_medium             = 0.3040;
             deepFlavour_WP_tight              = 0.7476;
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.895;
             bjetTagFileName                   = "wp_deepJet_106XUL17_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
             blind                             = true;
@@ -223,6 +230,8 @@ public:
             deepFlavour_WP_loose              = 0.0490;
             deepFlavour_WP_medium             = 0.2783;
             deepFlavour_WP_tight              = 0.7100;
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.895;
             bjetTagFileName                   = "wp_deepJet_106XUL18_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";
             blind                             = true;
@@ -239,6 +248,8 @@ public:
         tr.registerDerivedVar("deepFlavour_WP_loose",              deepFlavour_WP_loose             );
         tr.registerDerivedVar("deepFlavour_WP_medium",             deepFlavour_WP_medium            );
         tr.registerDerivedVar("deepFlavour_WP_tight",              deepFlavour_WP_tight             );
+        tr.registerDerivedVar("resolvedTop_WP",                    resolvedTop_WP                   );
+        tr.registerDerivedVar("mergedTop_WP",                      mergedTop_WP                     );
         tr.registerDerivedVar("isSignal",                          isSignal                         );
         tr.registerDerivedVar("DoubleDisCo_Cfg_0l_RPV",            DoubleDisCo_Cfg_0l_RPV           );
         tr.registerDerivedVar("DoubleDisCo_Model_0l_RPV",          DoubleDisCo_Model_0l_RPV         );
