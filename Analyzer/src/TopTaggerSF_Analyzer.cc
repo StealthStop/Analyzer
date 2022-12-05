@@ -69,29 +69,29 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
     my_1D_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
 
     //Define binning for the histograms
-    const Int_t nPtBins_Njet6_R = 6;
-    std::vector<double> ptBinEdges_Njet6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const Int_t nPtBins_Njets6_R = 6;
+    std::vector<double> ptBinEdges_Njets6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
 
-    const Int_t nPtBins_Njet7_R = 6;
-    std::vector<double> ptBinEdges_Njet7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const Int_t nPtBins_Njets7_R = 6;
+    std::vector<double> ptBinEdges_Njets7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
 
-    const Int_t nPtBins_Njet8_R = 4;
-    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
+    const Int_t nPtBins_Njets8_R = 4;
+    std::vector<double> ptBinEdges_Njets8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
 
-    const Int_t nPtBins_Njet9_R = 3;
-    std::vector<double> ptBinEdges_Njet9_R = { 0.0, 120.0, 200.0, 1500.0 };
+    const Int_t nPtBins_Njets9_R = 3;
+    std::vector<double> ptBinEdges_Njets9_R = { 0.0, 120.0, 200.0, 1500.0 };
 
-    const Int_t nPtBins_Njet6_M = 2;
-    std::vector<double> ptBinEdges_Njet6_M = { 400.0, 600.0, 1500.0 };
+    const Int_t nPtBins_Njets6_M = 2;
+    std::vector<double> ptBinEdges_Njets6_M = { 400.0, 600.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet7_M = 2;      
-    std::vector<double> ptBinEdges_Njet7_M = { 400.0, 600.0, 1500.0 };
+    const Int_t nPtBins_Njets7_M = 2;      
+    std::vector<double> ptBinEdges_Njets7_M = { 400.0, 600.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet8_M = 1;      
-    std::vector<double> ptBinEdges_Njet8_M = { 400.0, 1500.0 };
+    const Int_t nPtBins_Njets8_M = 1;      
+    std::vector<double> ptBinEdges_Njets8_M = { 400.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet9_M = 1;      
-    std::vector<double> ptBinEdges_Njet9_M = { 400.0, 1500.0 };
+    const Int_t nPtBins_Njets9_M = 1;      
+    std::vector<double> ptBinEdges_Njets9_M = { 400.0, 1500.0 };
 
     const Int_t nJetBins = 4;
     Double_t njetBinEdges[ nJetBins + 1 ] = { 5.5, 6.5, 7.5, 8.5, 9.5 };
@@ -110,7 +110,7 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
             {
                 std::string njetStr = "";
                 if (njet != "")
-                    njetStr = "_Njet" + njet;
+                    njetStr = "_Njets" + njet;
 
                 std::string tagStr = "";
                 if (tag != "")
@@ -123,28 +123,28 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                 {
                     if (njetStr.find("6") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet6_R;
-                        ptBinEdges = ptBinEdges_Njet6_R; 
+                        nPtBins    = nPtBins_Njets6_R;
+                        ptBinEdges = ptBinEdges_Njets6_R; 
                     }
                     else if (njetStr.find("7") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet7_R;
-                        ptBinEdges = ptBinEdges_Njet7_R; 
+                        nPtBins    = nPtBins_Njets7_R;
+                        ptBinEdges = ptBinEdges_Njets7_R; 
                     }
                     else if (njetStr.find("8") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet8_R;
-                        ptBinEdges = ptBinEdges_Njet8_R; 
+                        nPtBins    = nPtBins_Njets8_R;
+                        ptBinEdges = ptBinEdges_Njets8_R; 
                     }
                     else if (njetStr.find("9") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet9_R;
-                        ptBinEdges = ptBinEdges_Njet9_R; 
+                        nPtBins    = nPtBins_Njets9_R;
+                        ptBinEdges = ptBinEdges_Njets9_R; 
                     }
                     else
                     {
-                        nPtBins    = nPtBins_Njet6_R;
-                        ptBinEdges = ptBinEdges_Njet6_R; 
+                        nPtBins    = nPtBins_Njets6_R;
+                        ptBinEdges = ptBinEdges_Njets6_R; 
                     }
                 }
                 // Choose the binning for the merged case
@@ -152,28 +152,28 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                 {
                     if (njetStr.find("6") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet6_M;
-                        ptBinEdges = ptBinEdges_Njet6_M; 
+                        nPtBins    = nPtBins_Njets6_M;
+                        ptBinEdges = ptBinEdges_Njets6_M; 
                     }
                     else if (njetStr.find("7") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet7_M;
-                        ptBinEdges = ptBinEdges_Njet7_M; 
+                        nPtBins    = nPtBins_Njets7_M;
+                        ptBinEdges = ptBinEdges_Njets7_M; 
                     }
                     else if (njetStr.find("8") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet8_M;
-                        ptBinEdges = ptBinEdges_Njet8_M; 
+                        nPtBins    = nPtBins_Njets8_M;
+                        ptBinEdges = ptBinEdges_Njets8_M; 
                     }
                     else if (njetStr.find("9") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet9_M;
-                        ptBinEdges = ptBinEdges_Njet9_M; 
+                        nPtBins    = nPtBins_Njets9_M;
+                        ptBinEdges = ptBinEdges_Njets9_M; 
                     }
                     else
                     {
-                        nPtBins    = nPtBins_Njet6_M;
-                        ptBinEdges = ptBinEdges_Njet6_M; 
+                        nPtBins    = nPtBins_Njets6_M;
+                        ptBinEdges = ptBinEdges_Njets6_M; 
                     }
                 }
 
@@ -546,8 +546,8 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                             correctHT = 2999.0;
 
                         int correctNjets = NGoodJets_pt30;
-                        if (correctNjets >= 10)
-                            correctNjets = 10;
+                        if (correctNjets >= 9)
+                            correctNjets =  9;
 
                         if (njetCut.first == "" and selection.find("CR") != std::string::npos)
                         {
