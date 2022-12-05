@@ -512,7 +512,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                         std::string njetStr = "";
                         if (njetCut.first != "")
-                            njetStr = "_Njet" + njetCut.first;
+                            njetStr = "_Njets" + njetCut.first;
 
                         std::string selection = kv.first + tagStr + njetStr;
 
