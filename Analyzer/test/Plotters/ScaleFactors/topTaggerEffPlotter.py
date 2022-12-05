@@ -149,7 +149,8 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, goodName, outputFile):
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
 
-    if "topPt" in goodName and "Njets" in goodName:
+    if "topPt" in goodName and "Njets" not in goodName:
+
         if "QCD" in goodName:
             goodName = goodName.replace("Binned", "MisTagSF_vs").replace("_QCDCR", "")
         else:
@@ -194,7 +195,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     XTitleSize = 0.045;  XLabelSize = 0.036;  XTitleOffset = 1.0 
     YTitleSize = 0.045;  YLabelSize = 0.036;  YTitleOffset = 1.3 
 
-    dataRatio = dataNum.Clone(); mcRatio = mcNum.Clone(); dataMcRatio = dataNum.Clone()
+    dataRatio = dataNum.Clone(0); mcRatio = mcNum.Clone(0); dataMcRatio = dataNum.Clone(0)
     dataRatio.Divide(dataNum, dataDen, 1, 1, "B"); mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
     dataMcRatio.Divide(dataRatio, mcRatio)
     dataMcRatio.SetTitle("")
@@ -351,7 +352,7 @@ if __name__ == '__main__':
     elif cr == "QCD":
         dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_JetHT.root")
 
-    outputPath = "./Studies/TopTaggerSF/%s/%s"%(tag,arg.year)
+    outputPath = "./Studies/TopTaggerSF/%s/"%(tag)
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
@@ -441,4 +442,4 @@ if __name__ == '__main__':
                     dataDen = hDataDen
                     dataDen.Add(hMcTopDen, -1.0)
 
-                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, numerTag1, outputFile) 
+                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, year + "_" + numerTag1, outputFile) 
