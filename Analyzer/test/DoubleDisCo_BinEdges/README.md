@@ -85,7 +85,9 @@ optional arguments:
                         number of edge choices to print
 ```
 Various useful examples for running the different applications with command-line arguments.
+
 (1) First, you run the Optimized_BinEdges module and get the table for each channel, including optimized ABCD bin edges. 
+
 (2) Then, you run the other modules with these optimized ABCD bin edges to make the plots.
 
 So, please don't forget the replace the edges while running other modules.
