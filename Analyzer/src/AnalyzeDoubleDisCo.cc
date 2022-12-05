@@ -1020,19 +1020,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 NMTops_CR.push_back(tr.getVar<int>("ntops_1jet" + jecvar));
 
                 HT_pt30_CR.push_back(tr.getVar<double>("HT_" + htName + "_pt30"    + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR"                 + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b"              + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1t"              + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1b_1t"           + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_2b"              + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45"              + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_1b"           + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_2b"           + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_1t"           + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_2t"           + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_1b_1t"        + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_45_2b_1t"        + jecvar));
-                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_all"             + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_0l"              + jecvar));
+                Baseline_CR.push_back(tr.getVar<bool>("pass_qcdCR_1l"              + jecvar));
 
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + jecvar));
                 Mll_CR.push_back(tr.getVar<double>("mll"                           + jecvar));
@@ -1216,23 +1205,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 {"_1l"               , Baseline[1]},
                 {"_2l"               , Baseline[2]},
                 {"_0l_blind"         , Baseline_blind[0]},
-                {"_1l_blind"         , Baseline_blind[1]},
-                {"_2l_blind"         , Baseline_blind[2]},
-                {"_0l_QCDCR"         , Baseline_CR[0]},
-                {"_0l_QCDCR_1b"      , Baseline_CR[1]},
-                {"_0l_QCDCR_1t"      , Baseline_CR[2]},
-                {"_0l_QCDCR_1b_1t"   , Baseline_CR[3]},
-                {"_0l_QCDCR_2b"      , Baseline_CR[4]},
-                {"_0l_QCDCR_45"      , Baseline_CR[5]},
-                {"_0l_QCDCR_45_1b"   , Baseline_CR[6]},
-                {"_0l_QCDCR_45_2b"   , Baseline_CR[7]},
-                {"_0l_QCDCR_45_1t"   , Baseline_CR[8]},
-                {"_0l_QCDCR_45_2t"   , Baseline_CR[9]},
-                {"_0l_QCDCR_45_1b_1t", Baseline_CR[10]},
-                {"_0l_QCDCR_45_2b_1t", Baseline_CR[11]},
-                {"_0l_QCDCR_all"     , Baseline_CR[12]},
-                {"_1l_QCDCR"         , Baseline_CR[0]},
-                {"_2l_QCDCR"         , Baseline_CR[0]},
+                {"_1l_blind"         , Baseline_blind[1]},                         
+                {"_2l_blind"         , Baseline_blind[2]}, 
+                {"_0l_QCDCR"         , Baseline_CR[0]}, 
+                {"_1l_QCDCR"         , Baseline_CR[1]}, 
+                {"_2l_QCDCR"         , Baseline_CR[1]}, 
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
