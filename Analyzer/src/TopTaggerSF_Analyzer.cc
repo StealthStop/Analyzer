@@ -238,27 +238,27 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             printf( " Event %i\n", tr.getEvtNum() );        
 
         const auto& runtype = tr.getVar<std::string>("runtype");
-        const auto& runyear = tr.getVar<std::string>("runYear");
 
         // Top canddiate pt and disc
         const auto& bestTopPt     = tr.getVar<double>("bestTopPt");
         const auto& bestTopDisc   = tr.getVar<double>("bestTopDisc");
         const auto& bestTopNconst = tr.getVar<int>("bestTopNconst");
 
+        const auto& resolvedTop_WP = tr.getVar<double>("resolvedTop_WP");
+        const auto& mergedTop_WP   = tr.getVar<double>("mergedTop_WP");
+
         // Distinguish if the best top candidate is resolved or merged
-        bool pass_TightResolvedTop = bestTopDisc > 0.95 and bestTopNconst == 3;
-        bool pass_AnyResolvedTop   = bestTopDisc > 0.0  and bestTopNconst == 3;
+        bool pass_TightResolvedTop = bestTopDisc > resolvedTop_WP and bestTopNconst == 3;
+        bool pass_AnyResolvedTop   = bestTopDisc > 0.0            and bestTopNconst == 3;
        
-        bool pass_TightMergedTop   = bestTopDisc > 0.937 and bestTopNconst == 1;
-        bool pass_AnyMergedTop     = bestTopDisc > 0.0   and bestTopNconst == 1;
-        if (runyear.find("2016") == std::string::npos)
-            pass_TightMergedTop    = bestTopDisc > 0.895 and bestTopNconst == 1;
+        bool pass_TightMergedTop   = bestTopDisc > mergedTop_WP and bestTopNconst == 1;
+        bool pass_AnyMergedTop     = bestTopDisc > 0.0          and bestTopNconst == 1;
 
         // Event-level booleans (triggers, filters, etc.)
         const auto& pass_METFilters  = tr.getVar<bool>("passMETFilters");
         const auto& pass_MadHT       = tr.getVar<bool>("passMadHT");
         const auto& pass_MuonTrigger = tr.getVar<bool>("passTriggerMuon");
-        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerHad");
+        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerAllHad");
         const auto& pass_HEMveto     = tr.getVar<bool>("passElectronHEMveto");
         const auto& pass_JetID       = tr.getVar<bool>("JetID");        
 

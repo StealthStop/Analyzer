@@ -55,15 +55,12 @@ void CalculateTopTagSF::Loop(NTupleReader& tr, double, int maxevents, bool)
     while( tr.getNextEvent() )
     {
         const auto& filetag      = tr.getVar<std::string>("filetag");
-        const auto& runyear      = tr.getVar<std::string>("runYear");
         const auto& passMadHT    = tr.getVar<bool>("passMadHT");
         const auto& eventCounter = tr.getVar<int>("eventCounter");
 
         // Distinguish if a top candidate is resolved or merged
-        double resolvedWP = 0.95;
-        double mergedWP   = 0.937;
-        if ( runyear.find("2016") == std::string::npos )
-            mergedWP = 0.895;
+        const auto& resolvedWP = tr.getVar<double>("resolvedTop_WP");
+        const auto& mergedWP   = tr.getVar<double>("mergedTop_WP");
 
         //-----------------------------------
         //-- Initialize Histograms
