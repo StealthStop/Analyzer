@@ -57,29 +57,29 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
     my_1D_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
 
     //Define binning for the histograms
-    std::vector<double> ptBinEdges_Njet6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
-    const int nPtBins_Njet6_R = ptBinEdges_Njet6_R.size() - 1;
+    std::vector<double> ptBinEdges_Njets6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const int nPtBins_Njets6_R = ptBinEdges_Njets6_R.size() - 1;
 
-    std::vector<double> ptBinEdges_Njet7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
-    const int nPtBins_Njet7_R = ptBinEdges_Njet7_R.size() - 1;
+    std::vector<double> ptBinEdges_Njets7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const int nPtBins_Njets7_R = ptBinEdges_Njets7_R.size() - 1;
 
-    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
-    const int nPtBins_Njet8_R = ptBinEdges_Njet8_R.size() - 1;
+    std::vector<double> ptBinEdges_Njets8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
+    const int nPtBins_Njets8_R = ptBinEdges_Njets8_R.size() - 1;
 
-    std::vector<double> ptBinEdges_Njet9_R = { 0.0, 120.0, 200.0, 1500.0 };
-    const int nPtBins_Njet9_R = ptBinEdges_Njet9_R.size() - 1;
+    std::vector<double> ptBinEdges_Njets9_R = { 0.0, 120.0, 200.0, 1500.0 };
+    const int nPtBins_Njets9_R = ptBinEdges_Njets9_R.size() - 1;
 
-    std::vector<double> ptBinEdges_Njet6_M = { 400.0, 600.0, 1500.0 };
-    const int nPtBins_Njet6_M = ptBinEdges_Njet6_M.size() - 1;
+    std::vector<double> ptBinEdges_Njets6_M = { 400.0, 600.0, 1500.0 };
+    const int nPtBins_Njets6_M = ptBinEdges_Njets6_M.size() - 1;
                                          
-    std::vector<double> ptBinEdges_Njet7_M = { 400.0, 600.0, 1500.0 };
-    const int nPtBins_Njet7_M = ptBinEdges_Njet7_M.size() - 1;      
+    std::vector<double> ptBinEdges_Njets7_M = { 400.0, 600.0, 1500.0 };
+    const int nPtBins_Njets7_M = ptBinEdges_Njets7_M.size() - 1;      
                                          
-    std::vector<double> ptBinEdges_Njet8_M = { 400.0, 1500.0 };
-    const int nPtBins_Njet8_M = ptBinEdges_Njet8_M.size() - 1;      
+    std::vector<double> ptBinEdges_Njets8_M = { 400.0, 1500.0 };
+    const int nPtBins_Njets8_M = ptBinEdges_Njets8_M.size() - 1;      
                                          
-    std::vector<double> ptBinEdges_Njet9_M = { 400.0, 1500.0 };
-    const int nPtBins_Njet9_M = ptBinEdges_Njet9_M.size() - 1;
+    std::vector<double> ptBinEdges_Njets9_M = { 400.0, 1500.0 };
+    const int nPtBins_Njets9_M = ptBinEdges_Njets9_M.size() - 1;
 
     std::vector<double> njetBinEdges = { 5.5, 6.5, 7.5, 8.5, 9.5 };
     const int nJetBins = njetBinEdges.size() - 1;
