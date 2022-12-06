@@ -198,6 +198,34 @@ An example call to the stack plotter could be:
 python stackPlotter.py --year 2016 --inpath ./condor/2016_DisCo_0L_1L_hadd/ --outpath plot_histos --normMC2Data
 ```
 
+## Make Yields Tables
+
+A tool is provided to load information from ROOT files output by the `AnalyzeDoubleDisCo` analyzer and make a table of event yields (and fractional yields) for different backgrounds and signal processes.
+The user can choose which channel as well as toggle between QCD CR or not.
+The tables are output in standalone `.tex` format that can be simply input into another `.tex` document.
+
+```
+usage: usage: %tableYields [options] [-h] --channel CHANNEL --inputDir
+                                     INPUTDIR --outputDir OUTPUTDIR [--QCDCR]
+                                     [--year YEAR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --channel CHANNEL     which channel to process
+  --inputDir INPUTDIR   directory for input ROOT
+  --outputDir OUTPUTDIR
+                        where to put tex table files
+  --QCDCR               do for QCD CR
+  --year YEAR           which year to process
+```
+
+An example call to the tool would be:
+
+```
+python Tools/makeYieldsTables.py --inputDir ~/nobackup/outputsPath/DataVsMC_Run2 --outputDir MyOutput --channel 1l --year Run2
+```
+
+
 ## Generating Filelists, Checking Ntuples, and Checking Event Numbers
 
 ### Produce the Filelist and sampleSet.cfg
