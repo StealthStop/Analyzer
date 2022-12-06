@@ -43,22 +43,10 @@ TopTaggerSF_Analyzer::TopTaggerSF_Analyzer()
         {"topPt_vs_HT",       120, 0.0, 1500.0, 120, 0.0, 3000.0},
     };
 
-    njets = {"", "6", "7", "8", "9incl"};
+    njets = {"", "6", "7", "8", "8incl", "9incl"};
     
     // For setting histograms of events passing numerator and denominator selections
     tags = {"", "numR", "numM", "denR", "denM"};
-}
-
-Double_t* TopTaggerSF_Analyzer::vecToDouble_t(const std::vector<double>& input)
-{
-    unsigned int length = input.size();
-    
-    Double_t* output = new Double_t[length];
-
-    for (unsigned int i = 0; i < length; i++)
-        output[i] = input.at(i);
-
-    return output;
 }
 
 void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
@@ -69,38 +57,38 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
     my_1D_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
 
     //Define binning for the histograms
-    const Int_t nPtBins_Njets6_R = 6;
-    std::vector<double> ptBinEdges_Njets6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    std::vector<double> ptBinEdges_Njet6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const int nPtBins_Njet6_R = ptBinEdges_Njet6_R.size() - 1;
 
-    const Int_t nPtBins_Njets7_R = 6;
-    std::vector<double> ptBinEdges_Njets7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    std::vector<double> ptBinEdges_Njet7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const int nPtBins_Njet7_R = ptBinEdges_Njet7_R.size() - 1;
 
-    const Int_t nPtBins_Njets8_R = 4;
-    std::vector<double> ptBinEdges_Njets8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
+    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
+    const int nPtBins_Njet8_R = ptBinEdges_Njet8_R.size() - 1;
 
-    const Int_t nPtBins_Njets9_R = 3;
-    std::vector<double> ptBinEdges_Njets9_R = { 0.0, 120.0, 200.0, 1500.0 };
+    std::vector<double> ptBinEdges_Njet9_R = { 0.0, 120.0, 200.0, 1500.0 };
+    const int nPtBins_Njet9_R = ptBinEdges_Njet9_R.size() - 1;
 
-    const Int_t nPtBins_Njets6_M = 2;
-    std::vector<double> ptBinEdges_Njets6_M = { 400.0, 600.0, 1500.0 };
-                                          
-    const Int_t nPtBins_Njets7_M = 2;      
-    std::vector<double> ptBinEdges_Njets7_M = { 400.0, 600.0, 1500.0 };
-                                          
-    const Int_t nPtBins_Njets8_M = 1;      
-    std::vector<double> ptBinEdges_Njets8_M = { 400.0, 1500.0 };
-                                          
-    const Int_t nPtBins_Njets9_M = 1;      
-    std::vector<double> ptBinEdges_Njets9_M = { 400.0, 1500.0 };
+    std::vector<double> ptBinEdges_Njet6_M = { 400.0, 600.0, 1500.0 };
+    const int nPtBins_Njet6_M = ptBinEdges_Njet6_M.size() - 1;
+                                         
+    std::vector<double> ptBinEdges_Njet7_M = { 400.0, 600.0, 1500.0 };
+    const int nPtBins_Njet7_M = ptBinEdges_Njet7_M.size() - 1;      
+                                         
+    std::vector<double> ptBinEdges_Njet8_M = { 400.0, 1500.0 };
+    const int nPtBins_Njet8_M = ptBinEdges_Njet8_M.size() - 1;      
+                                         
+    std::vector<double> ptBinEdges_Njet9_M = { 400.0, 1500.0 };
+    const int nPtBins_Njet9_M = ptBinEdges_Njet9_M.size() - 1;
 
-    const Int_t nJetBins = 4;
-    Double_t njetBinEdges[ nJetBins + 1 ] = { 5.5, 6.5, 7.5, 8.5, 9.5 };
+    std::vector<double> njetBinEdges = { 5.5, 6.5, 7.5, 8.5, 9.5 };
+    const int nJetBins = njetBinEdges.size() - 1;
 
-    const Int_t nHTBins = 4;
-    Double_t htBinEdges[ nHTBins + 1 ] = { 200.0, 450.0, 600.0, 850.0, 3000.0 };
+    std::vector<double> htBinEdges = { 200.0, 450.0, 600.0, 850.0, 3000.0 };
+    const int nHTBins = htBinEdges.size() - 1;
 
-    const Int_t nDiscBins = 7;
-    Double_t discBinEdges[ nDiscBins + 1 ] = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0 };
+    std::vector<double> discBinEdges = { 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0 };
+    const int nDiscBins = discBinEdges.size() - 1;
 
     for(auto& cutVar : cutMap)
     {
@@ -116,7 +104,7 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                 if (tag != "")
                     tagStr = "_" + tag;
 
-                Int_t nPtBins;
+                int nPtBins;
                 std::vector<double> ptBinEdges;
                 // Choose binning for resolved case
                 if (tagStr.find("R") != std::string::npos)
@@ -186,13 +174,13 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                     if      (name.find("Binned") != std::string::npos and tag != "" and name.find("CR") != std::string::npos)
                     {
                         if      (name.find("topPt") != std::string::npos)
-                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nPtBins,   vecToDouble_t(ptBinEdges)));
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nPtBins,   ptBinEdges.data()));
                         else if (name.find("nJets") != std::string::npos)
-                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nJetBins,  njetBinEdges));
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nJetBins,  njetBinEdges.data()));
                         else if (name.find("HT") != std::string::npos)
-                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nHTBins,   htBinEdges));
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nHTBins,   htBinEdges.data()));
                         else if (name.find("Disc") != std::string::npos)
-                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nDiscBins, discBinEdges));
+                            my_1D_histos.emplace(name, std::make_shared<TH1D>(name.c_str(), name.c_str(), nDiscBins, discBinEdges.data()));
                     }
             
                     // For a 1D histo of the selection variables, make for any version except for specific numerator/denominator
@@ -217,7 +205,7 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                     else if (njet == "" and tag != "" and name.find("Binned") != std::string::npos)
                     {
                         if (name.find("nJets") != std::string::npos)
-                            my_2D_histos.emplace(name, std::make_shared<TH2D>(name.c_str(), name.c_str(), nPtBins, vecToDouble_t(ptBinEdges), nJetBins,  njetBinEdges));
+                            my_2D_histos.emplace(name, std::make_shared<TH2D>(name.c_str(), name.c_str(), nPtBins, ptBinEdges.data(), nJetBins,  njetBinEdges.data()));
                     }
                 }
             }
@@ -482,6 +470,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             {"6",      NGoodJets_pt30 == 6},
             {"7",      NGoodJets_pt30 == 7},
             {"8",      NGoodJets_pt30 == 8},
+            {"8incl",  NGoodJets_pt30 >= 8},
             {"9incl",  NGoodJets_pt30 >= 9},
         };
 
