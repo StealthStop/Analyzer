@@ -188,6 +188,7 @@ def main():
     fileParts = []
     fileParts.append("Universe             = vanilla\n")
     fileParts.append("Executable           = run_Analyzer_condor.sh\n")
+    fileParts.append("Request_Memory       = 1 Gb\n")
     fileParts.append("Transfer_Input_Files = %s/%s.tar.gz, %s/exestuff.tar.gz\n" % (options.outPath,environ["CMSSW_VERSION"],options.outPath))
     fileParts.append("x509userproxy        = $ENV(X509_USER_PROXY)\n\n")
 
