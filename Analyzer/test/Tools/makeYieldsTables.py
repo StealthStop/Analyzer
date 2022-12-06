@@ -86,7 +86,7 @@ class Yields:
             if njetBin >= inclusiveBin:
                 njetBin = inclusiveBin
 
-            key = sample + "_Njet" + str(njetBin)
+            key = sample + "_Njets" + str(njetBin)
 
             if key not in self.data:
                 self.data[key] = [content, errorSquaredTotal]
@@ -222,7 +222,7 @@ class Yields:
             isNegligible = True
             for njet in self.njets: 
 
-                key = sample + "_Njet" + njet.replace("incl", "")
+                key = sample + "_Njets" + njet.replace("incl", "")
 
                 if key in self.data:
                     aCell, njetIsNegligible = self.makeCell(self.data[key], self.data[key.replace(sample, "AllBkg")], doFractions)
@@ -255,7 +255,7 @@ class Yields:
              aRow = 2*"    " + aRow
 
              for njet in self.njets: 
-                 key = sample + "_Njet" + njet.replace("incl", "")
+                 key = sample + "_Njets" + njet.replace("incl", "")
 
                  aRow += self.makeCell(self.data[key], None, doFractions)[0]
 
