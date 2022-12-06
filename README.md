@@ -65,7 +65,7 @@ cmsenv
 getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_RPV_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
 getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_SYY_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_SYY_Run2
 getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_RPV_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_SYY_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_SYY_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_SYY_v3.2 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_SYY_Run2
 getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_RPV_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
 getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_SYY_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_SYY_Run2
 ```
