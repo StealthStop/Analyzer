@@ -32,23 +32,24 @@ private:
         const auto& DoubleDisCo_Cfg_0l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_RPV"           );
         const auto& DoubleDisCo_Model_0l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_0l_RPV"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_0l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_0l_RPV");
-        const auto& DoubleDisCo_Cfg_1l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_RPV"           );  
-        const auto& DoubleDisCo_Model_1l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_1l_RPV"         );    
+        const auto& DoubleDisCo_Cfg_1l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_RPV"           );
+        const auto& DoubleDisCo_Model_1l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_1l_RPV"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_1l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_1l_RPV");
         const auto& DoubleDisCo_Cfg_0l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_0l_SYY"           );
         const auto& DoubleDisCo_Model_0l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_0l_SYY"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_0l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_0l_SYY");
-        const auto& DoubleDisCo_Cfg_1l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_SYY"           );  
-        const auto& DoubleDisCo_Model_1l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_1l_SYY"         );    
+        const auto& DoubleDisCo_Cfg_1l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_1l_SYY"           );
+        const auto& DoubleDisCo_Model_1l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_1l_SYY"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_1l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_1l_SYY");
-        const auto& DoubleDisCo_Cfg_2l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_RPV"           ); 
+        const auto& DoubleDisCo_Cfg_2l_RPV            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_RPV"           );
         const auto& DoubleDisCo_Model_2l_RPV          = tr.getVar<std::string>("DoubleDisCo_Model_2l_RPV"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_RPV = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_RPV");
-        const auto& DoubleDisCo_Cfg_2l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_SYY"           ); 
+        const auto& DoubleDisCo_Cfg_2l_SYY            = tr.getVar<std::string>("DoubleDisCo_Cfg_2l_SYY"           );
         const auto& DoubleDisCo_Model_2l_SYY          = tr.getVar<std::string>("DoubleDisCo_Model_2l_SYY"         );
         const auto& DoubleDisCo_Cfg_NonIsoMuon_2l_SYY = tr.getVar<std::string>("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY");
         const auto& leptonFileName                    = tr.getVar<std::string>("leptonFileName"                    );
         const auto& hadronicFileName                  = tr.getVar<std::string>("hadronicFileName"                  );
+        const auto& toptaggerFileName                 = tr.getVar<std::string>("toptaggerFileName"                 );
         const auto& btagEffFileName                   = tr.getVar<std::string>("btagEffFileName"                   );
         const auto& bjetTagFileName                   = tr.getVar<std::string>("bjetTagFileName"                   );
         //const auto& bjetTagFileNameReshape            = tr.getVar<std::string>("bjetTagFileNameReshape"            );
@@ -56,7 +57,6 @@ private:
         const auto& meanFileName                      = tr.getVar<std::string>("meanFileName"                      );
         const auto& TopTaggerCfg                      = tr.getVar<std::string>("TopTaggerCfg"                      );
 
- 
         for(const auto& module : modules)
         {
             if     (module=="PrepNTupleVars")                        tr.emplaceModule<PrepNTupleVars>();
@@ -90,20 +90,20 @@ private:
             else if(module=="ISRJets")                               tr.emplaceModule<ISRJets>();
             else if(module=="DoubleDisCo_0l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_0l_RPV, DoubleDisCo_Model_0l_RPV);
             else if(module=="DoubleDisCo_NonIsoMuon_0l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_0l_RPV, DoubleDisCo_Model_0l_RPV);
-            else if(module=="DoubleDisCo_1l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV); 
+            else if(module=="DoubleDisCo_1l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_RPV, DoubleDisCo_Model_1l_RPV);
             else if(module=="DoubleDisCo_NonIsoMuon_1l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l_RPV, DoubleDisCo_Model_1l_RPV);
-            else if(module=="DoubleDisCo_2l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l_RPV, DoubleDisCo_Model_2l_RPV); 
+            else if(module=="DoubleDisCo_2l_RPV")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l_RPV, DoubleDisCo_Model_2l_RPV);
             else if(module=="DoubleDisCo_NonIsoMuon_2l_RPV")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_2l_RPV, DoubleDisCo_Model_2l_RPV);
             else if(module=="DoubleDisCo_0l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_0l_SYY, DoubleDisCo_Model_0l_SYY);
             else if(module=="DoubleDisCo_NonIsoMuon_0l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_0l_SYY, DoubleDisCo_Model_0l_SYY);
-            else if(module=="DoubleDisCo_1l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY); 
+            else if(module=="DoubleDisCo_1l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_1l_SYY, DoubleDisCo_Model_1l_SYY);
             else if(module=="DoubleDisCo_NonIsoMuon_1l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_1l_SYY, DoubleDisCo_Model_1l_SYY);
-            else if(module=="DoubleDisCo_2l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY); 
+            else if(module=="DoubleDisCo_2l_SYY")                    tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_2l_SYY, DoubleDisCo_Model_2l_SYY);
             else if(module=="DoubleDisCo_NonIsoMuon_2l_SYY")         tr.emplaceModule<DeepEventShape>(DoubleDisCo_Cfg_NonIsoMuon_2l_SYY, DoubleDisCo_Model_2l_SYY);
 
             if(runtype == "MC")
             {
-                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, hadronicFileName, meanFileName);
+                if     (module=="ScaleFactors")  tr.emplaceModule<ScaleFactors>(runYear, leptonFileName, hadronicFileName, toptaggerFileName, meanFileName, filetag);
                 else if(module=="BTagCorrector")
                 {
                     std::string bjetTagFileNameReshape = "";
@@ -115,7 +115,7 @@ private:
     }
 
 public:
-    Config() 
+    Config()
     {
     }
 
@@ -131,6 +131,7 @@ public:
  
         double Lumi=0.0, Lumi_postHEM=-1.0, Lumi_preHEM=-1.0;
         double deepCSV_WP_loose=0.0, deepCSV_WP_medium=0.0, deepCSV_WP_tight=0.0, deepFlavour_WP_loose=0.0, deepFlavour_WP_medium=0.0, deepFlavour_WP_tight=0.0;
+        double resolvedTop_WP = 0.0, mergedTop_WP = 0.0;
         bool blind = true;
 
         std::string DoubleDisCo_Cfg_0l_RPV            = "Keras_Tensorflow_DoubleDisCo_Reg_0l_RPV_Run2.cfg";           
@@ -156,6 +157,7 @@ public:
         std::string hadronicFileName                  = "allInOne_hadronicSF_UL.root";
         std::string btagEffFileName                   = "allInOne_BTagEff_UL.root";
         std::string meanFileName                      = "allInOne_SFMean_UL.root";
+        std::string toptaggerFileName                 = "allInOne_TopTagEffandSF_UL.root";
 
         // Determines if an analyzer is compatible with fastmode
         // If it is not, then the fastMode flag is essentially neutralized
@@ -168,16 +170,17 @@ public:
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16preVFP
             deepCSV_WP_loose                  = 0.2027;
             deepCSV_WP_medium                 = 0.6001;
-            deepCSV_WP_tight                  = 0.8819;           
+            deepCSV_WP_tight                  = 0.8819;
             deepFlavour_WP_loose              = 0.0508;
             deepFlavour_WP_medium             = 0.2598;
             deepFlavour_WP_tight              = 0.6502;           
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.937;
             bjetTagFileName                   = "wp_deepJet_106XUL16preVFP_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16preVFP_v2.csv";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016preVFP.cfg";
         }
-
         else if(filetag.find("2016postVFP") != std::string::npos)
         {
             runYear                           = "2016postVFP";
@@ -185,34 +188,36 @@ public:
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL16postVFP
             deepCSV_WP_loose                  = 0.1918;
             deepCSV_WP_medium                 = 0.5847;
-            deepCSV_WP_tight                  = 0.8767;           
+            deepCSV_WP_tight                  = 0.8767;
             deepFlavour_WP_loose              = 0.0480;
             deepFlavour_WP_medium             = 0.2489;
             deepFlavour_WP_tight              = 0.6377;           
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.937;
             bjetTagFileName                   = "wp_deepJet_106XUL16postVFP_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL16postVFP_v3.csv";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2016postVFP.cfg";
-
         }
         else if(filetag.find("2017") != std::string::npos)
-        { 
+        {
             runYear                           = "2017";
             Lumi                              = 41480.0;
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL17
             deepCSV_WP_loose                  = 0.1355;
-            deepCSV_WP_medium                 = 0.4506;       
+            deepCSV_WP_medium                 = 0.4506;
             deepCSV_WP_tight                  = 0.7738;
             deepFlavour_WP_loose              = 0.0532;
-            deepFlavour_WP_medium             = 0.3040;       
+            deepFlavour_WP_medium             = 0.3040;
             deepFlavour_WP_tight              = 0.7476;
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.895;
             bjetTagFileName                   = "wp_deepJet_106XUL17_v3.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL17_v3.csv";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2017.cfg";
-
         }
-        else if(filetag.find("2018") != std::string::npos) 
+        else if(filetag.find("2018") != std::string::npos)
         {
             runYear                           = "2018";
             Lumi                              = 59830.0;
@@ -220,16 +225,17 @@ public:
             Lumi_postHEM                      = 38654.0;
             // For b-tagging working point definitions, see link: https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation106XUL18
             deepCSV_WP_loose                  = 0.1208;
-            deepCSV_WP_medium                 = 0.4168;       
+            deepCSV_WP_medium                 = 0.4168;
             deepCSV_WP_tight                  = 0.7665;
             deepFlavour_WP_loose              = 0.0490;
-            deepFlavour_WP_medium             = 0.2783;       
+            deepFlavour_WP_medium             = 0.2783;
             deepFlavour_WP_tight              = 0.7100;
+            resolvedTop_WP                    = 0.95;
+            mergedTop_WP                      = 0.895;
             bjetTagFileName                   = "wp_deepJet_106XUL18_v2.csv";
             //bjetTagFileNameReshape            = "reshaping_deepJet_106XUL18_v2.csv";
             blind                             = true;
             TopTaggerCfg                      = "TopTaggerCfg_2018.cfg";
-
         }
 
         tr.registerDerivedVar("runYear",                           runYear                          );
@@ -242,6 +248,8 @@ public:
         tr.registerDerivedVar("deepFlavour_WP_loose",              deepFlavour_WP_loose             );
         tr.registerDerivedVar("deepFlavour_WP_medium",             deepFlavour_WP_medium            );
         tr.registerDerivedVar("deepFlavour_WP_tight",              deepFlavour_WP_tight             );
+        tr.registerDerivedVar("resolvedTop_WP",                    resolvedTop_WP                   );
+        tr.registerDerivedVar("mergedTop_WP",                      mergedTop_WP                     );
         tr.registerDerivedVar("isSignal",                          isSignal                         );
         tr.registerDerivedVar("DoubleDisCo_Cfg_0l_RPV",            DoubleDisCo_Cfg_0l_RPV           );
         tr.registerDerivedVar("DoubleDisCo_Model_0l_RPV",          DoubleDisCo_Model_0l_RPV         );
@@ -261,13 +269,14 @@ public:
         tr.registerDerivedVar("DoubleDisCo_Cfg_2l_SYY",            DoubleDisCo_Cfg_2l_SYY           );
         tr.registerDerivedVar("DoubleDisCo_Model_2l_SYY",          DoubleDisCo_Model_2l_SYY         );
         tr.registerDerivedVar("DoubleDisCo_Cfg_NonIsoMuon_2l_SYY", DoubleDisCo_Cfg_NonIsoMuon_2l_SYY);
-        tr.registerDerivedVar("leptonFileName",                    leptonFileName                   );       
-        tr.registerDerivedVar("hadronicFileName",                  hadronicFileName                 ); 
-        tr.registerDerivedVar("btagEffFileName",                   btagEffFileName                  );        
-        tr.registerDerivedVar("bjetTagFileName",                   bjetTagFileName                  );        
-        //tr.registerDerivedVar("bjetTagFileNameReshape",            bjetTagFileNameReshape           );        
-        tr.registerDerivedVar("meanFileName",                      meanFileName                     );        
-        tr.registerDerivedVar("etaCut",                            2.4                              ); 
+        tr.registerDerivedVar("leptonFileName",                    leptonFileName                   );
+        tr.registerDerivedVar("hadronicFileName",                  hadronicFileName                 );
+        tr.registerDerivedVar("toptaggerFileName",                 toptaggerFileName                );
+        tr.registerDerivedVar("btagEffFileName",                   btagEffFileName                  );
+        tr.registerDerivedVar("bjetTagFileName",                   bjetTagFileName                  );
+        //tr.registerDerivedVar("bjetTagFileNameReshape",            bjetTagFileNameReshape           );
+        tr.registerDerivedVar("meanFileName",                      meanFileName                     );
+        tr.registerDerivedVar("etaCut",                            2.4                              );
         tr.registerDerivedVar("blind",                             blind                            );
         tr.registerDerivedVar("TopTaggerCfg",                      TopTaggerCfg                     );
 
@@ -346,6 +355,19 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="CalculateTopTagSF")
+        {
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger"
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else if(analyzer=="CalculateSFMean")
         {
             const std::vector<std::string> modulesList = {
@@ -371,11 +393,11 @@ public:
                 "RunTopTagger",
                 "Baseline",
                 "BTagCorrector",
-                "ScaleFactors",        
+                "ScaleFactors",
                 "MakeMVAVariables",
             };
             registerModules(tr, std::move(modulesList));
-        }       
+        }
         else if(analyzer=="TopTaggerSF_Analyzer")
         {
             const std::vector<std::string> modulesList = {
@@ -413,7 +435,7 @@ public:
             registerModules(tr, std::move(modulesList));
         }
         else if(analyzer=="Semra_Analyzer")
-        {   
+        {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
                 "Muon",
@@ -433,7 +455,7 @@ public:
                 "StopGenMatch",
             };
             registerModules(tr, std::move(modulesList));
-        } 
+        }
         else if(analyzer=="StealthHemispheres" || analyzer=="ISRJets_Analyzer")
         {
             const std::vector<std::string> modulesList = {
@@ -460,7 +482,7 @@ public:
             registerModules(tr, std::move(modulesList));
         }
         else if(analyzer=="AnalyzeXsec")
-        {   
+        {
             const std::vector<std::string> modulesList = {
                 "PrepNTupleVars",
                 "Muon",
@@ -508,7 +530,7 @@ public:
             std::cerr << utility::color("Error: Analyzer \"" + analyzer + "\" is not compatible with fast mode !!! Exiting...", "red") << std::endl;
             exit(-1);
         }
-    
+
     }
 };
 

@@ -146,6 +146,7 @@ def main():
                        testDir + "/allInOne_SFMean_UL.root",
                        testDir + "/allInOne_leptonSF_UL.root",
                        testDir + "/allInOne_hadronicSF_UL.root",
+                       testDir + "/allInOne_TopTagEffandSF_UL.root",
                        testDir + "/wp_deepJet_106XUL16postVFP_v3.csv",
                        testDir + "/wp_deepJet_106XUL16preVFP_v2.csv",
                        testDir + "/wp_deepJet_106XUL17_v3.csv",

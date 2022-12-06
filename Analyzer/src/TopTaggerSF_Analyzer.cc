@@ -69,29 +69,29 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
     my_1D_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter","EventCounter", 2, -1.1, 1.1 ) );
 
     //Define binning for the histograms
-    const Int_t nPtBins_Njet6_R = 6;
-    std::vector<double> ptBinEdges_Njet6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const Int_t nPtBins_Njets6_R = 6;
+    std::vector<double> ptBinEdges_Njets6_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
 
-    const Int_t nPtBins_Njet7_R = 6;
-    std::vector<double> ptBinEdges_Njet7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
+    const Int_t nPtBins_Njets7_R = 6;
+    std::vector<double> ptBinEdges_Njets7_R = { 0.0, 100.0, 150.0, 200.0, 300.0, 400.0, 1500.0 };
 
-    const Int_t nPtBins_Njet8_R = 4;
-    std::vector<double> ptBinEdges_Njet8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
+    const Int_t nPtBins_Njets8_R = 4;
+    std::vector<double> ptBinEdges_Njets8_R = { 0.0, 120.0, 200.0, 300.0, 1500.0 };
 
-    const Int_t nPtBins_Njet9_R = 3;
-    std::vector<double> ptBinEdges_Njet9_R = { 0.0, 120.0, 200.0, 1500.0 };
+    const Int_t nPtBins_Njets9_R = 3;
+    std::vector<double> ptBinEdges_Njets9_R = { 0.0, 120.0, 200.0, 1500.0 };
 
-    const Int_t nPtBins_Njet6_M = 2;
-    std::vector<double> ptBinEdges_Njet6_M = { 400.0, 600.0, 1500.0 };
+    const Int_t nPtBins_Njets6_M = 2;
+    std::vector<double> ptBinEdges_Njets6_M = { 400.0, 600.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet7_M = 2;      
-    std::vector<double> ptBinEdges_Njet7_M = { 400.0, 600.0, 1500.0 };
+    const Int_t nPtBins_Njets7_M = 2;      
+    std::vector<double> ptBinEdges_Njets7_M = { 400.0, 600.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet8_M = 1;      
-    std::vector<double> ptBinEdges_Njet8_M = { 400.0, 1500.0 };
+    const Int_t nPtBins_Njets8_M = 1;      
+    std::vector<double> ptBinEdges_Njets8_M = { 400.0, 1500.0 };
                                           
-    const Int_t nPtBins_Njet9_M = 1;      
-    std::vector<double> ptBinEdges_Njet9_M = { 400.0, 1500.0 };
+    const Int_t nPtBins_Njets9_M = 1;      
+    std::vector<double> ptBinEdges_Njets9_M = { 400.0, 1500.0 };
 
     const Int_t nJetBins = 4;
     Double_t njetBinEdges[ nJetBins + 1 ] = { 5.5, 6.5, 7.5, 8.5, 9.5 };
@@ -110,7 +110,7 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
             {
                 std::string njetStr = "";
                 if (njet != "")
-                    njetStr = "_Njet" + njet;
+                    njetStr = "_Njets" + njet;
 
                 std::string tagStr = "";
                 if (tag != "")
@@ -123,28 +123,28 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                 {
                     if (njetStr.find("6") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet6_R;
-                        ptBinEdges = ptBinEdges_Njet6_R; 
+                        nPtBins    = nPtBins_Njets6_R;
+                        ptBinEdges = ptBinEdges_Njets6_R; 
                     }
                     else if (njetStr.find("7") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet7_R;
-                        ptBinEdges = ptBinEdges_Njet7_R; 
+                        nPtBins    = nPtBins_Njets7_R;
+                        ptBinEdges = ptBinEdges_Njets7_R; 
                     }
                     else if (njetStr.find("8") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet8_R;
-                        ptBinEdges = ptBinEdges_Njet8_R; 
+                        nPtBins    = nPtBins_Njets8_R;
+                        ptBinEdges = ptBinEdges_Njets8_R; 
                     }
                     else if (njetStr.find("9") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet9_R;
-                        ptBinEdges = ptBinEdges_Njet9_R; 
+                        nPtBins    = nPtBins_Njets9_R;
+                        ptBinEdges = ptBinEdges_Njets9_R; 
                     }
                     else
                     {
-                        nPtBins    = nPtBins_Njet6_R;
-                        ptBinEdges = ptBinEdges_Njet6_R; 
+                        nPtBins    = nPtBins_Njets6_R;
+                        ptBinEdges = ptBinEdges_Njets6_R; 
                     }
                 }
                 // Choose the binning for the merged case
@@ -152,28 +152,28 @@ void TopTaggerSF_Analyzer::InitHistos(const std::map<std::string, bool>& cutMap)
                 {
                     if (njetStr.find("6") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet6_M;
-                        ptBinEdges = ptBinEdges_Njet6_M; 
+                        nPtBins    = nPtBins_Njets6_M;
+                        ptBinEdges = ptBinEdges_Njets6_M; 
                     }
                     else if (njetStr.find("7") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet7_M;
-                        ptBinEdges = ptBinEdges_Njet7_M; 
+                        nPtBins    = nPtBins_Njets7_M;
+                        ptBinEdges = ptBinEdges_Njets7_M; 
                     }
                     else if (njetStr.find("8") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet8_M;
-                        ptBinEdges = ptBinEdges_Njet8_M; 
+                        nPtBins    = nPtBins_Njets8_M;
+                        ptBinEdges = ptBinEdges_Njets8_M; 
                     }
                     else if (njetStr.find("9") != std::string::npos)
                     {
-                        nPtBins    = nPtBins_Njet9_M;
-                        ptBinEdges = ptBinEdges_Njet9_M; 
+                        nPtBins    = nPtBins_Njets9_M;
+                        ptBinEdges = ptBinEdges_Njets9_M; 
                     }
                     else
                     {
-                        nPtBins    = nPtBins_Njet6_M;
-                        ptBinEdges = ptBinEdges_Njet6_M; 
+                        nPtBins    = nPtBins_Njets6_M;
+                        ptBinEdges = ptBinEdges_Njets6_M; 
                     }
                 }
 
@@ -238,27 +238,27 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
             printf( " Event %i\n", tr.getEvtNum() );        
 
         const auto& runtype = tr.getVar<std::string>("runtype");
-        const auto& runyear = tr.getVar<std::string>("runYear");
 
         // Top canddiate pt and disc
         const auto& bestTopPt     = tr.getVar<double>("bestTopPt");
         const auto& bestTopDisc   = tr.getVar<double>("bestTopDisc");
         const auto& bestTopNconst = tr.getVar<int>("bestTopNconst");
 
+        const auto& resolvedTop_WP = tr.getVar<double>("resolvedTop_WP");
+        const auto& mergedTop_WP   = tr.getVar<double>("mergedTop_WP");
+
         // Distinguish if the best top candidate is resolved or merged
-        bool pass_TightResolvedTop = bestTopDisc > 0.95 and bestTopNconst == 3;
-        bool pass_AnyResolvedTop   = bestTopDisc > 0.0  and bestTopNconst == 3;
+        bool pass_TightResolvedTop = bestTopDisc > resolvedTop_WP and bestTopNconst == 3;
+        bool pass_AnyResolvedTop   = bestTopDisc > 0.0            and bestTopNconst == 3;
        
-        bool pass_TightMergedTop   = bestTopDisc > 0.937 and bestTopNconst == 1;
-        bool pass_AnyMergedTop     = bestTopDisc > 0.0   and bestTopNconst == 1;
-        if (runyear.find("2016") == std::string::npos)
-            pass_TightMergedTop    = bestTopDisc > 0.895 and bestTopNconst == 1;
+        bool pass_TightMergedTop   = bestTopDisc > mergedTop_WP and bestTopNconst == 1;
+        bool pass_AnyMergedTop     = bestTopDisc > 0.0          and bestTopNconst == 1;
 
         // Event-level booleans (triggers, filters, etc.)
         const auto& pass_METFilters  = tr.getVar<bool>("passMETFilters");
         const auto& pass_MadHT       = tr.getVar<bool>("passMadHT");
         const auto& pass_MuonTrigger = tr.getVar<bool>("passTriggerMuon");
-        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerQCD");
+        const auto& pass_QCDTrigger  = tr.getVar<bool>("passTriggerAllHad");
         const auto& pass_HEMveto     = tr.getVar<bool>("passElectronHEMveto");
         const auto& pass_JetID       = tr.getVar<bool>("JetID");        
 
@@ -304,17 +304,10 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // So if we want an additional b jet that is loose we will have at least 2 loose b
         bool pass_1bjetLoose    = NGoodBJets_pt30_loose >= 2;
         bool pass_HT200         = HT_trigger_pt30        > 200.0;
-        bool pass_HT1000        = HT_trigger_pt30        > 1000.0;
-        bool pass_HT1200        = HT_trigger_pt30        > 1200.0;
+        bool pass_HT500         = HT_trigger_pt30        > 500.0;
         bool pass_MET50         = MET                    > 50.0;
 
-        // To stay above HT turn for HT trigger for QCD CR selection
-        // Bump up the HT for 2017 and 2018
-        bool pass_HT_QCDCR = false;
-        if (runyear.find("2016") != std::string::npos)
-            pass_HT_QCDCR = pass_HT1000;
-        else
-            pass_HT_QCDCR = pass_HT1200; 
+        bool pass_HT_QCDCR = pass_HT500;
 
         // Here pt ordered jet collection is assumed...
         // Calculate dPhi between MET and leading three jets
@@ -411,27 +404,20 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // -------------------
         double weightQCD              = 1.0;
         double weightTTbar            = 1.0;
-        double eventweight            = 1.0;
-        double bTagScaleFactor        = 1.0;
-        double prefiringScaleFactor   = 1.0;
-        double puScaleFactor          = 1.0;
-        double totGoodMuonScaleFactor = 1.0;
-        double topPtScaleFactor       = 1.0;
         if(runtype == "MC")
         {
             // Define Lumi weight
             const auto& Weight = tr.getVar<float>("Weight");
             const auto& lumi   = tr.getVar<double>("FinalLumi");
-            eventweight        = lumi * Weight;
+            double eventweight = lumi * Weight;
 
-            bTagScaleFactor        = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
-            prefiringScaleFactor   = tr.getVar<double>("prefiringScaleFactor");
-            puScaleFactor          = tr.getVar<double>("puWeightCorr");
-            totGoodMuonScaleFactor = tr.getVar<double>("totGoodMuonSF");
-            topPtScaleFactor       = tr.getVar<double>("topPtScaleFactor");
+            double bTagScaleFactor        = tr.getVar<double>("bTagSF_EventWeightSimple_Central");
+            double prefiringScaleFactor   = tr.getVar<double>("prefiringScaleFactor");
+            double puScaleFactor          = tr.getVar<double>("puWeightCorr");
+            double topPtScaleFactor       = tr.getVar<double>("topPtScaleFactor");
 
-            weightTTbar *= eventweight * totGoodMuonScaleFactor * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
-            weightQCD   *= eventweight /* jetTrigSF ? */        * puScaleFactor * bTagScaleFactor * prefiringScaleFactor;
+            weightTTbar *= eventweight * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
+            weightQCD   *= eventweight * puScaleFactor * bTagScaleFactor * prefiringScaleFactor * topPtScaleFactor;
         }
     
         // To be used with Single-Muon-triggered data and measuring tagging efficiency SF
@@ -526,7 +512,7 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
 
                         std::string njetStr = "";
                         if (njetCut.first != "")
-                            njetStr = "_Njet" + njetCut.first;
+                            njetStr = "_Njets" + njetCut.first;
 
                         std::string selection = kv.first + tagStr + njetStr;
 
@@ -560,8 +546,8 @@ void TopTaggerSF_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
                             correctHT = 2999.0;
 
                         int correctNjets = NGoodJets_pt30;
-                        if (correctNjets >= 10)
-                            correctNjets = 10;
+                        if (correctNjets >= 9)
+                            correctNjets =  9;
 
                         if (njetCut.first == "" and selection.find("CR") != std::string::npos)
                         {
