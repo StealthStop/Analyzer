@@ -63,7 +63,7 @@ class Yields:
 
     # Loop over an Njets histogram and store per bin contents
     # in the self.data dictionary
-    def processHisto(self, sample, histo=None):
+    def processHisto(self, sample, inclusiveBin, histo=None):
 
         if histo == None:
             histo = self.totalHisto
@@ -80,13 +80,13 @@ class Yields:
             sampleTotal       += content
             errorSquaredTotal += error**2.0
 
-            # Want to make the Njet = 12 bin inclusive
-            # So call any Njet > 12 as "12" so that they get added together
+            # Want to make the Njet = 11/12/13 bin inclusive (depending on channel)
+            # So call any Njet > 11/12/13 as "11/12/13", respectively so that they get added together
             njetBin = bin - 1
-            if njetBin >= 12:
-                njetBin = 12
+            if njetBin >= inclusiveBin:
+                njetBin = inclusiveBin
 
-            key = sample + "_Njet" + str(njetBin)
+            key = sample + "_Njets" + str(njetBin)
 
             if key not in self.data:
                 self.data[key] = [content, errorSquaredTotal]
@@ -222,7 +222,7 @@ class Yields:
             isNegligible = True
             for njet in self.njets: 
 
-                key = sample + "_Njet" + njet.replace("incl", "")
+                key = sample + "_Njets" + njet.replace("incl", "")
 
                 if key in self.data:
                     aCell, njetIsNegligible = self.makeCell(self.data[key], self.data[key.replace(sample, "AllBkg")], doFractions)
@@ -255,7 +255,7 @@ class Yields:
              aRow = 2*"    " + aRow
 
              for njet in self.njets: 
-                 key = sample + "_Njet" + njet.replace("incl", "")
+                 key = sample + "_Njets" + njet.replace("incl", "")
 
                  aRow += self.makeCell(self.data[key], None, doFractions)[0]
 
@@ -277,12 +277,22 @@ if __name__ == "__main__":
     parser.add_argument("--channel",   dest="channel",   help="which channel to process",     required=True)
     parser.add_argument("--inputDir",  dest="inputDir",  help="directory for input ROOT",     required=True)
     parser.add_argument("--outputDir", dest="outputDir", help="where to put tex table files", required=True)
+    parser.add_argument("--QCDCR",     dest="QCDCR",     help="do for QCD CR",                default=False, action="store_true")
     parser.add_argument("--year",      dest="year",      help="which year to process",        default="Run2")
     args = parser.parse_args()
 
-    njets   = ["7", "8", "9", "10", "11", "12incl"]
+    extraStr = ""
+    if args.QCDCR:
+        extraStr = "_QCDCR"
+
+    njets = ["7", "8", "9", "10", "11", "12incl"]
+    inclusiveBin = 12
+    if args.channel == "0l":
+        njets = ["8", "9", "10", "11", "12", "13incl"]
+        inclusiveBin = 13
     if args.channel == "2l":
-        njets = ["6", "7", "8", "9", "10", "11", "12incl"]
+        njets = ["6", "7", "8", "9", "10", "11incl"]
+        inclusiveBin = 11
 
     theYields = Yields(args.outputDir, njets, args.channel)
 
@@ -299,7 +309,7 @@ if __name__ == "__main__":
             continue
 
         # Only put a few signal
-        if "mStop" in sample and (not any(mass in sample for mass in ["350", "550", "850", "1150"]) or "SYY" in sample):
+        if "mStop" in sample and (not any(mass in sample for mass in ["350", "550", "850", "1150"])):
             continue
 
         # If considering a single year, then pay attention to the year
@@ -313,11 +323,11 @@ if __name__ == "__main__":
             continue
 
         f = ROOT.TFile.Open(args.inputDir + "/" + rootFile, "READ")
-        h = f.Get("h_njets_" + args.channel)
+        h = f.Get("h_Njets_%s%s_ABCD"%(args.channel, extraStr))
 
         # Extract per-bin information from the histogram
         # and store in an internal dictionary
-        theYields.processHisto(sample, h)
+        theYields.processHisto(sample, inclusiveBin, h)
 
     # Now that all backgrounds have been read in
     # Calculate and store the same information for total background
