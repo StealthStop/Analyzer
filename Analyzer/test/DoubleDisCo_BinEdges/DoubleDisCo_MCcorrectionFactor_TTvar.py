@@ -472,7 +472,14 @@ class MCcorrectionFactor_TTvar():
                 calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
             else:
                 absoluteMax = -999.0
-                someNjets = ["7", "8", "9"]
+
+                if self.channel == "0l":
+                    someNjets = ["8", "9"]
+                elif self.channel == "1l":
+                    someNjets = ["7", "8"]
+                elif self.channel == "2l":
+                    someNjets = ["6", "7"]
+
                 for someNjet in someNjets:
                     if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
                     if abs(1- maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMax:

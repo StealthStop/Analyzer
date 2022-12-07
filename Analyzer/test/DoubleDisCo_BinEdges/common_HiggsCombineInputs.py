@@ -66,7 +66,7 @@ class HiggsCombineInputs:
                     hist.SetBinError((Njet - len(self.njets)), value[njet][ttVar][1])
 
                 # put the variables to root file
-                self.make_HiggsCombineInputs_RootFiles(hist, (var + "_" + ttVar))
+                self.make_HiggsCombineInputs_RootFiles(hist, (self.year + var + "_" + ttVar))
                         
     # ----------------------------------------------------------------
     # put the average value of MC corrected data to the same root file 
