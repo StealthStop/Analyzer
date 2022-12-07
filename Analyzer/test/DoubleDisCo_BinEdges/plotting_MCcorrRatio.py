@@ -197,7 +197,7 @@ def main():
   
             draw = False 
 
-            MCcorr_TT = f1.Get("MCcorr_TT_TT")
+            MCcorr_TT = f1.Get("%s_MCcorr_TT_TT"%(year))
             MCcorr_TT.SetTitle("")
             MCcorr_TT.SetLineWidth(4)
             MCcorr_TT.SetLineColor(ROOT.kBlack)
@@ -211,12 +211,12 @@ def main():
                 if ttvar == "TT":
                     continue
 
-                histName = "MCcorr_Ratio_MC_%s"%(ttvar)
+                histName = "%s_MCcorr_Ratio_MC_%s"%(year,ttvar)
                 yTitle   = "Closure Correction Ratio [TTvar / TT]"
                 tag      = "_MC_correction_ratio_"
                 
                 if ttvar == "TT":
-                    histName = "MCcorr_TT_TT"
+                    histName = "%s_MCcorr_TT_TT"%(year)
                     yTitle = "MC Correction [TT]"
                     tag = "_MC_correction_"
 
@@ -231,7 +231,7 @@ def main():
                 hist.GetXaxis().SetTitle("N_{jets}")
                 hist.GetYaxis().SetTitle(yTitle)
 
-                MCcorr_TTvar = f1.Get("MCcorr_TTvar_%s"%(ttvar))
+                MCcorr_TTvar = f1.Get("%s_MCcorr_TTvar_%s"%(year,ttvar))
                 MCcorr_TTvar.SetTitle("")
                 MCcorr_TTvar.SetLineWidth(4)
                 MCcorr_TTvar.SetLineColor(ROOT.TColor.GetColor(ttvar_colors[ttvar]))
