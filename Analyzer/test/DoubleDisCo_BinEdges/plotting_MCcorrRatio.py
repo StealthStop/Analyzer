@@ -249,6 +249,8 @@ def main():
                 hist.GetYaxis().SetTitleOffset(1)
                 hist.GetYaxis().SetTitleOffset(1)
 
+                histBottomPanel = hist.Clone(hist.GetName() + "_clone")
+
                 if ttvar != "TT":
                     canvas.cd()
                     if not draw:
@@ -293,18 +295,18 @@ def main():
                 legend_each.Draw("SAME")
 
                 canvas_each.cd(2)
-                hist.GetXaxis().SetLabelSize(xLabelSize * scale * globalScale)
-                hist.GetYaxis().SetLabelSize(yLabelSize * scale * globalScale)
-                hist.GetXaxis().SetTitleSize(xTitleSize * scale * globalScale)
-                hist.GetYaxis().SetTitleSize(yTitleSize * scale * globalScale)
-                hist.GetYaxis().SetTitleOffset(0.3/0.7)
+                histBottomPanel.GetXaxis().SetLabelSize(xLabelSize * scale * globalScale)
+                histBottomPanel.GetYaxis().SetLabelSize(yLabelSize * scale * globalScale)
+                histBottomPanel.GetXaxis().SetTitleSize(xTitleSize * scale * globalScale)
+                histBottomPanel.GetYaxis().SetTitleSize(yTitleSize * scale * globalScale)
+                histBottomPanel.GetYaxis().SetTitleOffset(0.3/0.7)
 
-                hist.GetYaxis().SetTitleOffset(hist.GetYaxis().GetTitleOffset() / globalScale)
+                histBottomPanel.GetYaxis().SetTitleOffset(histBottomPanel.GetYaxis().GetTitleOffset() / globalScale)
 
-                hist.GetYaxis().SetRangeUser(0.04,1.96) 
-                hist.GetYaxis().SetNdivisions(7)
-                hist.GetYaxis().SetTitle("Ratio [TTvar / TT]")
-                hist.Draw("hist E")
+                histBottomPanel.GetYaxis().SetRangeUser(0.04,1.96) 
+                histBottomPanel.GetYaxis().SetNdivisions(7)
+                histBottomPanel.GetYaxis().SetTitle("Ratio [TTvar / TT]")
+                histBottomPanel.Draw("hist E")
 
                 line.Draw("same")
                 canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + tag + ttvar + "_" + label + ".pdf")
