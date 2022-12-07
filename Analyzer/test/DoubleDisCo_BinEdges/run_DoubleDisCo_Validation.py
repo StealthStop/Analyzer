@@ -41,9 +41,7 @@ parser = argparse.ArgumentParser(usage)
 parser.add_argument("--run",               dest="run",               help="which code to run",                            required=True                                                         )
 parser.add_argument("--year",              dest="year",              help="which year",                                   required=True                                                         )
 #parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_1L") # with OldSeed - Old Ntuples
-#parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms_data/d3/jhiltb/PO_Boxes/shared/hadd_Run2UL_DisCo_outputs_0L_1L_04.10.2022") # new Run2UL NN v1 for 1l
-#parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms_data/d3/jhiltb/PO_Boxes/shared/hadd_Run2UL_DisCo_outputs_0Lv2.0_1Lv2.0_02.11.2022") # new Run2UL NN v2.0 for 0l, 1l
-parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms_data/d3/jhiltb/PO_Boxes/shared/hadd_Run2UL_DisCo_outputs_1Lv2.2_2Lv1.2_11.11.2022") # Run2UL latest  
+parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms/home/jhiltb/nobackup/PO_Boxes/shared/DisCo_outputs_0L_1L_2L_RPVSYYv3.X_07.12.2022") # Run2UL 
 parser.add_argument("--tt",                dest="tt",                help="name of TT sample",                            default="TT"                                                          )
 parser.add_argument("--nontt",             dest="nontt",             help="name of NonTT sample",                         default="NonTT"                                                       )
 parser.add_argument("--ttVar",             dest="ttVar",             help="TT MCcorrectionFactor_TTvar (default no var)", default="TT"                                                          )
@@ -52,8 +50,8 @@ parser.add_argument("--mass",              dest="mass",              help="signa
 parser.add_argument("--data",              dest="data",              help="name of Data sample",                          default="Data"                                                        )
 parser.add_argument("--channel",           dest="channel",           help="0l or 1l",                                     required=True                                                         )
 parser.add_argument("--cmslabel",          dest="cmslabel",          help="CMS label: Preliminary/Work in Progress",      default="Work in Progress"                                            )
-parser.add_argument("--label_xPosition",   dest="label_xPosition",   help="x position of the CMS labels",                 default=0.60                                                          )
-parser.add_argument("--label_yPosition",   dest="label_yPosition",   help="y position of the CMS labels",                 default=1.055                                                         )
+parser.add_argument("--label_xPosition",   dest="label_xPosition",   help="x position of the CMS labels",                 default=0.33                                                          )
+parser.add_argument("--label_yPosition",   dest="label_yPosition",   help="y position of the CMS labels",                 default=1.04                                                          )
 parser.add_argument("--disc1edge",         dest="disc1edge",         help="fixed d1 edge",                                default=None,  type=float                                             )
 parser.add_argument("--disc2edge",         dest="disc2edge",         help="fixed d2 edge",                                default=None,  type=float                                             )
 parser.add_argument("--fastMode",          dest="fastMode",          help="Fast mode, don't scan all choices",            default=False, action="store_true"                                    ) 
@@ -63,6 +61,7 @@ parser.add_argument("--plotVars2D",        dest="plotVars2D",        help="Plot 
 parser.add_argument("--plotDisc1VsDisc2",  dest="plotDisc1VsDisc2",  help="Plot disc1 and disc2 (2D)",                    default=False, action="store_true"                                    ) 
 parser.add_argument("--plotVarVsBoundary", dest="plotVarVsBoundary", help="Plot var vs boundary",                         default=False, action="store_true"                                    ) 
 parser.add_argument("--numEdgeChoices",    dest="numEdgeChoices",    help="number of edge choices to print",              default=4,     type=int                                               )
+parser.add_argument("--makeDiscoCfg",      dest="makeDiscoCfg",      help="make cfg file including opt. ABCD edges",      default=True,  action="store_true"                                    )
 args = parser.parse_args()
 
 # -------------------------------------------
@@ -129,7 +128,7 @@ if ("SHH" in args.sig):
 # root files
 # ----------
 files = {
-    "TT"             : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ), # TT.root file includes also fsrUp/Down and isrUp/Down histograms anymore
+    "TT"             : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ), # TT.root file includes also fsrUp/Down, isrUp/Down JECup/down, JERup/down histograms anymore
     "TT_fsrDown"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
     "TT_fsrUp"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
     "TT_isrDown"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
@@ -151,7 +150,7 @@ files = {
 # ---------------------
 # get the 2D histograms
 # --------------------- 
-histName = "h_DoubleDisCo_disc1_disc2_%s_Njets${NJET}_ABCD"%(args.channel)
+histName = "h_DoubleDisCo_%s_disc1_disc2_%s_Njets${NJET}_ABCD"%(args.sig,args.channel)
 
 
 # ---------------------------------------------------------------
@@ -174,7 +173,7 @@ translator = {"ABCD"   : {"A" : "A",  "B" : "B",  "C" : "C",  "D" : "D" },
 
 theApp = None
 if  args.run == "Optimized_BinEdges":
-    theApp = Optimized_BinEdges(args.year, args.channel, Sig, args.mass, args.ttVar, translator)
+    theApp = Optimized_BinEdges(args.year, args.channel, Sig, args.mass, args.ttVar, translator, args.makeDiscoCfg)
     theApp.run(disc1edge=None, disc2edge=None, fastMode=False, samples=samples, files=files, histName=histName, njets=args.njets, regions=regions, tablesPath=tablesPath, numEdgeChoices=args.numEdgeChoices)
 
 elif args.run == "BinEdges":

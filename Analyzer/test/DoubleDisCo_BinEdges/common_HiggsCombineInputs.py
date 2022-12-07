@@ -55,7 +55,7 @@ class HiggsCombineInputs:
             # loop over ttVar
             for ttVar in ttVars:
 
-                hist = ROOT.TH1F(var + "_" + ttVar, var + "_" + ttVar, len(self.njets), 0, len(self.njets))
+                hist = ROOT.TH1F(self.year + var + "_" + ttVar, var + "_" + ttVar, len(self.njets), 0, len(self.njets))
 
                 # loop over njets
                 for njet in self.njets:                        
@@ -84,7 +84,7 @@ class HiggsCombineInputs:
             hist.SetBinContent((Njet - len(self.njets)), dictionary[njet]) 
 
         # put the average value of MC corrected data to the dictionary
-        self.make_HiggsCombineInputs_RootFiles(hist, ("average_MCcorrectedData_Syst_%s"%(region)))
+        self.make_HiggsCombineInputs_RootFiles(hist, ("%s_average_MCcorrectedData_Syst_%s"%(self.year,region)))
 
 
     # ----------------------------------------------------------------
@@ -104,7 +104,7 @@ class HiggsCombineInputs:
             hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
 
         # put the mximum value of MC corrected data to the dicionary
-        self.make_HiggsCombineInputs_RootFiles(hist, ("maximum_MCcorrectedData_Syst_%s"%(region)))
+        self.make_HiggsCombineInputs_RootFiles(hist, ("%s_maximum_MCcorrectedData_Syst_%s"%(self.year,region)))
 
 
     # -------------------
