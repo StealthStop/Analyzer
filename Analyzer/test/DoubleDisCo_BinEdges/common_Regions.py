@@ -630,61 +630,41 @@ class addEdges_toDoubleDisco():
         self.channel   = channel
         self.regions   = regions
 
-def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
+def addEdges_toDoubleDiscoCfg(self, isNonIso=False, bestEdges=None):
 
-        cfgVer = ""
-        
-        if self.channel == "0l":
-            cfgVer = "v2.0"
-        else:
-            cfgVer = "v4.0"
+    nonIsoStr = ""
+    if isNonIso:
+        nonIsoStr = "_NonIsoMuon"
 
-        outputDir = "DeepESMCfg_DoubleDisCo_Reg_%s_%s_Run2_%s/"%(self.channel, self.model, str(cfgVer))
-  
-        if not os.path.exists(outputDir):
-            os.makedirs(outputDir)
+    configName = "Keras_Tensorflow%s_DoubleDisCo_Reg_%s_%s_Run2.cfg"%(nonIsoStr, self.channel, self.year)
+    realPath   = os.path.realpath("../" + configName)
+
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)
  
-        f = open("../DeepESMCfg_DoubleDisCo_Reg_%s_%s_Run2_%s/DoubleDisCo_Reg.cfg"%(self.channel, self.model, str(cfgVer)), "r")
-      
-        g = open("%s/DoubleDisCo_Reg.cfg"%(outputDir), "w") 
-        
-        # get the all information from DoubleDisCo cfg file
-        lines = f.readlines()
-        f.close()
-        
-        for line in lines:
+    f = open("%s/DoubleDisCo_Reg%s.cfg"%(realPath,     nonIsoStr), "r")
+    g = open("%s/DoubleDisCo_Reg%s_Opt.cfg"%(realPath, nonIsoStr), "w") 
 
-            if "}" in line:
-                continue
+    # get the all information from DoubleDisCo cfg file
+    lines = f.readlines()
+    f.close()
 
+    for iLine in range(0, len(lines)):
+
+        line       = lines[iLine]
+
+        if "binEdges_ABCD" not in line:
             g.write(line)
+        else:
+            futureLine = lines[iLine+1]
 
-        # add the all ABCD and Validation edges to DoubleDisCo cfg file
-        for key, region in self.regions.items():
+            edgeCand1 = line.rpartition(" = ")[-1] 
+            edgeCand2 = futureLine.rpartition(" = ")[-1]
 
-            g.write("\n")
-            g.write(" # %s Bin Edges\n"%(region))                        
-
-            i = 0
-            for njet in Njets:
-
-                if (njet < 10):
-                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][0]))
-                    i += 1
-                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][1]))
-                else:
-                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][0]))
-                    i += 1
-                    g.write("   binEdges_%s[%d] = %s \n" %(region, i, edgesPerNjets[njet][key][1]))
-                i += 1
-
-        g.write("} \n")
-        g.close()
-
-# ------------------------------------------------------------------
-# get the sys for MC
-#   -- get the MC correction value for TT from boundary 1.0
-#   -- get the MC correction value for also TTvars from boundary 1.0
-#   -- gat the ratio of MC correction value: (TT/TTvar)
-# ------------------------------------------------------------------
-
+            if (edgeCand1 != "1.00" and edgeCand1 != "0.00") and \
+               (edgeCand2 != "1.00" and edgeCand2 != "0.00"):
+                g.write(line.replace(edgeCand, bestEdges[0]))
+            else:
+                g.write(line)
+    
+    g.close()

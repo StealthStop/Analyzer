@@ -243,7 +243,7 @@ class BinEdges():
                         absMin = 0.0
                         if region != "ABCD":
                             absMin = 10e-10
-                            
+
                         if hist_key == "TT":
                             # significance including non-closure
                             plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  5.0, njet, name=region, variable="Sign_includingNonClosure"        )

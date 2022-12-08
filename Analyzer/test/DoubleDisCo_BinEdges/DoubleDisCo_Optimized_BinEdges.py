@@ -70,8 +70,6 @@ class Optimized_BinEdges():
             # get the current best choice of ABCD edges     
             if (pass_nonClosure and pass_sigFrac):
 
-                print "HEY I am here and pass sigfrac and nonclosure !!!"
-    
                 if (total_significance > max_significance):
 
                     max_significance = total_significance
@@ -216,6 +214,10 @@ class Optimized_BinEdges():
         # -------------------------------------
         # add all edges to DoubleDisCo cfg file
         # -------------------------------------
-        if self.makeDiscoCfg:
-            addEdges = addEdges_toDoubleDisco(self.sig, self.channel, regions)
-            addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
+        #iBestChoice = sorted(best_choices_parameters.keys(), reverse=True)[1]
+        #bestEdges   = best_choices_parameters[iBestChoice]["ABCDedges"]
+
+        #if self.makeDiscoCfg:
+        #    addEdges = addEdges_toDoubleDisco(self.sig, self.channel, regions)
+        #    addEdges.addEdges_toDoubleDiscoCfg(False, bestEdges)
+        #    addEdges.addEdges_toDoubleDiscoCfg(True,  bestEdges)
