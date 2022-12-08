@@ -625,12 +625,11 @@ class All_Regions:
 # -----------------------------------------
 class addEdges_toDoubleDisco():
 
-    def __init__(self, year, model, mass, channel, regions):
-        self.year      = year
+    def __init__(self, model, channel, regions):
         self.model     = model
-        self.mass      = mass
         self.channel   = channel
         self.regions   = regions
+
 def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
 
         cfgVer = ""
@@ -640,12 +639,12 @@ def addEdges_toDoubleDiscoCfg(self, edgesPerNjets=None, Njets=None):
         else:
             cfgVer = "v4.0"
 
-        outputDir = "DeepESMCfg_DoubleDisCo_Reg_%s_%s_2016_%s/"%(self.channel, self.model, str(cfgVer))
+        outputDir = "DeepESMCfg_DoubleDisCo_Reg_%s_%s_Run2_%s/"%(self.channel, self.model, str(cfgVer))
   
         if not os.path.exists(outputDir):
             os.makedirs(outputDir)
  
-        f = open("../DeepESMCfg_DoubleDisCo_Reg_%s_%s_2016_%s/DoubleDisCo_Reg.cfg"%(self.channel, self.model, str(cfgVer)), "r")
+        f = open("../DeepESMCfg_DoubleDisCo_Reg_%s_%s_Run2_%s/DoubleDisCo_Reg.cfg"%(self.channel, self.model, str(cfgVer)), "r")
       
         g = open("%s/DoubleDisCo_Reg.cfg"%(outputDir), "w") 
         

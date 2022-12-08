@@ -266,7 +266,12 @@ class maximumCorrectedData_ttSyst(TableWriter):
         self.f.write("\n")
 
     def writeLine(self, **kwargs):
-        self.f.write("        %s & %.3f & %.3f \\\\" %(kwargs["njet"], kwargs["maxCorrData"], kwargs["ttSyst"]))
+
+        njetToWrite = kwargs["njet"]
+        if "incl" in njetToWrite:
+            njetToWrite = "$\\geq%s$"%(njetToWrite.partition("incl")[0])
+        
+        self.f.write("        %s & %s & %.3f \\\\" %(njetToWrite, kwargs["maxCorrData"], kwargs["ttSyst"]))
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")

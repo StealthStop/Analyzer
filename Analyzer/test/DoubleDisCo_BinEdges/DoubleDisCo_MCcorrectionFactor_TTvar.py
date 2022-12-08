@@ -1,4 +1,5 @@
 import numpy as np
+import re
 
 from collections               import defaultdict
 from common_Regions            import *
@@ -7,6 +8,12 @@ from common_Aggregator         import *
 from common_TableWriter        import *
 from common_HiggsCombineInputs import *
 
+def naturalSort(unsortedList):
+
+    convert      = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+
+    return sorted(unsortedList, key=alphanum_key)
 
 class MCcorrectionFactor_TTvar():
 
@@ -482,9 +489,12 @@ class MCcorrectionFactor_TTvar():
                 absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
                 absoluteMaxDiff = abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet])
 
-        for key_njet, maximum_correctedDataValue in maximum_CorrectedDataValue_forAllRegions["All"].items():
+        njetKeys = naturalSort(maximum_CorrectedDataValue_forAllRegions["All"].keys())
+        for key_njet in njetKeys:
+    
+            maximum_correctedDataValue = maximum_CorrectedDataValue_forAllRegions["All"][key_njet]
 
-            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet not in someNjets:
+            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
                 calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
             else:
                 calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
@@ -492,12 +502,11 @@ class MCcorrectionFactor_TTvar():
             # ------------------
             # write the tex file
             # ------------------
-            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
-                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData=maximum_CorrectedDataValue_forAllRegions["All"][key_njet], ttSyst=calculatedSys["All"][key_njet])
+            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
+                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="%.3f"%(maximum_CorrectedDataValue_forAllRegions["All"][key_njet]), ttSyst=calculatedSys["All"][key_njet])
 
             else:
-                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData=0.000, ttSyst=calculatedSys["All"][key_njet])
-
+                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file

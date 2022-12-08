@@ -216,6 +216,6 @@ class Optimized_BinEdges():
         # -------------------------------------
         # add all edges to DoubleDisCo cfg file
         # -------------------------------------
-        #if self.makeDiscoCfg:
-        #    addEdges = addEdges_toDoubleDisco(self.year, self.sig, self.mass, self.channel, regions)
-        #    addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
+        if self.makeDiscoCfg:
+            addEdges = addEdges_toDoubleDisco(self.sig, self.channel, regions)
+            addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
