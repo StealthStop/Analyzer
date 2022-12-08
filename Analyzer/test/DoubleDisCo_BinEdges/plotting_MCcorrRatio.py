@@ -1,4 +1,5 @@
 import ROOT
+import argparse
 import os
 
 # -----------------------------
@@ -102,6 +103,13 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
 # main part of plotting
 # ---------------------
 def main():
+
+    usage  = "usage: %prog [options]"
+    parser = argparse.ArgumentParser(usage)
+    parser.add_argument("--sig",  dest="sig",  help="signal model RPV, SYY", default="RPV")
+    parser.add_argument("--mass", dest="mass", help="signal mass",           default="550")
+    args = parser.parse_args()
+
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
 
@@ -111,7 +119,7 @@ def main():
                #"1l_0.95_0.61",
              ]
 
-    path = "year_TT_TTvar_Syst_RPV_550_label.root"
+    path = "year_TT_TTvar_Syst_%s_%s_label.root"%(args.sig, args.mass)
     
     years = [
              #"2016preVFP" ,

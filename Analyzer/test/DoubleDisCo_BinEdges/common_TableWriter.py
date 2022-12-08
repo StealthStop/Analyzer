@@ -225,12 +225,14 @@ class Optimized_ABCDedges(TableWriter):
 
             value = tempDict[key]
 
+            firstWrite = False
             for njet in njets:
                 Njet = njet.replace("incl", "")
                 if "incl" in njet:
                     Njet = "$\geq%s$"%(Njet)
-                if Njet == "7":
+                if not firstWrite:
                     self.f.write("        \\multirow{%d}{*}{%s} & \\multirow{%d}{*}{%.3f} & %s & %.3f & %.3f & %.3f & %.3f & %.3f \\\\"%(len(njets), value["ABCDedges"], len(njets), value["Significance"], Njet, value["nonClosure_njet%s"%njet], value["nonCllosurePull_njet%s"%njet], value["sigFracB_njet%s"%njet], value["sigFracC_njet%s"%njet], value["sigFracD_njet%s"%njet]))
+                    firstWrite = True
                 else:
                     self.f.write("                                            &                        & %s & %.3f & %.3f & %.3f & %.3f & %.3f \\\\"%(Njet, value["nonClosure_njet%s"%njet], value["nonCllosurePull_njet%s"%njet], value["sigFracB_njet%s"%njet], value["sigFracC_njet%s"%njet], value["sigFracD_njet%s"%njet]))
 
