@@ -186,9 +186,9 @@ def main():
     for year in years:
 
         # create output directory for each year
-        if not os.path.exists("%s_plots_MCcorrectionFactorRatio/"%(year)):
-            os.makedirs("%s_plots_MCcorrectionFactorRatio/"%(year))
-
+        outputPath = "%s_plots_MCcorrectionFactorRatio/"%(year)
+        if not os.path.exists(outputPath):
+            os.makedirs(outputPath)
 
         # ----------------------
         # loop over the channels
@@ -335,4 +335,4 @@ if __name__ == "__main__":
     main()
 
 
- 
+         
