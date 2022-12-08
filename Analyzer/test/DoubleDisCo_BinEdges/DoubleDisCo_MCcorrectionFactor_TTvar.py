@@ -466,27 +466,27 @@ class MCcorrectionFactor_TTvar():
         # calculate the sys. via the maximum value of corrected data closure
         # sys = (1.0 / maximum value of corrected data closure)
         # ------------------------------------------------------------------
+        absoluteMax     = -999.0
+        absoluteMaxDiff = 0.0
+
+        if self.channel == "0l":
+            someNjets = ["8", "9"]
+        elif self.channel == "1l":
+            someNjets = ["7", "8"]
+        elif self.channel == "2l":
+            someNjets = ["6", "7"]
+
+        for someNjet in someNjets:
+            if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
+            if abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMaxDiff:
+                absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
+                absoluteMaxDiff = abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet])
+
         for key_njet, maximum_correctedDataValue in maximum_CorrectedDataValue_forAllRegions["All"].items():
 
-            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
+            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet not in someNjets:
                 calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
             else:
-                absoluteMax     = -999.0
-                absoluteMaxDiff = 0.0
-
-                if self.channel == "0l":
-                    someNjets = ["8", "9"]
-                elif self.channel == "1l":
-                    someNjets = ["7", "8"]
-                elif self.channel == "2l":
-                    someNjets = ["6", "7"]
-
-                for someNjet in someNjets:
-                    if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
-                    if abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMaxDiff:
-                        absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
-                        absoluteMaxDiff = abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet])
-
                 calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
             
             # ------------------
@@ -496,7 +496,7 @@ class MCcorrectionFactor_TTvar():
                 maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData=maximum_CorrectedDataValue_forAllRegions["All"][key_njet], ttSyst=calculatedSys["All"][key_njet])
 
             else:
-                maxCorrData_ttSyst.writeLine(njet=njet, maxCorrData=0.000, ttSyst=calculatedSys["All"][key_njet])
+                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData=0.000, ttSyst=calculatedSys["All"][key_njet])
 
 
         # -------------------------------------------------------------
