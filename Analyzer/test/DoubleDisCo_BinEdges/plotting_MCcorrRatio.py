@@ -186,7 +186,9 @@ def main():
     for year in years:
 
         # create output directory for each year
-        os.makedirs("%s_plots_MCcorrectionFactorRatio/"%(year))
+        if not os.path.exists("%s_plots_MCcorrectionFactorRatio/"%(year)):
+            os.makedirs("%s_plots_MCcorrectionFactorRatio/"%(year))
+
 
         # ----------------------
         # loop over the channels
@@ -317,7 +319,7 @@ def main():
                 histBottomPanel.Draw("hist E")
 
                 line.Draw("same")
-                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + tag + ttvar + "_" + label + ".pdf")
+                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
  
             # ---------------------------------------------
             # save canvas & legend including all histograms
@@ -325,7 +327,7 @@ def main():
             canvas.cd()
             addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.1, RightMargin=0.1, SF=1.0)    
             legend.Draw("SAME")
-            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_MCcorr_Ratio_MC_" + label + ".pdf")     
+            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
          
         f1.Close()
  

@@ -32,7 +32,7 @@ command=$1
 command2=$2 # channel option on the command line
 
 YEARS=("Run2UL") #"2016preVFP" "2016postVFP" "2017" "2018")
-MODELS=("RPV") 
+MODELS=("RPV" "SYY") 
 #MODELS=("SYY")
 MASSES=("550")
 CHANNELS=("0l" "1l" "2l")
@@ -105,9 +105,15 @@ done
 # ------------------------------------------
 # MC-based systematics
 #   -- Closure Correction Ratio = ttvar / tt
-# ------------------------------------------
-if [ $command == "mc" ] || [ $command == "All" ]; then
+# -----------------------------------------
+for MODEL in ${MODELS[@]}; do
 
-    python plotting_MCcorrRatio.py
+        for MASS in ${MASSES[@]}; do
 
-fi
+            if [ $command == "mc" ] || [ $command == "All" ]; then
+            
+                python plotting_MCcorrRatio.py --sig ${MODEL} --mass ${MASS}
+            
+            fi
+    done
+done
