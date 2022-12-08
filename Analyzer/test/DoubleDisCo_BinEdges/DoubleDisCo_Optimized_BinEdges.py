@@ -195,9 +195,9 @@ class Optimized_BinEdges():
                     sigFracD[region][njet]                         = np.array(theEdgesClass.get("sigFractionD",                     None, None, self.sig ))[:,0]
                     sigFracD_Unc[region][njet]                     = np.array(theEdgesClass.get("sigFractionD",                     None, None, self.sig ))[:,1]
   
-        sigFracsCut = 0.4 
+        sigFracsCut = 0.4
         if self.channel == "0l": 
-            sigFracsCut = 0.3
+            sigFracsCut = 0.3 
 
         # ------------------------------------------------------------
         # optimized ABCD edges with significance including non-closure
@@ -214,10 +214,16 @@ class Optimized_BinEdges():
         # -------------------------------------
         # add all edges to DoubleDisCo cfg file
         # -------------------------------------
-        #iBestChoice = sorted(best_choices_parameters.keys(), reverse=True)[1]
-        #bestEdges   = best_choices_parameters[iBestChoice]["ABCDedges"]
+        iBestChoice = None
+        bestChoices = sorted(best_choices_parameters.keys(), reverse=True)
+        if len(bestChoices) > 1:
+            iBestChoice = bestChoices[1]
+        else:
+            iBestChoice = bestChoices[0]
 
-        #if self.makeDiscoCfg:
-        #    addEdges = addEdges_toDoubleDisco(self.sig, self.channel, regions)
-        #    addEdges.addEdges_toDoubleDiscoCfg(False, bestEdges)
-        #    addEdges.addEdges_toDoubleDiscoCfg(True,  bestEdges)
+        bestEdges   = best_choices_parameters[iBestChoice]["ABCDedges"]
+
+        if self.makeDiscoCfg:
+            aWriter = ConfigWriter(self.sig, self.channel, regions)
+            aWriter.addEdges_toDoubleDiscoCfg(False, bestEdges)
+            aWriter.addEdges_toDoubleDiscoCfg(True,  bestEdges)

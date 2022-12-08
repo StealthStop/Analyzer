@@ -623,48 +623,49 @@ class All_Regions:
 # -----------------------------------------
 # add the all edges to DoubleDisCo Cfg file
 # -----------------------------------------
-class addEdges_toDoubleDisco():
+class ConfigWriter():
 
     def __init__(self, model, channel, regions):
-        self.model     = model
+        self.model     = model.partition("_")[0]
         self.channel   = channel
         self.regions   = regions
 
-def addEdges_toDoubleDiscoCfg(self, isNonIso=False, bestEdges=None):
-
-    nonIsoStr = ""
-    if isNonIso:
-        nonIsoStr = "_NonIsoMuon"
-
-    configName = "Keras_Tensorflow%s_DoubleDisCo_Reg_%s_%s_Run2.cfg"%(nonIsoStr, self.channel, self.year)
-    realPath   = os.path.realpath("../" + configName)
-
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)
- 
-    f = open("%s/DoubleDisCo_Reg%s.cfg"%(realPath,     nonIsoStr), "r")
-    g = open("%s/DoubleDisCo_Reg%s_Opt.cfg"%(realPath, nonIsoStr), "w") 
-
-    # get the all information from DoubleDisCo cfg file
-    lines = f.readlines()
-    f.close()
-
-    for iLine in range(0, len(lines)):
-
-        line       = lines[iLine]
-
-        if "binEdges_ABCD" not in line:
-            g.write(line)
-        else:
-            futureLine = lines[iLine+1]
-
-            edgeCand1 = line.rpartition(" = ")[-1] 
-            edgeCand2 = futureLine.rpartition(" = ")[-1]
-
-            if (edgeCand1 != "1.00" and edgeCand1 != "0.00") and \
-               (edgeCand2 != "1.00" and edgeCand2 != "0.00"):
-                g.write(line.replace(edgeCand, bestEdges[0]))
-            else:
-                g.write(line)
+    def addEdges_toDoubleDiscoCfg(self, isNonIso=False, bestEdges=None):
     
-    g.close()
+        nonIsoStr = ""
+        if isNonIso:
+            nonIsoStr = "_NonIsoMuon"
+    
+        configName = "Keras_Tensorflow%s_DoubleDisCo_Reg_%s_%s_Run2.cfg"%(nonIsoStr, self.channel, self.model)
+        realPath   = os.path.realpath("../" + configName).rpartition("/")[0]
+    
+        f = open("%s/DoubleDisCo_Reg%s.cfg"%(realPath,     nonIsoStr), "r")
+        g = open("%s/DoubleDisCo_Reg%s_Opt.cfg"%(realPath, nonIsoStr), "w") 
+    
+        # get the all information from DoubleDisCo cfg file
+        lines = f.readlines()
+        f.close()
+    
+        for iLine in range(0, len(lines)):
+    
+            line       = lines[iLine]
+    
+            if "binEdges_ABCD" not in line:
+                g.write(line)
+            else:
+                futureLine = lines[iLine+1]
+    
+                edgeCand1 = line.rpartition(" = ")[-1].rstrip()
+                edgeCand2 = futureLine.rpartition(" = ")[-1].rstrip()
+    
+                if (edgeCand1 != "1.00" and edgeCand1 != "0.00") and \
+                   (edgeCand2 != "1.00" and edgeCand2 != "0.00"):
+                    g.write(line.replace(edgeCand1, bestEdges[0]))
+                    g.write(futureLine.replace(edgeCand2, bestEdges[1]))
+                elif (edgeCand1 != "1.00" and edgeCand1 != "0.00") and \
+                     (edgeCand2 == "1.00" or edgeCand2 == "0.00"):
+                    continue
+                else:
+                    g.write(line)
+        
+        g.close()
