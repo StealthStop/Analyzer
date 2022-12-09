@@ -54,12 +54,30 @@ class MCcorrectionFactor_TT():
         elif disc2edge < disc1edge:
             d2gridWidth /= unevenFactor
          
-        temp1 = np.unique(np.round(np.clip(np.arange(float(disc1edge), 1.05, d1gridWidth), 0.0, 1.0), 2))
-        temp2 = np.unique(np.round(np.clip(np.arange(float(disc2edge), 1.05, d2gridWidth), 0.0, 1.0), 2))
+        tempArr = []
+        latestD1 = float(disc1edge)
+        latestD2 = float(disc2edge)
+        while True:
+
+            latestD1 = round(latestD1 + d1gridWidth, 2)
+            latestD2 = round(latestD2 + d2gridWidth, 2)
+
+            diffD1 = 1.0 - latestD1
+            diffD2 = 1.0 - latestD2
+
+            if latestD1 <= 1.0 and latestD2 <= 1.0:
+                if diffD1 < d1gridWidth or diffD2 < d2gridWidth:
+                    tempArr.append([1.0, 1.0])
+                    break
+                else:
+                    tempArr.append([latestD1, latestD2])
+            else:
+                break
 
         self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, self.regionGridWidth),
                                 "Val_CD" : np.arange(0.40, 1.05, self.regionGridWidth),
-                                "Val_D"  : np.array(list(zip(temp1, temp2)))
+                                "Val_D"  : np.array(tempArr)
+
         }
 
         # Will hold the pair of final edge values for the full ABCD region
