@@ -58,8 +58,12 @@ class All_Regions:
     # -------------------------------------
     def cal_Significance(self, nSigEvents, nTTEvents, sys=0.3):
         
-        if (nTTEvents == 0.0):
+        if nSigEvents == 0.0:
+            if nTTEvents == 0.0:
+                return -999.0
             return 0.0
+        elif nTTEvents == 0.0:
+            return -999.0
     
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 )**0.5
         
@@ -71,8 +75,12 @@ class All_Regions:
     # -------------------------------------------------
     def cal_Significance_includingNonClosure(self, nSigEvents, nTTEvents, nonClosure=None, sys=0.3):
         
-        if (nTTEvents == 0.0):
+        if nSigEvents == 0.0:
+            if nTTEvents == 0.0:
+                return -999.0
             return 0.0
+        elif nTTEvents == 0.0:
+            return -999.0
 
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 + (nonClosure * nTTEvents)**2.0 )**0.5
         
@@ -84,8 +92,12 @@ class All_Regions:
     # -------------------------------------
     def cal_Significance_nonSimplified(self, nSigEvents, nTTEvents, sys=0.3):
         
-        if (nTTEvents == 0.0 or nSigEvents == 0.0):
+        if nSigEvents == 0.0:
+            if nTTEvents == 0.0:
+                return -999.0
             return 0.0
+        elif nTTEvents == 0.0:
+            return -999.0
 
         b = nTTEvents;     s = nSigEvents
         n = (s+b);     sigma = (b * sys)**2.0
@@ -187,6 +199,35 @@ class All_Regions:
         nXBins = range(firstXBin+1, lastXBin)
         nYBins = range(firstYBin+1, lastYBin)
 
+        for key, h1 in self.hist.items():
+            for xBin in range(1, totalXbins+1):
+                xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
+                xBinKey     = "%.3f"%(xLowBinEdge)
+
+                self.add("nEventsA", xBinKey, "1.00", (0.0, 0.0), key)
+                self.add("nEventsB", xBinKey, "1.00", (0.0, 0.0), key)
+                self.add("nEventsC", xBinKey, "1.00", (0.0, 0.0), key)
+                self.add("nEventsD", xBinKey, "1.00", (0.0, 0.0), key)
+
+                for yBin in range(1, totalYbins+1):
+                    yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
+                    yBinKey     = "%.3f"%(yLowBinEdge)
+
+                    self.add("nEventsA", xBinKey, yBinKey, (0.0, 0.0), key)
+                    self.add("nEventsB", xBinKey, yBinKey, (0.0, 0.0), key)
+                    self.add("nEventsC", xBinKey, yBinKey, (0.0, 0.0), key)
+                    self.add("nEventsD", xBinKey, yBinKey, (0.0, 0.0), key)
+
+                    self.add("nEventsA", "1.00", yBinKey, (0.0, 0.0), key)
+                    self.add("nEventsB", "1.00", yBinKey, (0.0, 0.0), key)
+                    self.add("nEventsC", "1.00", yBinKey, (0.0, 0.0), key)
+                    self.add("nEventsD", "1.00", yBinKey, (0.0, 0.0), key)
+
+            self.add("nEventsA", "1.00", "1.00", (0.0, 0.0), key)
+            self.add("nEventsB", "1.00", "1.00", (0.0, 0.0), key)
+            self.add("nEventsC", "1.00", "1.00", (0.0, 0.0), key)
+            self.add("nEventsD", "1.00", "1.00", (0.0, 0.0), key)
+
         # count signal and background events and errors in bin edges
         for key, h1 in self.hist.items():
 
@@ -200,7 +241,7 @@ class All_Regions:
                 # Only care about actual choice of bin edges
                 if self.fastMode and self.disc1Edge != None and (abs(self.disc1Edge - xLowBinEdge) >= 10e-3):
                     continue
-
+                
                 # For each choice of xBin (vertical divider in ABCD plane),
                 # initialize counts for the four regions
                 startOfScan = True
@@ -322,10 +363,10 @@ class All_Regions:
             nTot_SigTT_C = nSigEvents_C + nTTEvents_C
             nTot_SigTT_D = nSigEvents_D + nTTEvents_D
 
-            sigFracsA    = -1.0; sigFracsB    = -1.0; sigFracsC    = -1.0; sigFracsD    = -1.0
-            sigFracsErrA = -1.0; sigFracsErrB = -1.0; sigFracsErrC = -1.0; sigFracsErrD = -1.0
-            bkgFracsA    = -1.0; bkgFracsB    = -1.0; bkgFracsC    = -1.0; bkgFracsD    = -1.0
-            bkgFracsErrA = -1.0; bkgFracsErrB = -1.0; bkgFracsErrC = -1.0; bkgFracsErrD = -1.0
+            sigFracsA    = -999.0; sigFracsB    = -999.0; sigFracsC    = -999.0; sigFracsD    = -999.0
+            sigFracsErrA = -999.0; sigFracsErrB = -999.0; sigFracsErrC = -999.0; sigFracsErrD = -999.0
+            bkgFracsA    = -999.0; bkgFracsB    = -999.0; bkgFracsC    = -999.0; bkgFracsD    = -999.0
+            bkgFracsErrA = -999.0; bkgFracsErrB = -999.0; bkgFracsErrC = -999.0; bkgFracsErrD = -999.0
  
             if nTot_SigTT_A > 0.0: 
                 sigFracsA    = nSigEvents_A / nTot_SigTT_A
@@ -358,7 +399,7 @@ class All_Regions:
                 bkgFracsD    = 1 - sigFracsD
                 bkgFracsErrD = ((nTTEvents_D * nSigEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0 + \
                                 (nSigEvents_D * nTTEventsErr_D**0.5 / (nTot_SigTT_D)**2.0)**2.0)**0.5   
-         
+
             self.add("sigFractionA", disc1Key, disc2Key, (sigFracsA, sigFracsErrA), self.Sig)
             self.add("sigFractionB", disc1Key, disc2Key, (sigFracsB, sigFracsErrB), self.Sig)
             self.add("sigFractionC", disc1Key, disc2Key, (sigFracsC, sigFracsErrC), self.Sig)
@@ -526,8 +567,8 @@ class All_Regions:
             # ----------------------------------------------------
             significance_TT = 0.0; significanceUnc_TT = 0.0; tempOptMetric = 999.0
 
-            significance_TT += self.cal_Significance(nSigEvents_A, nTTEvents_A)**2.0
-            significance_TT  = significance_TT**0.5
+            significance_TT = self.cal_Significance(nSigEvents_A, nTTEvents_A)**2.0
+            significance_TT = significance_TT**0.5
 
             D = ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 )**0.5
             if nTTEvents_A > 0.0:
@@ -538,8 +579,8 @@ class All_Regions:
             # significance for optimizing ABCD edges
             # this one including also non-closure
             significance_includingNonClosure = 0.0; significanceUnc_includingNonClosure = 0.0
-            significance_includingNonClosure += self.cal_Significance_includingNonClosure(nSigEvents_A, nTTEvents_A, nonClosure_TT)**2.0
-            significance_includingNonClosure  = significance_includingNonClosure**0.5
+            significance_includingNonClosure = self.cal_Significance_includingNonClosure(nSigEvents_A, nTTEvents_A, nonClosure_TT)**2.0
+            significance_includingNonClosure = significance_includingNonClosure**0.5
 
             if nTTEvents_A > 0.0:
                 significanceUnc_includingNonClosure = ( ( nSigEventsErr_A / (nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 + (nonClosure_TT * nTTEvents_A)**2.0)**0.5 )**2.0
@@ -550,8 +591,8 @@ class All_Regions:
 
             # this one non-simplified version
             significance_nonSimplified = 0.0; significanceUnc_nonSimplified = 0.0
-            significance_nonSimplified += self.cal_Significance_nonSimplified(nSigEvents_A, nTTEvents_A)**2.0
-            significance_nonSimplified  = significance_nonSimplified**0.5
+            significance_nonSimplified = self.cal_Significance_nonSimplified(nSigEvents_A, nTTEvents_A)**2.0
+            significance_nonSimplified = significance_nonSimplified**0.5
             self.add("significance_nonSimplified", disc1Key, disc2Key, (significance_nonSimplified,significanceUnc_nonSimplified), "TT")
 
 
