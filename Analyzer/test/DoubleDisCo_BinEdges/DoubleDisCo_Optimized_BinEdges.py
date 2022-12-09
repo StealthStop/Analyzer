@@ -195,9 +195,10 @@ class Optimized_BinEdges():
                     sigFracD[region][njet]                         = np.array(theEdgesClass.get("sigFractionD",                     None, None, self.sig ))[:,0]
                     sigFracD_Unc[region][njet]                     = np.array(theEdgesClass.get("sigFractionD",                     None, None, self.sig ))[:,1]
   
-        sigFracsCut = 0.4
-        if self.channel == "0l": 
+        if self.sig == "RPV": 
             sigFracsCut = 0.3 
+        else:
+            sigFracsCut = 1.0
 
         # ------------------------------------------------------------
         # optimized ABCD edges with significance including non-closure

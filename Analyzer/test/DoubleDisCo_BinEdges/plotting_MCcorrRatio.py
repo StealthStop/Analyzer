@@ -113,14 +113,19 @@ def main():
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
 
-    labels = [ "0l_0.6_0.6",
-               "1l_0.6_0.6", 
-               "2l_0.6_0.6",
-               #"1l_0.95_0.61",
+    labels = [ #"0l_0.6_0.6",
+               #"1l_0.6_0.6", 
+               #"2l_0.6_0.6",
+            
+               # SYY optimized ABCD bin edges
+               "0l_0.85_0.74",
+               "2l_0.70_0.85",
+               "2l_0.69_0.57", 
              ]
 
     path = "year_TT_TTvar_Syst_%s_%s_label.root"%(args.sig, args.mass)
-    
+   
+ 
     years = [
              #"2016preVFP" ,
              #"2016postVFP" ,
@@ -319,7 +324,7 @@ def main():
                 histBottomPanel.Draw("hist E")
 
                 line.Draw("same")
-                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + tag + ttvar + "_" + label + ".pdf")
+                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
  
             # ---------------------------------------------
             # save canvas & legend including all histograms
@@ -327,7 +332,7 @@ def main():
             canvas.cd()
             addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.1, RightMargin=0.1, SF=1.0)    
             legend.Draw("SAME")
-            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_MCcorr_Ratio_MC_" + label + ".pdf")     
+            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
          
         f1.Close()
  
@@ -335,4 +340,4 @@ if __name__ == "__main__":
     main()
 
 
- 
+         
