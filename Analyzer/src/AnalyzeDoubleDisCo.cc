@@ -1385,7 +1385,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             continue;
 
                         // No lep, jet, or ttg variations for QCDCR
-                        if (kv.first.find("QCDCR_") != std::string::npos and
+                        if (kv.first.find("QCDCR") != std::string::npos and
                            (ttvar.find("lep") != std::string::npos or
                             ttvar.find("jet") != std::string::npos or 
                             ttvar.find("btg") != std::string::npos or
@@ -1393,7 +1393,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             continue;
 
                         // No nim variation for SR
-                        if (kv.first.find("QCDCR_") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                        if (kv.first.find("QCDCR") == std::string::npos and ttvar.find("nim") != std::string::npos)
                             continue;
 
                         if (kv.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
