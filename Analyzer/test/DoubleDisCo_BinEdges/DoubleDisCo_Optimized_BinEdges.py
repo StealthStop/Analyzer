@@ -200,8 +200,6 @@ class Optimized_BinEdges():
        
         if self.sig == "RPV": 
             sigFracsCut = 0.3 
-            if self.channel == "0l": 
-                sigFracsCut = 0.3
         else:
             sigFracsCut = 1.0
 
@@ -220,6 +218,6 @@ class Optimized_BinEdges():
         # -------------------------------------
         # add all edges to DoubleDisCo cfg file
         # -------------------------------------
-        if self.makeDiscoCfg:
-            addEdges = addEdges_toDoubleDisco(self.sig, self.channel, regions)
-            addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
+        #if self.makeDiscoCfg:
+        #    addEdges = addEdges_toDoubleDisco(self.sig, self.channel, regions)
+        #    addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
