@@ -21,6 +21,8 @@ class Common_Calculations_Plotters:
         self.cmsLabel        = cmsLabel
         self.label_xPosition = label_xPosition
         self.label_yPosition = label_yPosition
+        self.cmap            = plt.cm.jet
+        self.cmap.set_under("w", 1)
 
         self.outputDir = outputDir
 
@@ -451,7 +453,7 @@ class Common_Calculations_Plotters:
 
         fig = plt.figure(figsize=(7, 6)) 
         fig.subplots_adjust()
-        plt.hist2d(edges[:,0], edges[:,1], bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=plt.cm.jet, weights=var, cmin=cmin, cmax=cmax, vmin=vmin, vmax=vmax)
+        plt.hist2d(edges[:,0], edges[:,1], bins=[nBins, nBins], range=[[-binWidth/2.0, 1+binWidth/2.0], [-binWidth/2.0, 1+binWidth/2.0]], cmap=self.cmap, weights=var, cmin=cmin, cmax=cmax, vmin=vmin, vmax=vmax)
         plt.colorbar()
         ax = plt.gca()
         ax.set_xlabel("Disc. 1 Bin Edge", fontsize=14)
