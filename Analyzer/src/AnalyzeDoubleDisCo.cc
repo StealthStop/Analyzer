@@ -1189,8 +1189,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     theWeight_prfDown = tr.getVar<double>("TotalWeight_" + channel + "l_PrfDown" + jecvar);
                     theWeight_btgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_BtgUp"   + jecvar);
                     theWeight_btgDown = tr.getVar<double>("TotalWeight_" + channel + "l_BtgDown" + jecvar);
-                    theWeight_ttgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_TtgUp"   + jecvar);
-                    theWeight_ttgDown = tr.getVar<double>("TotalWeight_" + channel + "l_TtgDown" + jecvar);
                     theWeight_puUp    = tr.getVar<double>("TotalWeight_" + channel + "l_PUup"    + jecvar);
                     theWeight_puDown  = tr.getVar<double>("TotalWeight_" + channel + "l_PUdown"  + jecvar);
 
@@ -1216,6 +1214,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     {
                         theWeight_lepUp   = tr.getVar<double>("TotalWeight_" + channel + "l_LepUp"   + jecvar);
                         theWeight_lepDown = tr.getVar<double>("TotalWeight_" + channel + "l_LepDown" + jecvar);
+                        theWeight_ttgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_TtgUp"   + jecvar);
+                        theWeight_ttgDown = tr.getVar<double>("TotalWeight_" + channel + "l_TtgDown" + jecvar);
                     }
                     else
                     {
