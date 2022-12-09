@@ -199,34 +199,35 @@ class All_Regions:
         nXBins = range(firstXBin+1, lastXBin)
         nYBins = range(firstYBin+1, lastYBin)
 
-        for key, h1 in self.hist.items():
-            for xBin in range(1, totalXbins+1):
-                xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
-                xBinKey     = "%.3f"%(xLowBinEdge)
+        if not self.fastMode:
+            for key, h1 in self.hist.items():
+                for xBin in range(1, totalXbins+1):
+                    xLowBinEdge = self.hist["TT"].GetXaxis().GetBinLowEdge(xBin)
+                    xBinKey     = "%.3f"%(xLowBinEdge)
 
-                self.add("nEventsA", xBinKey, "1.00", (0.0, 0.0), key)
-                self.add("nEventsB", xBinKey, "1.00", (0.0, 0.0), key)
-                self.add("nEventsC", xBinKey, "1.00", (0.0, 0.0), key)
-                self.add("nEventsD", xBinKey, "1.00", (0.0, 0.0), key)
+                    self.add("nEventsA", xBinKey, "1.00", (0.0, 0.0), key)
+                    self.add("nEventsB", xBinKey, "1.00", (0.0, 0.0), key)
+                    self.add("nEventsC", xBinKey, "1.00", (0.0, 0.0), key)
+                    self.add("nEventsD", xBinKey, "1.00", (0.0, 0.0), key)
 
-                for yBin in range(1, totalYbins+1):
-                    yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
-                    yBinKey     = "%.3f"%(yLowBinEdge)
+                    for yBin in range(1, totalYbins+1):
+                        yLowBinEdge = self.hist["TT"].GetYaxis().GetBinLowEdge(yBin)
+                        yBinKey     = "%.3f"%(yLowBinEdge)
 
-                    self.add("nEventsA", xBinKey, yBinKey, (0.0, 0.0), key)
-                    self.add("nEventsB", xBinKey, yBinKey, (0.0, 0.0), key)
-                    self.add("nEventsC", xBinKey, yBinKey, (0.0, 0.0), key)
-                    self.add("nEventsD", xBinKey, yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsA", xBinKey, yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsB", xBinKey, yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsC", xBinKey, yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsD", xBinKey, yBinKey, (0.0, 0.0), key)
 
-                    self.add("nEventsA", "1.00", yBinKey, (0.0, 0.0), key)
-                    self.add("nEventsB", "1.00", yBinKey, (0.0, 0.0), key)
-                    self.add("nEventsC", "1.00", yBinKey, (0.0, 0.0), key)
-                    self.add("nEventsD", "1.00", yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsA", "1.00", yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsB", "1.00", yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsC", "1.00", yBinKey, (0.0, 0.0), key)
+                        self.add("nEventsD", "1.00", yBinKey, (0.0, 0.0), key)
 
-            self.add("nEventsA", "1.00", "1.00", (0.0, 0.0), key)
-            self.add("nEventsB", "1.00", "1.00", (0.0, 0.0), key)
-            self.add("nEventsC", "1.00", "1.00", (0.0, 0.0), key)
-            self.add("nEventsD", "1.00", "1.00", (0.0, 0.0), key)
+                self.add("nEventsA", "1.00", "1.00", (0.0, 0.0), key)
+                self.add("nEventsB", "1.00", "1.00", (0.0, 0.0), key)
+                self.add("nEventsC", "1.00", "1.00", (0.0, 0.0), key)
+                self.add("nEventsD", "1.00", "1.00", (0.0, 0.0), key)
 
         # count signal and background events and errors in bin edges
         for key, h1 in self.hist.items():
