@@ -292,7 +292,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         ttvarStr = "_" + ttvar;
 
                     // No lep, jet, or ttg variations for QCDCR
-                    if (mycut.first.find("QCDCR_") != std::string::npos and
+                    if (mycut.first.find("QCDCR") != std::string::npos and
                        (ttvar.find("lep")          != std::string::npos or
                         ttvar.find("jet")          != std::string::npos or 
                         ttvar.find("btg")          != std::string::npos or
@@ -300,7 +300,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         continue;
 
                     // No nim variation for SR
-                    if (mycut.first.find("QCDCR_") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                    if (mycut.first.find("QCDCR") == std::string::npos and ttvar.find("nim") != std::string::npos)
                         continue;
 
                     if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
@@ -392,14 +392,14 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         ttvarStr = "_" + ttvar;
 
                     // No lep, jet, or ttg variations for QCDCR
-                    if (mycut.first.find("QCDCR_") != std::string::npos and
+                    if (mycut.first.find("QCDCR") != std::string::npos and
                        (ttvar.find("lep")          != std::string::npos or
                         ttvar.find("jet")          != std::string::npos or 
                         ttvar.find("ttg")          != std::string::npos))
                         continue;
 
                     // No nim variation for SR
-                    if (mycut.first.find("QCDCR_") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                    if (mycut.first.find("QCDCR") == std::string::npos and ttvar.find("nim") != std::string::npos)
                         continue;
 
                     if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
