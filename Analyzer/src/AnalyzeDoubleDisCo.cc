@@ -295,11 +295,18 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (mycut.first.find("QCDCR_") != std::string::npos and
                        (ttvar.find("lep")          != std::string::npos or
                         ttvar.find("jet")          != std::string::npos or 
+                        ttvar.find("btg")          != std::string::npos or
                         ttvar.find("ttg")          != std::string::npos))
                         continue;
 
                     // No nim variation for SR
                     if (mycut.first.find("QCDCR_") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
                         continue;
 
                     // -------------------------------------------------------------
@@ -393,6 +400,12 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
 
                     // No nim variation for SR
                     if (mycut.first.find("QCDCR_") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
                         continue;
 
                     // -------------------------------------------------------------
@@ -631,8 +644,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     weight_CR_pdfDown              ;
             std::vector<double>                                     weight_CR_prfUp                ;
             std::vector<double>                                     weight_CR_prfDown              ;
-            std::vector<double>                                     weight_CR_btgUp                ;
-            std::vector<double>                                     weight_CR_btgDown              ;
             std::vector<double>                                     weight_CR_nimUp                ;
             std::vector<double>                                     weight_CR_nimDown              ;
             std::vector<double>                                     weight_CR_puUp                 ;
@@ -1172,7 +1183,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 double theWeightQCDCR_pdfUp = 1.0, theWeightQCDCR_pdfDown = 1.0;
                 double theWeightQCDCR_prfUp = 1.0, theWeightQCDCR_prfDown = 1.0;
                 double theWeightQCDCR_nimUp = 1.0, theWeightQCDCR_nimDown = 1.0;
-                double theWeightQCDCR_btgUp = 1.0, theWeightQCDCR_btgDown = 1.0;
                 double theWeightQCDCR_puUp  = 1.0, theWeightQCDCR_puDown  = 1.0;
                 if(runtype == "MC" )
                 {
@@ -1205,8 +1215,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     theWeightQCDCR_prfDown = tr.getVar<double>("TotalWeight_QCDCR_PrfDown" + jecvar);
                     theWeightQCDCR_nimUp   = tr.getVar<double>("TotalWeight_QCDCR_NimUp"   + jecvar);
                     theWeightQCDCR_nimDown = tr.getVar<double>("TotalWeight_QCDCR_NimDown" + jecvar);
-                    theWeightQCDCR_btgUp   = tr.getVar<double>("TotalWeight_QCDCR_BtgUp"   + jecvar);
-                    theWeightQCDCR_btgDown = tr.getVar<double>("TotalWeight_QCDCR_BtgDown" + jecvar);
                     theWeightQCDCR_puUp    = tr.getVar<double>("TotalWeight_QCDCR_PUup"    + jecvar);
                     theWeightQCDCR_puDown  = tr.getVar<double>("TotalWeight_QCDCR_PUdown"  + jecvar);
 
@@ -1214,13 +1222,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     {
                         theWeight_lepUp   = tr.getVar<double>("TotalWeight_" + channel + "l_LepUp"   + jecvar);
                         theWeight_lepDown = tr.getVar<double>("TotalWeight_" + channel + "l_LepDown" + jecvar);
-                        theWeight_ttgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_TtgUp"   + jecvar);
-                        theWeight_ttgDown = tr.getVar<double>("TotalWeight_" + channel + "l_TtgDown" + jecvar);
                     }
                     else
                     {
                         theWeight_jetUp   = tr.getVar<double>("TotalWeight_" + channel + "l_JetUp"   + jecvar);
                         theWeight_jetDown = tr.getVar<double>("TotalWeight_" + channel + "l_JetDown" + jecvar);
+                        theWeight_ttgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_TtgUp"   + jecvar);
+                        theWeight_ttgDown = tr.getVar<double>("TotalWeight_" + channel + "l_TtgDown" + jecvar);
                     }
                 }
 
@@ -1259,8 +1267,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 weight_CR_pdfDown.push_back(theWeightQCDCR_pdfDown);
                 weight_CR_prfUp.push_back(theWeightQCDCR_prfUp);
                 weight_CR_prfDown.push_back(theWeightQCDCR_prfDown);
-                weight_CR_btgUp.push_back(theWeightQCDCR_btgUp);
-                weight_CR_btgDown.push_back(theWeightQCDCR_btgDown);
                 weight_CR_nimUp.push_back(theWeightQCDCR_nimUp);
                 weight_CR_nimDown.push_back(theWeightQCDCR_nimDown);
                 weight_CR_puUp.push_back(theWeightQCDCR_puUp);
@@ -1382,11 +1388,18 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         if (kv.first.find("QCDCR_") != std::string::npos and
                            (ttvar.find("lep") != std::string::npos or
                             ttvar.find("jet") != std::string::npos or 
+                            ttvar.find("btg") != std::string::npos or
                             ttvar.find("ttg") != std::string::npos))
                             continue;
 
                         // No nim variation for SR
                         if (kv.first.find("QCDCR_") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                            continue;
+
+                        if (kv.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
+                            continue;
+
+                        if (kv.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
                             continue;
 
                         double w = 1.0;
@@ -1430,11 +1443,11 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         }
                         else if (ttvar == "btgUp")
                         {
-                            w = !isQCD ? weight_btgUp[channel] : weight_CR_btgUp[channel];
+                            w = weight_btgUp[channel];
                         }
                         else if (ttvar == "btgDown")
                         {
-                            w = !isQCD ? weight_btgDown[channel] : weight_CR_btgDown[channel];
+                            w = weight_btgDown[channel];
                         }
                         else if (ttvar == "ttgUp")
                         {
