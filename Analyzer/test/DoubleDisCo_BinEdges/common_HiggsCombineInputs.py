@@ -62,8 +62,17 @@ class HiggsCombineInputs:
 
                     Njet = int(njet.replace("incl", ""))
 
-                    hist.SetBinContent((Njet - len(self.njets)), value[njet][ttVar][0])
-                    hist.SetBinError((Njet - len(self.njets)), value[njet][ttVar][1])
+                    if self.channel == "0l":
+                        hist.SetBinContent((Njet - len(self.njets) - 1), value[njet][ttVar][0])
+                        hist.SetBinError((Njet - len(self.njets) - 1), value[njet][ttVar][1])
+
+                    if self.channel == "1l":               
+                        hist.SetBinContent((Njet - len(self.njets)), value[njet][ttVar][0])
+                        hist.SetBinError((Njet - len(self.njets)), value[njet][ttVar][1]) 
+
+                    if self.channel == "2l":
+                        hist.SetBinContent((Njet - len(self.njets) + 1), value[njet][ttVar][0])
+                        hist.SetBinError((Njet - len(self.njets) + 1), value[njet][ttVar][1])
 
                 # put the variables to root file
                 self.make_HiggsCombineInputs_RootFiles(hist, (self.year + "_" + var + "_" + ttVar))
@@ -81,7 +90,14 @@ class HiggsCombineInputs:
 
             Njet = int(njet.replace("incl", ""))
 
-            hist.SetBinContent((Njet - len(self.njets)), dictionary[njet]) 
+            if self.channel == "0l":
+                hist.SetBinContent((Njet - len(self.njets) - 1), dictionary[njet]) 
+
+            if self.channel == "1l":
+                hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
+
+            if self.channel == "2l":
+                hist.SetBinContent((Njet - len(self.njets) + 1), dictionary[njet])
 
         # put the average value of MC corrected data to the dictionary
         self.make_HiggsCombineInputs_RootFiles(hist, ("%s_average_MCcorrectedData_Syst_%s"%(self.year,region)))
@@ -101,7 +117,14 @@ class HiggsCombineInputs:
 
             Njet = int(njet.replace("incl", ""))
 
-            hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
+            if self.channel == "0l":
+                hist.SetBinContent((Njet - len(self.njets) - 1), dictionary[njet])
+
+            if self.channel == "1l":
+                hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
+
+            if self.channel == "2l":
+                hist.SetBinContent((Njet - len(self.njets) + 1), dictionary[njet])
 
         # put the mximum value of MC corrected data to the dicionary
         self.make_HiggsCombineInputs_RootFiles(hist, ("%s_maximum_MCcorrectedData_Syst_%s"%(self.year,region)))
