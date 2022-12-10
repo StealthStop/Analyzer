@@ -44,11 +44,15 @@ class Optimized_BinEdges():
                     total_significance += (significance[njet][i_list]**2.0)
  
                 # check the non-closure and pull to get the same ABCD edges for all njet bins
-                if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2): 
+                # avoid invalid -999 values
+                if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2) or \
+                       (nonClosure[njet][i_list] < 0.0):
                     pass_nonClosure = False
     
                 # based on the sigFracs table, 30% for 0l, 40% for 1l
-                if not (sigFracB[njet][i_list] < sigFracCut and sigFracC[njet][i_list] < sigFracCut and sigFracD[njet][i_list] < sigFracCut): 
+                # avoid invalid -999 values
+                if not (sigFracB[njet][i_list] < sigFracCut and sigFracC[njet][i_list] < sigFracCut and sigFracD[njet][i_list] < sigFracCut) or \
+                       (sigFracB[njet][i_list] < 0.0 or sigFracC[njet][i_list] < 0.0 or sigFracD[njet][i_list] < 0.0):
                     pass_sigFrac = False
     
             # Add manually the non-optimized edges and associated quantities
