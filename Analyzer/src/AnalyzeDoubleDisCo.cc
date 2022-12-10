@@ -306,7 +306,8 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
                         continue;
 
-                    if (mycut.first.find("1l") != std::string::npos and (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
+                    if ((mycut.first.find("1l") != std::string::npos or mycut.first.find("2l") != std::string::npos) and 
+                        (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
                         continue;
 
                     // -------------------------------------------------------------
@@ -405,7 +406,8 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
                         continue;
 
-                    if (mycut.first.find("1l") != std::string::npos and (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
+                    if ((mycut.first.find("1l") != std::string::npos or mycut.first.find("2l") != std::string::npos) and 
+                        (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
                         continue;
 
                     // -------------------------------------------------------------
@@ -1399,7 +1401,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         if (kv.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
                             continue;
 
-                        if (kv.first.find("1l") != std::string::npos and (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
+                        if ((kv.first.find("1l") != std::string::npos or kv.first.find("2l") != std::string::npos) and 
+                            (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
                             continue;
 
                         double w = 1.0;
