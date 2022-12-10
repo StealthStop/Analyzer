@@ -76,9 +76,11 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_Njets",                        21, -0.5, 20.5},
         {"h_Nbjets",                       21, -0.5, 20.5},
         {"h_Ntops",                         7, -0.5,  6.5},
+        {"h_njets_10incl_RPV",             20, -0.5, 19.5},
         {"h_njets_11incl_RPV",             24, -0.5, 23.5},
         {"h_njets_12incl_RPV",             24, -0.5, 23.5},
         {"h_njets_13incl_RPV",             24, -0.5, 23.5},
+        {"h_njets_10incl_SYY",             20, -0.5, 19.5},
         {"h_njets_11incl_SYY",             24, -0.5, 23.5},
         {"h_njets_12incl_SYY",             24, -0.5, 23.5},
         {"h_njets_13incl_SYY",             24, -0.5, 23.5},
@@ -99,14 +101,15 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
     };
 
     channels = {"0", "1", "2"};
-    njets    = {"Incl", "6", "7", "8", "9", "10", "11", "11incl", "12", "12incl", "13incl"};
-    systvars = {"nom", "fsrUp", "fsrDown", "isrUp", "isrDown",
-                       "pdfUp", "pdfDown", "sclUp", "sclDown",
-                       "prfUp", "prfDown", "btgUp", "btgDown",
-                       "jetUp", "jetDown", "lepUp", "lepDown",
-                       "puUp",  "puDown"
+    njets    = {"Incl", "6", "7", "8", "9", "10", "10incl", "11", "11incl", "12", "12incl", "13incl"};
+    systvars = {"", "fsrUp", "fsrDown", "isrUp", "isrDown",
+                    "pdfUp", "pdfDown", "sclUp", "sclDown",
+                    "prfUp", "prfDown", "btgUp", "btgDown",
+                    "jetUp", "jetDown", "lepUp", "lepDown",
+                    "puUp",  "puDown",  "ttgUp", "ttgDown",
+                    "nimUp", "nimDown"
     };
-    jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"      };
+    jecvars  = {"", "JECup", "JECdown", "JERup", "JERdown"};
     regions  = {"ABCD", "Val_BD", "Val_CD", "Val_D"};
 
     my_histos.emplace("EventCounter", std::make_shared<TH1D>("EventCounter", "EventCounter", 2, -1.1, 1.1) );
@@ -281,12 +284,30 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                 for (const auto& ttvar : systvars)
                 {
                     // Variations irrelevant for data
-                    if (ttvar != "nom" and runtype == "Data")
+                    if (ttvar != "" and runtype == "Data")
                         continue;
 
                     std::string ttvarStr = "";
-                    if (ttvar != "nom")
+                    if (ttvar != "")
                         ttvarStr = "_" + ttvar;
+
+                    // No lep, jet, or ttg variations for QCDCR
+                    if (mycut.first.find("QCDCR") != std::string::npos and
+                       (ttvar.find("lep")          != std::string::npos or
+                        ttvar.find("jet")          != std::string::npos or 
+                        ttvar.find("btg")          != std::string::npos or
+                        ttvar.find("ttg")          != std::string::npos))
+                        continue;
+
+                    // No nim variation for SR
+                    if (mycut.first.find("QCDCR") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
+                        continue;
 
                     // -------------------------------------------------------------
                     // loop over jecvars to pick up different JEC and JER variations
@@ -298,7 +319,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                             continue;
 
                         // We don't do double variations
-                        if (jecvar != "" and ttvar != "nom")
+                        if (jecvar != "" and ttvar != "")
                             continue;
 
                         std::string jecStr = "";
@@ -317,10 +338,6 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                             if (region != "Incl")
                                 regionStr = "_" + region;
 
-                            // Only make mass reg histos for per-njets scenarios not inclusive
-                            if (hInfo.name.find("massReg") != std::string::npos and (Njet == "Incl" or region == "Incl"))
-                                continue;
-
                             // Only make njets histos for njets-inclusive scenarios
                             if (hInfo.name.find("njets") != std::string::npos and Njet != "Incl")
                                 continue;
@@ -329,19 +346,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                             if (hInfo.name.find("njets") != std::string::npos and hInfo.name.find("incl") != std::string::npos and region == "Incl")
                                 continue;
 
-                            if (hInfo.name.find("DoubleDisCo") == std::string::npos and Njet != "Incl")
-                                continue;
-
-                            if (hInfo.name.find("disc") != std::string::npos and Njet == "Incl")
-                                continue;
-
                             if (hInfo.name.find("njets") == std::string::npos and region != "ABCD")
                                 continue;
 
-                            if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
-                                continue;
-
-                            if ((ttvar != "nom" or jecvar != "") and hInfo.name.find("njets") == std::string::npos and hInfo.name.find("DoubleDisCo") == std::string::npos)
+                            if ((ttvar != "" or jecvar != "") and hInfo.name.find("njets") == std::string::npos and hInfo.name.find("DoubleDisCo") == std::string::npos)
                                 continue;
 
                             std::string name = hInfo.name + mycut.first + njetStr + regionStr + ttvarStr + jecStr;
@@ -364,10 +372,6 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
             // ---------------
             for (const auto& Njet : njets)
             {
-                // For the disc1 vs disc2 plots, no need for njets inclusive one
-                if (Njet == "Incl" && h2dInfo.name.find("DisCo") != std::string::npos)
-                    continue;
-
                 std::string njetStr = "";
                 // For 2D histos, don't make any where we exclude all but one njets bin
                 if (Njet != "Incl")
@@ -380,12 +384,29 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                 for (const auto& ttvar : systvars)
                 {
                     // Variations irrelevant for data
-                    if (ttvar != "nom" and runtype == "Data")
+                    if (ttvar != "" and runtype == "Data")
                         continue;
 
                     std::string ttvarStr = "";
-                    if (ttvar != "nom")
+                    if (ttvar != "")
                         ttvarStr = "_" + ttvar;
+
+                    // No lep, jet, or ttg variations for QCDCR
+                    if (mycut.first.find("QCDCR") != std::string::npos and
+                       (ttvar.find("lep")          != std::string::npos or
+                        ttvar.find("jet")          != std::string::npos or 
+                        ttvar.find("ttg")          != std::string::npos))
+                        continue;
+
+                    // No nim variation for SR
+                    if (mycut.first.find("QCDCR") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
+                        continue;
+
+                    if (mycut.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
+                        continue;
 
                     // -------------------------------------------------------------
                     // loop over jecvars to pick up different JEC and JER variations
@@ -397,7 +418,7 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                            continue;
 
                        // We don't do double variations
-                        if (jecvar != "" and ttvar != "nom")
+                        if (jecvar != "" and ttvar != "")
                             continue;
 
                         std::string jecStr = "";
@@ -419,13 +440,10 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                             if (region != "ABCD")
                                 continue;
 
-                            if (ttvar != "nom" and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
+                            if (ttvar != "" and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
                                 continue;
 
-                            if (mycut.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
-                                continue;
-
-                            if ((ttvar != "nom" or jecvar != "") and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
+                            if ((ttvar != "" or jecvar != "") and h2dInfo.name.find("DoubleDisCo") == std::string::npos)
                                 continue;
 
                             std::string name = h2dInfo.name + mycut.first + njetStr + regionStr + ttvarStr + jecStr;
@@ -616,6 +634,20 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
             std::vector<bool>                                       Baseline_CR                    ;
             std::vector<double>                                     weight_CR                      ;
+            std::vector<double>                                     weight_CR_fsrUp                ;
+            std::vector<double>                                     weight_CR_fsrDown              ;
+            std::vector<double>                                     weight_CR_isrUp                ;
+            std::vector<double>                                     weight_CR_isrDown              ;
+            std::vector<double>                                     weight_CR_sclUp                ;
+            std::vector<double>                                     weight_CR_sclDown              ;
+            std::vector<double>                                     weight_CR_pdfUp                ;
+            std::vector<double>                                     weight_CR_pdfDown              ;
+            std::vector<double>                                     weight_CR_prfUp                ;
+            std::vector<double>                                     weight_CR_prfDown              ;
+            std::vector<double>                                     weight_CR_nimUp                ;
+            std::vector<double>                                     weight_CR_nimDown              ;
+            std::vector<double>                                     weight_CR_puUp                 ;
+            std::vector<double>                                     weight_CR_puDown               ;
             std::vector<std::vector<bool> >                         GoodJets_CR                    ;
             std::vector<int>                                        NGoodJets_CR                   ;
             std::vector<int>                                        NGoodBJets_CR                  ;
@@ -736,12 +768,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     weight_prfDown                 ;
             std::vector<double>                                     weight_btgUp                   ;
             std::vector<double>                                     weight_btgDown                 ;
+            std::vector<double>                                     weight_ttgUp                   ;
+            std::vector<double>                                     weight_ttgDown                 ;
             std::vector<double>                                     weight_jetUp                   ;
             std::vector<double>                                     weight_jetDown                 ;
             std::vector<double>                                     weight_lepUp                   ;
             std::vector<double>                                     weight_lepDown                 ;
-            std::vector<double>                                     weight_puUp                   ;
-            std::vector<double>                                     weight_puDown                 ;
+            std::vector<double>                                     weight_puUp                    ;
+            std::vector<double>                                     weight_puDown                  ;
             std::vector<std::vector<bool> >                         GoodJets                       ;
             std::vector<int>                                        NGoodJets                      ;
             std::vector<int>                                        NGoodBJets                     ;
@@ -1131,21 +1165,28 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 //  -- calculate event weights for them
                 //  -- make histograms for systvars fsrUp/Down, isrUp/Down in root file
                 // ----------------------------------------------------------------------------
-                double theWeight       = 1.0;
-                double theWeightQCDCR  = 1.0;
-                double theWeight_fsrUp = 1.0, theWeight_fsrDown = 1.0;
-                double theWeight_isrUp = 1.0, theWeight_isrDown = 1.0;
-                double theWeight_sclUp = 1.0, theWeight_sclDown = 1.0;
-                double theWeight_pdfUp = 1.0, theWeight_pdfDown = 1.0;
-                double theWeight_prfUp = 1.0, theWeight_prfDown = 1.0;
-                double theWeight_lepUp = 1.0, theWeight_lepDown = 1.0;
-                double theWeight_jetUp = 1.0, theWeight_jetDown = 1.0;
-                double theWeight_btgUp = 1.0, theWeight_btgDown = 1.0;
-                double theWeight_puUp  = 1.0, theWeight_puDown  = 1.0;
+                double theWeight            = 1.0;
+                double theWeight_fsrUp      = 1.0, theWeight_fsrDown = 1.0;
+                double theWeight_isrUp      = 1.0, theWeight_isrDown = 1.0;
+                double theWeight_sclUp      = 1.0, theWeight_sclDown = 1.0;
+                double theWeight_pdfUp      = 1.0, theWeight_pdfDown = 1.0;
+                double theWeight_prfUp      = 1.0, theWeight_prfDown = 1.0;
+                double theWeight_lepUp      = 1.0, theWeight_lepDown = 1.0;
+                double theWeight_jetUp      = 1.0, theWeight_jetDown = 1.0;
+                double theWeight_btgUp      = 1.0, theWeight_btgDown = 1.0;
+                double theWeight_ttgUp      = 1.0, theWeight_ttgDown = 1.0;
+                double theWeight_puUp       = 1.0, theWeight_puDown  = 1.0;
+                double theWeightQCDCR       = 1.0;
+                double theWeightQCDCR_fsrUp = 1.0, theWeightQCDCR_fsrDown = 1.0;
+                double theWeightQCDCR_isrUp = 1.0, theWeightQCDCR_isrDown = 1.0;
+                double theWeightQCDCR_sclUp = 1.0, theWeightQCDCR_sclDown = 1.0;
+                double theWeightQCDCR_pdfUp = 1.0, theWeightQCDCR_pdfDown = 1.0;
+                double theWeightQCDCR_prfUp = 1.0, theWeightQCDCR_prfDown = 1.0;
+                double theWeightQCDCR_nimUp = 1.0, theWeightQCDCR_nimDown = 1.0;
+                double theWeightQCDCR_puUp  = 1.0, theWeightQCDCR_puDown  = 1.0;
                 if(runtype == "MC" )
                 {
                     theWeight         = tr.getVar<double>("TotalWeight_" + channel + "l"         + jecvar);
-                    theWeightQCDCR    = tr.getVar<double>("TotalWeight_" + channel + "l_QCDCR"   + jecvar);
                     theWeight_fsrUp   = tr.getVar<double>("TotalWeight_" + channel + "l_FSRup"   + jecvar);
                     theWeight_fsrDown = tr.getVar<double>("TotalWeight_" + channel + "l_FSRdown" + jecvar);
                     theWeight_isrUp   = tr.getVar<double>("TotalWeight_" + channel + "l_ISRup"   + jecvar);
@@ -1161,6 +1202,22 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     theWeight_puUp    = tr.getVar<double>("TotalWeight_" + channel + "l_PUup"    + jecvar);
                     theWeight_puDown  = tr.getVar<double>("TotalWeight_" + channel + "l_PUdown"  + jecvar);
 
+                    theWeightQCDCR         = tr.getVar<double>("TotalWeight_QCDCR"         + jecvar);
+                    theWeightQCDCR_fsrUp   = tr.getVar<double>("TotalWeight_QCDCR_FSRup"   + jecvar);
+                    theWeightQCDCR_fsrDown = tr.getVar<double>("TotalWeight_QCDCR_FSRdown" + jecvar);
+                    theWeightQCDCR_isrUp   = tr.getVar<double>("TotalWeight_QCDCR_ISRup"   + jecvar);
+                    theWeightQCDCR_isrDown = tr.getVar<double>("TotalWeight_QCDCR_ISRdown" + jecvar);
+                    theWeightQCDCR_sclUp   = tr.getVar<double>("TotalWeight_QCDCR_SclUp"   + jecvar);
+                    theWeightQCDCR_sclDown = tr.getVar<double>("TotalWeight_QCDCR_SclDown" + jecvar);
+                    theWeightQCDCR_pdfUp   = tr.getVar<double>("TotalWeight_QCDCR_PDFup"   + jecvar);
+                    theWeightQCDCR_pdfDown = tr.getVar<double>("TotalWeight_QCDCR_PDFdown" + jecvar);
+                    theWeightQCDCR_prfUp   = tr.getVar<double>("TotalWeight_QCDCR_PrfUp"   + jecvar);
+                    theWeightQCDCR_prfDown = tr.getVar<double>("TotalWeight_QCDCR_PrfDown" + jecvar);
+                    theWeightQCDCR_nimUp   = tr.getVar<double>("TotalWeight_QCDCR_NimUp"   + jecvar);
+                    theWeightQCDCR_nimDown = tr.getVar<double>("TotalWeight_QCDCR_NimDown" + jecvar);
+                    theWeightQCDCR_puUp    = tr.getVar<double>("TotalWeight_QCDCR_PUup"    + jecvar);
+                    theWeightQCDCR_puDown  = tr.getVar<double>("TotalWeight_QCDCR_PUdown"  + jecvar);
+
                     if (channel != "0")
                     {
                         theWeight_lepUp   = tr.getVar<double>("TotalWeight_" + channel + "l_LepUp"   + jecvar);
@@ -1170,6 +1227,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     {
                         theWeight_jetUp   = tr.getVar<double>("TotalWeight_" + channel + "l_JetUp"   + jecvar);
                         theWeight_jetDown = tr.getVar<double>("TotalWeight_" + channel + "l_JetDown" + jecvar);
+                        theWeight_ttgUp   = tr.getVar<double>("TotalWeight_" + channel + "l_TtgUp"   + jecvar);
+                        theWeight_ttgDown = tr.getVar<double>("TotalWeight_" + channel + "l_TtgDown" + jecvar);
                     }
                 }
 
@@ -1191,11 +1250,27 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 weight_jetDown.push_back(theWeight_jetDown);
                 weight_btgUp.push_back(theWeight_btgUp);
                 weight_btgDown.push_back(theWeight_btgDown);
+                weight_ttgUp.push_back(theWeight_ttgUp);
+                weight_ttgDown.push_back(theWeight_ttgDown);
                 weight_puUp.push_back(theWeight_puUp);
                 weight_puDown.push_back(theWeight_puDown);
 
                 // qcd cr
                 weight_CR.push_back(theWeightQCDCR);
+                weight_CR_fsrUp.push_back(theWeightQCDCR_fsrUp);
+                weight_CR_fsrDown.push_back(theWeightQCDCR_fsrDown);
+                weight_CR_isrUp.push_back(theWeightQCDCR_isrUp);
+                weight_CR_isrDown.push_back(theWeightQCDCR_isrDown);
+                weight_CR_sclUp.push_back(theWeightQCDCR_sclUp);
+                weight_CR_sclDown.push_back(theWeightQCDCR_sclDown);
+                weight_CR_pdfUp.push_back(theWeightQCDCR_pdfUp);
+                weight_CR_pdfDown.push_back(theWeightQCDCR_pdfDown);
+                weight_CR_prfUp.push_back(theWeightQCDCR_prfUp);
+                weight_CR_prfDown.push_back(theWeightQCDCR_prfDown);
+                weight_CR_nimUp.push_back(theWeightQCDCR_nimUp);
+                weight_CR_nimDown.push_back(theWeightQCDCR_nimDown);
+                weight_CR_puUp.push_back(theWeightQCDCR_puUp);
+                weight_CR_puDown.push_back(theWeightQCDCR_puDown);
             }
 
             Debug("Preparing cut map", __LINE__);
@@ -1259,6 +1334,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     {"10",     !isQCD ? NGoodJets[channel]==10 : NGoodJets_CR[channel]==10},
                     {"11",     !isQCD ? NGoodJets[channel]==11 : NGoodJets_CR[channel]==11},
                     {"12",     !isQCD ? NGoodJets[channel]==12 : NGoodJets_CR[channel]==12},
+                    {"10incl", !isQCD ? NGoodJets[channel]>=10 : NGoodJets_CR[channel]>=10},
                     {"11incl", !isQCD ? NGoodJets[channel]>=11 : NGoodJets_CR[channel]>=11},
                     {"12incl", !isQCD ? NGoodJets[channel]>=12 : NGoodJets_CR[channel]>=12},
                     {"13incl", !isQCD ? NGoodJets[channel]>=13 : NGoodJets_CR[channel]>=13},
@@ -1297,56 +1373,73 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         Debug("Top of ttvar loop for ttvar: " + ttvar, __LINE__);
 
                         std::string ttvarStr = "";
-                        if (ttvar != "nom")
+                        if (ttvar != "")
                             ttvarStr = "_" + ttvar;
 
-                        if (ttvar != "nom" and runtype == "Data")
+                        // We do not vary the data
+                        if (ttvar != "" and runtype == "Data")
                             continue;
 
-                        if (ttvar != "nom" and jecvar != "")
+                        // We do not do "double" variations
+                        if (ttvar != "" and jecvar != "")
                             continue;
 
-                        if (kv.first.find("QCDCR_") != std::string::npos and ttvar != "nom")
+                        // No lep, jet, or ttg variations for QCDCR
+                        if (kv.first.find("QCDCR") != std::string::npos and
+                           (ttvar.find("lep") != std::string::npos or
+                            ttvar.find("jet") != std::string::npos or 
+                            ttvar.find("btg") != std::string::npos or
+                            ttvar.find("ttg") != std::string::npos))
+                            continue;
+
+                        // No nim variation for SR
+                        if (kv.first.find("QCDCR") == std::string::npos and ttvar.find("nim") != std::string::npos)
+                            continue;
+
+                        if (kv.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
+                            continue;
+
+                        if (kv.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
                             continue;
 
                         double w = 1.0;
 
                         // get the event weights for fsrUp/Down, isrUp/Down, etc.
-                        if (ttvar == "nom")
+                        if (ttvar == "")
                         {
                             w  = !isQCD ? weight[channel] : weight_CR[channel];
                         }
                         else if (ttvar == "fsrUp")
                         {
-                            w = weight_fsrUp[channel];
+                            w = !isQCD ? weight_fsrUp[channel] : weight_CR_fsrUp[channel];
                         }
                         else if (ttvar == "fsrDown")
                         {
-                            w = weight_fsrDown[channel];
+                            w = !isQCD ? weight_fsrDown[channel] : weight_CR_fsrDown[channel];
                         }
                         else if (ttvar == "isrUp")
                         {
-                            w =weight_isrUp[channel];
+                            w = !isQCD ? weight_isrUp[channel] : weight_CR_isrUp[channel];
                         }
                         else if (ttvar == "isrDown")
                         {
-                            w = weight_isrDown[channel];
+                            w = !isQCD ? weight_isrDown[channel] : weight_CR_isrDown[channel];
                         }
                         else if (ttvar == "pdfUp")
                         {
-                            w = weight_pdfUp[channel];
+                            w = !isQCD ? weight_pdfUp[channel] : weight_CR_pdfUp[channel];
                         }
                         else if (ttvar == "pdfDown")
                         {
-                            w = weight_pdfDown[channel];
+                            w = !isQCD ? weight_pdfDown[channel] : weight_CR_pdfDown[channel];
                         }
                         else if (ttvar == "prfUp")
                         {
-                            w =weight_prfUp[channel];
+                            w = !isQCD ? weight_prfUp[channel] : weight_CR_prfUp[channel];
                         }
                         else if (ttvar == "prfDown")
                         {
-                            w = weight_prfDown[channel];
+                            w = !isQCD ? weight_prfDown[channel] : weight_CR_prfDown[channel];
                         }
                         else if (ttvar == "btgUp")
                         {
@@ -1356,9 +1449,17 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         {
                             w = weight_btgDown[channel];
                         }
+                        else if (ttvar == "ttgUp")
+                        {
+                            w = weight_ttgUp[channel];
+                        }
+                        else if (ttvar == "ttgDown")
+                        {
+                            w = weight_ttgDown[channel];
+                        }
                         else if (ttvar == "jetUp")
                         {
-                            w =weight_jetUp[channel];
+                            w = weight_jetUp[channel];
                         }
                         else if (ttvar == "jetDown")
                         {
@@ -1366,27 +1467,27 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         }
                         else if (ttvar == "lepUp")
                         {
-                            w =weight_lepUp[channel];
+                            w = !isQCD ? weight_lepUp[channel] : weight_CR_nimUp[channel];
                         }
                         else if (ttvar == "lepDown")
                         {
-                            w = weight_lepDown[channel];
+                            w = !isQCD ? weight_lepDown[channel] : weight_CR_nimDown[channel];
                         }
                         else if (ttvar == "puUp")
                         {
-                            w =weight_puUp[channel];
+                            w = !isQCD ? weight_puUp[channel] : weight_CR_puUp[channel];
                         }
                         else if (ttvar == "puDown")
                         {
-                            w = weight_puDown[channel];
+                            w = !isQCD ? weight_puDown[channel] : weight_CR_puDown[channel];
                         }
                         else if (ttvar == "sclUp")
                         {
-                            w =weight_sclUp[channel];
+                            w = !isQCD ? weight_sclUp[channel] : weight_CR_sclUp[channel];
                         }
                         else if (ttvar == "sclDown")
                         {
-                            w = weight_sclDown[channel];
+                            w = !isQCD ? weight_sclDown[channel] : weight_CR_sclDown[channel];
                         }
 
                         // -----------------
@@ -1409,7 +1510,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             // Can easily be extended later if want to make plots in val regions
                             if (kv.second and inNjetsBin and region == "ABCD")
                             {
-                                if (njets == "Incl" and jecvar == "" and ttvar == "nom")
+                                if (njets == "Incl" and jecvar == "" and ttvar == "")
                                 {
 
                                     Debug("Filling event variable histograms with name: " + name, __LINE__);
@@ -1787,7 +1888,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                 // -------------------------------------------------------------------------------------------------
                                 // Fill 2D event-level varaibles
                                 // -------------------------------------------------------------------------------------------------
-                                if (region == "ABCD" and ttvar == "nom" and jecvar == "")
+                                if (region == "ABCD" and ttvar == "" and jecvar == "")
                                     my_2d_histos["h_nRtops_vs_nMtops"      + name]->Fill(!isQCD ? NRTops[channel] : NRTops_CR[channel], !isQCD ? NMTops[channel] : NMTops_CR[channel], w);
 
                                 auto& cmJets = Jets_cm_top6[channel];
@@ -1796,7 +1897,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                                 Debug("Filling 2D pt HT variable histograms with name: " + name, __LINE__);
 
-                                if (region == "ABCD" and ttvar == "nom" and jecvar == "")
+                                if (region == "ABCD" and ttvar == "" and jecvar == "")
                                 {
                                     for(unsigned int i = 1; i <= nJets; i++)
                                     {
@@ -1804,14 +1905,6 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                         my_2d_histos["h_pt_jetRank_cm"    + name]->Fill(pt,    i, w);
                                         my_2d_histos["h_ptrHT_jetRank_cm" + name]->Fill(pt/ht, i, w);
                                     }
-                                }
-
-                                Debug("Filling 2D disc1 disc2 histograms with name: " + name, __LINE__);
-
-                                if (region == "ABCD" and njets != "Incl")
-                                {
-                                    my_histos["h_DoubleDisCo_RPV_massReg" + name]->Fill(!isQCD ? DoubleDisCo_RPV_massReg[channel] : DoubleDisCo_RPV_massReg_CR[channel], w);
-                                    my_histos["h_DoubleDisCo_SYY_massReg" + name]->Fill(!isQCD ? DoubleDisCo_SYY_massReg[channel] : DoubleDisCo_SYY_massReg_CR[channel], w);
                                 }
 
                                 auto& RPV_disc1 = DoubleDisCo_RPV_disc1[channel];
@@ -1831,14 +1924,16 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                 // make inputs for Validation Study
                                 //  -- it is a 2D histogram of whole ABCD region for per-njets
                                 // -----------------------------------------------------------
-                                if (njets != "Incl" and region == "ABCD")
+                                if (region == "ABCD")
                                 {
                                     my_histos["h_DoubleDisCo_RPV_disc1" + name]->Fill(RPV_disc1, w);
                                     my_histos["h_DoubleDisCo_RPV_disc2" + name]->Fill(RPV_disc2, w);
                                     my_2d_histos["h_DoubleDisCo_RPV_disc1_disc2" + name]->Fill(RPV_disc1, RPV_disc2, w);
+                                    my_histos["h_DoubleDisCo_RPV_massReg" + name]->Fill(!isQCD ? DoubleDisCo_RPV_massReg[channel] : DoubleDisCo_RPV_massReg_CR[channel], w);
                                     my_histos["h_DoubleDisCo_SYY_disc1" + name]->Fill(SYY_disc1, w);
                                     my_histos["h_DoubleDisCo_SYY_disc2" + name]->Fill(SYY_disc2, w);
                                     my_2d_histos["h_DoubleDisCo_SYY_disc1_disc2" + name]->Fill(SYY_disc1, SYY_disc2, w);
+                                    my_histos["h_DoubleDisCo_SYY_massReg" + name]->Fill(!isQCD ? DoubleDisCo_SYY_massReg[channel] : DoubleDisCo_SYY_massReg_CR[channel], w);
                                 }
                             }
 
@@ -1866,6 +1961,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     {
                                         shift = inRegionBin_RPV[iSubRegion] ? iSubRegion : 100;
 
+                                        my_histos["h_njets_10incl_RPV" + name]->Fill(theGoodJets>=10 ? 10 - 5 + shift*5 : theGoodJets - 5 + shift*5, w);
                                         my_histos["h_njets_11incl_RPV" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
                                         my_histos["h_njets_12incl_RPV" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
                                         my_histos["h_njets_13incl_RPV" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
@@ -1875,6 +1971,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     {
                                         shift = inRegionBin_SYY[iSubRegion] ? iSubRegion : 100;
 
+                                        my_histos["h_njets_10incl_SYY" + name]->Fill(theGoodJets>=10 ? 10 - 5 + shift*5 : theGoodJets - 5 + shift*5, w);
                                         my_histos["h_njets_11incl_SYY" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
                                         my_histos["h_njets_12incl_SYY" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
                                         my_histos["h_njets_13incl_SYY" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
