@@ -40,7 +40,8 @@ class Optimized_BinEdges():
             for njet in njets:
     
                 # get significance for each njet bin and add them quadrature 
-                total_significance += (significance[njet][i_list]**2.0)
+                if significance[njet][i_list] >= 0.0:
+                    total_significance += (significance[njet][i_list]**2.0)
  
                 # check the non-closure and pull to get the same ABCD edges for all njet bins
                 if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2): 
