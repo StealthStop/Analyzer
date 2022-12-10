@@ -306,7 +306,8 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
                         continue;
 
-                    if (mycut.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
+                    if ((mycut.first.find("1l") != std::string::npos or mycut.first.find("2l") != std::string::npos) and 
+                        (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
                         continue;
 
                     // -------------------------------------------------------------
@@ -405,7 +406,8 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (mycut.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
                         continue;
 
-                    if (mycut.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
+                    if ((mycut.first.find("1l") != std::string::npos or mycut.first.find("2l") != std::string::npos) and 
+                        (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
                         continue;
 
                     // -------------------------------------------------------------
@@ -1399,7 +1401,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                         if (kv.first.find("0l") != std::string::npos and ttvar.find("lep") != std::string::npos)
                             continue;
 
-                        if (kv.first.find("1l") != std::string::npos and ttvar.find("jet") != std::string::npos)
+                        if ((kv.first.find("1l") != std::string::npos or kv.first.find("2l") != std::string::npos) and 
+                            (ttvar.find("jet") != std::string::npos or ttvar.find("ttg") != std::string::npos))
                             continue;
 
                         double w = 1.0;
@@ -1961,7 +1964,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     {
                                         shift = inRegionBin_RPV[iSubRegion] ? iSubRegion : 100;
 
-                                        my_histos["h_njets_10incl_RPV" + name]->Fill(theGoodJets>=10 ? 10 - 5 + shift*5 : theGoodJets - 5 + shift*5, w);
+                                        my_histos["h_njets_10incl_RPV" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, w);
                                         my_histos["h_njets_11incl_RPV" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
                                         my_histos["h_njets_12incl_RPV" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
                                         my_histos["h_njets_13incl_RPV" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
@@ -1971,7 +1974,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     {
                                         shift = inRegionBin_SYY[iSubRegion] ? iSubRegion : 100;
 
-                                        my_histos["h_njets_10incl_SYY" + name]->Fill(theGoodJets>=10 ? 10 - 5 + shift*5 : theGoodJets - 5 + shift*5, w);
+                                        my_histos["h_njets_10incl_SYY" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, w);
                                         my_histos["h_njets_11incl_SYY" + name]->Fill(theGoodJets>=11 ? 11 - 6 + shift*6 : theGoodJets - 6 + shift*6, w);
                                         my_histos["h_njets_12incl_SYY" + name]->Fill(theGoodJets>=12 ? 12 - 7 + shift*6 : theGoodJets - 7 + shift*6, w);
                                         my_histos["h_njets_13incl_SYY" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*6 : theGoodJets - 8 + shift*6, w);
