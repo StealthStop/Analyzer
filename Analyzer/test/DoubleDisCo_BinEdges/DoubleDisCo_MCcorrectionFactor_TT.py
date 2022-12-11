@@ -43,41 +43,9 @@ class MCcorrectionFactor_TT():
         # ------------------------------------------------
         # make the lists for rightBoundary and topBoundary
         # ------------------------------------------------
-        # Special list of boundaries for Val D region
-        unevenFactor = (1.0 - disc1edge) / (1.0 - disc2edge)
-
-        d1gridWidth = self.regionGridWidth
-        d2gridWidth = self.regionGridWidth
-
-        if disc1edge < disc2edge:
-            d1gridWidth *= unevenFactor
-        elif disc2edge < disc1edge:
-            d2gridWidth /= unevenFactor
-         
-        tempArr = []
-        latestD1 = float(disc1edge)
-        latestD2 = float(disc2edge)
-        while True:
-
-            latestD1 = round(latestD1 + d1gridWidth, 2)
-            latestD2 = round(latestD2 + d2gridWidth, 2)
-
-            diffD1 = 1.0 - latestD1
-            diffD2 = 1.0 - latestD2
-
-            if latestD1 <= 1.0 and latestD2 <= 1.0:
-                if diffD1 < d1gridWidth or diffD2 < d2gridWidth:
-                    tempArr.append([1.0, 1.0])
-                    break
-                else:
-                    tempArr.append([latestD1, latestD2])
-            else:
-                break
-
         self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, self.regionGridWidth),
                                 "Val_CD" : np.arange(0.40, 1.05, self.regionGridWidth),
-                                "Val_D"  : np.array(tempArr)
-
+                                "Val_D"  : np.arange(0.60, 1.05, self.regionGridWidth)
         }
 
         # Will hold the pair of final edge values for the full ABCD region
@@ -178,10 +146,11 @@ class MCcorrectionFactor_TT():
 
                     for d in self.list_boundaries[region]:            
 
-                        disc1 = (float(abcdFinalEdges[0]) - (float(abcdFinalEdges[0]) / 2.0)) / (1.0 - float(abcdFinalEdges[0])) * (float(d[0]) - float(abcdFinalEdges[0])) + (float(abcdFinalEdges[0]) / 2.0)
-                        disc2 = (float(abcdFinalEdges[1]) - (float(abcdFinalEdges[1]) / 2.0)) / (1.0 - float(abcdFinalEdges[1])) * (float(d[1]) - float(abcdFinalEdges[1])) + (float(abcdFinalEdges[1]) / 2.0)
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=d[0], topBoundary=d[1], disc1Edge=float(disc1), disc2Edge=float(disc2), fastMode=fastMode)
-                        theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d[0])
+                        disc1_edge = ((float(abcdFinalEdges[0]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
+                        disc2_edge = ((float(abcdFinalEdges[1]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
+
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode)
+                        theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
 
             # ---------------------------
             # Plot variable vs Disc1Disc2
@@ -193,11 +162,7 @@ class MCcorrectionFactor_TT():
 
                 for b in self.list_boundaries[region]:
 
-                    boundary = None
-                    if region == "Val_D":
-                        boundary = b[0]
-                    else:
-                        boundary = b
+                    boundary = b
 
                     kwgs = {"region" : region, "njet" : njet, "boundary" : boundary}
   
@@ -223,11 +188,7 @@ class MCcorrectionFactor_TT():
                 continue
 
             for b in self.list_boundaries[region]:
-                boundary = None
-                if region == "Val_D":
-                    boundary = b[0]
-                else:
-                    boundary = b
+                boundary = b
 
                 eventsTT = {}; eventsData = {}; edgesPerNjets = {}
                 for njet in njets:
