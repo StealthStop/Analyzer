@@ -12,7 +12,7 @@ def get_canvas(year, channel):
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTopMargin(0.1)
     ROOT.gPad.SetBottomMargin(0.1)
-    ROOT.gPad.SetLeftMargin(0.1)
+    ROOT.gPad.SetLeftMargin(0.12)
     ROOT.gPad.SetRightMargin(0.1)
     ROOT.gPad.SetTicks()
 
@@ -39,7 +39,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
     ROOT.gPad.SetPad(0.0, split, 1.0, 1.0)
     ROOT.gPad.SetTopMargin(0.1 / upperSplit) 
     ROOT.gPad.SetBottomMargin(0)
-    ROOT.gPad.SetLeftMargin(0.1)
+    ROOT.gPad.SetLeftMargin(0.12)
     ROOT.gPad.SetRightMargin(0.1)
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTicks()
@@ -48,7 +48,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
     ROOT.gPad.SetPad(0.0, 0.0, 1.0, 0.3)
     ROOT.gPad.SetTopMargin(0)
     ROOT.gPad.SetBottomMargin(0.1 / lowerSplit)
-    ROOT.gPad.SetLeftMargin(0.1)
+    ROOT.gPad.SetLeftMargin(0.12)
     ROOT.gPad.SetRightMargin(0.1)
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTicks()
@@ -119,7 +119,7 @@ def main():
             
                # SYY optimized ABCD bin edges
                "0l_0.85_0.74",
-               "2l_0.70_0.85",
+               "1l_0.7_0.85",
                "2l_0.69_0.57", 
              ]
 
@@ -253,16 +253,16 @@ def main():
                 MCcorr_TTvar.GetXaxis().SetTitle("N_{jets}")
                 MCcorr_TTvar.GetYaxis().SetTitle("MC Correction")
 
-                globalScale = 1.08
+                globalScale = 1.10
                 xLabelSize = 0.05; yLabelSize = 0.05
                 xTitleSize = 0.05; yTitleSize = 0.05
 
-                hist.GetXaxis().SetLabelSize(xLabelSize * globalScale)
-                hist.GetYaxis().SetLabelSize(yLabelSize * globalScale)
-                hist.GetXaxis().SetTitleSize(xTitleSize * globalScale)
-                hist.GetYaxis().SetTitleSize(yTitleSize * globalScale)
-                hist.GetYaxis().SetTitleOffset(1)
-                hist.GetYaxis().SetTitleOffset(1)
+                hist.GetXaxis().SetLabelSize(xLabelSize * 0.8)
+                hist.GetYaxis().SetLabelSize(yLabelSize * 0.8)
+                hist.GetXaxis().SetTitleSize(xTitleSize * 0.8)
+                hist.GetYaxis().SetTitleSize(yTitleSize * 0.8)
+                hist.GetYaxis().SetTitleOffset(1.4)
+                hist.GetYaxis().SetTitleOffset(1.4)
 
                 histBottomPanel = hist.Clone(hist.GetName() + "_clone")
 
@@ -306,7 +306,7 @@ def main():
 
                 legend_each.AddEntry(MCcorr_TT, "Nominal TT", "l")            
                 legend_each.AddEntry(MCcorr_TTvar, ttvar_names[ttvar], "l")            
-                addCMSlogo(canvas_each, year, TopMargin=0.1, LeftMargin=0.1, RightMargin=0.1, SF=1.0)
+                addCMSlogo(canvas_each, year, TopMargin=0.1, LeftMargin=0.12, RightMargin=0.1, SF=1.0)
                 legend_each.Draw("SAME")
 
                 canvas_each.cd(2)
@@ -330,7 +330,7 @@ def main():
             # save canvas & legend including all histograms
             # ---------------------------------------------
             canvas.cd()
-            addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.1, RightMargin=0.1, SF=1.0)    
+            addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.12, RightMargin=0.1, SF=1.0)    
             legend.Draw("SAME")
             canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
          
