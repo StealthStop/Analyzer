@@ -54,7 +54,7 @@ for YEAR in ${YEARS[@]}; do
                     if [ $command == "Optimized_BinEdges" ] || [ $command == "All" ]; then
                          echo "running for Optimized_BinEdges:---------------------------------"
 
-                         python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --njets "8" "9" "10" "11" "12" "13incl" 
+                         python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --njets "8" "9" "10" "11" "12" "13incl"
                          python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --njets "7" "8" "9" "10" "11" "12incl"
                          python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --njets "6" "7" "8" "9" "10" "11incl"
  
@@ -66,7 +66,7 @@ for YEAR in ${YEARS[@]}; do
 
                         python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.85 --disc2edge 0.74 --plotVars2D --plotDisc1VsDisc2 --njets "8" "9" "10" "11" "12" "13incl"
                         python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.70 --disc2edge 0.85 --plotVars2D --plotDisc1VsDisc2 --njets "7" "8" "9" "10" "11" "12incl"
-                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.69 --disc2edge 0.57 --plotVars2D --plotDisc1VsDisc2 --njets "6" "7" "8" "9" "10" "11incl" 
+                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.69 --disc2edge 0.57 --plotVars2D --plotDisc1VsDisc2 --njets "6" "7" "8" "9" "10" "11incl"
 
                     fi
                                                 
@@ -102,13 +102,12 @@ done
 #   -- Closure Correction Ratio = ttvar / tt
 # -----------------------------------------
 for MODEL in ${MODELS[@]}; do
+    for MASS in ${MASSES[@]}; do
 
-        for MASS in ${MASSES[@]}; do
-
-            if [ $command == "mc" ] || [ $command == "All" ]; then
-            
-                python plotting_MCcorrRatio.py --sig ${MODEL} --mass ${MASS}
-            
-            fi
+        if [ $command == "mc" ] || [ $command == "All" ]; then
+        
+            python plotting_MCcorrRatio.py --sig ${MODEL} --mass ${MASS}
+        
+        fi
     done
 done
