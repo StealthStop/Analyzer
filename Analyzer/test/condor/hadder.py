@@ -168,6 +168,8 @@ def main():
                                 "2016preVFP_AllTT",     "2016postVFP_AllTT",     "2017_AllTT",     "2018_AllTT",
                                 "2016preVFP_RPV",       "2016postVFP_RPV",       "2017_RPV",       "2018_RPV",
                                 "2016preVFP_StealthSYY","2016postVFP_StealthSYY","2017_StealthSYY","2018_StealthSYY",
+                                "2016preVFP_TTX",       "2016postVFP_TTX",       "2017_TTX",       "2018_TTX",
+                                "2018_RPV2W"
                                 ]
 
             if sampleCollection in sampleSetsToHadd:
