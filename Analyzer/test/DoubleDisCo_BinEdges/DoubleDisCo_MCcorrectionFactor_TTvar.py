@@ -239,7 +239,8 @@ class MCcorrectionFactor_TTvar():
         # Plot non-closure as function of boundary
         # ----------------------------------------
         # initilaize a dictionary to include all variables for sys to put in Higgs Combine
-        TT_TTvar_sys = { "MCcorr_TT"       : {},
+        TT_TTvar_sys = { "nEventsA_TT"     : {},
+                         "MCcorr_TT"       : {},
                          "MCcorr_TTvar"    : {}, 
                          "MCcorr_Ratio_MC" : {},
         }
@@ -355,12 +356,14 @@ class MCcorrectionFactor_TTvar():
                     continue
 
                 # initialize the dictionaries
+                nEventsPerBoundaryTT                            = {}
                 closureCorrPerBoundaryTT                        = {}
                 closurePerBoundaryTTinData                      = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
                 MCcorrRatio_MC_BoundaryTT                       = {}
                 MCcorrRatio_MC_Unc_BoundaryTT                   = {}
 
+                nEventsPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsA",             sample = "TT",       region = region, njet = njet)
                 closureCorrPerBoundaryTT["TT"]                          = theAggy.getPerBoundary(variable = "closureCorr",          sample = "TT",       region = region, njet = njet)            
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["None"] = theAggy.getPerBoundary(variable = "Closure",              sample = "TTinData", region = region, njet = njet)
@@ -376,6 +379,7 @@ class MCcorrectionFactor_TTvar():
                     MCcorrRatio_MC_Unc_BoundaryTT[ttVar]                   = theAggy.getPerBoundary(variable = "MCcorrRatio_MC_Unc",         sample = ttVar,                 region = region, njet = njet)
 
                     # fill the TT_TTvar_sys dictionary
+                    TT_TTvar_sys["nEventsA_TT"][njet]["TT"]      = nEventsPerBoundaryTT["TT"][1.00]
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
                     TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
                     TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
