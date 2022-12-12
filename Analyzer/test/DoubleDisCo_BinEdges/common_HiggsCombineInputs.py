@@ -62,17 +62,20 @@ class HiggsCombineInputs:
 
                     Njet = int(njet.replace("incl", ""))
 
+                    binIndex = None
                     if self.channel == "0l":
-                        hist.SetBinContent((Njet - len(self.njets) - 1), value[njet][ttVar][0])
-                        hist.SetBinError((Njet - len(self.njets) - 1), value[njet][ttVar][1])
+                        binIndex = Njet - len(self.njets) - 1
+                    elif self.channel == "1l":
+                        binIndex = Njet - len(self.njets)
+                    elif self.channel == "2l":
+                        binIndex = Njet - len(self.njets) + 1
 
-                    if self.channel == "1l":               
-                        hist.SetBinContent((Njet - len(self.njets)), value[njet][ttVar][0])
-                        hist.SetBinError((Njet - len(self.njets)), value[njet][ttVar][1]) 
-
-                    if self.channel == "2l":
-                        hist.SetBinContent((Njet - len(self.njets) + 1), value[njet][ttVar][0])
-                        hist.SetBinError((Njet - len(self.njets) + 1), value[njet][ttVar][1])
+                    if "nEventsA" in var:
+                        hist.SetBinContent(binIndex, 1.0)
+                        hist.SetBinError(binIndex,   value[njet][ttVar][1]/value[njet][ttVar][0])
+                    else:
+                        hist.SetBinContent(binIndex, value[njet][ttVar][0])
+                        hist.SetBinError(binIndex,   value[njet][ttVar][1])
 
                 # put the variables to root file
                 self.make_HiggsCombineInputs_RootFiles(hist, (self.year + "_" + var + "_" + ttVar))
@@ -136,14 +139,4 @@ class HiggsCombineInputs:
     def close_HiggsCombineInputs_RootFiles(self):
 
         self.f.Close()
-
-
-
-
-
-
-
-    
-
-
 

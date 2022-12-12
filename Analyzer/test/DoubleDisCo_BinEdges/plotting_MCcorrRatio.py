@@ -218,6 +218,13 @@ def main():
             MCcorr_TT.SetLineColor(ROOT.kBlack)
             MCcorr_TT.GetYaxis().SetTitle("Closure Correction [TT]")
 
+            nEventsA_TT = f1.Get("%s_nEventsA_TT_TT"%(year))
+            nEventsA_TT.SetTitle("")
+            nEventsA_TT.SetLineWidth(0)
+            nEventsA_TT.SetFillColorAlpha(ROOT.kGray, 0.8)
+            nEventsA_TT.GetYaxis().SetTitle("Closure Correction Ratio [TTvar / TT]")
+            nEventsA_TT.GetXaxis().SetTitle("N_{jets}")
+
             # ----------------
             # loop over ttvars
             # ----------------
@@ -269,13 +276,17 @@ def main():
                 if ttvar != "TT":
                     canvas.cd()
                     if not draw:
-                        hist.GetYaxis().SetRangeUser(0.0, 2.0)
-                        hist.Draw("hist")
+                        nEventsA_TT.GetYaxis().SetRangeUser(0.0, 2.0)
+                        nEventsA_TT.Draw("E2")
+                        hist.Draw("hist SAME")
                         draw = True
+        
+                        legend.AddEntry(nEventsA_TT, "TT Stat. Unc.", "F")
                         
                     else:
                         hist.Draw("hist SAME")
 
+                    
                     legend.AddEntry(hist, ttvar_names[ttvar], "l")
 
                 # ----------------------------------

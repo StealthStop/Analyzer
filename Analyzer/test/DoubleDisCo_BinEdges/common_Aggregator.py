@@ -63,6 +63,8 @@ class Aggregator:
             self.data[self.makeKey(variable = "sigFraction%s"%(subregion), **kwargs)] = regionObj.getFinal("sigFraction%s"%(subregion), Sig)
             self.data[self.makeKey(variable = "ttFraction%s"%(subregion),  **kwargs)] = regionObj.getFinal("ttFraction%s"%(subregion), "TT")
 
+            self.data[self.makeKey(variable = "nEvents%s"%(subregion), **kwargs)]     = regionObj.get("nEvents%s"%(subregion), None, None, "TT")
+
         # loop over for getting plots for TT, NonTT, Data
         for sample in self.samples:
 
