@@ -492,6 +492,22 @@ public:
                 "CommonVariables",
             };
             registerModules(tr, std::move(modulesList));
+        } else if (analyzer == "Analyze2W"){
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "RunTopTagger",
+                "CommonVariables",
+                "Baseline",
+                "MakeMVAVariables",
+                // "StopJets",
+                //"StopGenMatch"
+            };
+            registerModules(tr, std::move(modulesList));
         }
         else if(analyzer=="MakeMiniTree")
         {
