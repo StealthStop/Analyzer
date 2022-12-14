@@ -405,7 +405,7 @@ class StackPlotter:
                         if Hobj.IsGood():
                             dataScale = Hobj.Integral()
 
-                            if self.normalize:
+                            if self.normalize and dataScale != 0.0:
                                 Hobj.Scale(1.0 / dataScale)
 
                             tempMax = Hobj.histogram.GetMaximum()
@@ -452,7 +452,7 @@ class StackPlotter:
                         if Hobj.IsGood():
                             sigScale = Hobj.Integral()
 
-                            if self.normalize:
+                            if self.normalize and sigScale != 0.0:
                                 Hobj.Scale(1.0 / sigScale)
 
                             tempMax = Hobj.histogram.GetMaximum()
