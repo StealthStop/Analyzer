@@ -4,7 +4,8 @@ import ROOT
 
 from collections import OrderedDict
 
-selections    = ["0l_blind_ABCD", "1l_blind_ABCD", "2l_blind_ABCD", "0l_QCDCR_ABCD", "1l_QCDCR_ABCD"]
+selections = ["0l_blind_ABCD", "1l_blind_ABCD", "2l_blind_ABCD", "0l_ABCD", "1l_ABCD", "2l_ABCD", "0l_QCDCR_ABCD", "1l_QCDCR_ABCD"]
+comboJets  = ["8",             "7",             "6",             "8",       "7",       "6",       "8",             "7"            ]
 
 histograms = {
     "h_Jet@_PtrHT_cm_?"                  : {"logY" : True,  "orders" : list(xrange(1,8)), "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet @ p_{T}/H_{T}",                   "rebin" : 4, "min" :  0,    "max" :    1}},
@@ -32,28 +33,18 @@ histograms = {
     "h_Stop@_Mass_cm_TopSeed_?"          : {"logY" : False, "orders" : list(xrange(1,3)), "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Stop @ mass [GeV]",                   "rebin" : 2, "min" :  0,    "max" : 1500}},
     "h_Stop@_Eta_cm_TopSeed_?"           : {"logY" : False, "orders" : list(xrange(1,3)), "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Stop @ #eta",                         "rebin" : 1, "min" : -4,    "max" :    4}},
     "h_Stop@_Phi_cm_TopSeed_?"           : {"logY" : False, "orders" : list(xrange(1,3)), "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Stop @ #phi",                         "rebin" : 1, "min" : -6,    "max" :    6}},
-   
-    "h_combined6thJet_PtrHT_cm_2l_ABCD"  : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 6 to Last Jet p_{T}/H_{T}",  "rebin" : 4, "min" :  0,    "max" :    1}},
-    "h_combined6thJet_Pt_cm_2l_ABCD"     : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 6 to Last Jet p_{T} [GeV]",  "rebin" : 8, "min" :  0,    "max" : 1500}},
-    "h_combined6thJet_Eta_cm_2l_ABCD"    : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 6 to Last Jet #eta",         "rebin" : 1, "min" : -4,    "max" :    4}},
-    "h_combined6thJet_Phi_cm_2l_ABCD"    : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 6 to Last Jet #phi",         "rebin" : 1, "min" : -6,    "max" :    6}},
-    "h_combined6thJet_Mass_cm_2l_ABCD"   : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 6 to Last Jet mass [GeV]",   "rebin" : 2, "min" :  0,    "max" :  150}},
-    "h_combined6thJet_Energy_cm_2l_ABCD" : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 6 to Last Jet Energy [GeV]", "rebin" : 8, "min" :  0,    "max" : 1500}},
-
-    "h_combined7thJet_PtrHT_cm_1l_ABCD"  : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 7 to Last Jet p_{T}/H_{T}",  "rebin" : 4, "min" :  0,    "max" :    1}},
-    "h_combined7thJet_Pt_cm_1l_ABCD"     : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 7 to Last Jet p_{T} [GeV]",  "rebin" : 8, "min" :  0,    "max" : 1500}},
-    "h_combined7thJet_Eta_cm_1l_ABCD"    : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 7 to Last Jet #eta",         "rebin" : 4, "min" : -4,    "max" :    4}},
-    "h_combined7thJet_Phi_cm_1l_ABCD"    : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 7 to Last Jet #phi",         "rebin" : 1, "min" : -6,    "max" :    6}},
-    "h_combined7thJet_Mass_cm_1l_ABCD"   : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 7 to Last Jet mass [GeV]",   "rebin" : 2, "min" :  0,    "max" :  150}},
-    "h_combined7thJet_Energy_cm_1l_ABCD" : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 7 to Last Jet Energy [GeV]", "rebin" : 8, "min" :  0,    "max" : 1500}},
-
-    "h_combined8thJet_PtrHT_cm_0l_ABCD"  : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 8 to Last Jet p_{T}/H_{T}",  "rebin" : 4, "min" :  0,    "max" :    1}},
-    "h_combined8thJet_Pt_cm_0l_ABCD"     : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 8 to Last Jet p_{T} [GeV]",  "rebin" : 8, "min" :  0,    "max" : 1500}},
-    "h_combined8thJet_Eta_cm_0l_ABCD"    : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 8 to Last Jet #eta",         "rebin" : 1, "min" : -4,    "max" :    4}},
-    "h_combined8thJet_Phi_cm_0l_ABCD"    : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 8 to Last Jet #phi",         "rebin" : 1, "min" : -6,    "max" :    6}},
-    "h_combined8thJet_Mass_cm_0l_ABCD"   : {"logY" : False,                               "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 8 to Last Jet mass [GeV]",   "rebin" : 2, "min" :  0,    "max" :  150}},
-    "h_combined8thJet_Energy_cm_0l_ABCD" : {"logY" : True,                                "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined 8 to Last Jet Energy [GeV]", "rebin" : 8, "min" :  0,    "max" : 1500}},
 }
+
+for selection in selections:
+    comboJet = comboJets[selections.index(selection)]
+
+    histograms["h_combined%sthJet_PtrHT_cm_%s"%(comboJet, selection)]   = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet p_{T}/H_{T}"%(comboJet),  "rebin" : 4, "min" :  0,    "max" :    1}},
+    histograms["h_combined%sthJet_Pt_cm_%s"%(comboJet, selection)]      = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet p_{T} [GeV]"%(comboJet),  "rebin" : 8, "min" :  0,    "max" : 1500}},
+    histograms["h_combined%sthJet_Eta_cm_%s"%(comboJet, selection)]     = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet #eta"%(comboJet),         "rebin" : 1, "min" : -4,    "max" :    4}},
+    histograms["h_combined%sthJet_Phi_cm_%s"%(comboJet, selection)]     = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet #phi"%(comboJet),         "rebin" : 1, "min" : -6,    "max" :    6}},
+    histograms["h_combined%sthJet_Mass_cm_%s"%(comboJet, selection)]    = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet mass [GeV]"%(comboJet),   "rebin" : 2, "min" :  0,    "max" :  150}},
+    histograms["h_combined%sthJet_Energy_cm_%s"%(comboJet, selection)]  = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet Energy [GeV]"%(comboJet), "rebin" : 8, "min" :  0,    "max" : 1500}},
+
 
 data = {
     "Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
