@@ -273,6 +273,7 @@ template <typename H> class HistogramManager {
                     // value " << (fill << ...));
                     my_histos.at(name + s).Fill(fill..., weight);
                 }
+                my_histos.at(name).Fill(fill..., weight);
             }
         std::string makeCutflow(const std::string &name, bool do_entries = false) {
             std::vector<std::string> names = {name};

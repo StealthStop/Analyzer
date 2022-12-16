@@ -499,12 +499,11 @@ const std::size_t MAX_JETS=6;
 
 Analyze2W::Analyze2W() {
     my_histos.generators.push_back(std::make_unique<LeadingJetGen>());
-
     my_histos.cuts.push_back(std::make_unique<GenHTCut>());
     my_histos.cuts.push_back(std::make_unique<GenLepCut>());
-    //my_histos.cuts.push_back(std::make_unique<SelectionCut>());
-    // my_histos.cuts.push_back(std::make_unique<MassRatioCut>());
-    // my_histos.cuts.push_back(std::make_unique<TauCut>());
+    my_histos.cuts.push_back(std::make_unique<SelectionCut>());
+    my_histos.cuts.push_back(std::make_unique<MassRatioCut>());
+    my_histos.cuts.push_back(std::make_unique<TauCut>());
     // my_histos.cuts.push_back(std::make_unique<EtaCut>());
     // my_histos.cuts.push_back(std::make_unique<GenWPt>());
     my_histos.cuts.push_back(std::make_unique<NBJetCut>());
@@ -512,26 +511,35 @@ Analyze2W::Analyze2W() {
     my_histos.cuts.push_back(std::make_unique<NJet8Cut>());
     my_histos.cuts.push_back(std::make_unique<NJet6Cut>());
     my_histos.constructChains({
-            {"GenLepCut"},
             //        {"GenLepCut", "GenWPt"},
             //        {"GenLepCut", "GenHTCut", "GenWPt"},
             // {"GenLepCut", "SelectionCut"},
             // {"GenLepCut", "SelectionCut","EtaCut"},
             // {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut"},
             // {"GenLepCut", "SelectionCut","EtaCut", "MassRatioCut", "TauCut"},
+            {"GenLepCut"},
             {"GenLepCut", "NBJetCut"},
             {"GenLepCut", "NMedWCut"},
             {"GenLepCut", "NBJetCut", "NMedWCut"},
+
+            {"GenLepCut", "SelectionCut"},
+            {"GenLepCut", "SelectionCut", "TauCut"},
+            {"GenLepCut", "SelectionCut", "TauCut", "MassRatioCut"},
 
             {"GenLepCut", "NJet8Cut"},
             {"GenLepCut", "NJet8Cut", "NBJetCut"},
             {"GenLepCut", "NJet8Cut", "NMedWCut"},
             {"GenLepCut", "NJet8Cut", "NBJetCut", "NMedWCut"},
 
-            {"GenLepCut", "NJet6Cut"},
-            {"GenLepCut", "NJet6Cut", "NBJetCut"},
-            {"GenLepCut", "NJet6Cut", "NMedWCut"},
-            {"GenLepCut", "NJet6Cut", "NBJetCut", "NMedWCut"}
+            // {"GenLepCut", "NJet6Cut"},
+            // {"GenLepCut", "NJet6Cut", "NBJetCut"},
+            // {"GenLepCut", "NJet6Cut", "NMedWCut"},
+            // {"GenLepCut", "NJet6Cut", "NBJetCut", "NMedWCut"},
+
+            {"GenLepCut", "SelectionCut", "NJet8Cut"},
+            {"GenLepCut", "SelectionCut", "NJet8Cut", "NBJetCut"},
+            {"GenLepCut", "SelectionCut", "NJet8Cut", "NMedWCut"},
+            {"GenLepCut", "SelectionCut", "NJet8Cut", "NBJetCut", "NMedWCut"}
             //{"SelectionCut"},
             //{"SelectionCut","EtaCut"},
             //{"SelectionCut","EtaCut", "MassRatioCut"},
@@ -554,7 +562,7 @@ void Analyze2W::InitHistos() {
     TH2::SetDefaultSumw2();
 
     // Event level information
-    my_histos.createNewHistogram("EventCounter", 2, -1.1, 1.1, "Event Counter");
+    my_histos.createNewHistogram("EventCounter", 2, -1.1, 1.1, "EventCounter");
     my_histos.createNewHistogram("NJets_pt20", 15, 0, 15, "NJets PT20");
     my_histos.createNewHistogram("NJets_pt30", 15, 0, 15, "NJets PT30");
     my_histos.createNewHistogram("HT_pt30", 200, 0, 2000, "HT_pt30", "Events", true);
@@ -636,6 +644,7 @@ void Analyze2W::InitHistos() {
 
     // Mass difference of two leading AK15 jets
     my_histos.createNewHistogram("mass_ratio", 100, 0, 1, "Mass Difference Ratio");
+    my_histos.createNewHistogram("mass_average_ak15", 200, 0, 1000, "Average Mass of the AK15 Jets");
 
     // Jet kinematic information
     for(std::size_t i = 0; i < 6; ++i){
@@ -653,7 +662,6 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
     std::cout << " FILETAG    " << filetag << "\n";
     bool is_virtual_sbottom = (filetag.find("mB-0") != std::string::npos);
     bool is_rpv_mc = (filetag.find("RPV2W") != std::string::npos);
-    bool has_ca12 = true;
     while (tr.getNextEvent()) {
         if (maxevents != -1 && tr.getEvtNum() >= maxevents) {
             std::cout << std::endl;
@@ -725,6 +733,14 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         makeVec(GoodLeptonsCharge, int);
         makeVec(GoodLeptonsMiniIso, double);
 
+        makeVec(JetsAK15, utility::LorentzVector);
+        makeVec(JetsAK15_NsubjettinessTau4, float);
+        makeVec(JetsAK15_NsubjettinessTau3, float);
+        makeVec(JetsAK15_NsubjettinessTau2, float);
+        makeVec(JetsAK15_NsubjettinessTau1, float);
+        MAKE_RATIO(AK15,4, 3);
+        MAKE_RATIO(AK15,4, 2);
+        MAKE_RATIO(AK15,2, 1);
 
 
         struct TruthMatchedParticle{
@@ -934,6 +950,12 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
             }
         }
 
+
+        float average_mass = 0;
+        if(std::size(JetsAK15) > 2){
+            average_mass = ( JetsAK15[0].M() + JetsAK15[1].M() )/2.0f;
+        }
+
         double weight = 1.0, eventweight = 1.0, leptonScaleFactor = 1.0,
                bTagScaleFactor = 1.0, htDerivedScaleFactor = 1.0,
                prefiringScaleFactor = 1.0, puScaleFactor = 1.0;
@@ -946,7 +968,7 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
                 htDerivedScaleFactor * prefiringScaleFactor * puScaleFactor;
         }
 
-#define Fill(table, var) my_histos.fill(table, weight, var)
+#define FillMain(table, var) my_histos.fill(table, weight, var)
 
 
         //SliceData data{HT_trigger_pt30, GenHT, NJets_pt20, num_leps, JetsAK15, nsrAK15_21, nsrAK15_42, nsrAK15_43};
@@ -954,96 +976,74 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         if(std::size(gen_w_boson)){
             max_gen_w_pt =  std::max_element(gen_w_boson.begin(), gen_w_boson.end(), [](const auto& x,const auto& y){return x.second.Pt() < y.second.Pt();})->second.Pt();
         }
-        if(has_ca12){
-            makeVec(JetsAK15, utility::LorentzVector);
-            makeVec(JetsAK15_NsubjettinessTau4, float);
-            makeVec(JetsAK15_NsubjettinessTau3, float);
-            makeVec(JetsAK15_NsubjettinessTau2, float);
-            makeVec(JetsAK15_NsubjettinessTau1, float);
-            MAKE_RATIO(AK15,4, 3);
-            MAKE_RATIO(AK15,4, 2);
-            MAKE_RATIO(AK15,2, 1);
-            SliceData data;
-            data.Ht = HT_trigger_pt30;
-            data.genHt = GenHT;
-            data.NJets = NJets_pt30;
-            data.n_gen_leps = num_leps;
-            data.gen_w_pt = max_gen_w_pt;
-            data.Jets = JetsAK8;
-            data.nsr21 = nsrAK15_21;
-            data.nsr42 = nsrAK15_42;
-            data.nsr43 = nsrAK15_43;
-            data.nbjets = NBJets;
-            data.nmedw = nw_deep_tag ;
-            my_histos.processCuts(data);
+        SliceData data;
+        data.Ht = HT_trigger_pt30;
+        data.genHt = GenHT;
+        data.NJets = NJets_pt30;
+        data.n_gen_leps = num_leps;
+        data.gen_w_pt = max_gen_w_pt;
+        data.Jets = JetsAK15;
+        data.nsr21 = nsrAK15_21;
+        data.nsr42 = nsrAK15_42;
+        data.nsr43 = nsrAK15_43;
+        data.nbjets = NBJets;
+        data.nmedw = nw_deep_tag ;
+        my_histos.processCuts(data);
 
-            Fill("nAK15Jets", std::size(JetsAK15));
-            for (std::size_t i = 0; i < std::size(JetsAK15); ++i) {
-                Fill("AK15_NSubJettiness3", JetsAK15_NsubjettinessTau3[i]);
-                Fill("AK15_NSubJettiness2", JetsAK15_NsubjettinessTau2[i]);
-                Fill("AK15_NSubJettiness1", JetsAK15_NsubjettinessTau1[i]);
-                Fill("AK15_NSubJettiness4", JetsAK15_NsubjettinessTau4[i]);
-                Fill("AK15_NSubRatio42", nsrAK15_42[i]);
-                Fill("AK15_NSubRatio43", nsrAK15_43[i]);
-                Fill("AK15_NSubRatio21", nsrAK15_21[i]);
-                Fill("AK15Pt", JetsAK15[i].Pt());
-            }
-            Fill("mass_ratio", data.mass_ratio);
-        } else {
-            SliceData data;
-            data.Ht = HT_trigger_pt30;
-            data.genHt = GenHT;
-            data.NJets = NJets_pt30;
-            data.n_gen_leps = num_leps;
-            data.gen_w_pt = max_gen_w_pt;
-            data.Jets = JetsAK8;
-            data.nsr21 = {};
-            data.nsr42 = {};
-            data.nsr43 = {};
-            data.nbjets = NBJets;
-            data.nmedw = nw_deep_tag ;
-            my_histos.processCuts(data);
-            my_histos.processCuts(data);
+        FillMain("nAK15Jets", std::size(JetsAK15));
+        for (std::size_t i = 0; i < std::size(JetsAK15); ++i) {
+            FillMain("AK15_NSubJettiness3", JetsAK15_NsubjettinessTau3[i]);
+            FillMain("AK15_NSubJettiness2", JetsAK15_NsubjettinessTau2[i]);
+            FillMain("AK15_NSubJettiness1", JetsAK15_NsubjettinessTau1[i]);
+            FillMain("AK15_NSubJettiness4", JetsAK15_NsubjettinessTau4[i]);
+            FillMain("AK15_NSubRatio42", nsrAK15_42[i]);
+            FillMain("AK15_NSubRatio43", nsrAK15_43[i]);
+            FillMain("AK15_NSubRatio21", nsrAK15_21[i]);
+            FillMain("AK15Pt", JetsAK15[i].Pt());
+        }
+        FillMain("mass_ratio", data.mass_ratio);
+        if(average_mass > 0 ){
+            FillMain("mass_average_ak15", average_mass);
         }
 
 
 
 
         if(num_leps==0 && nw_deep_tag >= 2 && reco_stop_mass > 0.0f ){
-            Fill("RecoStopMass", reco_stop_mass);
-            Fill("RecoStopMassImbalance", imbalance);
+            FillMain("RecoStopMass", reco_stop_mass);
+            FillMain("RecoStopMassImbalance", imbalance);
 
             if(!is_virtual_sbottom){
-                Fill("RecoSBottomMass", reco_sbottom_mass);
-                Fill("RecoSBottomMassImbalance", reco_sbottom_imbalance);
+                FillMain("RecoSBottomMass", reco_sbottom_mass);
+                FillMain("RecoSBottomMassImbalance", reco_sbottom_imbalance);
             }
             if(is_rpv_mc){
                 for(int i: {0,1}){
-                    Fill("GenStopNearestRecoStop", nearest_reco_stop[i]);
+                    FillMain("GenStopNearestRecoStop", nearest_reco_stop[i]);
                 }
             }
             for(const auto& pair: matched_w_jets){
-                Fill("DeepAK8TagW_MatchedEnergyRatio", gen_w_boson[pair.first].second.E()/JetsAK8[pair.second].E());
+                FillMain("DeepAK8TagW_MatchedEnergyRatio", gen_w_boson[pair.first].second.E()/JetsAK8[pair.second].E());
             }
         }
 
         for(const auto& jet : deep_w_jets){
-            Fill("DeepAK8TagW_pt", jet.Pt());
+            FillMain("DeepAK8TagW_pt", jet.Pt());
         }
 
 
-        Fill("NJets_pt20", NJets_pt20);
-        Fill("NJets_pt30", NJets_pt30);
+        FillMain("NJets_pt20", NJets_pt20);
+        FillMain("NJets_pt30", NJets_pt30);
 
 
-        Fill("nbjets_loose", NBJets_loose);
-        Fill("nbjets_medium", NBJets);
-        // Fill("nwjets", nwjets);
-        Fill("HT_pt30", HT_trigger_pt30);
-        Fill("met", MET);
+        FillMain("nbjets_loose", NBJets_loose);
+        FillMain("nbjets_medium", NBJets);
+        // FillMain("nwjets", nwjets);
+        FillMain("HT_pt30", HT_trigger_pt30);
+        FillMain("met", MET);
 
 
-        Fill("DeepAK8TagW_medium_wp", nw_deep_tag);
+        FillMain("DeepAK8TagW_medium_wp", nw_deep_tag);
 
         auto computeAngle = [](const auto &pair) {
             return ROOT::Math::VectorUtil::Angle(pair[0].second.Vect(), pair[1].second.Vect());
@@ -1051,36 +1051,36 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         };
 
         if(is_rpv_mc){
-            Fill("DeepAK8TagW_HasNearGenW", std::size(matched_w_jets));
-            for(int i = 0 ; i < 2; ++i ) { Fill("GenWSbottomChildMaxDR", gen_max_child_angles[i]); }
+            FillMain("DeepAK8TagW_HasNearGenW", std::size(matched_w_jets));
+            for(int i = 0 ; i < 2; ++i ) { FillMain("GenWSbottomChildMaxDR", gen_max_child_angles[i]); }
             for (const auto &v : gen_w_boson) {
-                Fill("WEta", v.second.Eta());
-                Fill("WE", v.second.E());
-                Fill("WPhi", v.second.Phi());
-                Fill("WP", v.second.P());
-                Fill("WPt", v.second.Pt());
+                FillMain("WEta", v.second.Eta());
+                FillMain("WE", v.second.E());
+                FillMain("WPhi", v.second.Phi());
+                FillMain("WP", v.second.P());
+                FillMain("WPt", v.second.Pt());
             }
             for (const auto &v : gen_stops) {
-                Fill("StopEta", v.second.Eta());
-                Fill("StopE", v.second.E());
-                Fill("StopPhi", v.second.Phi());
-                Fill("StopP", v.second.P());
-                Fill("StopPt", v.second.Pt());
+                FillMain("StopEta", v.second.Eta());
+                FillMain("StopE", v.second.E());
+                FillMain("StopPhi", v.second.Phi());
+                FillMain("StopP", v.second.P());
+                FillMain("StopPt", v.second.Pt());
             }
-            if (std::size(gen_w_boson) == 2) Fill("Gen_W_Angle", computeAngle(gen_w_boson));
+            if (std::size(gen_w_boson) == 2) FillMain("Gen_W_Angle", computeAngle(gen_w_boson));
 
             if(!is_virtual_sbottom){
                 for(int i = 0 ; i < 2; ++i ) {
-                    Fill("DRGenWSbottom",
+                    FillMain("DRGenWSbottom",
                             ROOT::Math::VectorUtil::DeltaR(GenParticles[gen_w_idx[i]], GenParticles[gen_sb_idx[i]])
-                        );}
+                            );}
 
             }
             for(int i = 0 ; i < 2; ++i ) {
-                Fill("DRGenSbottomChildren",
+                FillMain("DRGenSbottomChildren",
                         ROOT::Math::VectorUtil::DeltaR(
                             GenParticles[gen_sb_quark_idx[i][0]] , GenParticles[gen_sb_quark_idx[i][1]])
-                    );
+                        );
             }
         }
 
@@ -1088,48 +1088,48 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
 
 
         for (std::size_t i = 0; i < std::size(JetsAK8); ++i) {
-            Fill("AK8_NSubJettiness3", JetsAK8_NsubjettinessTau3[i]);
-            Fill("AK8_NSubJettiness2", JetsAK8_NsubjettinessTau2[i]);
-            Fill("AK8_NSubJettiness1", JetsAK8_NsubjettinessTau1[i]);
-            Fill("AK8_NSubRatio32", nsrAK8_32[i]);
-            Fill("AK8_NSubRatio31", nsrAK8_31[i]);
-            Fill("AK8_NSubRatio21", nsrAK8_21[i]);
+            FillMain("AK8_NSubJettiness3", JetsAK8_NsubjettinessTau3[i]);
+            FillMain("AK8_NSubJettiness2", JetsAK8_NsubjettinessTau2[i]);
+            FillMain("AK8_NSubJettiness1", JetsAK8_NsubjettinessTau1[i]);
+            FillMain("AK8_NSubRatio32", nsrAK8_32[i]);
+            FillMain("AK8_NSubRatio31", nsrAK8_31[i]);
+            FillMain("AK8_NSubRatio21", nsrAK8_21[i]);
         }
 
-        Fill("NGoodLeptons", std::size(GoodLeptons));
+        FillMain("NGoodLeptons", std::size(GoodLeptons));
 
         for(std::size_t i = 0 ; i < std::size(GoodLeptons); ++i){
             const auto& lepton =  GoodLeptons[i];
             const auto& v = lepton.second;
-            Fill("l_Pt" , v.Pt() );
-            Fill("l_Phi" , v.Phi());
-            Fill("l_Eta" , v.Eta());
-            Fill("l_Charge" , GoodLeptonsCharge[i]);
-            Fill("l_MiniIso", GoodLeptonsMiniIso[i]);
+            FillMain("l_Pt" , v.Pt() );
+            FillMain("l_Phi" , v.Phi());
+            FillMain("l_Eta" , v.Eta());
+            FillMain("l_Charge" , GoodLeptonsCharge[i]);
+            FillMain("l_MiniIso", GoodLeptonsMiniIso[i]);
             if(lepton.first == "e"){
-                Fill("e_Pt" , v.Pt() );
-                Fill("e_Phi" , v.Phi());
-                Fill("e_Eta" , v.Eta());
-                Fill("e_Charge" , GoodLeptonsCharge[i]);
-                Fill("e_MiniIso", GoodLeptonsMiniIso[i]);
+                FillMain("e_Pt" , v.Pt() );
+                FillMain("e_Phi" , v.Phi());
+                FillMain("e_Eta" , v.Eta());
+                FillMain("e_Charge" , GoodLeptonsCharge[i]);
+                FillMain("e_MiniIso", GoodLeptonsMiniIso[i]);
             } else if (lepton.first == "m") {
-                Fill("m_Pt" , v.Pt() );
-                Fill("m_Phi" , v.Phi());
-                Fill("m_Eta" , v.Eta());
-                Fill("m_Charge" , GoodLeptonsCharge[i]);
-                Fill("m_MiniIso", GoodLeptonsMiniIso[i]);
+                FillMain("m_Pt" , v.Pt() );
+                FillMain("m_Phi" , v.Phi());
+                FillMain("m_Eta" , v.Eta());
+                FillMain("m_Charge" , GoodLeptonsCharge[i]);
+                FillMain("m_MiniIso", GoodLeptonsMiniIso[i]);
 
             }
         }
         for (std::size_t i = 0; i < std::min(MAX_JETS, std::size(Jets)); ++i) {
             auto& jet = Jets[i];
-            Fill("Jet_" + std::to_string(i) + "_E", jet.E());
-            Fill("Jet_" + std::to_string(i) + "_P", jet.P());
-            Fill("Jet_" + std::to_string(i) + "_Pt",jet.Pt());
-            Fill("Jet_" + std::to_string(i) + "_Phi",jet.Phi());
-            Fill("Jet_" + std::to_string(i) + "_Eta",jet.Eta());
+            FillMain("Jet_" + std::to_string(i) + "_E", jet.E());
+            FillMain("Jet_" + std::to_string(i) + "_P", jet.P());
+            FillMain("Jet_" + std::to_string(i) + "_Pt",jet.Pt());
+            FillMain("Jet_" + std::to_string(i) + "_Phi",jet.Phi());
+            FillMain("Jet_" + std::to_string(i) + "_Eta",jet.Eta());
         }
-        my_histos.fill("EventCounter", 1, eventCounter);
+        my_histos.fill("EventCounter", 1, 1);
     }
 }
 
