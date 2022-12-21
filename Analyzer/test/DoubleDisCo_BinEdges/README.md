@@ -33,14 +33,14 @@ Currently, there are four `applications` that perform specific validation studie
 The best choice is determined based on best signal sensitivy as well as minimal non-closure, and limited signal contamination in the B, C, and D regions.
 The top `n` choices (requested by the user) are printed in a LaTeX table.
 
-`DoubleDisCo_MCcorrectionFactor_TT.py`: This application plots quantities related a correction factor to be applied to the ABCD calculation.
-Things are plotted as a function of the boundary value defining the validation regions. 
-
-`DoubleDisCo_MCcorrectionFactor_TTvar.py`: The `TTvar` version of the `MCcorrectionFactor` application plots quantities related a correction factor to be applied to the ABCD calculation for several variations of the TT background e.g. TT_erdOn, TT_fsrUp, TT_fsrDown, etc.
-
 `DoubleDisCo_BinEdges.py`: This application performs a general validation where several quantities are plotted as a function of ABCD edges in both 1D and 2D.
 Three validation regions (subdivision of BD, subdivision of CD, and subdivision of D) are defined with predefined boundary values, and quantities are plotted
 individually for these validation boundaries.
+
+`DoubleDisCo_MCcorrectionFactor_TT.py`: This application plots quantities related a correction factor to be applied to the ABCD calculation.
+Things are plotted as a function of the boundary value defining the validation regions. 
+
+`DoubleDisCo_MCcorrectionFactor_TTvar.py`: The `TTvar` version of the `MCcorrectionFactor` application plots quantities related a correction factor to be applied to the ABCD calculation for several variations of the TT background e.g. TT_erdOn, TT_fsrUp, TT_fsrDown, etc. Also, the root file including the syst. for Higgs combine are made by this module.
 
 ## Performing Validation Studies
 
@@ -86,20 +86,32 @@ optional arguments:
 ```
 Various useful examples for running the different applications with command-line arguments.
 
+(1) First, you run the Optimized_BinEdges module and get the table for each channel, including optimized ABCD bin edges. 
+
+(2) Then, you run the other modules with these optimized ABCD bin edges to make the plots.
+
+So, please don't forget the replace the edges while running other modules.
+
 ```
+
 # Running for Optimized_BinEdges
-python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year 2016 --channel 0l
-python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year 2016 --channel 1l
-
-# Running for MCcorrectionFactor_TT
-python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 0l --disc1edge 0.69 --disc2edge 0.74 --fastMode
-python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year 2016 --channel 1l --disc1edge 0.59 --disc2edge 0.70 --fastMode
-
-# Running for MCcorrectionFactor_TTvar
-python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 0l  --disc1edge 0.69 --disc2edge 0.74
-python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year 2016 --channel 1l  --disc1edge 0.59 --disc2edge 0.70
+python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year Run2UL --channel 0l --sig RPV --mass 550 -- --numEdgeChoices 6  
+python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year Run2UL --channel 1l --sig RPV --mass 550 -- --numEdgeChoices 6
+python run_DoubleDisCo_Validation.py --run Optimized_BinEdges --year Run2UL --channel 2l --sig RPV --mass 550 -- --numEdgeChoices 6
 
 # Running for BinEdges
-python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 0l --disc1edge 0.69 --disc2edge 0.74
-python run_DoubleDisCo_Validation.py --run BinEdges --year 2016 --channel 1l --disc1edge 0.59 --disc2edge 0.70
+python run_DoubleDisCo_Validation.py --run BinEdges --year Run2UL --channel 0l --disc1edge 0.69 --disc2edge 0.74 --plotVars2D --plotDisc1VsDisc2
+python run_DoubleDisCo_Validation.py --run BinEdges --year Run2UL --channel 1l --disc1edge 0.59 --disc2edge 0.70 --plotVars2D --plotDisc1VsDisc2
+python run_DoubleDisCo_Validation.py --run BinEdges --year Run2UL --channel 2l --disc1edge 0.59 --disc2edge 0.70 --plotVars2D --plotDisc1VsDisc2
+
+# Running for MCcorrectionFactor_TT 
+python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year Run2UL --channel 0l --disc1edge 0.69 --disc2edge 0.74 --plotVarVsBoundary --fastMode
+python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year Run2UL --channel 1l --disc1edge 0.59 --disc2edge 0.70 --plotVarVsBoundary --fastMode
+python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year Run2UL --channel 2l --disc1edge 0.59 --disc2edge 0.70 --plotVarVsBoundary --fastMode
+
+# Running for MCcorrectionFactor_TTvar 
+python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year Run2UL --channel 0l  --disc1edge 0.69 --disc2edge 0.74 --plotVarVsBoundary --fastMode
+python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year Run2UL --channel 1l  --disc1edge 0.59 --disc2edge 0.70 --plotVarVsBoundary --fastMode
+python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year Run2UL --channel 2l  --disc1edge 0.59 --disc2edge 0.70 --plotVarVsBoundary --fastMode
+
 ```

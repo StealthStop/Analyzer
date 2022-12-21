@@ -1,4 +1,5 @@
 import numpy as np
+import re
 
 from collections               import defaultdict
 from common_Regions            import *
@@ -7,6 +8,12 @@ from common_Aggregator         import *
 from common_TableWriter        import *
 from common_HiggsCombineInputs import *
 
+def naturalSort(unsortedList):
+
+    convert      = lambda text: int(text) if text.isdigit() else text.lower()
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+
+    return sorted(unsortedList, key=alphanum_key)
 
 class MCcorrectionFactor_TTvar():
 
@@ -112,23 +119,9 @@ class MCcorrectionFactor_TTvar():
         # ------------------------------------------------
         # make the lists for rightBoundary and topBoundary
         # ------------------------------------------------
-        # Special list of boundaries for Val D region
-        unevenFactor = (1.0 - disc1edge) / (1.0 - disc2edge)
-
-        d1gridWidth = self.regionGridWidth
-        d2gridWidth = self.regionGridWidth
-
-        if disc1edge < disc2edge:
-            d1gridWidth *= unevenFactor
-        elif disc2edge < disc1edge:
-            d2gridWidth /= unevenFactor
-         
-        temp1 = np.unique(np.round(np.clip(np.arange(float(disc1edge), 1.05, d1gridWidth), 0.0, 1.0), 2))
-        temp2 = np.unique(np.round(np.clip(np.arange(float(disc2edge), 1.05, d2gridWidth), 0.0, 1.0), 2))
-
         self.list_boundaries = {"Val_BD" : np.arange(0.40, 1.05, self.regionGridWidth),
                                 "Val_CD" : np.arange(0.40, 1.05, self.regionGridWidth),
-                                "Val_D"  : np.array(list(zip(temp1, temp2)))
+                                "Val_D"  : np.arange(0.60, 1.05, self.regionGridWidth)
         }
 
         # Will hold the pair of final edge values for the full ABCD region
@@ -235,45 +228,19 @@ class MCcorrectionFactor_TTvar():
                     elif region == "Val_D":
 
                         for d in self.list_boundaries[region]:            
+                            disc1_edge = ((float(abcdFinalEdges[0]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
+                            disc2_edge = ((float(abcdFinalEdges[1]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
 
-                            disc1 = (float(abcdFinalEdges[0]) - (float(abcdFinalEdges[0]) / 2.0)) / (1.0 - float(abcdFinalEdges[0])) * (float(d[0]) - float(abcdFinalEdges[0])) + (float(abcdFinalEdges[0]) / 2.0)
-                            disc2 = (float(abcdFinalEdges[1]) - (float(abcdFinalEdges[1]) / 2.0)) / (1.0 - float(abcdFinalEdges[1])) * (float(d[1]) - float(abcdFinalEdges[1])) + (float(abcdFinalEdges[1]) / 2.0)
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=d[0], topBoundary=d[1], disc1Edge=float(disc1), disc2Edge=float(disc2), fastMode=fastMode)
-                            theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d[0])
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode)
+                            theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
 
-        # -----------------------------------
-        # Plot bkg subtracted data-MC closure
-        # -----------------------------------
-        for region in regions:
-            if "Val_" not in region:
-                continue
-
-            for b in self.list_boundaries[region]:
-                eventsTT = {}; eventsData = {}; edgesPerNjets = {}
-
-                boundary = None
-                for b in self.list_boundaries[region]:
-
-                    boundary = None
-                    if region == "Val_D":
-                        boundary = b[0]
-                    else:
-                        boundary = b
-
-                for njet in njets:
-
-                    nEventsTT   = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = boundary, sample = "TT"  ) for subregion in ["A", "B", "C", "D"]}
-                    nEventsData = {subregion : theAggy.get("nEvents%s"%(subregion), region = region, njet = njet, boundary = boundary, sample = "Data") for subregion in ["A", "B", "C", "D"]}
-
-                    eventsTT.setdefault(njet,      {}).setdefault(region, nEventsTT)
-                    eventsData.setdefault(njet,    {}).setdefault(region, nEventsData)
-                    edgesPerNjets.setdefault(njet, {}).setdefault(region, theAggy.get("finalEdges", region = region, njet = njet, boundary = boundary))
 
         # ----------------------------------------
         # Plot non-closure as function of boundary
         # ----------------------------------------
         # initilaize a dictionary to include all variables for sys to put in Higgs Combine
-        TT_TTvar_sys = { "MCcorr_TT"       : {},
+        TT_TTvar_sys = { "nEventsA_TT"     : {},
+                         "MCcorr_TT"       : {},
                          "MCcorr_TTvar"    : {}, 
                          "MCcorr_Ratio_MC" : {},
         }
@@ -389,12 +356,14 @@ class MCcorrectionFactor_TTvar():
                     continue
 
                 # initialize the dictionaries
+                nEventsPerBoundaryTT                            = {}
                 closureCorrPerBoundaryTT                        = {}
                 closurePerBoundaryTTinData                      = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
                 MCcorrRatio_MC_BoundaryTT                       = {}
                 MCcorrRatio_MC_Unc_BoundaryTT                   = {}
 
+                nEventsPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsA",             sample = "TT",       region = region, njet = njet)
                 closureCorrPerBoundaryTT["TT"]                          = theAggy.getPerBoundary(variable = "closureCorr",          sample = "TT",       region = region, njet = njet)            
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["None"] = theAggy.getPerBoundary(variable = "Closure",              sample = "TTinData", region = region, njet = njet)
@@ -410,6 +379,7 @@ class MCcorrectionFactor_TTvar():
                     MCcorrRatio_MC_Unc_BoundaryTT[ttVar]                   = theAggy.getPerBoundary(variable = "MCcorrRatio_MC_Unc",         sample = ttVar,                 region = region, njet = njet)
 
                     # fill the TT_TTvar_sys dictionary
+                    TT_TTvar_sys["nEventsA_TT"][njet]["TT"]      = nEventsPerBoundaryTT["TT"][1.00]
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
                     TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
                     TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
@@ -466,29 +436,40 @@ class MCcorrectionFactor_TTvar():
         # calculate the sys. via the maximum value of corrected data closure
         # sys = (1.0 / maximum value of corrected data closure)
         # ------------------------------------------------------------------
-        for key_njet, maximum_correctedDataValue in maximum_CorrectedDataValue_forAllRegions["All"].items():
+        absoluteMax     = -999.0
+        absoluteMaxDiff = 0.0
 
-            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
+        if self.channel == "0l":
+            someNjets = ["8", "9"]
+        elif self.channel == "1l":
+            someNjets = ["7", "8"]
+        elif self.channel == "2l":
+            someNjets = ["6", "7"]
+
+        for someNjet in someNjets:
+            if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
+            if abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMaxDiff:
+                absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
+                absoluteMaxDiff = abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet])
+
+        njetKeys = naturalSort(maximum_CorrectedDataValue_forAllRegions["All"].keys())
+        for key_njet in njetKeys:
+    
+            maximum_correctedDataValue = maximum_CorrectedDataValue_forAllRegions["All"][key_njet]
+
+            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
                 calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
             else:
-                absoluteMax = -999.0
-                someNjets = ["7", "8", "9"]
-                for someNjet in someNjets:
-                    if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
-                    if abs(1- maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMax:
-                        absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
-
                 calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
             
             # ------------------
             # write the tex file
             # ------------------
-            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
-                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData=maximum_CorrectedDataValue_forAllRegions["All"][key_njet], ttSyst=calculatedSys["All"][key_njet])
+            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
+                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="%.3f"%(maximum_CorrectedDataValue_forAllRegions["All"][key_njet]), ttSyst=calculatedSys["All"][key_njet])
 
             else:
-                maxCorrData_ttSyst.writeLine(njet=njet, maxCorrData=0.000, ttSyst=calculatedSys["All"][key_njet])
-
+                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
@@ -511,5 +492,4 @@ class MCcorrectionFactor_TTvar():
         # close the tex file
         # ------------------
         maxCorrData_ttSyst.writeClose()
-
 

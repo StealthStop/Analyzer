@@ -149,7 +149,8 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, goodName, outputFile):
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
 
-    if "topPt" in goodName and "Njets" in goodName:
+    if "topPt" in goodName and "Njets" not in goodName:
+
         if "QCD" in goodName:
             goodName = goodName.replace("Binned", "MisTagSF_vs").replace("_QCDCR", "")
         else:
@@ -194,7 +195,7 @@ def make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     XTitleSize = 0.045;  XLabelSize = 0.036;  XTitleOffset = 1.0 
     YTitleSize = 0.045;  YLabelSize = 0.036;  YTitleOffset = 1.3 
 
-    dataRatio = dataNum.Clone(); mcRatio = mcNum.Clone(); dataMcRatio = dataNum.Clone()
+    dataRatio = dataNum.Clone(0); mcRatio = mcNum.Clone(0); dataMcRatio = dataNum.Clone(0)
     dataRatio.Divide(dataNum, dataDen, 1, 1, "B"); mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
     dataMcRatio.Divide(dataRatio, mcRatio)
     dataMcRatio.SetTitle("")
@@ -332,7 +333,7 @@ if __name__ == '__main__':
 
     varTags      = [ "topPt", "nJets" ]
     topTags      = [ "R", "M" ]
-    nJetCutTags  = [ "7", "8", "9incl", "" ]
+    nJetCutTags  = [ "6", "7", "8", "9incl", "" ]
 
     inputDir = arg.inputDir
     tag      = arg.tag
@@ -343,15 +344,15 @@ if __name__ == '__main__':
 
     # For pure top, we include semileptonic ttbar, single top, and tt + W/Z/H
     # Non-pure top is everything else
-    mcFilePureTop    = ROOT.TFile.Open(fullPath + "/" + year + "_PureTop.root")
-    mcFileNotPureTop = ROOT.TFile.Open(fullPath + "/" + year + "_NotPureTop.root")
+    mcFileSemiLepCand    = ROOT.TFile.Open(fullPath + "/" + year + "_SemiLepCand.root")
+    mcFileNotSemiLepCand = ROOT.TFile.Open(fullPath + "/" + year + "_NotSemiLepCand.root")
     dataFile         = 0
     if   cr == "TTbar":
         dataFile  = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleMuon.root")
     elif cr == "QCD":
         dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_JetHT.root")
 
-    outputPath = "./Studies/TopTaggerSF/%s/%s"%(tag,arg.year)
+    outputPath = "./Studies/TopTaggerSF/%s/"%(tag)
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
@@ -368,13 +369,13 @@ if __name__ == '__main__':
         h2DataNum = dataFile.Get(numerTag2)
         h2DataDen = dataFile.Get(denomTag2)
 
-        mcFilePureTop.cd()
-        h2McTopNum = mcFilePureTop.Get(numerTag2)
-        h2McTopDen = mcFilePureTop.Get(denomTag2)
+        mcFileSemiLepCand.cd()
+        h2McTopNum = mcFileSemiLepCand.Get(numerTag2)
+        h2McTopDen = mcFileSemiLepCand.Get(denomTag2)
 
-        mcFileNotPureTop.cd()
-        h2McNotPureTopNum = mcFileNotPureTop.Get(numerTag2)
-        h2McNotPureTopDen = mcFileNotPureTop.Get(denomTag2)
+        mcFileNotSemiLepCand.cd()
+        h2McNotSemiLepCandNum = mcFileNotSemiLepCand.Get(numerTag2)
+        h2McNotSemiLepCandDen = mcFileNotSemiLepCand.Get(denomTag2)
 
         mcNum = 0
         mcDen = 0
@@ -384,20 +385,20 @@ if __name__ == '__main__':
             mcNum = h2McTopNum
             mcDen = h2McTopDen
             dataNum = h2DataNum
-            dataNum.Add(h2McNotPureTopNum, -1.0)
+            dataNum.Add(h2McNotSemiLepCandNum, -1.0)
             
             dataDen = h2DataDen
-            dataDen.Add(h2McNotPureTopDen, -1.0)
+            dataDen.Add(h2McNotSemiLepCandDen, -1.0)
         elif cr == "QCD":
-            mcNum = h2McNotPureTopNum
-            mcDen = h2McNotPureTopDen
+            mcNum = h2McNotSemiLepCandNum
+            mcDen = h2McNotSemiLepCandDen
             dataNum = h2DataNum
             dataNum.Add(h2McTopNum, -1.0)
             
             dataDen = h2DataDen
             dataDen.Add(h2McTopDen, -1.0)
 
-        make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, goodName, outputFile)
+        #make2DRatioPlot(dataNum, dataDen, mcNum, mcDen, goodName, outputFile)
 
         for varTag in varTags:
             for nJetCutTag in nJetCutTags:
@@ -412,13 +413,13 @@ if __name__ == '__main__':
                 hDataNum = dataFile.Get(numerTag1)
                 hDataDen = dataFile.Get(denomTag1)
 
-                mcFilePureTop.cd()
-                hMcTopNum = mcFilePureTop.Get(numerTag1)
-                hMcTopDen = mcFilePureTop.Get(denomTag1)
+                mcFileSemiLepCand.cd()
+                hMcTopNum = mcFileSemiLepCand.Get(numerTag1)
+                hMcTopDen = mcFileSemiLepCand.Get(denomTag1)
 
-                mcFileNotPureTop.cd()
-                hMcNotPureTopNum = mcFileNotPureTop.Get(numerTag1)
-                hMcNotPureTopDen = mcFileNotPureTop.Get(denomTag1)
+                mcFileNotSemiLepCand.cd()
+                hMcNotSemiLepCandNum = mcFileNotSemiLepCand.Get(numerTag1)
+                hMcNotSemiLepCandDen = mcFileNotSemiLepCand.Get(denomTag1)
 
                 mcNum = 0
                 mcDen = 0
@@ -428,17 +429,17 @@ if __name__ == '__main__':
                     mcNum = hMcTopNum
                     mcDen = hMcTopDen
                     dataNum = hDataNum
-                    dataNum.Add(hMcNotPureTopNum, -1.0)
+                    dataNum.Add(hMcNotSemiLepCandNum, -1.0)
                     
                     dataDen = hDataDen
-                    dataDen.Add(hMcNotPureTopDen, -1.0)
+                    dataDen.Add(hMcNotSemiLepCandDen, -1.0)
                 elif cr == "QCD":
-                    mcNum = hMcNotPureTopNum
-                    mcDen = hMcNotPureTopDen
+                    mcNum = hMcNotSemiLepCandNum
+                    mcDen = hMcNotSemiLepCandDen
                     dataNum = hDataNum
                     dataNum.Add(hMcTopNum, -1.0)
                     
                     dataDen = hDataDen
                     dataDen.Add(hMcTopDen, -1.0)
 
-                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, numerTag1, outputFile) 
+                make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, year + "_" + numerTag1, outputFile) 

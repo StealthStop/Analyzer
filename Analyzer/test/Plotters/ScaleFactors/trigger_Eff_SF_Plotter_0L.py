@@ -6,13 +6,56 @@ import numpy as np
 import array as arr
 from ROOT import TFile, gROOT, gStyle
 
-ROOT.gStyle.SetPaintTextFormat("3.2f")
+ROOT.gStyle.SetPaintTextFormat("3.3f")
 
 debug = True
 
 def print_db(input):
     if (debug):
         print input
+
+
+# -----------------
+# set minimum error
+# ----------------- 
+def setMinimumErrors(dataMcRatio):
+
+    xbins = dataMcRatio.GetXaxis().GetNbins()+1
+    ybins = dataMcRatio.GetYaxis().GetNbins()+1
+
+    for xbin in xrange(xbins):
+        for ybin in xrange(ybins):
+
+            content = dataMcRatio.GetBinContent(xbin,ybin)
+            error   = dataMcRatio.GetBinError(xbin,ybin)
+
+            if error < 1e-10:
+                newerror = content*0.03
+                dataMcRatio.SetBinError(xbin,ybin,newerror)
+
+# ----------------
+# Devin's function
+# ----------------
+def updateErrors(hist,den):
+
+    xbins = hist.GetXaxis().GetNbins()+1
+    ybins = hist.GetYaxis().GetNbins()+1
+
+    for xbin in range(1,xbins):
+        for ybin in range(1,ybins):
+
+            content = hist.GetBinContent(xbin,ybin)
+            error   = hist.GetBinError(xbin,ybin)
+
+            # If eff = 1 (errors undefined), set conservative, symmetric errors equal to Clopper-Pearson lower interval distance
+            if content == 1.0 and error < 1e-10: 
+                error = 1.0 - (ROOT.Math.normal_cdf(-1,1,0))**(1.0 / den.GetBinContent(xbin,ybin))
+                hist.SetBinError(xbin,ybin,error)
+ 
+            if error < 1e-10:
+                print('WARNING: Error in bin ({},{}) is < 1e-10. Setting error to 3% of bin content.'.format(xbin,ybin))
+                error = content*0.03
+                hist.SetBinError(xbin,ybin,error)
 
 # ------------
 # Add CMS logo
@@ -32,10 +75,14 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
     mark.SetTextAlign(31)
     mark.DrawLatex(1 - RightMargin, (1 - (TopMargin - 0.034)*SF), "%s (13 TeV)"%(year))
 
-# ---------------------
+# -------------------------------------------
 # Make Efficiency plots
-# ---------------------
-def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKey):
+# they are 1D plots
+#   -- denominator = preselections
+#   -- numerator   = preselections + triggers
+#   -- efficiency  = numerator / denominator
+# -------------------------------------------
+def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKey):
 
     XMin = 0;    XMax = 1; RatioXMin = 0; RatioXMax = 1
     YMin = 0.30; YMax = 1; RatioYMin = 0; RatioYMax = 0.30
@@ -49,55 +96,30 @@ def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKe
     Efficiency_data.GetXaxis().SetLabelSize(0)
     Efficiency_data.GetYaxis().SetTitleSize(0.05)
     Efficiency_data.GetYaxis().SetLabelSize(0.05)
-    Efficiency_data.Divide(dataNum, dataDen, 1, 1, "B")
     Efficiency_data.SetLineWidth(3)
     Efficiency_data.SetLineColor(1)
     Efficiency_data.SetMarkerColor(1)
     Efficiency_data.SetMarkerSize(3.0)
     Efficiency_data.SetMarkerStyle(20)
-    Efficiency_data.GetYaxis().SetRangeUser(0.65, 1.1)
+    Efficiency_data.Divide(dataNum, dataDen, 1, 1, "B")
+    Efficiency_data.GetYaxis().SetRangeUser(0.4, 1.1)
     # get mc efficiency
     Efficiency_mc = mcNum.Clone()
-    Efficiency_mc.Divide(mcNum, mcDen, 1, 1, "B")
     Efficiency_mc.SetLineWidth(3)
     Efficiency_mc.SetLineColor(2)
     Efficiency_mc.SetMarkerColor(2)
     Efficiency_mc.SetMarkerSize(3.0)
     Efficiency_mc.SetMarkerStyle(20)
-    # calculate scale factor
+    Efficiency_mc.Divide(mcNum, mcDen, 1, 1, "B")
+    Efficiency_mc.GetYaxis().SetRangeUser(0.4, 1.1)
+    # get errors
+    updateErrors(Efficiency_data, dataDen)
+    updateErrors(Efficiency_mc, mcDen)
+    # get scale factor
     ScaleFactor = dataNum.Clone()
     ScaleFactor.Divide(Efficiency_data, Efficiency_mc)
-    # fill eff. and sf to canvas
-    canvas = ROOT.TCanvas("c_%s"%(var), "c_%s"%(var), 1400, 1400)
-    legend = ROOT.TLegend(0.58, 0.20, 0.94, 0.42, "", "trNDC")
-    canvas.Divide(1,2)
-    canvas.cd(1)
-    ROOT.gPad.SetPad(XMin, YMin, XMax, YMax)
-    ROOT.gPad.SetGrid()
-    ROOT.gPad.SetTopMargin(0.1)
-    ROOT.gPad.SetBottomMargin(0.017)
-    ROOT.gPad.SetLeftMargin(0.17)
-    ROOT.gPad.SetRightMargin(0.05)
-    ROOT.gPad.SetTicks()
-    Efficiency_data.Draw("E1 P SAME")
-    Efficiency_mc.Draw("E1 P SAME")
-    legend.SetTextSize(0.035)
-    legend.AddEntry(Efficiency_data, "Data" + dataset, "E1 P")
-    legend.AddEntry(Efficiency_mc, mc, "E1 P")
-    legend.Draw("SAME")
-    addCMSlogo(canvas, year, TopMargin=0.098, LeftMargin=0.17, RightMargin=0.05, SF=1.0)
-    canvas.cd(2)
-    ROOT.gPad.SetPad(RatioXMin, RatioYMin, RatioXMax, RatioYMax)
-    ROOT.gPad.SetTopMargin(0.05)
-    ROOT.gPad.SetBottomMargin(0.35)
-    ROOT.gPad.SetLeftMargin(0.17)
-    ROOT.gPad.SetRightMargin(0.05)
-    ROOT.gPad.SetTicks()
-    ROOT.gPad.SetGridy()
-    ScaleFactor = dataNum.Clone()
-    ScaleFactor.Divide(Efficiency_data,Efficiency_mc)
-    ScaleFactor.SetMinimum(0.8) 
-    ScaleFactor.SetMaximum(1.2) 
+    ScaleFactor.SetMinimum(0.7) # 0.8 
+    ScaleFactor.SetMaximum(1.1) # 1.2
     ScaleFactor.GetYaxis().SetNdivisions(-304) 
     ScaleFactor.SetTitle("")
     ScaleFactor.SetLineWidth(3)
@@ -112,13 +134,43 @@ def makeEfficiency(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKe
     ScaleFactor.GetYaxis().SetTitleSize(0.8*PadFactor*YTitleSize)
     ScaleFactor.GetYaxis().SetLabelSize(PadFactor*YLabelSize)
     ScaleFactor.GetYaxis().SetTitleOffset(1.6*YTitleOffset/PadFactor)
+    
+    # fill Eficiency and SF to canvas
+    canvas = ROOT.TCanvas("c_%s"%(var), "c_%s"%(var), 1400, 1400)
+    legend = ROOT.TLegend(0.63, 0.05, 0.99, 0.27, "", "trNDC")
+    canvas.Divide(1,2)
+    canvas.cd(1)
+    ROOT.gPad.SetPad(XMin, YMin, XMax, YMax)
+    ROOT.gPad.SetGrid()
+    ROOT.gPad.SetTopMargin(0.1)
+    ROOT.gPad.SetBottomMargin(0.017)
+    ROOT.gPad.SetLeftMargin(0.17)
+    ROOT.gPad.SetRightMargin(0.05)
+    ROOT.gPad.SetTicks()
+    Efficiency_data.Draw("E1 P SAME")
+    Efficiency_mc.Draw("E1 P SAME")
+    legend.SetTextSize(0.035)
+    legend.SetBorderSize(0)
+    legend.SetFillStyle(0)
+    legend.AddEntry(Efficiency_data, "Data" + dataset, "E1 P")
+    legend.AddEntry(Efficiency_mc, mc, "E1 P")
+    legend.Draw("SAME")
+    addCMSlogo(canvas, year, TopMargin=0.098, LeftMargin=0.17, RightMargin=0.05, SF=1.0)
+    canvas.cd(2)
+    ROOT.gPad.SetPad(RatioXMin, RatioYMin, RatioXMax, RatioYMax)
+    ROOT.gPad.SetTopMargin(0.05)
+    ROOT.gPad.SetBottomMargin(0.35)
+    ROOT.gPad.SetLeftMargin(0.17)
+    ROOT.gPad.SetRightMargin(0.05)
+    ROOT.gPad.SetTicks()
+    ROOT.gPad.SetGridy()
     ScaleFactor.Draw("E1 P")
-    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/" + year + dataset + "_" + mc + "_" + var + "_TriggerEfficiency" + ".pdf")
+    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/" + year + "_jet_trig_ge1bjetCut_" + var + "_TriggerEfficiency" + ".pdf")
 
 # --------------------------
 # Make 2D Scale Factor plots
 # --------------------------
-def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile):
+def make_ScaleFactor_Plots(dataNum, dataDen, mcNum, mcDen, year, outputFile, xTitle, yTitle):
 
     XMin = 0;    XMax = 1; RatioXMin = 0; RatioXMax = 1
     YMin = 0.20; YMax = 1; RatioYMin = 0; RatioYMax = 0.20
@@ -126,43 +178,21 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
     XTitleSize = 0.045;  XLabelSize = 0.036;  XTitleOffset = 1.0 
     YTitleSize = 0.045;  YLabelSize = 0.036;  YTitleOffset = 0.9
 
+    # get data and mc efficiency 
     Efficiency_data = dataNum.Clone() 
-    Efficiency_mc   = mcNum.Clone() 
-    ScaleFactor     = dataNum.Clone()
     Efficiency_data.Divide(dataNum, dataDen, 1, 1, "B")
+    Efficiency_mc = mcNum.Clone() 
     Efficiency_mc.Divide(mcNum, mcDen, 1, 1, "B")
+    # get errors
+    updateErrors(Efficiency_data, dataDen)
+    updateErrors(Efficiency_mc, mcDen)  
+    # get scale factor 
+    ScaleFactor = dataNum.Clone()
     ScaleFactor.Divide(Efficiency_data, Efficiency_mc)
     ScaleFactor.SetTitle("")
-
-    #Efficiency_data.GetZaxis().SetRangeUser(0.75,1.1)
-    #Efficiency_data.SetTitle("")
-    #Efficiency_data.GetYaxis().SetTitle(6thJetPt [GeV)
-    #Efficiency_data.GetXaxis().SetTitle("HT [GeV]")
-    #Efficiency_data.GetYaxis().SetTitleSize(YTitleSize)
-    #Efficiency_data.GetXaxis().SetTitleSize(XTitleSize)
-    #Efficiency_data.GetYaxis().SetLabelSize(YLabelSize)
-    #Efficiency_data.GetXaxis().SetLabelSize(XLabelSize)
-    #Efficiency_data.GetYaxis().SetTitleOffset(YTitleOffset)
-    #Efficiency_data.GetXaxis().SetTitleOffset(XTitleOffset)
-    #Efficiency_data.SetContour(255)
-
-    #Efficiency_mc.GetZaxis().SetRangeUser(0.75,1.1)
-    #Efficiency_mc.SetTitle("")
-    #Efficiency_mc.GetYaxis().SetTitle(6thJetPt [GeV)
-    #Efficiency_mc.GetXaxis().SetTitle("HT [GeV]")
-    #Efficiency_mc.GetYaxis().SetTitleSize(YTitleSize)
-    #Efficiency_mc.GetXaxis().SetTitleSize(XTitleSize)
-    #Efficiency_mc.GetYaxis().SetLabelSize(YLabelSize)
-    #Efficiency_mc.GetXaxis().SetLabelSize(XLabelSize)
-    #Efficiency_mc.GetYaxis().SetTitleOffset(YTitleOffset)
-    #Efficiency_mc.GetXaxis().SetTitleOffset(XTitleOffset)
-    #Efficiency_mc.SetContour(255)
-
-    ScaleFactor.GetZaxis().SetRangeUser(0.50, 1.05) # 0.75, 1.1 / 0.5, 1.2
-    #ScaleFactor.GetZaxis().SetRangeUser(0.0, 1.025) #0.65, 1.025
-    ScaleFactor.SetTitle("")
-    ScaleFactor.GetYaxis().SetTitle("6^{th} Jet p_{T} [GeV]")
-    ScaleFactor.GetXaxis().SetTitle("H_{T} [GeV]")
+    ScaleFactor.GetZaxis().SetRangeUser(0.65, 1.05) 
+    ScaleFactor.GetXaxis().SetTitle(xTitle)
+    ScaleFactor.GetYaxis().SetTitle(yTitle)
     ScaleFactor.GetYaxis().SetTitleSize(YTitleSize)
     ScaleFactor.GetXaxis().SetTitleSize(XTitleSize)
     ScaleFactor.GetYaxis().SetLabelSize(YLabelSize)
@@ -172,33 +202,9 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
     #ScaleFactor.GetXaxis().SetRangeUser(500,1500)
     #ScaleFactor.GetYaxis().SetRangeUser(45,120) # (40,120)
     ScaleFactor.SetContour(255)
-
-    #setMinimumErrors(ScaleFactor)
-
-    theName = dataNum.GetName().replace("numerator", year) + dataset
-
-    #aCanvas = ROOT.TCanvas("c_data_%s"%(theName), "c_data_%s"%(theName), 1500, 1200)
-    #ROOT.gPad.Clear()
-    #aCanvas.cd()
-    #ROOT.gPad.SetTopMargin(0.02)
-    #ROOT.gPad.SetLeftMargin(0.09)
-    #ROOT.gPad.SetBottomMargin(0.11)
-    #ROOT.gPad.SetRightMargin(0.11)
-    #ROOT.gPad.SetTicks()
-    #Efficiency_data.Draw("COLZ E TEXT")
-    #aCanvas.SaveAs("plots/plots_refAN_18.03.2021/%s.pdf"%("2016_data_"+theName))
-
-    #aCanvas = ROOT.TCanvas("c_mc_%s"%(theName), "c_mc_%s"%(theName), 1500, 1200)
-    #ROOT.gPad.Clear()
-    #aCanvas.cd()
-    #ROOT.gPad.SetTopMargin(0.02)
-    #ROOT.gPad.SetLeftMargin(0.09)
-    #ROOT.gPad.SetBottomMargin(0.11)
-    #ROOT.gPad.SetRightMargin(0.11)
-    #ROOT.gPad.SetTicks()
-    #Efficiency_mc.Draw("COLZ E TEXT")
-    #aCanvas.SaveAs("plots/plots_refAN_18.03.2021/%s.pdf"%("2016_mc_"+theName))
-
+    
+    # fill SF to canvas
+    theName = dataNum.GetName().replace("h2_num", year) 
     aCanvas = ROOT.TCanvas("c_ScaleFactor_%s"%(theName), "c_ScaleFactor_%s"%(theName), 1400, 1400)
     ROOT.gPad.Clear()
     aCanvas.cd()
@@ -211,17 +217,11 @@ def make2DScaleFactor(dataNum, dataDen, mcNum, mcDen, year, dataset, outputFile)
     addCMSlogo(aCanvas, year, TopMargin=0.12, LeftMargin=0.09, RightMargin=0.11, SF=1.0)
     aCanvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/%s.pdf"%(theName+"_TriggerSF"))
 
-    # make the zoom version of the SF plots
-    #ScaleFactor.GetXaxis().SetRangeUser(500, 1000)
-    #ScaleFactor.GetYaxis().SetRangeUser(45, 90)
-    #ScaleFactor.GetZaxis().SetRangeUser(0.65, 1.05)
-    #aCanvas.SaveAs("test/latest/%s.pdf"%(theName+"_TriggerSF"+"_zoom"))
-
     # write SF histograms to the root file
     if outputFile is not None:
         outputFile.cd()
-        ScaleFactor.SetName(theName)
-        ScaleFactor.Write(theName) 
+        ScaleFactor.SetName(theName+"_TriggerSF")
+        ScaleFactor.Write(theName+"_TriggerSF") 
 
 
 # -------------
@@ -233,117 +233,91 @@ def main():
     # commandline options
     #   -- python triggerRefAN_Efficiency_SF_0l.py --model RPV --mass 550
     # -------------------------------------------------------------------
-    usage  = "usage: %prog [options]"
-    parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--model", dest="model", help="signal model", default="RPV")
-    parser.add_argument("--mass",  dest="mass",  help="signal mass",  default="550")
-    args = parser.parse_args()
+    #usage  = "usage: %prog [options]"
+    #parser = argparse.ArgumentParser(usage)
+    #parser.add_argument("--inpath",  dest="inpath",  help="Path to root files", default="NULL", required=True      )
+    #parser.add_argument("--outpath", dest="outpath", help="Where to put plots", default="NULL", required=True      )
+    #parser.add_argument("--year",    dest="year",    help="which year",                         required=True      )
+    #parser.add_argument("--channel", dest="channel", help="which channel",                      required=True      )
+    #parser.add_argument("--wip",     dest="wip",     help="Work in Progress",   default=False,  action="store_true")
+    #args = parser.parse_args()
 
 
     gROOT.SetBatch(True)
     gStyle.SetOptStat(0)
     #gStyle.SetOptStat(1)    
  
-    # ------------------------------
-    # root path & years & histograms
-    # ------------------------------ 
-    #path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_2022/2_triggerSFs/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
-    #path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/TriggerSFs_Run2UL_2022/2_secondVersion_forRootFileInFramework_22Octtober2022/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
-    path = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/TriggerSFs_Run2UL_2022/hadd_year_HadronicTriggerEfficiencySF_12.10.2022/"
-    
+    # -------------------------------
+    # root years & paths & histograms
+    # ------------------------------- 
+    path_jetTriggers    = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_FullStatusTalk/hadd_Run2UL_HadronicTriggerEfficiencySF/"
+
     years = [
         "2016preVFP" ,
         "2016postVFP" ,
         "2017" ,
         "2018" ,
     ]
-
-    varList1D = [
-        "HT",
-        "6thJetPt",
-        #"NJet",
-        #"NBJet",
+    
+    varList_jetTrigEff = [
+        "wJetHtBin",
+        "w6thJetPtBin",
     ]
 
-    varKeys = {
-        "HT"        : "H_{T}",
-        "6thJetPt"  : "6^{th} Jet p_{T}",
-        #"NJet"      : "N_{jet}",
-        #"NBJet"     : "N_{bjet}",
+    varKeys_jetTrig = {
+        "wJetHtBin"    : "H_{T}",
+        "w6thJetPtBin" : "6^{th} Jet p_{T}",
     }
 
-    varList2D = [
-        "1bjetCut_pt45_HTvs6thJetPt",
-        #"ge1bjetCut_pt45_HTvs6thJetPt",
-        #"2bjetCut_pt45_HTvs6thJetPt",
-        "ge2bjetCut_pt45_HTvs6thJetPt",
-        #"3bjetCut_pt45_HTvs6thJetPt",
-        #"ge3bjetCut_pt45_HTvs6thJetPt",
-        #"ge4bjetCut_pt45_HTvs6thJetPt",
-
-        #"ge6jetCut_pt45_HTvs6thJetPt",
-        #"6jetCut_pt45_HTvs6thJetPt",
-        #"7jetCut_pt45_HTvs6thJetPt",
-        #"8jetCut_pt45_HTvs6thJetPt",
-        #"9jetCut_pt45_HTvs6thJetPt",
-        #"ge10jetCut_pt45_HTvs6thJetPt",
+    varList_jetTrigSF = [
+        "1bjetCut_wJetHt6thJetPtBin",
+        #"2bjetCut_wJetHt6thJetPtBin",
+        #"3bjetCut_wJetHt6thJetPtBin",
+        #"ge1bjetCut_wJetHt6thJetPtBin",
+        "ge2bjetCut_wJetHt6thJetPtBin",
+        #"ge3bjetCut_wJetHt6thJetPtBin",
+        #"ge4bjetCut_wJetHt6thJetPtBin",
     ]
-    
+
     # --------------------------
     # loop over & get histograms
     # --------------------------
     for year in years:
         print_db("Processing year " + year)
 
-        filename1 = path.replace("year",year) + year + "_" + args.model + "_2t6j_mStop-" + args.mass + ".root"  
-        print_db("Opening file " + filename1)
+        # --------------------------------------
+        # jet triggers root files and histograms
+        # --------------------------------------
+        filename1 = path_jetTriggers + year + "_" + "TT" + ".root"
         f1 = ROOT.TFile.Open(filename1, "READ")
-
-        filename2 = path.replace("year",year) + year + "_" + "TT" + ".root"
-        print_db("Opening file " + filename2)
+        filename2 = path_jetTriggers + year + "_" + "Data_SingleMuon" + ".root"
         f2 = ROOT.TFile.Open(filename2, "READ")
+        f3 = ROOT.TFile.Open("triggerEfficiencySF_plots/triggerEffSFS_0l/%s_Hadronic_Triggers_SF.root"%(year), "RECREATE")
 
-        filename3 = path.replace("year",year) + year + "_" + "Data_SingleMuon" + ".root"
-        print_db("Opening file " + filename3)
-        f3 = ROOT.TFile.Open(filename3, "READ")
-
-        f4 = ROOT.TFile.Open("triggerEfficiencySF_plots/triggerEffSFS_0l/%s_Hadronic_Triggers_SF.root"%(year), "RECREATE")
-
-        # ----------------
-        # efficiency plots
-        # ----------------
-        for var in varList1D:
+        # --------------------------------
+        # efficiency plots & scale factors 
+        # efficiency = num / den
+        # SF = Data Eff / MC Eff
+        # --------------------------------
+        for var in varList_jetTrigEff:
             ROOT.TH1.AddDirectory(0)                                      
+            h_SingleMuon_Denominator = f2.Get("h_den_jet_trig_ge1bjetCut_%s"%(var))
+            h_SingleMuon_Numerator   = f2.Get("h_num_jet_trig_ge1bjetCut_%s"%(var))
+            h_TT_Denominator         = f1.Get("h_den_jet_trig_ge1bjetCut_%s"%(var))
+            h_TT_Numerator           = f1.Get("h_num_jet_trig_ge1bjetCut_%s"%(var))
+            make_Efficiency_Plots(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon", "TT", var, varKeys_jetTrig[var])
 
-            h_SingleMuon_Denominator = f3.Get("h_denominator_CombHadIsoMu_noTrig_ge1bjetCut_pt45_%s"%(var))
-            h_SingleMuon_Numerator   = f3.Get("h_numerator_CombHadIsoMu_trig_ge1bjetCut_pt45_%s"%(var))
-            h_RPV550_Denominator     = f1.Get("h_denominator_CombHadIsoMu_noTrig_ge1bjetCut_pt45_%s"%(var))
-            h_RPV550_Numerator       = f1.Get("h_numerator_CombHadIsoMu_trig_ge1bjetCut_pt45_%s"%(var))
-            h_TT_Denominator         = f2.Get("h_denominator_CombHadIsoMu_noTrig_ge1bjetCut_pt45_%s"%(var))
-            h_TT_Numerator           = f2.Get("h_numerator_CombHadIsoMu_trig_ge1bjetCut_pt45_%s"%(var))
-            makeEfficiency(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_RPV550_Numerator, h_RPV550_Denominator, year, "_SingleMuon", args.model + "_" + args.mass, var, varKeys[var])            
-            makeEfficiency(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon", "TT", var, varKeys[var])
-
-        # ------------------
-        # scale factor plots
-        # ------------------
-        for var in varList2D:
+        for var in varList_jetTrigSF:
             ROOT.TH1.AddDirectory(0)
-
-            h_SingleMuon_Denominator = f3.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
-            h_SingleMuon_Numerator   = f3.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
-            #h_RPV550_Denominator     = f1.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
-            #h_RPV550_Numerator       = f1.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
-            h_TT_Denominator         = f2.Get("h_denominator_CombHadIsoMu_noTrig_%s"%(var))
-            h_TT_Numerator           = f2.Get("h_numerator_CombHadIsoMu_trig_%s"%(var))
-            #make2DScaleFactor(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_RPV550_Numerator, h_RPV550_Denominator, year, "_SingleMuon" + "_" + args.model + "_" + args.mass, None)
-            make2DScaleFactor(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon_TT", f4)
+            h_SingleMuon_Denominator = f2.Get("h2_den_jet_trig_%s"%(var))
+            h_SingleMuon_Numerator   = f2.Get("h2_num_jet_trig_%s"%(var))
+            h_TT_Denominator         = f1.Get("h2_den_jet_trig_%s"%(var))
+            h_TT_Numerator           = f1.Get("h2_num_jet_trig_%s"%(var))
+            make_ScaleFactor_Plots(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, f3, "H_{T} [GeV]", "6^{th} Jet p_{T} [GeV]")
 
     f1.Close()
     f2.Close()
     f3.Close()
-    f4.Close()
-
  
 if __name__ == "__main__":
     main()

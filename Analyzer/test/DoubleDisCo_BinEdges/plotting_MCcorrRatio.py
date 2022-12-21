@@ -1,4 +1,5 @@
 import ROOT
+import argparse
 import os
 
 # -----------------------------
@@ -11,7 +12,7 @@ def get_canvas(year, channel):
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTopMargin(0.1)
     ROOT.gPad.SetBottomMargin(0.1)
-    ROOT.gPad.SetLeftMargin(0.1)
+    ROOT.gPad.SetLeftMargin(0.12)
     ROOT.gPad.SetRightMargin(0.1)
     ROOT.gPad.SetTicks()
 
@@ -38,7 +39,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
     ROOT.gPad.SetPad(0.0, split, 1.0, 1.0)
     ROOT.gPad.SetTopMargin(0.1 / upperSplit) 
     ROOT.gPad.SetBottomMargin(0)
-    ROOT.gPad.SetLeftMargin(0.1)
+    ROOT.gPad.SetLeftMargin(0.12)
     ROOT.gPad.SetRightMargin(0.1)
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTicks()
@@ -47,7 +48,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
     ROOT.gPad.SetPad(0.0, 0.0, 1.0, 0.3)
     ROOT.gPad.SetTopMargin(0)
     ROOT.gPad.SetBottomMargin(0.1 / lowerSplit)
-    ROOT.gPad.SetLeftMargin(0.1)
+    ROOT.gPad.SetLeftMargin(0.12)
     ROOT.gPad.SetRightMargin(0.1)
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTicks()
@@ -102,18 +103,30 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
 # main part of plotting
 # ---------------------
 def main():
+
+    usage  = "usage: %prog [options]"
+    parser = argparse.ArgumentParser(usage)
+    parser.add_argument("--sig",  dest="sig",  help="signal model RPV, SYY", default="RPV")
+    parser.add_argument("--mass", dest="mass", help="signal mass",           default="550")
+    args = parser.parse_args()
+
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
 
-    labels = [ "0l_0.6_0.6",
-               "1l_0.6_0.6", 
-               "2l_0.6_0.6",
-               #"1l_0.95_0.61",
+    labels = [ #"0l_0.6_0.6",
+               #"1l_0.6_0.6", 
+               #"2l_0.6_0.6",
+            
+               # SYY optimized ABCD bin edges
+               "0l_0.85_0.74",
+               "1l_0.7_0.85",
+               "2l_0.69_0.57", 
              ]
 
-    path = "year_TT_TTvar_Syst_RPV_550_label.root"
-    
-    years = [#"2016",
+    path = "year_TT_TTvar_Syst_%s_%s_label.root"%(args.sig, args.mass)
+   
+ 
+    years = [
              #"2016preVFP" ,
              #"2016postVFP" ,
              #"2017" ,
@@ -178,7 +191,9 @@ def main():
     for year in years:
 
         # create output directory for each year
-        os.makedirs("%s_plots_MCcorrectionFactorRatio/"%(year))
+        outputPath = "%s_plots_MCcorrectionFactorRatio/"%(year)
+        if not os.path.exists(outputPath):
+            os.makedirs(outputPath)
 
         # ----------------------
         # loop over the channels
@@ -197,11 +212,18 @@ def main():
   
             draw = False 
 
-            MCcorr_TT = f1.Get("MCcorr_TT_TT")
+            MCcorr_TT = f1.Get("%s_MCcorr_TT_TT"%(year))
             MCcorr_TT.SetTitle("")
             MCcorr_TT.SetLineWidth(4)
             MCcorr_TT.SetLineColor(ROOT.kBlack)
             MCcorr_TT.GetYaxis().SetTitle("Closure Correction [TT]")
+
+            nEventsA_TT = f1.Get("%s_nEventsA_TT_TT"%(year))
+            nEventsA_TT.SetTitle("")
+            nEventsA_TT.SetLineWidth(0)
+            nEventsA_TT.SetFillColorAlpha(ROOT.kGray, 0.8)
+            nEventsA_TT.GetYaxis().SetTitle("Closure Correction Ratio [TTvar / TT]")
+            nEventsA_TT.GetXaxis().SetTitle("N_{jets}")
 
             # ----------------
             # loop over ttvars
@@ -211,12 +233,12 @@ def main():
                 if ttvar == "TT":
                     continue
 
-                histName = "MCcorr_Ratio_MC_%s"%(ttvar)
+                histName = "%s_MCcorr_Ratio_MC_%s"%(year,ttvar)
                 yTitle   = "Closure Correction Ratio [TTvar / TT]"
                 tag      = "_MC_correction_ratio_"
                 
                 if ttvar == "TT":
-                    histName = "MCcorr_TT_TT"
+                    histName = "%s_MCcorr_TT_TT"%(year)
                     yTitle = "MC Correction [TT]"
                     tag = "_MC_correction_"
 
@@ -231,34 +253,40 @@ def main():
                 hist.GetXaxis().SetTitle("N_{jets}")
                 hist.GetYaxis().SetTitle(yTitle)
 
-                MCcorr_TTvar = f1.Get("MCcorr_TTvar_%s"%(ttvar))
+                MCcorr_TTvar = f1.Get("%s_MCcorr_TTvar_%s"%(year,ttvar))
                 MCcorr_TTvar.SetTitle("")
                 MCcorr_TTvar.SetLineWidth(4)
                 MCcorr_TTvar.SetLineColor(ROOT.TColor.GetColor(ttvar_colors[ttvar]))
                 MCcorr_TTvar.GetXaxis().SetTitle("N_{jets}")
                 MCcorr_TTvar.GetYaxis().SetTitle("MC Correction")
 
-                globalScale = 1.08
+                globalScale = 1.10
                 xLabelSize = 0.05; yLabelSize = 0.05
                 xTitleSize = 0.05; yTitleSize = 0.05
 
-                hist.GetXaxis().SetLabelSize(xLabelSize * globalScale)
-                hist.GetYaxis().SetLabelSize(yLabelSize * globalScale)
-                hist.GetXaxis().SetTitleSize(xTitleSize * globalScale)
-                hist.GetYaxis().SetTitleSize(yTitleSize * globalScale)
-                hist.GetYaxis().SetTitleOffset(1)
-                hist.GetYaxis().SetTitleOffset(1)
+                hist.GetXaxis().SetLabelSize(xLabelSize * 0.8)
+                hist.GetYaxis().SetLabelSize(yLabelSize * 0.8)
+                hist.GetXaxis().SetTitleSize(xTitleSize * 0.8)
+                hist.GetYaxis().SetTitleSize(yTitleSize * 0.8)
+                hist.GetYaxis().SetTitleOffset(1.4)
+                hist.GetYaxis().SetTitleOffset(1.4)
+
+                histBottomPanel = hist.Clone(hist.GetName() + "_clone")
 
                 if ttvar != "TT":
                     canvas.cd()
                     if not draw:
-                        hist.GetYaxis().SetRangeUser(0.0, 2.0)
-                        hist.Draw("hist")
+                        nEventsA_TT.GetYaxis().SetRangeUser(0.0, 2.0)
+                        nEventsA_TT.Draw("E2")
+                        hist.Draw("hist SAME")
                         draw = True
+        
+                        legend.AddEntry(nEventsA_TT, "TT Stat. Unc.", "F")
                         
                     else:
                         hist.Draw("hist SAME")
 
+                    
                     legend.AddEntry(hist, ttvar_names[ttvar], "l")
 
                 # ----------------------------------
@@ -289,33 +317,33 @@ def main():
 
                 legend_each.AddEntry(MCcorr_TT, "Nominal TT", "l")            
                 legend_each.AddEntry(MCcorr_TTvar, ttvar_names[ttvar], "l")            
-                addCMSlogo(canvas_each, year, TopMargin=0.1, LeftMargin=0.1, RightMargin=0.1, SF=1.0)
+                addCMSlogo(canvas_each, year, TopMargin=0.1, LeftMargin=0.12, RightMargin=0.1, SF=1.0)
                 legend_each.Draw("SAME")
 
                 canvas_each.cd(2)
-                hist.GetXaxis().SetLabelSize(xLabelSize * scale * globalScale)
-                hist.GetYaxis().SetLabelSize(yLabelSize * scale * globalScale)
-                hist.GetXaxis().SetTitleSize(xTitleSize * scale * globalScale)
-                hist.GetYaxis().SetTitleSize(yTitleSize * scale * globalScale)
-                hist.GetYaxis().SetTitleOffset(0.3/0.7)
+                histBottomPanel.GetXaxis().SetLabelSize(xLabelSize * scale * globalScale)
+                histBottomPanel.GetYaxis().SetLabelSize(yLabelSize * scale * globalScale)
+                histBottomPanel.GetXaxis().SetTitleSize(xTitleSize * scale * globalScale)
+                histBottomPanel.GetYaxis().SetTitleSize(yTitleSize * scale * globalScale)
+                histBottomPanel.GetYaxis().SetTitleOffset(0.3/0.7)
 
-                hist.GetYaxis().SetTitleOffset(hist.GetYaxis().GetTitleOffset() / globalScale)
+                histBottomPanel.GetYaxis().SetTitleOffset(histBottomPanel.GetYaxis().GetTitleOffset() / globalScale)
 
-                hist.GetYaxis().SetRangeUser(0.04,1.96) 
-                hist.GetYaxis().SetNdivisions(7)
-                hist.GetYaxis().SetTitle("Ratio [TTvar / TT]")
-                hist.Draw("hist E")
+                histBottomPanel.GetYaxis().SetRangeUser(0.04,1.96) 
+                histBottomPanel.GetYaxis().SetNdivisions(7)
+                histBottomPanel.GetYaxis().SetTitle("Ratio [TTvar / TT]")
+                histBottomPanel.Draw("hist E")
 
                 line.Draw("same")
-                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + tag + ttvar + "_" + label + ".pdf")
+                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
  
             # ---------------------------------------------
             # save canvas & legend including all histograms
             # ---------------------------------------------
             canvas.cd()
-            addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.1, RightMargin=0.1, SF=1.0)    
+            addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.12, RightMargin=0.1, SF=1.0)    
             legend.Draw("SAME")
-            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_MCcorr_Ratio_MC_" + label + ".pdf")     
+            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
          
         f1.Close()
  
@@ -323,4 +351,4 @@ if __name__ == "__main__":
     main()
 
 
- 
+         

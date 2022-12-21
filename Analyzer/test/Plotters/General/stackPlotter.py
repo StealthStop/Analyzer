@@ -333,25 +333,13 @@ class StackPlotter:
 
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.040 / self.upperSplit
-        nColumns = 1
-        maxBkgLegendFrac = 0.25 * (1.0 - self.TopMargin - self.BottomMargin)
-
-        tooManyBkgds = nBkgs * textSize * 1.2 > maxBkgLegendFrac
-        if tooManyBkgds:
-            nColumns = 3
-
+        textSize = 0.025 / self.upperSplit
         space    = 0.015
 
-        bkgXmin = 0.70 - self.RightMargin
-        if self.printNEvents:
-            bkgXmin = 0.50 - self.RightMargin
-        if tooManyBkgds:
-            bkgXmin = self.LeftMargin + 0.05
-            
+        bkgXmin = 0.60 if self.printNEvents else 0.75
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.01
-        bkgYmin = bkgYmax-(float(nBkgs)/float(nColumns))*(1.2*textSize+space)
+        bkgYmin = bkgYmax-nBkgs*(textSize+space)
         
         if self.printInfo:
             bkgYmax -= 0.025
@@ -361,8 +349,6 @@ class StackPlotter:
         bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
-        if tooManyBkgds:
-            bkgLegend.SetNColumns(nColumns)
 
         sigXmin = 0.70 - self.RightMargin
         if self.printNEvents:
@@ -390,7 +376,7 @@ class StackPlotter:
         if tooManyBkgds:
             sigLegend.SetNColumns(nColumns-1)
 
-        yMax = 1.0; factor = 1.0; power = 1.0
+        yMax = 1.0; factor = 1.05; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
             power = math.log10(theMax / theMin) * 3.0
 
@@ -399,10 +385,11 @@ class StackPlotter:
         if self.printInfo:
             yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
         else:                             
-            yMax = (theMax-theMin) * (0.95 - theFrac)**(-power) * factor
+            yMax = (theMax-theMin) * (1.0 - theFrac)**(-power) * factor
 
         return bkgLegend, sigLegend, yMax
 
+    # add CMS labels
     def addCMSlogo(self, canvas):
 
         canvas.cd()
@@ -704,7 +691,7 @@ class StackPlotter:
 
                         ratio.Draw("E0P")
 
-                    canvas.SaveAs("%s/%s.pdf"%(self.outpath, newName))
+                    canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
 
 if __name__ == "__main__":
 

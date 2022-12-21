@@ -27,8 +27,7 @@ public:
     void printTriggerList( const std::vector<std::string>& TriggerNames );
     
     bool containsGoodHadron( const std::vector<utility::LorentzVector>& hadrons, const std::vector<bool>& goodHadrons, double ptThreshold, double etaSelection);
-    void fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double HT, int njet, int nbjet, double weight );
-    void fillHistosRefAN( const std::map<std::string, bool>& cutMap, bool passTriggerRefAN, double pt, double HT, int njet, int nbjet, double weight );
+    void fillHistos( const std::map<std::string, bool>& cutMap, bool passTriggerAllHad, double pt, double HT, double weight );
 };
 
 #endif
