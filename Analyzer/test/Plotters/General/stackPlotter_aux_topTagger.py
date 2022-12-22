@@ -37,8 +37,6 @@ histograms = {
     "nMuons?"       : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "N_{muons}",                       "rebin" :  1, "min" :  -0.5, "max" : 20.5}},
     "topPt?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "Best Candidate top p_{T} [GeV]",  "rebin" : 12, "min" :     0, "max" : 2000}},
     "topPt?"        : {"logY" : True,  "Y" : {"title" : "Weighted Events", "min" : 2e-3}, "X" : {"title" : "Best Candidate top p_{T} [GeV]",  "rebin" : 12, "min" :     0, "max" : 2000}},
-
-
 }
 
 backgrounds = {
@@ -49,16 +47,15 @@ backgrounds = {
     "Diboson"        : {"name" : "Diboson",         "color" : ROOT.TColor.GetColor("#fdb462"),   "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
     "Triboson"       : {"name" : "Triboson",        "color" : ROOT.TColor.GetColor("#ffcc33"),   "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
     "TTX"            : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    #"BG_OTHER"      : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0}
 }
 
 signals = OrderedDict({
-    #"RPV_2t6j_mStop-350"        : {"name" : "RPV m_{ #tilde{t}} = 350 GeV",               "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    #"RPV_2t6j_mStop-550"        : {"name" : "RPV m_{ #tilde{t}} = 550 GeV",               "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    #"RPV_2t6j_mStop-850"        : {"name" : "RPV m_{ #tilde{t}} = 850 GeV",               "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+    #"RPV_2t6j_mStop-350" : {"name" : "RPV m_{ #tilde{t}} = 350 GeV", "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+    #"RPV_2t6j_mStop-550" : {"name" : "RPV m_{ #tilde{t}} = 550 GeV", "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+    #"RPV_2t6j_mStop-850" : {"name" : "RPV m_{ #tilde{t}} = 850 GeV", "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
 })
 
 data = {
     "Data_SingleMuon" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
-    #"pseudoDataS" : {"name" : "pseudoDataS", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
+    #"Data_JetHT"    : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
 }

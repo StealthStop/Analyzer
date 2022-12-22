@@ -279,9 +279,9 @@ class StackPlotter:
         textSize = 0.025 / self.upperSplit
         space    = 0.015
 
-        bkgXmin = 0.60 if self.printNEvents else 0.75
-        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
-        bkgXmax = 1.0-self.RightMargin-0.01
+        bkgXmin = 0.60 if self.printNEvents else 0.65
+        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.02
+        bkgXmax = 1.0-self.RightMargin-0.02
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
         
         if self.printInfo:
@@ -405,7 +405,7 @@ class StackPlotter:
                         if Hobj.IsGood():
                             dataScale = Hobj.Integral()
 
-                            if self.normalize:
+                            if self.normalize and dataScale != 0.0:
                                 Hobj.Scale(1.0 / dataScale)
 
                             tempMax = Hobj.histogram.GetMaximum()
@@ -420,7 +420,7 @@ class StackPlotter:
                     for bname, binfo in self.backgrounds.items(): 
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
-    
+   
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
                         if Hobj.IsGood(): mcScale += Hobj.Integral()
@@ -452,7 +452,7 @@ class StackPlotter:
                         if Hobj.IsGood():
                             sigScale = Hobj.Integral()
 
-                            if self.normalize:
+                            if self.normalize and sigScale != 0.0:
                                 Hobj.Scale(1.0 / sigScale)
 
                             tempMax = Hobj.histogram.GetMaximum()
@@ -526,7 +526,7 @@ class StackPlotter:
                         theMin /= mcScale
 
                     # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
-                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], theMin, theMax)
+                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds)+1, len(self.signals), newInfo["logY"], theMin, theMax)
 
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=True):
                         lname = h[0]

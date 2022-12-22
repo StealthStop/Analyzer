@@ -1,114 +1,59 @@
 #!/bin/python
+import os
 import ROOT
-import math
-import array
-import numpy as np
+import argparse
+
+import matplotlib as mpl
+mpl.use('Agg')
+mpl.rcParams['font.size'] = 18.0
+
+import matplotlib.pyplot as plt
 
 ROOT.gROOT.SetBatch(True)
 
-def main() :
+def main(inpath, outpath, year, channel) :
 
-    #vals        = array.array('f', [81255,1626,3865,6455] )
-    vals        = array.array('f', [29079,358,1797,371] )
+    if not os.path.exists(outpath):
+        os.makedirs(outpath)
 
-    colors          = array.array('i', [40,38,30,41] )
-    labels          = ["t#bar{t}", "t#bar{t}+X", "QCD multijet", "Other" ]
+    histoName = "h_Njets_%s_ABCD"%(channel)
 
-    tpie            = ROOT.TPie( "tpie", "", 4, vals, colors )
+    ttFile  = ROOT.TFile.Open(inpath + "/" + year + "_TT.root", "READ")
+    qcdFile = ROOT.TFile.Open(inpath + "/" + year + "_QCD.root", "READ")
+    ttxFile = ROOT.TFile.Open(inpath + "/" + year + "_TTX.root", "READ")
+    othFile = ROOT.TFile.Open(inpath + "/" + year + "_BG_OTHER.root", "READ")
 
-    c1              = ROOT.TCanvas( "c1", "c1", 1400, 700 )
-    c1.Divide(2,1)
-    c1.SetFillStyle(4000)
-    c1.SetFillColorAlpha(1, 0.)
+    ttHist  = ttFile.Get(histoName)
+    qcdHist = qcdFile.Get(histoName) 
+    ttxHist = ttxFile.Get(histoName) 
+    othHist = othFile.Get(histoName) 
 
-    c1.cd(1)
-    ROOT.gPad.SetFillStyle(4000)
-    ROOT.gPad.SetFillColorAlpha(1, 0.)
-    ROOT.gPad.SetBottomMargin(0.0)
-    #ROOT.gPad.SetLeftMargin(0.0)
-    #ROOT.gPad.SetRightMargin(0.0)
-    tpie.SetRadius( .30 )
-    tpie.SetLabelsOffset( .05 )
-    tpie.SetEntryLabel( 0, "t#bar{t}" )
-    tpie.SetEntryLabel( 2, "QCD" )
-    tpie.SetEntryLabel( 1, "t#bar{t}+X" )
-    tpie.SetEntryLabel( 3, "Other" )
-    tpie.SetLabelFormat( "%txt (%perc)")
-    tpie.SetTextSize(.025)
-    #tpie.SetX(0.1)
-    #tpie.SetY(0.5)
+    ttCounts  = ttHist.Integral()
+    qcdCounts = qcdHist.Integral()
+    ttxCounts = ttxHist.Integral()
+    othCounts = othHist.Integral()
 
-    l1              = tpie.MakeLegend()
-    l1.SetY1(0.88)
-    l1.SetY2(0.95)
-    l1.SetX1(0.0)
-    l1.SetX2(1.05)
-    l1.SetTextSize(.05)
-    l1.SetBorderSize(0)
-    l1.SetFillStyle(4000)
-    l1.SetFillColorAlpha(1, 0.)
-    l1.SetNColumns(4)
-    tpie.Draw("3d ")
-    l1.Draw("SAME")
+    vals   = [ttCounts, ttxCounts, qcdCounts, othCounts]
+    colors = ["#9995AB", "#7d99d1", "#85c2a3", "#d4cf87"]
 
-    c1.Update()
-    c1.SaveAs("2016McComposition_3d.pdf")
-  
-    #tpie.Draw("nol <")
-    #l1.SetX1(.80)
-    #l1.SetY2(.86)
-    #l1.Draw("SAME")
+    labels = [r"$t\bar{t}$ + jets", r"$t\bar{t} + X$", "QCD multijet", "Other"]
 
-    #c1.Update()
-    #c1.SaveAs("Run2McComposition_2d.pdf")
+    fig, ax = plt.subplots()
+    fig.subplots_adjust(top=1, bottom=0, right=0.83, left=0.07, hspace=0, wspace=0)
+    ax.pie(vals, colors=colors, labels=labels, autopct='%1.1f%%', shadow=False, startangle=40, textprops={"fontsize" : 16})
+    ax.axis('equal')    
+    ax.margins(0.2, 0)
 
-    c1.cd(2)
-    ROOT.gPad.SetFillStyle(4000)
-    ROOT.gPad.SetFillColorAlpha(1, 0.)
-    ROOT.gPad.SetTopMargin(0.01)
-    ROOT.gPad.SetLeftMargin(0.0)
-    ROOT.gPad.SetRightMargin(0.0)
-
-    #crvals      = array.array('f', [16424,131565,229,2886])
-    crvals      = array.array('f', [58458,377328,779,8925])
-    crcolors     = array.array('i', [ROOT.kBlue-6,ROOT.kGreen+1,ROOT.kOrange+2,ROOT.kMagenta+2] )
-    crtpie            = ROOT.TPie( "crtpie", "", 4, crvals, crcolors )
-
-    #c2              = ROOT.TCanvas( "c2", "c2", 700, 700 )
-    #c2.SetFillStyle(4000)
-    #c2.SetFillColorAlpha(1, 0.)
-
-    crtpie.SetRadius( .30 )
-    crtpie.SetLabelsOffset( .05 )
-    crtpie.SetEntryLabel( 0, "t#bar{t}" )
-    crtpie.SetEntryLabel( 1, "QCD" )
-    crtpie.SetEntryLabel( 2, "t#bar{t}+X" )
-    crtpie.SetEntryLabel( 3, "Other" )
-    crtpie.SetLabelFormat( "%txt (%perc)")
-    crtpie.SetTextSize(.025)
-    #crtpie.SetX(0.9)
-    #crtpie.SetY(0.5)
-
-    #l1              = crtpie.MakeLegend()
-    #l1.SetY1(.66)
-    #l1.SetY2(.86)
-    #l1.SetTextSize(.025)
-    #l1.SetBorderSize(0)
-    #l1.SetFillStyle(4000)
-    #l1.SetFillColorAlpha(1, 0.)
-    crtpie.Draw("3d SAME")
-    #l1.Draw("SAME")
-
-    c1.Update()
-    c1.SaveAs("Run2McComposition_3d.pdf")
- 
-    #crtpie.Draw("nol <")
-    #l1.SetX1(.80)
-    #l1.SetY2(.86)
-    #l1.Draw("SAME")
-
-    #c2.Update()
-    #c2.SaveAs("2016McComposition_CR_2d.pdf")
+    fig.savefig("%s/%sMcComposition_%s.pdf"%(outpath, year, channel), dpi=fig.dpi)
 
 if __name__ == "__main__" :
-    main()
+
+    usage = "usage: %stackPlotter [options]"
+    parser = argparse.ArgumentParser(usage)
+    parser.add_argument("--inpath",  dest="inpath",  help="Path to root files", default="NULL", required=True)
+    parser.add_argument("--outpath", dest="outpath", help="Where to put plots", default="NULL", required=True)
+    parser.add_argument("--year",    dest="year",    help="which year",                         required=True)
+    parser.add_argument("--channel", dest="channel", help="which channel",                      required=True)
+    args = parser.parse_args()
+
+    main(args.inpath, args.outpath, args.year, args.channel)
