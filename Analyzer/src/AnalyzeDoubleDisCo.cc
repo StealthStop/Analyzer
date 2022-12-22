@@ -275,7 +275,11 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                 std::string njetStr = "";
                 // For 1D histos, don't make any where we exclude all but one njets bin
                 if (Njet != "Incl")
+                {
                     njetStr = "_Njets" + Njet;
+                    if (hInfo.name.find("DoubleDisCo") == std::string::npos)
+                        continue;
+                }
 
                 // --------------------------------------------------------------------------
                 // loop over the systvars fsrUp/Down, isrUp/Down, etc.
@@ -373,10 +377,15 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
             // ---------------
             for (const auto& Njet : njets)
             {
+
                 std::string njetStr = "";
                 // For 2D histos, don't make any where we exclude all but one njets bin
                 if (Njet != "Incl")
+                {
                     njetStr = "_Njets" + Njet;
+                    if (h2dInfo.name.find("DoubleDisCo") == std::string::npos)
+                        continue;
+                }
 
                 // --------------------------------------------------------------------------
                 // loop over the systvars fsrUp/Down, isrUp/Down
@@ -1277,17 +1286,30 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
             Debug("Preparing cut map", __LINE__);
 
+            const auto& NGoodElectrons = tr.getVar<int>("NGoodElectrons" + jecvar);
+            const auto& NGoodMuons     = tr.getVar<int>("NGoodMuons"     + jecvar);
+
             const std::map<std::string, bool> cut_map
             {
-                {"_0l"               , Baseline[0]},
-                {"_1l"               , Baseline[1]},
-                {"_2l"               , Baseline[2]},
-                {"_0l_blind"         , Baseline_blind[0]},
-                {"_1l_blind"         , Baseline_blind[1]},                         
-                {"_2l_blind"         , Baseline_blind[2]}, 
-                {"_0l_QCDCR"         , Baseline_CR[0]}, 
-                {"_1l_QCDCR"         , Baseline_CR[1]}, 
-                {"_2l_QCDCR"         , Baseline_CR[1]}, 
+                {"_0l"            , Baseline[0]},
+                {"_1l"            , Baseline[1]},
+                {"_1l_el"         , Baseline[1] and NGoodElectrons == 1},
+                {"_1l_mu"         , Baseline[1] and NGoodMuons     == 1},
+                {"_2l"            , Baseline[2]},
+                {"_2l_elel"       , Baseline[2] and NGoodElectrons == 2},
+                {"_2l_mumu"       , Baseline[2] and NGoodMuons     == 2},
+                {"_2l_elmu"       , Baseline[2] and NGoodElectrons == 1 and NGoodMuons == 1},
+                {"_0l_blind"      , Baseline_blind[0]},
+                {"_1l_blind"      , Baseline_blind[1]},                         
+                {"_1l_blind_el"   , Baseline_blind[1] and NGoodElectrons == 1},
+                {"_1l_blind_mu"   , Baseline_blind[1] and NGoodMuons     == 1},
+                {"_2l_blind"      , Baseline_blind[2]}, 
+                {"_2l_blind_elel" , Baseline_blind[2] and NGoodElectrons == 2},
+                {"_2l_blind_mumu" , Baseline_blind[2] and NGoodMuons     == 2},
+                {"_2l_blind_elmu" , Baseline_blind[2] and NGoodElectrons == 1 and NGoodMuons == 1},
+                {"_0l_QCDCR"      , Baseline_CR[0]}, 
+                {"_1l_QCDCR"      , Baseline_CR[1]}, 
+                {"_2l_QCDCR"      , Baseline_CR[1]}, 
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
@@ -1641,6 +1663,15 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                         jetFlavuds = Jets_flavuds_CR[channel];
                                     }
 
+                                    Debug("Filling 2D pt HT variable histograms with name: " + name, __LINE__);
+
+                                    for(unsigned int i = 1; i <= nJets; i++)
+                                    {
+                                        double pt  = static_cast<double>(cmJets.at(i-1).Pt());
+                                        my_2d_histos["h_pt_jetRank_cm"    + name]->Fill(pt,    i, w);
+                                        my_2d_histos["h_ptrHT_jetRank_cm" + name]->Fill(pt/ht, i, w);
+                                    }
+
                                     Debug("Filling jet variable histograms with name: " + name, __LINE__);
 
                                     for(unsigned int i = 1; i <= nJets; i++)
@@ -1886,28 +1917,10 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     my_histos["h_combined8thJet_Mass_cm"   + name]->Fill(theComb8thJetM,     w);
                                     my_histos["h_combined8thJet_Energy_cm" + name]->Fill(theComb8thJetE,     w);
 
-                                }
-
-                                // -------------------------------------------------------------------------------------------------
-                                // Fill 2D event-level varaibles
-                                // -------------------------------------------------------------------------------------------------
-                                if (region == "ABCD" and ttvar == "" and jecvar == "")
+                                    // -------------------------------------------------------------------------------------------------
+                                    // Fill 2D event-level varaibles
+                                    // -------------------------------------------------------------------------------------------------
                                     my_2d_histos["h_nRtops_vs_nMtops"      + name]->Fill(!isQCD ? NRTops[channel] : NRTops_CR[channel], !isQCD ? NMTops[channel] : NMTops_CR[channel], w);
-
-                                auto& cmJets = Jets_cm_top6[channel];
-                                if (isQCD)
-                                    cmJets = Jets_cm_top6_CR[channel];
-
-                                Debug("Filling 2D pt HT variable histograms with name: " + name, __LINE__);
-
-                                if (region == "ABCD" and ttvar == "" and jecvar == "")
-                                {
-                                    for(unsigned int i = 1; i <= nJets; i++)
-                                    {
-                                        double pt  = static_cast<double>(cmJets.at(i-1).Pt());
-                                        my_2d_histos["h_pt_jetRank_cm"    + name]->Fill(pt,    i, w);
-                                        my_2d_histos["h_ptrHT_jetRank_cm" + name]->Fill(pt/ht, i, w);
-                                    }
                                 }
 
                                 auto& RPV_disc1 = DoubleDisCo_RPV_disc1[channel];
