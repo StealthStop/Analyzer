@@ -145,6 +145,24 @@ class Common_Calculations_Plotters:
         
         ax1 = self.addCMSlabel(ax1)
 
+        # put model, channel labels
+        md = ""
+        if self.model == "SYY":
+            md = "Stealth SYY"
+        else:
+            md = self.model
+
+        ch = ""
+        if self.channel == "0l":
+            ch = "Fully-Hadronic"
+        elif self.channel == "1l":
+            ch = "Semi-Leptonic"
+        elif self.channel == "2l":
+            ch = "Fully-Leptonic"
+
+        textLabel = '\n'.join(( "Closure per-$N_{jets}$ in %s"%(name), "%s"%(md), "%s"%(ch) ))
+        ax1.text(0.025, 0.6, textLabel, transform=ax.transAxes, color="black", fontsize=9, fontweight='normal',  va='center', ha='left')
+
         ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
         ax1.errorbar(x, pred, yerr=predUnc, label='Predicted', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label='Observed',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
