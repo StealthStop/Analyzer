@@ -291,6 +291,8 @@ class Common_Calculations_Plotters:
 
     # ----------------------------------------------------------------
     # plot whichever variable as a function of the choice of bin edges
+    #   -- call it inside DoubleDisCo_BinEdges module
+    #   -- make significance, non-closure, pull, sigFrac plots
     # ----------------------------------------------------------------
     def plot_Var_vsDisc1Disc2(self, var, edges, c1, c2, minEdge, maxEdge, binWidth, cmin, cmax, vmin, vmax, Njets = -1, name = "", variable = ""):
 
@@ -305,7 +307,46 @@ class Common_Calculations_Plotters:
 
         ax = self.addCMSlabel(ax)
 
-        l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="black", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="black", linewidth=2, linestyle="dashed")
+        # put model, channel, njet labels
+        md = ""
+        if self.model == "SYY":
+            md = "Stealth SYY"
+        else:
+            md = self.model
+
+        ch = ""
+        if self.channel == "0l":
+            ch = "Fully-Hadronic"
+        elif self.channel == "1l":
+            ch = "Semi-Leptonic"
+        elif self.channel == "2l":
+            ch = "Fully-Leptonic"
+
+        nj = ""
+        if "incl" in Njets:
+            nj = "$N_{jets} \geq$ %s"%(Njets.replace("incl",""))
+        else:
+            nj = "$N_{jets}$ = %s"%(Njets)
+
+        vr = ""
+        if variable == "Sign_includingNonClosure":
+            vr = "Significance"
+        else:
+            vr = "%s"%(variable)
+
+        textLabel = '\n'.join(( "%s in %s"%(vr,name), "%s"%(md), "%s"%(ch), nj ))
+
+        if name == "ABCD":
+            ax.text(0.05, 0.10, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='left')
+        if name == "Val_BD":
+            ax.text(0.95, 0.10, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='right')
+        if name == "Val_CD":
+            ax.text(0.05, 0.90, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='left')
+        if name == "Val_D":
+            ax.text(0.95, 0.90, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='right')
+
+        #
+        l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="maroon", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="maroon", linewidth=2, linestyle="dashed")
         ax.add_line(l1); 
         ax.add_line(l2)
 

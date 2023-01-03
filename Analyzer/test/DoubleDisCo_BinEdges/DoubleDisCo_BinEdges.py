@@ -167,7 +167,7 @@ class BinEdges():
                 # ------------------------------------------------
                 elif region == "Val_D":
                     
-                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=allRegionsFinalEdges["ABCD"][0], topBoundary=allRegionsFinalEdges["ABCD"][1], ABCDdisc1=float(allRegionsFinalEdges["ABCD"][0])/2.0, ABCDdisc2=float(allRegionsFinalEdges["ABCD"][1])/2.0, fastMode=fastMode)
+                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=0.6, topBoundary=0.6, ABCDdisc1=0.3, ABCDdisc2=0.3, fastMode=fastMode)
 
                 # ----------------------------
                 # Optimization based on TT !!!
@@ -257,7 +257,7 @@ class BinEdges():
                         if hist_key != self.sig:
                             plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosure"   )
                             #plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosureUnc")
-                            plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=region, variable="Pull"         )
+                            plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, -100.0,  100.0, -10.0, 10.0, njet, name=region, variable="Pull"         )
 
                     EventsPerNjets[hist_key][njet] = allRegionsFinalEvents[hist_key]
                 
