@@ -27,8 +27,8 @@ class Common_Calculations_Plotters:
     def addCMSlabel(self, ax):
 
         ax.text(0.0,  1.003, 'CMS',                     transform=ax.transAxes, fontsize=16, fontweight='bold',   va='bottom', ha='left')
-        ax.text(0.15, 1.010, '%s'%(self.cmsLabel),      transform=ax.transAxes, fontsize=10, fontstyle='italic',  va='bottom', ha='left')
-        ax.text(1.0,  1.010, '%s (13 TeV)'%(self.year), transform=ax.transAxes, fontsize=10, fontweight='normal', va='bottom', ha='right')
+        ax.text(0.15, 1.010, '%s'%(self.cmsLabel),      transform=ax.transAxes, fontsize=11, fontstyle='italic',  va='bottom', ha='left')
+        ax.text(1.0,  1.010, '%s (13 TeV)'%(self.year), transform=ax.transAxes, fontsize=11, fontweight='normal', va='bottom', ha='right')
     
         return ax
 
@@ -48,7 +48,7 @@ class Common_Calculations_Plotters:
     # -----------------
     # plot all closures
     # -----------------
-    def plot_ClosureNjets(self, bkgObs, bkgPred, Njets, name = '', closureTag = '', bkgTag = '', isBlind=False):
+    def plot_ClosureNjets(self, bkgObs, bkgPred, Njets, name = '', closureTag = '', bkgTag = '', valColor=None, isBlind=False):
         
         x         = []; xUnc         = []
         obs       = []; obsUnc       = [] 
@@ -160,12 +160,13 @@ class Common_Calculations_Plotters:
         elif self.channel == "2l":
             ch = "Fully-Leptonic"
 
-        textLabel = '\n'.join(( "Closure per-$N_{jets}$ in %s"%(name), "%s"%(md), "%s"%(ch) ))
-        ax1.text(0.025, 0.6, textLabel, transform=ax.transAxes, color="black", fontsize=9, fontweight='normal',  va='center', ha='left')
+        textLabel = '\n'.join(( "%s"%(name), "%s"%(md), "%s"%(ch) ))
+        ax1.text(0.66, 0.80, textLabel, transform=ax.transAxes, color="black",  fontsize=9,  fontweight='normal', va='center', ha='left' )
+        #ax1.text(0.5, 0.95, name,      transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center') 
 
         ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
-        ax1.errorbar(x, pred, yerr=predUnc, label='Predicted', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
-        ax1.errorbar(x, obs,  yerr=obsUnc,  label='Observed',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
+        ax1.errorbar(x, pred, yerr=predUnc, label=r'Predicted $t\bar{t}+jets$', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
+        ax1.errorbar(x, obs,  yerr=obsUnc,  label=r'Observed $t\bar{t}+jets$',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
         # closure   
         ax2 = fig.add_subplot(4, 1, 3)
@@ -198,7 +199,7 @@ class Common_Calculations_Plotters:
     # ----------------------
     # make all closure plots
     # ----------------------      
-    def make_allClosures(self, edgesPerNjets=None, TT_EventsPerNjets=None, NonTT_EventsPerNjets=None, sig_EventsPerNjets=None, data_EventsPerNjets=None, Njets=None, name="", closureTag="", bkgTag=""):
+    def make_allClosures(self, edgesPerNjets=None, TT_EventsPerNjets=None, NonTT_EventsPerNjets=None, sig_EventsPerNjets=None, data_EventsPerNjets=None, Njets=None, name="", closureTag="", bkgTag="", valColor=None):
     
         TT_EventsA     = 0.0; TT_EventsB         = 0.0; TT_EventsC    = 0.0; TT_EventsD    = 0.0;
         TT_EventsUncA  = 0.0; TT_EventsUncB      = 0.0; TT_EventsUncC = 0.0; TT_EventsUncD = 0.0;
@@ -299,11 +300,11 @@ class Common_Calculations_Plotters:
         # ------------------ 
         # usual closure
         if TT_EventsPerNjets != None and NonTT_EventsPerNjets == None and data_EventsPerNjets == None: 
-            self.plot_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
+            self.plot_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), Njets, name, closureTag, bkgTag, valColor)
         
         # MC correction factor related closure
         if TT_EventsPerNjets != None and data_EventsPerNjets != None and NonTT_EventsPerNjets != None: 
-            self.plot_MCcorr_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag)
+            self.plot_MCcorr_ClosureNjets(np.array(TT_EventsNjets), np.array(TT_EventsNjetsPred), np.array(data_EventsNjets), np.array(TT_NonTT_EventsNjetsPred), Njets, name, closureTag, bkgTag, valColor)
 
 
 
@@ -349,6 +350,8 @@ class Common_Calculations_Plotters:
         vr = ""
         if variable == "Sign_includingNonClosure":
             vr = "Significance"
+        elif variable == "NonClosure":
+            vr = "Non-Closure"
         else:
             vr = "%s"%(variable)
 
@@ -374,8 +377,6 @@ class Common_Calculations_Plotters:
         fig.savefig(self.outputDir+"/%s_%s_vs_Disc1Disc2_Njets%s_%s_%s.pdf"%(self.year, variable, Njets, name, self.channel), dpi=fig.dpi)
 
         plt.close(fig)
-
-
 
     # -------------------------------------------------
     # plot Disc1 vs Disc2 in each Region with all edges
@@ -557,7 +558,7 @@ class Common_Calculations_Plotters:
         ax.set_ylabel(ylabel, fontsize=14)
 
         iamLegend = plt.legend(ncol=2, loc='upper right', numpoints=1, frameon=False, fontsize=7, markerscale=0.8)
-        ax.text(0.15, 0.97, region, transform=ax.transAxes, color=valColor, fontsize=9, fontweight='bold',   va='center', ha='center')
+        ax.text(0.15, 0.97, region, transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center')
 
         ax = self.addCMSlabel(ax)
 
@@ -579,7 +580,7 @@ class Common_Calculations_Plotters:
     #   -- Data closure (Data with non-TT subtruction)
     #   -- MC corrected Data Closure
     # -------------------------------------------------------
-    def plot_MCcorr_ClosureNjets(self, bkgPred, bkgObs, dataPred, dataObs, Njets, name = '', closureTag = '', bkgTag = ''):
+    def plot_MCcorr_ClosureNjets(self, bkgPred, bkgObs, dataPred, dataObs, Njets, name = '', closureTag = '', bkgTag = '', valColor=None):
 
         x         = []; xUnc         = []
         bkg_obs   = []; bkg_obsUnc   = [] 
@@ -686,10 +687,29 @@ class Common_Calculations_Plotters:
 
                 ax1 = self.addCMSlabel(ax1)
 
-                ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label='Predicted MC',   xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=2, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=5.0)
-                ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label='Observed MC',    xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=2, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=5.0)
-                ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data', xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=2, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=5.0)
-                ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',  xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=2, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=5.0)
+                # put model, channel labels
+                md = ""
+                if self.model == "SYY":
+                    md = "Stealth SYY"
+                else:
+                    md = self.model
+
+                ch = ""
+                if self.channel == "0l":
+                    ch = "Fully-Hadronic"
+                elif self.channel == "1l":
+                    ch = "Semi-Leptonic"
+                elif self.channel == "2l":
+                    ch = "Fully-Leptonic"
+
+                textLabel = '\n'.join(( "%s"%(name), "%s"%(md), "%s"%(ch) ))
+                ax1.text(0.66, 0.70, textLabel, transform=ax.transAxes, color="black",  fontsize=9,  fontweight='normal', va='center', ha='left' )
+                #ax1.text(0.5, 0.95, name,      transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center') 
+
+                ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label=r'Predicted $t\bar{t}+jets$', xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=2, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=5.0)
+                ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label=r'Observed $t\bar{t}+jets$',  xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=2, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=5.0)
+                ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data',             xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=2, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=5.0)
+                ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',              xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=2, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=5.0)
                 ax1.set_xticklabels([])
                 ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
                 ax1.set_yscale('log')
@@ -699,9 +719,9 @@ class Common_Calculations_Plotters:
                 ax2 = fig.add_subplot(10, 1, (7,10))
                 fig.subplots_adjust(left=0.15, right=0.95)
                 ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5]) 
-                ax2.errorbar(x, MC_closureCorrection,     yerr=MC_closureCorrection_Unc,     xerr=xUnc, label='MC corr. = Obs. MC / Pred. MC',                            fmt='', capsize=0, color='limegreen',      lw=0, elinewidth=2, marker='o', markeredgecolor='limegreen',      markerfacecolor='limegreen',      markersize=5.0)
-                ax2.errorbar(x, DataClosure,              yerr=DataClosure_Unc,              xerr=xUnc, label='Data Closure = Pred. Data / Obs. Data',                    fmt='', capsize=0, color='crimson',        lw=0, elinewidth=2, marker='o', markeredgecolor='crimson',        markerfacecolor='crimson',        markersize=5.0)
-                ax2.errorbar(x, MC_corrected_DataClosure, yerr=MC_corrected_DataClosure_Unc, xerr=xUnc, label='Corr. Data Closure = (MC corr. * Pred. Data) / Obs. Data', fmt='', capsize=0, color='cornflowerblue', lw=0, elinewidth=2, marker='o', markeredgecolor='cornflowerblue', markerfacecolor='cornflowerblue', markersize=5.0)
+                ax2.errorbar(x, MC_closureCorrection,     yerr=MC_closureCorrection_Unc,     xerr=xUnc, label='Closure Correction',     fmt='', capsize=0, color='limegreen',      lw=0, elinewidth=2, marker='o', markeredgecolor='limegreen',      markerfacecolor='limegreen',      markersize=5.0)
+                ax2.errorbar(x, DataClosure,              yerr=DataClosure_Unc,              xerr=xUnc, label='Data Closure',           fmt='', capsize=0, color='crimson',        lw=0, elinewidth=2, marker='o', markeredgecolor='crimson',        markerfacecolor='crimson',        markersize=5.0)
+                ax2.errorbar(x, MC_corrected_DataClosure, yerr=MC_corrected_DataClosure_Unc, xerr=xUnc, label='Corrected Data Closure', fmt='', capsize=0, color='cornflowerblue', lw=0, elinewidth=2, marker='o', markeredgecolor='cornflowerblue', markerfacecolor='cornflowerblue', markersize=5.0)
                 ax2.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
                 ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
                 ax2.set_ylabel('Closure Correction [MC]', fontsize=11)
@@ -711,7 +731,7 @@ class Common_Calculations_Plotters:
                 plt.xlabel('Number of jets', fontsize=12)    
 
                 ax1.legend(loc='upper right', numpoints=1, frameon=False)
-                ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=6)
+                ax2.legend(loc='upper right', numpoints=1, frameon=False, fontsize=7)
     
                 fig.savefig('%s/%s_Njets_Region_A_PredVsActual_ClosureCorr_dataVsMC_%s_%s_%s_%s.pdf' % (self.outputDir, self.year, name, closureTag, bkgTag, self.channel))
    
