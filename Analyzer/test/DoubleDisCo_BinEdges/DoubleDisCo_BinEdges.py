@@ -13,6 +13,12 @@ class BinEdges():
         self.ttVar      = ttVar
         self.translator = translator
 
+        self.valColors = { "ABCD"   : "#5b3bd8",
+                           "Val_BD" : "#DDBB87",
+                           "Val_CD" : "#429c93", 
+                           "Val_D"  : "#990099",
+        }
+
     def run(self, disc1edge=None, disc2edge=None, fastMode=False, **kwargs):
 
         tablesPath     = kwargs["tablesPath"]["TT"]
@@ -291,12 +297,12 @@ class BinEdges():
         for region in regions:
 
             # usual closure
-            plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    None,                None,                   njets, name = region, closureTag = "b",  bkgTag = "TT")
+            plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    None,                None,                   njets, name = region, closureTag = "b",  bkgTag = "TT", valColor=self.valColors[region])
             #plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    EventsPerNjets[self.sig], None,              njets, name = region, closureTag = "sb", bkgTag = "TT")
             #plotter["NonTT"].make_allClosures(edgesPerNjets, None,                 EventsPerNjets["NonTT"], None,                None,                   njets, name = region, closureTag = "b",  bkgTag = "NonTT")
             #plotter["Data"].make_allClosures(edgesPerNjets,  None,                 None,                    None,                EventsPerNjets["Data"], njets, name = region, closureTag = "b",  bkgTag = "InitialData")
             #plotter[self.ttVar].make_ttVariances_allClosures(edgesPerNjets, EventsPerNjets["TT"], EventsPerNjets[self.ttVar], njets, name = region, closureTag = "b", varTag = self.ttVar)
-            plotter["Data"].make_allClosures(edgesPerNjets, EventsPerNjets["TT"], EventsPerNjets["NonTT"], None, EventsPerNjets["Data"], njets, name = region, closureTag = "b", bkgTag = "TTinData")
+            plotter["Data"].make_allClosures(edgesPerNjets, EventsPerNjets["TT"], EventsPerNjets["NonTT"], None, EventsPerNjets["Data"], njets, name = region, closureTag = "b", bkgTag = "TTinData", valColor=self.valColors[region])
 
             # data-MC closure
             #if region != "ABCD":
