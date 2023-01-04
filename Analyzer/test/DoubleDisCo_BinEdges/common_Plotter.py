@@ -557,11 +557,36 @@ class Common_Calculations_Plotters:
         ax.set_xlabel("Boundary Value", fontsize=14)
         ax.set_ylabel(ylabel, fontsize=14)
 
-        iamLegend = plt.legend(ncol=2, loc='upper right', numpoints=1, frameon=False, fontsize=7, markerscale=0.8)
-        ax.text(0.15, 0.97, region, transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center')
+        iamLegend = plt.legend(ncol=2, loc='upper right', numpoints=1, frameon=False, fontsize=8, markerscale=0.8)
+        ax.text(0.03, 0.96, region, transform=ax.transAxes, color=valColor, fontsize=12, fontweight='bold',   va='center', ha='left')
 
         ax = self.addCMSlabel(ax)
 
+        # put model, channel, njet labels
+        md = ""
+        if self.model == "SYY":
+            md = "Stealth SYY"
+        else:
+            md = self.model
+            
+        ch = ""
+        if self.channel == "0l":
+            ch = "Fully-Hadronic"
+        elif self.channel == "1l":
+            ch = "Semi-Leptonic"
+        elif self.channel == "2l":
+            ch = "Fully-Leptonic"
+        
+        nj = ""
+        if "incl" in Njets:
+            nj = "$N_{jets} \geq$ %s"%(Njets.replace("incl",""))
+        else:
+            nj = "$N_{jets}$ = %s"%(Njets)
+    
+        textLabel = '\n'.join(( "%s"%(md), "%s"%(ch), nj ))
+        ax.text(0.03, 0.85, textLabel, transform=ax.transAxes, color=valColor, fontsize=10, fontweight='normal',  va='center', ha='left')
+
+        #
         if lineY != None:
             l1 = ml.Line2D([0.0, 1.05], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
             ax.add_line(l1); 
