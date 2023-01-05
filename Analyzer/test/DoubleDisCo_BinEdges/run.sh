@@ -27,9 +27,7 @@
 # ----------------------------------------------------------------------
 
 
-#DATE=("11.10.2022")
 command=$1
-command2=$2 # channel option on the command line
 
 YEARS=("Run2UL") #"2016preVFP" "2016postVFP" "2017" "2018")
 #MODELS=("RPV" "SYY") 
@@ -64,9 +62,9 @@ for YEAR in ${YEARS[@]}; do
                     if [ $command == "BinEdges" ] || [ $command == "All" ]; then 
                         echo "running for BinEdges:---------------------------------"
 
-                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.85 --disc2edge 0.74 --plotVars2D --plotDisc1VsDisc2 --njets "8" "9" "10" "11" "12" "13incl"
-                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.70 --disc2edge 0.85 --plotVars2D --plotDisc1VsDisc2 --njets "7" "8" "9" "10" "11" "12incl"
-                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.69 --disc2edge 0.57 --plotVars2D --plotDisc1VsDisc2 --njets "6" "7" "8" "9" "10" "11incl"
+                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVars2D --plotDisc1VsDisc2 --njets "8" "9" "10" "11" "12" "13incl"
+                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVars2D --plotDisc1VsDisc2 --njets "7" "8" "9" "10" "11" "12incl"
+                        python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVars2D --plotDisc1VsDisc2 --njets "6" "7" "8" "9" "10" "11incl"
 
                     fi
                                                 
@@ -74,9 +72,9 @@ for YEAR in ${YEARS[@]}; do
                     if [ $command == "MCcorrectionFactor_TT" ] || [ $command == "All" ]; then 
                         echo "running for MCcorrectionFactor_TT:---------------------------------"
 
-                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.85 --disc2edge 0.74 --plotVarVsBoundary --fastMode --njets "8" "9" "10" "11" "12" "13incl"
-                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.70 --disc2edge 0.85 --plotVarVsBoundary --fastMode --njets "7" "8" "9" "10" "11" "12incl"
-                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.69 --disc2edge 0.57 --plotVarVsBoundary --fastMode --njets "6" "7" "8" "9" "10" "11incl"
+                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode --njets "8" "9" "10" "11" "12" "13incl"
+                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode --njets "7" "8" "9" "10" "11" "12incl"
+                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode --njets "6" "7" "8" "9" "10" "11incl"
 
                     fi
 
@@ -84,9 +82,9 @@ for YEAR in ${YEARS[@]}; do
                     if [ $command == "MCcorrectionFactor_TTvar" ] || [ $command == "All" ]; then 
                         echo "running for MCcorrectionFactor_TTvar:---------------------------------"
 
-                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.85 --disc2edge 0.74 --plotVarVsBoundary --fastMode --njets "8" "9" "10" "11" "12" "13incl"
-                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.70 --disc2edge 0.85 --plotVarVsBoundary --fastMode --njets "7" "8" "9" "10" "11" "12incl"
-                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.69 --disc2edge 0.57 --plotVarVsBoundary --fastMode --njets "6" "7" "8" "9" "10" "11incl"
+                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode --njets "8" "9" "10" "11" "12" "13incl"
+                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode --njets "7" "8" "9" "10" "11" "12incl"
+                        python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge ${DISC1} --disc2edge ${DISC2} --plotVarVsBoundary --fastMode --njets "6" "7" "8" "9" "10" "11incl"
 
                     fi
 
