@@ -263,7 +263,7 @@ class BinEdges():
                         if hist_key != self.sig:
                             plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosure"   )
                             #plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosureUnc")
-                            plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, -100.0,  100.0, -10.0, 10.0, njet, name=region, variable="Pull"         )
+                            plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, -500.0,  500.0, -15.0, 15.0, njet, name=region, variable="Pull"         )
 
                     EventsPerNjets[hist_key][njet] = allRegionsFinalEvents[hist_key]
                 

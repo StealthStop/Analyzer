@@ -358,16 +358,16 @@ class Common_Calculations_Plotters:
         textLabel = '\n'.join(( "%s in %s"%(vr,name), "%s"%(md), "%s"%(ch), nj ))
 
         if name == "ABCD":
-            ax.text(0.05, 0.10, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='left')
+            ax.text(0.05, 0.10, textLabel, transform=ax.transAxes, color="cadetblue", fontsize=9, fontweight='bold',  va='center', ha='left')
         if name == "Val_BD":
-            ax.text(0.95, 0.10, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='right')
+            ax.text(0.95, 0.10, textLabel, transform=ax.transAxes, color="cadetblue", fontsize=9, fontweight='bold',  va='center', ha='right')
         if name == "Val_CD":
-            ax.text(0.05, 0.90, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='left')
+            ax.text(0.05, 0.90, textLabel, transform=ax.transAxes, color="cadetblue", fontsize=9, fontweight='bold',  va='center', ha='left')
         if name == "Val_D":
-            ax.text(0.95, 0.90, textLabel, transform=ax.transAxes, color="maroon", fontsize=9, fontweight='bold',  va='center', ha='right')
+            ax.text(0.95, 0.90, textLabel, transform=ax.transAxes, color="cadetblue", fontsize=9, fontweight='bold',  va='center', ha='right')
 
         #
-        l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="maroon", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="maroon", linewidth=2, linestyle="dashed")
+        l1 = ml.Line2D([c1, c1], [0.0, 1.0], color="cadetblue", linewidth=2, linestyle="dashed"); l2 = ml.Line2D([0.0, 1.0], [c2, c2], color="cadetblue", linewidth=2, linestyle="dashed")
         ax.add_line(l1); 
         ax.add_line(l2)
 

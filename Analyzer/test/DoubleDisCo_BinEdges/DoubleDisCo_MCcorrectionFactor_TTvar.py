@@ -385,12 +385,13 @@ class MCcorrectionFactor_TTvar():
                     TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
                 # set y axis for higher njets bins
-                yMin = None; yMax = None
-                if int(njet.replace("incl", "")) > 8:
-                    yMin = 0.7; yMax = 1.7
+                #yMin = None; yMax = None
+                #if int(njet.replace("incl", "")) > 8:
+                #    yMin = 0.7; yMax = 1.7
 
-                else:
-                    yMin = 0.7; yMax = 1.3
+                #else:
+                #    yMin = 0.7; yMax = 1.3
+                yMin = 0.8; yMax = 1.4
 
                 # -------------------------------
                 # Make plots for all TT variances
