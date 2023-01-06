@@ -5,8 +5,9 @@ voms-proxy-init --voms cms --hours 168
 
 command=$1
 
-YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
-DATE=("30.11.2022")
+#YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
+YEARS=("2016postVFP" "2017")
+DATE=("withOptEdges_forFullStatusTalkSYY")
 
 
 for year in ${YEARS[@]}; do
@@ -54,14 +55,10 @@ for year in ${YEARS[@]}; do
     # -----------------
     if [ $command == "disco" ] || [ $command == "all" ]; then
         echo "running AnalyzeDoubleDisCo :---------------------------------"
-        python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_TT_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -n 5 --output ${year}_DisCo_outputs_dataMC_$DATE -s
+        python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_TT_skim, ${year}_TT_erdON_skim,${year}_TT_hdampUP_skim,${year}_TT_hdampDOWN_skim,${year}_TT_TuneCP5up_skim,${year}_TT_TuneCP5down_skim, ${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -n 4 --output ${year}_DisCo_outputs_0l_1l_2l_$DATE -s
 
     fi
 
-    if [ $command == "hadd" ]; then
-        echo "hadding AnalyzeDoubleDisCo :---------------------------------"
-        python hadder.py -d ${year}_TT_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -H Hadded_DoubleDisCo_$DATE -p ${year}_DisCo_outputs_dataMC_$DATE/output-files -y ${year} --haddOther -f
-    fi
 
     # -------------
     # make minitree
