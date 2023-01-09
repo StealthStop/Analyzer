@@ -276,11 +276,11 @@ class StackPlotter:
     # when going between ratio plot and pure stack with no ratio
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.025 / self.upperSplit
+        textSize = 0.028 / self.upperSplit
         space    = 0.015
 
-        bkgXmin = 0.60 if self.printNEvents else 0.65
-        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.02
+        bkgXmin = 0.70 if self.printNEvents else 0.755
+        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
         bkgXmax = 1.0-self.RightMargin-0.02
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
         
@@ -293,7 +293,7 @@ class StackPlotter:
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
 
-        sigXmin = self.LeftMargin+0.03
+        sigXmin = self.LeftMargin+0.26
         sigYmax = bkgYmax
         sigXmax = bkgXmin
         sigYmin = bkgYmax-nSigs*(textSize+space) 
@@ -352,6 +352,52 @@ class StackPlotter:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
         else:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+
+    def addExtraInfo(self, canvas, packedInfo):
+
+        njetStr = ""
+        if "Njets" in packedInfo:
+            njets = packedInfo.partition("Njets")[-1].partition("_")[0]
+    
+            op = "="
+            if "incl" in njets:
+                op = "#geq"
+
+            njetStr = "N_{ jets} %s %s"%(op, njets.replace("incl", ""))
+
+        modelStr = ""
+        if "RPV" in packedInfo:
+            modelStr = "RPV"
+        elif "SYY" in packedInfo:
+            modelStr = "Stealth SYY"
+
+        channelStr = ""
+        if "0l" in packedInfo:
+            channelStr = "Fully-Hadronic"
+        elif "1l" in packedInfo:
+            channelStr = "Semi-Leptonic"
+        elif "2l" in packedInfo:
+            channelStr = "Fully-Leptonic"
+
+        canvas.cd()
+
+        text = ROOT.TLatex()
+        text.SetNDC(True)
+
+        text.SetTextAlign(13)
+        text.SetTextSize(0.035)
+        text.SetTextFont(42)
+        text.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+        offset = 0.0
+        if modelStr != "":
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), modelStr)
+            offset += 0.05
+        if channelStr != "":
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), channelStr)
+            offset += 0.05
+        if njetStr != "":
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), njetStr)
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -535,7 +581,10 @@ class StackPlotter:
 
                         bkgLegend.AddEntry(h[1], lname, h[3])
 
-                    dummy.SetMaximum(yMax)
+                    if "max" not in hinfo["Y"]:
+                        dummy.SetMaximum(yMax)
+                    else:
+                        dummy.SetMaximum(hinfo["Y"]["max"])
                     dummy.SetMinimum(theMin)
                     dummy.Draw()
 
@@ -601,6 +650,7 @@ class StackPlotter:
                     if nSigLegend != 0: sigLegend.Draw("SAME")
 
                     self.addCMSlogo(canvas)
+                    self.addExtraInfo(canvas, newName)
 
                     # put the siginificance and cut label on the canvas
                     if self.printInfo:
