@@ -10,10 +10,10 @@ def get_canvas(year, channel):
     canvas = ROOT.TCanvas(year + "_MC_correction_ratio_" + channel, year + "_MC_correction_ratio_" + channel, 800, 800)
     canvas.cd()
     ROOT.gPad.SetGrid()
-    ROOT.gPad.SetTopMargin(0.1)
+    ROOT.gPad.SetTopMargin(0.06)
     ROOT.gPad.SetBottomMargin(0.1)
     ROOT.gPad.SetLeftMargin(0.12)
-    ROOT.gPad.SetRightMargin(0.1)
+    ROOT.gPad.SetRightMargin(0.03)
     ROOT.gPad.SetTicks()
 
     return canvas
@@ -37,10 +37,10 @@ def get_canvas_eachTTvar(year, ttvar, channel):
 
     canvas.cd(1)
     ROOT.gPad.SetPad(0.0, split, 1.0, 1.0)
-    ROOT.gPad.SetTopMargin(0.1 / upperSplit) 
+    ROOT.gPad.SetTopMargin(0.06 / upperSplit) 
     ROOT.gPad.SetBottomMargin(0)
     ROOT.gPad.SetLeftMargin(0.12)
-    ROOT.gPad.SetRightMargin(0.1)
+    ROOT.gPad.SetRightMargin(0.03)
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTicks()
 
@@ -49,7 +49,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
     ROOT.gPad.SetTopMargin(0)
     ROOT.gPad.SetBottomMargin(0.1 / lowerSplit)
     ROOT.gPad.SetLeftMargin(0.12)
-    ROOT.gPad.SetRightMargin(0.1)
+    ROOT.gPad.SetRightMargin(0.03)
     ROOT.gPad.SetGrid()
     ROOT.gPad.SetTicks()
 
@@ -60,7 +60,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
 # -----------------------------------
 def get_legend(textsize=0.02):
 
-    legend = ROOT.TLegend(0.2, 0.6, 0.5, 0.85, "", "trNDC")
+    legend = ROOT.TLegend(0.36, 0.65, 0.76, 0.92, "", "trNDC")
     legend.SetNColumns(2)
     legend.SetFillStyle(0)
     legend.SetTextSize(textsize)
@@ -73,7 +73,7 @@ def get_legend(textsize=0.02):
 # --------------------------------------
 def get_legend_eachTTvar(textsize=0.02):
 
-    legend = ROOT.TLegend(0.2, 0.78, 0.5, 0.88, "", "trNDC")
+    legend = ROOT.TLegend(0.36, 0.78, 0.71, 0.88, "", "trNDC")
     legend.SetFillStyle(0)
     legend.SetTextSize(textsize)
     legend.SetLineWidth(0)
@@ -94,10 +94,40 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
     mark.DrawLatex(LeftMargin, (1 - (TopMargin - 0.01)*SF), "CMS")
     mark.SetTextFont(52)
     mark.SetTextSize(0.038)
-    mark.DrawLatex(LeftMargin + 0.12, (1 - (TopMargin - 0.01)*SF), "Work in Progress")
+    mark.DrawLatex(LeftMargin + 0.11, (1 - (TopMargin - 0.01)*SF), "Work in Progress")
     mark.SetTextAlign(31)
+    mark.SetTextFont(42)
     mark.DrawLatex(1 - RightMargin, (1 - (TopMargin - 0.01)*SF), "%s (13 TeV)"%(year))
 
+# ---------------------
+# add extra information
+# ---------------------
+def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel):
+
+    canvas.cd(1)
+    text = ROOT.TLatex()
+    text.SetNDC(True)
+    text.SetTextAlign(13)
+    text.SetTextSize(textsize)
+    text.SetTextFont(42)
+    text.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+    name = ""
+    if   channel == "0l":
+        name = "Fully-Hadronic"
+    elif channel == "1l":
+        name = "Semi-Leptonic"
+    elif channel == "2l":
+        name = "Fully-Leptonic"
+
+    modelName = ""
+    if "SYY" in model:
+        modelName = "Stealth SYY"
+    else:
+        modelName = model
+        
+    text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.04, modelName)
+    text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.08, name)
 
 # ---------------------
 # main part of plotting
@@ -208,7 +238,7 @@ def main():
             canvas = get_canvas(year, label)
             
             # get legend
-            legend = get_legend()
+            legend = get_legend(0.028)
   
             draw = False 
 
@@ -250,14 +280,14 @@ def main():
                 hist.SetLineWidth(4)
                 #hist.SetLineColor(ttvar_colors[ttvar])
                 hist.SetLineColor(ROOT.TColor.GetColor(ttvar_colors[ttvar]))
-                hist.GetXaxis().SetTitle("N_{jets}")
+                hist.GetXaxis().SetTitle("N_{ jets}")
                 hist.GetYaxis().SetTitle(yTitle)
 
                 MCcorr_TTvar = f1.Get("%s_MCcorr_TTvar_%s"%(year,ttvar))
                 MCcorr_TTvar.SetTitle("")
                 MCcorr_TTvar.SetLineWidth(4)
                 MCcorr_TTvar.SetLineColor(ROOT.TColor.GetColor(ttvar_colors[ttvar]))
-                MCcorr_TTvar.GetXaxis().SetTitle("N_{jets}")
+                MCcorr_TTvar.GetXaxis().SetTitle("N_{ jets}")
                 MCcorr_TTvar.GetYaxis().SetTitle("MC Correction")
 
                 globalScale = 1.10
@@ -276,7 +306,7 @@ def main():
                 if ttvar != "TT":
                     canvas.cd()
                     if not draw:
-                        nEventsA_TT.GetYaxis().SetRangeUser(0.0, 2.0)
+                        nEventsA_TT.GetYaxis().SetRangeUser(0.0, 2.4)
                         nEventsA_TT.Draw("E2")
                         hist.Draw("hist SAME")
                         draw = True
@@ -293,7 +323,7 @@ def main():
                 # canvas & legend for each histogram
                 # ----------------------------------
                 canvas_each, scale = get_canvas_eachTTvar(year, ttvar, label)
-                legend_each = get_legend_eachTTvar(0.04)
+                legend_each = get_legend_eachTTvar(0.042)
 
                 MCcorr_TT.GetXaxis().SetLabelSize(xLabelSize * globalScale)
                 MCcorr_TT.GetYaxis().SetLabelSize(yLabelSize * globalScale)
@@ -317,7 +347,9 @@ def main():
 
                 legend_each.AddEntry(MCcorr_TT, "Nominal TT", "l")            
                 legend_each.AddEntry(MCcorr_TTvar, ttvar_names[ttvar], "l")            
-                addCMSlogo(canvas_each, year, TopMargin=0.1, LeftMargin=0.12, RightMargin=0.1, SF=1.0)
+                addCMSlogo(canvas_each, year, TopMargin=0.06, LeftMargin=0.12, RightMargin=0.03, SF=1.0)
+                addExtraInfo(canvas_each, 0.12, 0.91, 0.050, args.sig, label.partition("_")[0])
+
                 legend_each.Draw("SAME")
 
                 canvas_each.cd(2)
@@ -341,7 +373,9 @@ def main():
             # save canvas & legend including all histograms
             # ---------------------------------------------
             canvas.cd()
-            addCMSlogo(canvas, year, TopMargin=0.1, LeftMargin=0.12, RightMargin=0.1, SF=1.0)    
+            addCMSlogo(canvas, year, TopMargin=0.06, LeftMargin=0.12, RightMargin=0.03, SF=1.0)    
+            addExtraInfo(canvas, 0.12, 0.95, 0.035, args.sig, label.partition("_")[0])
+
             legend.Draw("SAME")
             canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
          
