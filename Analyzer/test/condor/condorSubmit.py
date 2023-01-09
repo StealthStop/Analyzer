@@ -102,10 +102,6 @@ def main():
     workingDir = options.outPath
     eosDir     = "%s/store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
 
-    #if os.path.isdir(workingDir):
-    #    print red("Job directory already exists and cannot proceed safely ! Exiting...")
-    #    exit(0)
-
     # Prepare the list of files to transfer
     mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)
     mvaFileName2016postVFP = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016postVFP.cfg" % repo)
@@ -202,6 +198,9 @@ def main():
         # create the directory
         if not os.path.isdir("%s/%s" %(workingDir, logsDir)):
             system('mkdir -p %s/%s' %(workingDir, logsDir))
+        else:
+            print red("Job directory \"%s/%s\" already exists and cannot proceed safely ! Exiting..."%(workingDir, logsDir))
+            exit(0)
    
         for s, n, e in sc.sampleList(ds):
 
