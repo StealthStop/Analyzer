@@ -28,6 +28,22 @@ def listPath(path, onEOS=False):
     for line in payload:
         line = str(line).rstrip("\n")
 
+        # Check the size, if clearly a broken file (< 512 bytes) do not count as "done"
+        if ".root" in line:
+
+            proc = subprocess.Popen(["xrdfs", "root://cmseos.fnal.gov", "stat", line], stdout=subprocess.PIPE)
+            info = proc.stdout.readlines()
+            size = None
+            for stat in info:
+                if "Size" in stat:
+                    size = stat.partition("Size:")[-1].replace(" ", "").rstrip()
+                    break
+                else:
+                    continue
+                    
+            if int(size) < 512:
+                continue
+
         # Ensure that each element in the list has its full path
         if not onEOS:
             line = path + "/" + line

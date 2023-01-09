@@ -102,9 +102,9 @@ def main():
     workingDir = options.outPath
     eosDir     = "%s/store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
 
-    if os.path.isdir(workingDir):
-        print red("Job directory already exists and cannot proceed safely ! Exiting...")
-        exit(0)
+    #if os.path.isdir(workingDir):
+    #    print red("Job directory already exists and cannot proceed safely ! Exiting...")
+    #    exit(0)
 
     # Prepare the list of files to transfer
     mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)
@@ -189,6 +189,7 @@ def main():
     fileParts.append("Universe             = vanilla\n")
     fileParts.append("Executable           = run_Analyzer_condor.sh\n")
     fileParts.append("Transfer_Input_Files = %s/%s.tar.gz, %s/exestuff.tar.gz\n" % (options.outPath,environ["CMSSW_VERSION"],options.outPath))
+    fileParts.append("Request_Memory       = 2.5 Gb\n")
     fileParts.append("x509userproxy        = $ENV(X509_USER_PROXY)\n\n")
 
     nFilesPerJob = options.numfile
