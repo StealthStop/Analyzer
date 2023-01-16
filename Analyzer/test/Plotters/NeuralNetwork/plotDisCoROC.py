@@ -26,15 +26,33 @@ class RocAndRoll:
         if signal[0] == "S":
             self.signal = "Stealth" + signal
 
+        self.signalShort = signal
+
         minNjet = 7; maxNjet = 12
+        if channel == "0l":
+            minNjet = 8
+            maxNjet = 13
+        elif channel == "2l":
+            minNjet = 6
+            maxNjet = 11
 
         self.Njets = [str(Njet) if Njet < maxNjet else str(Njet)+"incl" for Njet in range(minNjet, maxNjet+1)]
-        self.masses = ["300", "450", "550", "650", "850", "1200"]
-        self.massColors = {"300" : ROOT.kRed,       "450" : ROOT.kGreen+2,  "550"  : ROOT.kBlack,
-                           "650" : ROOT.kMagenta+2, "850" : ROOT.kOrange+1, "1200" : ROOT.kBlue
+        self.masses = ["350", "450", "550", "650", "850", "1150"]
+        self.massColors = {"350" : ROOT.kRed,       "450" : ROOT.kGreen+2,  "550"  : ROOT.kBlack,
+                           "650" : ROOT.kMagenta+2, "850" : ROOT.kOrange+1, "1150" : ROOT.kBlue
         }
 
-        self.njetsColors = {"7" : ROOT.kRed, "8" : ROOT.kGreen+2, "9" : ROOT.kBlack, "10" : ROOT.kMagenta+2, "11" : ROOT.kOrange+1, "11incl" : ROOT.kOrange+1, "12incl" : ROOT.kBlue}
+        colors = [ROOT.kRed,
+                  ROOT.kGreen+2,
+                  ROOT.kBlack,
+                  ROOT.kMagenta+2,
+                  ROOT.kOrange+1,
+                  ROOT.kBlue
+        ]
+
+        self.njetsColors = {}
+        for i in range(0, len(self.Njets)):
+            self.njetsColors[self.Njets[i]] = colors[i]
 
         self.getHistograms()
 
@@ -56,6 +74,45 @@ class RocAndRoll:
         else:
             return signal
 
+    def printLabels(self, c, disc, text):
+        c.cd()
+        label = ROOT.TLatex()
+        label.SetNDC(True)
+        label.SetTextAlign(13)
+        label.SetTextFont(42)
+        label.SetTextSize(0.040)
+        label.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+        channelStr = ""
+        if "0l" in self.channel:
+            channelStr = "Fully-Hadronic"
+        elif "1l" in self.channel:
+            channelStr = "Semi-Leptonic"
+        elif "2l" in self.channel:
+            channelStr = "Fully-Leptonic"
+
+        modelStr = ""
+        if "RPV" in self.signal:
+            modelStr = "RPV"
+        else:
+            modelStr = "Stealth SYY"
+
+        offset = 0.35
+        xpos = 0.70
+        label.DrawLatex(xpos, offset, "Disc. %d"%(disc))
+        offset -= 0.05
+
+        if modelStr != "":
+            label.DrawLatex(xpos, offset, modelStr)
+            offset -= 0.05
+        if channelStr != "":
+            label.DrawLatex(xpos, offset, channelStr)
+            offset -= 0.05
+
+        label.DrawLatex(xpos, offset, text)
+
+        label.Draw("SAME")
+
     def drawCMS(self, c):
         c.cd()
 
@@ -67,22 +124,15 @@ class RocAndRoll:
         mark.SetTextFont(61)
         mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
         mark.SetTextFont(52)
-        mark.SetTextSize(0.045)
+        mark.SetTextSize(0.040)
         if self.approved:
             mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.016), "Simulation Supplementary")
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.016), "work in progress")
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.016), "Work in Progress")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
-        if self.year == "2016":
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.015), "2016 (13 TeV)")
-        elif self.year == "2017":
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.015), "2017 (13 TeV)")
-        elif self.year == "2018":
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.015), "2018 (13 TeV)")
-        else:
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.015), "Run 2 (13 TeV)")
+        mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.015), "%s (13 TeV)"%(self.year))
 
     def getHistograms(self):
     
@@ -92,7 +142,7 @@ class RocAndRoll:
     
         for Njet in self.Njets:
     
-            self.histograms[Njet][self.background] = f.Get("h_DoubleDisCo_disc1_disc2_%s_Njets%s_ABCD"%(self.channel,Njet))
+            self.histograms[Njet][self.background] = f.Get("h_DoubleDisCo_%s_disc1_disc2_%s_Njets%s_ABCD"%(self.signalShort,self.channel,Njet))
             self.histograms[Njet][self.background].SetDirectory(0)
     
         f.Close()
@@ -101,7 +151,7 @@ class RocAndRoll:
             g = ROOT.TFile.Open(self.inputDir + "/%s_%s_2t6j_mStop-%s.root"%(self.year, self.signal, mass))
            
             for Njet in self.Njets:
-                self.histograms[Njet][self.signal+mass] = g.Get("h_DoubleDisCo_disc1_disc2_%s_Njets%s_ABCD"%(self.channel,Njet)) 
+                self.histograms[Njet][self.signal+mass] = g.Get("h_DoubleDisCo_%s_disc1_disc2_%s_Njets%s_ABCD"%(self.signalShort,self.channel,Njet)) 
                 self.histograms[Njet][self.signal+mass].SetDirectory(0)
     
     def getROCs(self, disc):
@@ -177,32 +227,19 @@ class RocAndRoll:
             ROOT.gPad.SetRightMargin(self.RightMargin)
 
             iamLegend = ROOT.TLegend(self.LeftMargin, (1.0-self.TopMargin+0.2*self.BottomMargin) / 1.2, 1.0-self.RightMargin, 1.0-self.TopMargin)
-            iamLegend.SetNColumns(4)
+            iamLegend.SetNColumns(3)
             iamLegend.SetTextSize(0.028)
-            iamLegend.AddEntry(None, self.printSignal(self.signal), "")
 
             jamLegend = ROOT.TLegend(0.65, self.BottomMargin+0.03, 1.0-self.RightMargin-0.03, 0.5)
             jamLegend.SetNColumns(1)
             jamLegend.SetTextSize(0.039)
 
-            count = 0
             for mass in self.masses:
 
                 self.ROCs[disc][Njet][self.signal+mass].SetLineColor(self.massColors[mass])
                 self.ROCs[disc][Njet][self.signal+mass].SetMarkerColor(self.massColors[mass])
     
-                count += 1
-
-                if count % 4 == 0:
-                    if count / 4 == 1:
-                        if "incl" in Njet:
-                            iamLegend.AddEntry(None, "N_{ jets} #geq %s"%(Njet.replace("incl","")), "")
-                        else:
-                            iamLegend.AddEntry(None, "N_{ jets} = %s"%(Njet), "")
-                    elif count / 4 > 1:
-                        iamLegend.AddEntry(None, "", "")
-                    count += 1
-                iamLegend.AddEntry(self.ROCs[disc][Njet][self.signal+mass], "m_{ #tilde{t}} = %s GeV"%(mass))
+                iamLegend.AddEntry(self.ROCs[disc][Njet][self.signal+mass], "m_{ #tilde{t}} = %s GeV"%(mass)) 
                 jamLegend.AddEntry(self.ROCs[disc][Njet][self.signal+mass], "AUC = %.3f"%(self.AUCs[disc][Njet][self.signal+mass]))
 
                 self.ROCs[disc][Njet][self.signal+mass].Draw("SAME ][")
@@ -215,8 +252,16 @@ class RocAndRoll:
     
             self.drawCMS(c)
 
+            njetLabel = None
+            if "incl" in Njet:
+                njetLabel = "N_{ jets} #geq %s"%(Njet.replace("incl",""))
+            else:
+                njetLabel = "N_{ jets} = %s"%(Njet)
+
+            self.printLabels(c, disc, njetLabel)
+
             iamLegend.Draw("SAME")
-            jamLegend.Draw("SAME")
+            #jamLegend.Draw("SAME")
     
             c.SaveAs(self.outputDir + "/ROC_%s_vs_TT_Njets%s_Disc%d_%s.pdf"%(self.signal,Njet,disc,self.channel))
 
@@ -234,28 +279,17 @@ class RocAndRoll:
             ROOT.gPad.SetRightMargin(self.RightMargin)
 
             iamLegend = ROOT.TLegend(self.LeftMargin, (1.0-self.TopMargin+0.2*self.BottomMargin) / 1.2, 1.0-self.RightMargin, 1.0-self.TopMargin)
-            iamLegend.SetNColumns(4)
+            iamLegend.SetNColumns(3)
             iamLegend.SetTextSize(0.034)
-            iamLegend.AddEntry(None, self.printSignal(self.signal), "")
 
             jamLegend = ROOT.TLegend(0.65, self.BottomMargin+0.03, 1.0-self.RightMargin-0.03, 0.5)
             jamLegend.SetNColumns(1)
             jamLegend.SetTextSize(0.039)
 
-            count = 0
             for Njet in self.Njets:
             
                 self.ROCs[disc][Njet][self.signal+mass].SetLineColor(self.njetsColors[Njet]) 
                 self.ROCs[disc][Njet][self.signal+mass].SetMarkerColor(self.njetsColors[Njet])
-
-                count += 1
-
-                if count % 4 == 0:
-                    if count / 4 == 1:
-                        iamLegend.AddEntry(None, "m_{ #tilde{t}} = %s GeV"%(mass), "")
-                    elif count / 4 > 1:
-                        iamLegend.AddEntry(None, "", "")
-                    count += 1
 
                 if "incl" in Njet:
                     iamLegend.AddEntry(self.ROCs[disc][Njet][self.signal+mass], "N_{ jets} #geq %s"%(Njet.replace("incl","")))
@@ -273,9 +307,10 @@ class RocAndRoll:
             l.Draw("SAME")
 
             self.drawCMS(c)
+            self.printLabels(c, disc, "m_{ #tilde{t}} = %s GeV"%(mass))
 
             iamLegend.Draw("SAME")
-            jamLegend.Draw("SAME")
+            #jamLegend.Draw("SAME")
 
             c.SaveAs(self.outputDir + "/ROC_%s%s_vs_TT_Disc%d_%s.pdf"%(self.signal,mass,disc,self.channel))
     

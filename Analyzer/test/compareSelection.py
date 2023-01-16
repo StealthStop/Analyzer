@@ -89,35 +89,25 @@ class comparePlotter:
     # when going between ratio plot and pure stack with no ratio
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.030 / self.upperSplit
-        nColumns = 1
-        maxBkgLegendFrac = 0.25 * (1.0 - self.TopMargin - self.BottomMargin)
+        textSize = 0.04 / self.upperSplit
+        space    = 0.04
 
-        tooManyBkgds = nBkgs * textSize * 1.2 > maxBkgLegendFrac
-        if tooManyBkgds:
-            nColumns = 1
-
-        space    = 0.015
-
-        bkgXmin = 0.70 - self.RightMargin
-        if tooManyBkgds:
-            bkgXmin = self.LeftMargin + 0.05
-            
+        bkgXmin = 0.755
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
-        bkgXmax = 1.0-self.RightMargin-0.01
-        bkgYmin = bkgYmax-(float(nBkgs)/float(nColumns+5))*(1.2*textSize+space)
+        bkgXmax = 1.0-self.RightMargin-0.02
+        bkgYmin = bkgYmax-nBkgs*(textSize+space)
+        
         bkgYFrac = (1.0-self.TopMargin-bkgYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
         bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
-        if tooManyBkgds:
-            bkgLegend.SetNColumns(nColumns)
 
-        sigXmin = self.LeftMargin+0.03
+        sigXmin = self.LeftMargin + 0.03
         sigYmax = bkgYmax
         sigXmax = bkgXmin
         sigYmin = bkgYmax-nSigs*(textSize+space) 
+
         sigYFrac = (1.0-self.TopMargin-sigYmin) / (1.0 - self.TopMargin - self.BottomMargin)
 
         sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
@@ -125,12 +115,13 @@ class comparePlotter:
         sigLegend.SetMargin(0.10)
         sigLegend.SetTextSize(textSize)
 
-        yMax = 1.0; factor = 1.0; power = 1.0
+        yMax = 1.0; factor = 1.05; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
             power = math.log10(theMax / theMin) * 3.0
 
-        theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac                           
-        #yMax = (theMax-theMin) * (0.95 - theFrac)**(-power) * factor
+        theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
+
+        yMax = (theMax-theMin) * (1.0 - sigYFrac)**(-power) * factor
 
         return bkgLegend, sigLegend, yMax
 
@@ -154,7 +145,7 @@ class comparePlotter:
         # elif (self.wip):
         #     mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Work in Progress")
         # else:
-        mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Preliminary")
+        mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Work in Progress")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -162,6 +153,38 @@ class comparePlotter:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
         else:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+
+    def addExtraInfo(self, canvas, packedInfo):
+
+        modelStr = ""
+        if "RPV" in packedInfo:
+            modelStr = "RPV"
+        elif "SYY" in packedInfo:
+            modelStr = "Stealth SYY"
+
+        channelStr = ""
+        if "0l" in packedInfo:
+            channelStr = "Fully-Hadronic"
+        elif "1l" in packedInfo:
+            channelStr = "Semi-Leptonic"
+
+        canvas.cd()
+
+        text = ROOT.TLatex()
+        text.SetNDC(True)
+
+        text.SetTextAlign(31)
+        text.SetTextSize(0.04)
+        text.SetTextFont(42)
+        text.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+        offset = 0.0
+        if modelStr != "":
+            text.DrawLatex(1 - self.RightMargin - 0.05, 1 - (self.TopMargin + 0.05 + offset), modelStr)
+            offset += 0.05
+        if channelStr != "":
+            text.DrawLatex(1 - self.RightMargin - 0.05, 1 - (self.TopMargin + 0.05 + offset), channelStr)
+            offset += 0.05
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -191,7 +214,7 @@ class comparePlotter:
                 theMax = 0.0
 
                 for sname, sinfo in self.samples.items():
-                    for selection, color in self.selections:
+                    for selection, _, _, _, color in self.selections:
                         newName = hname.replace("@", order).replace("?", "%s"%(selection))
                         #newName = hname.replace("?", "%s"%(selection))
 
@@ -202,28 +225,31 @@ class comparePlotter:
                             scale = Hobj.Integral()
                             if scale != 0.0: 
                                 Hobj.Scale(1.0 / scale)
-                                tempMax = Hobj.histogram.GetMaximum()/scale
+                                tempMax = Hobj.histogram.GetMaximum()
                             if tempMax > theMax:
                                 theMax = tempMax
 
                 # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
-                sigLegend, _, yMax = self.makeLegends(len(self.samples)*len(selection), len(self.samples)*len(selection), newInfo["logY"], theMin, theMax)
+                _, sigLegend, yMax = self.makeLegends(len(self.samples)*len(self.selections), len(self.samples)*len(self.selections), newInfo["logY"], theMin, theMax)
 
                 if newInfo["logY"]:
-                    yMax=5000
+                    yMax=80
+                    dummy.SetMaximum(yMax)
                 else:
-                    yMax=1
-                dummy.SetMaximum(yMax)
+                    #yMax=1
+                    dummy.SetMaximum(yMax)
                 dummy.SetMinimum(theMin)
                 dummy.Draw()
 
                 # Loop over each signal and get their respective histo
                 option = "HIST"; loption = "L"
                 for sname, sinfo in self.samples.items():
-                    for selection, color in self.selections:
+                    for selection, legName, msize, mstyle, color in self.selections:
                         newName = hname.replace("@", order).replace("?", "%s"%(selection))
                         #newName = hname.replace("?", "%s"%(selection))
                         newInfo["color"] = sinfo["color"] + color
+                        newInfo["msize"] = msize
+                        newInfo["mstyle"] = mstyle
                         
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
                         if "option"  not in sinfo: sinfo["option"]  = option 
@@ -234,7 +260,7 @@ class comparePlotter:
                             Hobj.Scale(1.0 / scale)
                         Hobj.histogram.Draw("same")
                         #sigLegend.AddEntry(Hobj.histogram, selection[1:].replace("_ABCD",""), "l")
-                        sigLegend.AddEntry(Hobj.histogram, selection[1:].replace("_ABCD","")+"_{}".format(sname), "l")
+                        sigLegend.AddEntry(Hobj.histogram, legName, "lp")
                         #nSigLegend, firstDraw = Hobj.Draw(canvas, False, firstDraw, nSigLegend, sigLegend)
 
                 if Hobj.IsGood():
@@ -244,6 +270,7 @@ class comparePlotter:
                 sigLegend.Draw("SAME")
 
                 self.addCMSlogo(canvas)
+                self.addExtraInfo(canvas, hname)
 
                 # Here we go into bottom panel if drawing the ratio
                 if not self.noRatio:
@@ -262,6 +289,7 @@ class comparePlotter:
                     ratio.Draw("E0P")
 
                 canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, hname.replace("?","").replace("@", order)))
+                canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, hname.replace("?","").replace("@", order)))
 
 if __name__ == "__main__":
 

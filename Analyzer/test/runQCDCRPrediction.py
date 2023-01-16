@@ -16,9 +16,9 @@ class ControlRegionProducer:
 
     def __init__(self, year, outpath, inpath, controlRegions, signalRegions, backgrounds, data, mainBG, inclBin):
 
-        self.year        = year
-        self.outpath     = outpath
-        self.inpath      = inpath        
+        self.year            = year
+        self.outpath         = outpath
+        self.inpath          = inpath        
         self.controlRegions  = controlRegions
         self.signalRegions   = signalRegions
         self.backgrounds     = backgrounds
@@ -60,7 +60,7 @@ class ControlRegionProducer:
         if self.approved:
             mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sSupplementary"%(simStr))
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sPreliminary"%(simStr))
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sWork in Progress"%(simStr))
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -69,6 +69,40 @@ class ControlRegionProducer:
         else:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
 
+    def addExtraInfo(self, canvas, packedInfo):
+
+        modelStr = ""
+        if "RPV" in packedInfo:
+            modelStr = "RPV"
+        elif "SYY" in packedInfo:
+            modelStr = "Stealth SYY"
+
+        channelStr = ""
+        if "0l" in packedInfo:
+            channelStr = "Fully-Hadronic"
+        elif "1l" in packedInfo:
+            channelStr = "Semi-Leptonic"
+        elif "2l" in packedInfo:
+            channelStr = "Fully-Leptonic"
+
+        canvas.cd(1)
+
+        text = ROOT.TLatex()
+        text.SetNDC(True)
+
+        text.SetTextAlign(31)
+        text.SetTextSize(0.045)
+        text.SetTextFont(42)
+        text.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+        offset = 0.0
+        if modelStr != "":
+            text.DrawLatex(1 - self.RightMargin - 0.03, 1 - (self.TopMargin + 0.09 + offset), modelStr)
+            offset += 0.05
+        if channelStr != "":
+            text.DrawLatex(1 - self.RightMargin - 0.03, 1 - (self.TopMargin + 0.09 + offset), channelStr)
+            offset += 0.05
+    
     def getCRData(self):
         print("-----Make small MC subtracted Data histograms from the CR-----")
         for hname, hinfo in self.controlRegions.items():
@@ -217,8 +251,10 @@ class ControlRegionProducer:
                 hCRPred.SetBinError(iBin, errorTot)
 
             hCRPredABCD   = self.dataQCDOnly.Clone("ABCD")
-            hCRPredABCD.SetMarkerColor(ROOT.kBlue)
-            hCRPredABCD.SetLineColor(ROOT.kBlue)
+            hCRPredABCD.SetMarkerColor(ROOT.TColor.GetColor("#006d2c"))
+            hCRPredABCD.SetMarkerStyle(8)
+            hCRPredABCD.SetMarkerSize(2)
+            hCRPredABCD.SetLineColor(ROOT.TColor.GetColor("#006d2c"))
             for iBin in range(1,hCRPredABCD.GetNbinsX()+1):
                 tf, etf   = self.getTFPerBin(tfABCDHisto, iBin)
                 val       = tf*hCRPredABCD.GetBinContent(iBin)
@@ -269,6 +305,9 @@ class ControlRegionProducer:
             max = qcdSRMC.histogram.GetMaximum()
             qcdSRMC.histogram.SetMaximum(max*25.0)
             qcdSRMC.histogram.SetMinimum(2e-2)
+            qcdSRMC.histogram.SetMarkerStyle(21)
+            qcdSRMC.histogram.SetMarkerSize(2)
+            qcdSRMC.histogram.GetYaxis().SetTitleOffset(1.2)
             qcdSRMC.histogram.Draw()
             #hCRPredUp.Draw("same")
             #hCRPredDown.Draw("same")
@@ -276,12 +315,15 @@ class ControlRegionProducer:
             hCRPredABCD.Draw("same")
             print(hCRPred.Integral(), qcdSRMC.histogram.Integral())
 
-            leg = ROOT.TLegend(0.2, 0.75, 0.5, 0.85)
+            # get model, channel labels
+            self.addExtraInfo(canvas,name)         
+
+            leg = ROOT.TLegend(0.2, 0.7, 0.5, 0.9)
             leg.SetBorderSize(0)
             leg.SetTextSize(0.05)
             #leg.AddEntry(hCRPred,     "Scaled QCD CR Data", "p")
-            leg.AddEntry(qcdSRMC.histogram,    "QCD SR MC",    "l")
-            leg.AddEntry(hCRPredABCD, "ABCD Scaled QCD CR Data", "p")
+            leg.AddEntry(qcdSRMC.histogram, "QCD_{MC}^{SR}",    "lp")
+            leg.AddEntry(hCRPredABCD,       "QCD_{Data}^{CR} (Scaled by TF)", "lp")
             leg.Draw()
 
             canvas.cd(2)
@@ -292,19 +334,22 @@ class ControlRegionProducer:
             ratio2.Divide(qcdSRMC.histogram)
             ratio.SetMaximum(2.2)
             ratio.SetMinimum(0.0)
+            ratio.SetMarkerColor(ROOT.kBlack)
+            #ratio.SetMarkerSize(1)
+            ratio.SetLineColor(ROOT.kBlack)
             ratio.GetYaxis().SetNdivisions(5, 5, 0)
-            ratio.GetYaxis().SetTitle("QCD Pred/QCD MC")
+            ratio.GetYaxis().SetTitle("QCD_{Data}^{CR} / QCD_{MC}^{SR}")
             ratio.GetYaxis().SetTitleSize(0.1)
-            ratio.GetXaxis().SetTitleSize(0.15)
-            ratio.GetYaxis().SetTitleOffset(0.8)
+            ratio.GetXaxis().SetTitleSize(0.12)
+            ratio.GetYaxis().SetTitleOffset(0.6)
             ratio.GetYaxis().SetLabelSize(0.1)
-            ratio.GetXaxis().SetLabelSize(0.1)
+            ratio.GetXaxis().SetLabelSize(0.12)
             ratio.Draw()
             #ratio2.Draw("same")
 
             self.addCMSlogo(canvas)
 
-            canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, name))
+            canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, name))
 
 if __name__ == "__main__":
 
@@ -312,7 +357,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--year",         dest="year",         help="which year",                  default="Run2UL"               )
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="output_QCDCRPrediction")
-    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="/uscms_data/d3/jhiltb/PO_Boxes/shared/hadd_Run2UL_DisCo_outputs_1Lv2.2_2Lv1.2_11.11.2022")
+    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="/uscms/home/jhiltb/nobackup/PO_Boxes/shared/DisCo_outputs_0l_1l_2l_optimizedBinEdges_forSYY_10.12.2022")
     parser.add_argument("--channel",      dest="channel",      help="0l, 1l, 2l",                  default="1l")
     parser.add_argument("--model",        dest="model",        help="Which NN model (RPV, SYY)",   default="RPV")
     args = parser.parse_args()
@@ -320,18 +365,18 @@ if __name__ == "__main__":
     inclBin = "12incl" if args.channel == "1l" else "13incl"
 
     controlRegions = [
-        {"h_njets_%s_%s_%s_QCDCR_ABCD"      %(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} (ABCD bins)",    "rebin" : 1,  "min" : 0,  "max" :    24}},},
+        {"h_njets_%s_%s_%s_QCDCR_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} in each A,B,C,D region", "rebin" : 1,  "min" : 0,  "max" : 24}},},
     ]
 
     signalRegions = {
-        "h_njets_%s_%s_%s_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}",    "rebin" : 1,  "min" : 0,  "max" :    24}},
+        "h_njets_%s_%s_%s_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}", "rebin" : 1, "min" : 0, "max" : 24}},
     }
 
     backgrounds = {
-        "TT_skim"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "QCD_skim"      : {"name" : "QCD multijet",    "color" : ROOT.kRed,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "TTX_skim"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "BG_OTHER_skim" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,                              "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "QCD"      : {"name" : "QCD multijet",    "color" : ROOT.TColor.GetColor("#85c2a3"), "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,                              "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "BG_OTHER" : {"name" : "Other",           "color" : 41,                              "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
     }
 
     data = {

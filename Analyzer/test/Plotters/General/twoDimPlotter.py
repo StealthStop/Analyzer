@@ -112,17 +112,25 @@ class Histogram:
 
             if "rebin" in self.info["X"]:
                 self.histogram.RebinX(self.info["X"]["rebin"])
+            if "rebin" in self.info["Y"]:
+                self.histogram.RebinY(self.info["Y"]["rebin"])
+
             self.histogram.GetXaxis().SetRangeUser(self.info["X"]["min"], self.info["X"]["max"])
             self.histogram.GetYaxis().SetRangeUser(self.info["Y"]["min"], self.info["Y"]["max"])
 
             self.histogram.SetMarkerSize(1.7)
 
             self.histogram.SetTitle("")
+
+            #self.histogram.GetXaxis().SetNdivisions(-4, "I")
+            #self.histogram.GetYaxis().SetNdivisions(-4, "I")
+
         else:
             self.histogram = -1
 
 # The StackPlotter class oversees the creation of all stack plots
 #     approved     : are these plots approved, then no "Preliminary"
+#     wip          : a work in progress, put to plot heading
 #     year         : corresponding year for the plots/inputs
 #     outpath      : where to put the plots, path is created if missing
 #     inpath       : where the input ROOT files are located
@@ -134,7 +142,7 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class TwoDimPlotter:
 
-    def __init__(self, approved, year, outpath, inpath, normalize, histograms, selections, backgrounds, signals, data, outrootname):
+    def __init__(self, approved, wip, year, outpath, inpath, normalize, histograms, selections, backgrounds, signals, data, outrootname):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -152,6 +160,7 @@ class TwoDimPlotter:
             os.makedirs(self.outpath)
 
         self.approved     = approved
+        self.wip          = wip
         self.normalize    = normalize
 
         # Customized numbers that are scaled
@@ -207,14 +216,12 @@ class TwoDimPlotter:
         mark.SetTextFont(52)
         mark.SetTextSize(0.040)
 
-        simStr = ""
-        if self.data == {}:
-            simStr = "Simulation "
-
         if self.approved:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sSupplementary"%(simStr))
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Supplementary")
+        elif self.wip:
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Work in Progress")
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "%sPreliminary"%(simStr))
+            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Preliminary")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -222,6 +229,52 @@ class TwoDimPlotter:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
         else:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+
+    def addExtraInfo(self, canvas, packedInfo):
+
+        njetStr = ""
+        if "Njets" in packedInfo:
+            njets = packedInfo.partition("Njets")[-1].partition("_")[0]
+    
+            op = "="
+            if "incl" in njets:
+                op = "#geq"
+
+            njetStr = "N_{ jets} %s %s"%(op, njets.replace("incl", ""))
+
+        modelStr = ""
+        if "RPV" in packedInfo:
+            modelStr = "RPV"
+        elif "SYY" in packedInfo:
+            modelStr = "Stealth SYY"
+
+        channelStr = ""
+        if "0l" in packedInfo:
+            channelStr = "Fully-Hadronic"
+        elif "1l" in packedInfo:
+            channelStr = "Semi-Leptonic"
+        elif "2l" in packedInfo:
+            channelStr = "Fully-Leptonic"
+
+        canvas.cd()
+
+        text = ROOT.TLatex()
+        text.SetNDC(True)
+
+        text.SetTextAlign(13)
+        text.SetTextSize(0.04)
+        text.SetTextFont(42)
+        text.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+        offset = 0.0
+        if channelStr != "":
+            text.DrawLatex(self.LeftMargin + 0.04, 1 - (self.TopMargin + 0.02 + offset), channelStr)
+            offset += 0.05
+        if modelStr != "":
+            text.DrawLatex(self.LeftMargin + 0.04, 1 - (self.TopMargin + 0.02 + offset), modelStr)
+            offset += 0.05
+        if njetStr != "":
+            text.DrawLatex(self.LeftMargin + 0.04, 1 - (self.TopMargin + 0.02 + offset), njetStr)
 
     def preprocess(self, container, hname, hinfo, theMax):
 
@@ -256,17 +309,15 @@ class TwoDimPlotter:
             canvas = self.makeCanvas(hinfo["logX"], hinfo["logY"], hinfo["logZ"])
             canvas.cd()
 
-            Hobj.histogram.SetMaximum(theMax)
             Hobj.histogram.SetContour(255)
             Hobj.Draw(canvas)
             self.addCMSlogo(canvas)
+            self.addExtraInfo(canvas, hname)
             saveName = "%s/%s_%s_%s"%(self.outpath, self.year, name, hname)
             canvas.SaveAs(saveName+".pdf")
             canvas.SaveAs(saveName+".gif")
 
             self.WriteHisto(Hobj, name)
-
-            return Hobj, canvas, saveName
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -285,53 +336,31 @@ class TwoDimPlotter:
             for order in orders:
                 for selection in self.selections:
          
-                    newName = hname.replace("@", "%d"%(order)).replace("?", "%s"%(selection))
+                    newName = hname.replace("@", str(order)).replace("?", selection)
                     newInfo = copy.deepcopy(hinfo)
-                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", "%d"%(order))
+                    newInfo["X"]["title"] = hinfo["X"]["title"].replace("@", str(order))
 
                     theMax = 0.0
                     theMax = self.preprocess(self.data,        newName, newInfo, theMax)
                     theMax = self.preprocess(self.backgrounds, newName, newInfo, theMax)
                     theMax = self.preprocess(self.signals,     newName, newInfo, theMax)
 
-                    hDat, canvas, saveName = self.plotLoop(self.data,        newName, newInfo, theMax)
-                    hBac,      _,        _ = self.plotLoop(self.backgrounds, newName, newInfo, theMax)
+                    self.plotLoop(self.data,        newName, newInfo, theMax)
+                    self.plotLoop(self.backgrounds, newName, newInfo, theMax)
                     self.plotLoop(self.signals,     newName, newInfo, theMax)
-
-                    hDat.Divide(hBac)
-                    hDat.histogram.SetMinimum(0.0)
-                    hDat.histogram.SetMaximum(2.0)
-                    self.WriteHisto(hDat, "Ratio")
-                    hDat.histogram.SetTitle("")
-                    hDat.Draw(canvas)
-                    canvas.SaveAs(saveName+"_Ratio.pdf")
-                    canvas.SaveAs(saveName+"_Ratio.gif")
-                    
-                    for i in range(0, hDat.histogram.GetYaxis().GetNbins()+1):
-                        h = copy.deepcopy(hDat)
-                        n = "px{}".format(i-1)
-                        h.histogram = hDat.histogram.ProjectionX(n, i, i)
-                        h.histogram.SetMinimum(0.0)
-                        h.histogram.SetMaximum(2.0)
-                        self.WriteHisto(h, n)
-                        canvas = self.makeCanvas(hinfo["logX"], hinfo["logY"], hinfo["logZ"])
-                        canvas.cd()
-                        h.Draw(canvas)
-                        canvas.SaveAs(saveName+n+".pdf")
-                        canvas.SaveAs(saveName+n+".gif")
-                        
 
 if __name__ == "__main__":
 
     usage = "usage: %twoDimPlotter [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--approved",     dest="approved",     help="Plot is approved",       default=False,  action="store_true") 
-    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity", default=False,  action="store_true") 
-    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",     default="NULL", required=True)
-    parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",     default="NULL", required=True)
-    parser.add_argument("--year",         dest="year",         help="which year",                             required=True)
-    parser.add_argument("--options",      dest="options",      help="options file",           default="twoDimPlotter_aux", type=str)
-    parser.add_argument("--outrootname",  dest="outrootname",  help="outrootname",            default=None)
+    parser.add_argument("--approved",     dest="approved",     help="Plot is approved",         default=False,  action="store_true") 
+    parser.add_argument("--wip",          dest="wip",          help="Plot is work in progress", default=False,  action="store_true") 
+    parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",   default=False,  action="store_true") 
+    parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",       default="NULL", required=True)
+    parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",       default="NULL", required=True)
+    parser.add_argument("--year",         dest="year",         help="which year",                               required=True)
+    parser.add_argument("--options",      dest="options",      help="options file",             default="twoDimPlotter_aux", type=str)
+    parser.add_argument("--outrootname",  dest="outrootname",  help="outrootname",              default=None)
     args = parser.parse_args()
 
     # The auxiliary file contains many "hardcoded" items
@@ -349,5 +378,5 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = TwoDimPlotter(args.approved, args.year, args.outpath, args.inpath, args.normalize, histograms, selections, backgrounds, signals, data, args.outrootname)
+    plotter = TwoDimPlotter(args.approved, args.wip, args.year, args.outpath, args.inpath, args.normalize, histograms, selections, backgrounds, signals, data, args.outrootname)
     plotter.makePlots()
