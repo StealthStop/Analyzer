@@ -27,6 +27,7 @@
 #include <utility>
 #include <vector>
 #include <fstream>
+#include <cassert>
 
 
 namespace detail {
@@ -394,13 +395,13 @@ class SelectionCut : public Cut {
             std::size_t j1_index = data.j1_index;
             std::size_t j2_index = data.j2_index;
 
-            auto& firstLargestPt = Jets[j1_index];
-            auto& secondLargestPt = Jets[j2_index];
+            auto& firstLargestPt = Jets.at(j1_index);
+            auto& secondLargestPt = Jets.at(j2_index);
             auto jetpass = [](const utility::LorentzVector &j, double t21) {
                 return j.Pt() > 400 && std::abs(j.Eta()) < 2.0 && t21 < 0.75;
             };
-            double largestTau21 = nsr21[j1_index];
-            double secondTau21 = nsr21[j2_index];
+            double largestTau21 = nsr21.at(j1_index);
+            double secondTau21 = nsr21.at(j2_index);
             if ((jetpass(firstLargestPt, largestTau21) &&
                         jetpass(secondLargestPt, secondTau21))&& data.Ht > 900) {
                 value = possible_values[0];
@@ -429,8 +430,8 @@ class TauCut : public Cut {
             auto &nsr42 = data.nsr42;
             std::size_t j1_index = data.j1_index;
             std::size_t j2_index = data.j2_index;
-            if (nsr43[j1_index] < 0.8 && nsr43[j2_index] < 0.8 &&
-                    nsr42[j1_index] < 0.5 && nsr42[j2_index] < 0.5 ){
+            if (nsr43.at(j1_index) < 0.8 && nsr43.at(j2_index) < 0.8 &&
+                    nsr42.at(j1_index) < 0.5 && nsr42.at(j2_index) < 0.5 ){
                 passed = true;
                 value = possible_values[0];
             } else {
@@ -454,8 +455,8 @@ class MassRatioCut : public Cut {
             //auto &nsr42 = data.nsr42;
             std::size_t j1_index = data.j1_index;
             std::size_t j2_index = data.j2_index;
-            auto& firstLargestPt = Jets[j1_index];
-            auto& secondLargestPt = Jets[j2_index];
+            auto& firstLargestPt = Jets.at(j1_index);
+            auto& secondLargestPt = Jets.at(j2_index);
             auto mass_ratio = std::abs(firstLargestPt.M() - secondLargestPt.M()) /
                 (firstLargestPt.M() + secondLargestPt.M());
             data.mass_ratio=mass_ratio;
@@ -474,11 +475,15 @@ class EtaCut : public Cut {
     public:
         EtaCut() : Cut("EtaCut", false, {"EtaPass", "NotSig"}) {}
         void calculate(SliceData &data) override {
+            if (!data.has_2_jets) {
+                value = possible_values[1];
+                return;
+            }
             auto &Jets = data.Jets;
             std::size_t j1_index = data.j1_index;
             std::size_t j2_index = data.j2_index;
-            auto& firstLargestPt = Jets[j1_index];
-            auto& secondLargestPt = Jets[j2_index];
+            auto& firstLargestPt = Jets.at(j1_index);
+            auto& secondLargestPt = Jets.at(j2_index);
             if ( data.has_2_jets && std::abs(firstLargestPt.Eta() - secondLargestPt.Eta()) < 1.0) {
                 passed = true;
                 value = possible_values[0];
@@ -1123,13 +1128,14 @@ void Analyze2W::Loop(NTupleReader &tr, double, int maxevents, bool) {
         }
         for (std::size_t i = 0; i < std::min(MAX_JETS, std::size(Jets)); ++i) {
             auto& jet = Jets[i];
-            FillMain("Jet_" + std::to_string(i) + "_E", jet.E());
-            FillMain("Jet_" + std::to_string(i) + "_P", jet.P());
-            FillMain("Jet_" + std::to_string(i) + "_Pt",jet.Pt());
-            FillMain("Jet_" + std::to_string(i) + "_Phi",jet.Phi());
-            FillMain("Jet_" + std::to_string(i) + "_Eta",jet.Eta());
+            const std::string jetnum = std::to_string(i);
+            FillMain("Jet_" + jetnum + "_E", jet.E());
+            FillMain("Jet_" + jetnum + "_P", jet.P());
+            FillMain("Jet_" + jetnum + "_Pt",jet.Pt());
+            FillMain("Jet_" + jetnum + "_Phi",jet.Phi());
+            FillMain("Jet_" + jetnum + "_Eta",jet.Eta());
         }
-        my_histos.fill("EventCounter", 1, 1);
+        my_histos.fill("EventCounter", 1.0, eventCounter);
     }
 }
 

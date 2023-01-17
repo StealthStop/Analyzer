@@ -45,11 +45,12 @@ def checkNumEvents(nEvents, rootFile, sampleCollection, log):
          f.cd()
          try:
               h = f.Get("EventCounter")
-              nNeg = h.GetBinContent(1)
+              nNeg = h.GetBinContent(0)
               nPos = h.GetBinContent(2)
               diff = nEvents-(nPos-nNeg)
+              diff = nEvents-h.GetEntries()
               if abs(diff) > 5.0:
-                   message = "Error: Sample: "+sampleCollection+" Expected nEvents:  "+str(nEvents)+" EventCounter nEvents: "+str(nPos-nNeg)+" = "+str(nPos)+" "+str(-nNeg)
+                   message = "Error: Sample: "+sampleCollection+" Expected nEvents:  "+str(nEvents)+" EventCounter nEvents: "+str(h.GetEntires())+" = "+str(nPos)+" "+str(-nNeg)
                    log.append(message)
                    print red("----------------------------------------------------------------------------------------------------------")
                    print red("Num events in \"EventCounter\" doesn't match the number in \"sampleSet.cfg\"")
@@ -200,6 +201,7 @@ def main():
                     outfile = "%s/%s.root" % (outDir, cleanName)
                     command = "hadd %s %s/%s.root %s" % (haddArgs, outDir, cleanName, files)
                     if not options.noHadd: subprocess.call(command.split(" "))
+                    print("HERE")
                     log = checkNumEvents(nEvents=float(sample[2]), rootFile=outfile, sampleCollection=cleanName, log=log)
 
                     individualSamples += " %s/%s.root"%(outDir, cleanName)
