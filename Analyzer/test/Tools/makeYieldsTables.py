@@ -43,6 +43,7 @@ class Yields:
                           "DYJetsToLL_M-50" : "DY + jets",         
                           "Diboson"         : "Diboson",           
                           "Triboson"        : "Triboson",          
+                          "ST"              : "Single top",          
                           "TTZToLLNuNu_M-10": "$t\\bar{t}Z(\\ell\\nu\\ell\\nu)$ + jets",          
                           "TTZToQQ"         : "$t\\bar{t}Z(qq)$ + jets",          
                           "ttHJetToNonbb"   : "$t\\bar{t}H(\\text{non-}bb)$ + jets",   
@@ -331,7 +332,7 @@ if __name__ == "__main__":
 
     # Now that all backgrounds have been read in
     # Calculate and store the same information for total background
-    theYields.processHisto("AllBkg")
+    theYields.processHisto("AllBkg", inclusiveBin)
 
     # Make per-Njets yields and fractions LaTeX tables
     theYields.makeTable("%s_Yields"%(args.year))
