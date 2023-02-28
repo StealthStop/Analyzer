@@ -16,7 +16,7 @@ import numpy as np
 # ----------------------------------------------------------------------------------
 class All_Regions:
 
-    def __init__(self, hist=None, Sig=None, ttVar=None, disc1Edge=None, disc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=False, **kwargs):
+    def __init__(self, hist=None, Sig=None, ttVar=None, disc1Edge=None, disc2Edge=None, leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=False, step=None, **kwargs):
 
         self.hist           = hist
         self.Sig            = Sig
@@ -27,6 +27,7 @@ class All_Regions:
         self.rightBoundary  = round(float(rightBoundary), 2)  if rightBoundary  != None else None
         self.topBoundary    = round(float(topBoundary), 2)    if topBoundary    != None else None
         self.bottomBoundary = round(float(bottomBoundary), 2) if bottomBoundary != None else None
+        self.step           = step
         self.fastMode       = fastMode
 
         self.extraArgs = kwargs
@@ -59,10 +60,10 @@ class All_Regions:
     def cal_Significance(self, nSigEvents, nTTEvents, sys=0.3):
         
         if nSigEvents == 0.0:
-            if nTTEvents == 0.0:
+            if nTTEvents <= 0.0:
                 return -999.0
             return 0.0
-        elif nTTEvents == 0.0:
+        elif nTTEvents <= 0.0:
             return -999.0
     
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 )**0.5
@@ -76,10 +77,10 @@ class All_Regions:
     def cal_Significance_includingNonClosure(self, nSigEvents, nTTEvents, nonClosure=None, sys=0.3):
         
         if nSigEvents == 0.0:
-            if nTTEvents == 0.0:
+            if nTTEvents <= 0.0:
                 return -999.0
             return 0.0
-        elif nTTEvents == 0.0:
+        elif nTTEvents <= 0.0:
             return -999.0
 
         significance = nSigEvents / ( nTTEvents + (sys * nTTEvents)**2.0 + (nonClosure * nTTEvents)**2.0 )**0.5
@@ -93,10 +94,10 @@ class All_Regions:
     def cal_Significance_nonSimplified(self, nSigEvents, nTTEvents, sys=0.3):
         
         if nSigEvents == 0.0:
-            if nTTEvents == 0.0:
+            if nTTEvents <= 0.0:
                 return -999.0
             return 0.0
-        elif nTTEvents == 0.0:
+        elif nTTEvents <= 0.0:
             return -999.0
 
         b = nTTEvents;     s = nSigEvents
@@ -114,7 +115,7 @@ class All_Regions:
     # -------------------
     def cal_Closure(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
     
-        if nEvents_A == 0.0 or nEvents_D == 0.0:
+        if nEvents_A <= 0.0 or nEvents_D <= 0.0:
             return -999.0, -999.0
         
         Closure = (nEvents_B * nEvents_C) / (nEvents_A * nEvents_D) 
@@ -131,7 +132,7 @@ class All_Regions:
     # -----------------------
     def cal_NonClosure(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
     
-        if nEvents_A == 0.0 or nEvents_D == 0.0:
+        if nEvents_A <= 0.0 or nEvents_D <= 0.0:
             return -999.0, -999.0
         
         nonClosure = abs(1.0 - ( (nEvents_B * nEvents_C) / (nEvents_A * nEvents_D) ) )
@@ -148,7 +149,7 @@ class All_Regions:
     # ------------------------------
     def cal_ClosureCorr(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
     
-        if nEvents_B == 0.0 or nEvents_C == 0.0:
+        if nEvents_B <= 0.0 or nEvents_C <= 0.0:
             return -999.0, -999.0
         
         closureCorr = (nEvents_A * nEvents_D) / (nEvents_B * nEvents_C)
@@ -157,7 +158,7 @@ class All_Regions:
                         + ( ( nEvents_D * nEventsErr_A ) / ( nEvents_B * nEvents_C) )**2.0 
                         + ( ( nEvents_D * nEvents_A * nEventsErr_A ) / ( nEvents_B**2.0 * nEvents_C ) )**2.0 
                         + ( ( nEvents_D * nEvents_A * nEventsErr_C ) / ( nEvents_B * nEvents_C**2.0 ) )**2.0 )**0.5
-    
+   
         return closureCorr, closureCorrUnc
 
     # ------------------------
@@ -165,7 +166,7 @@ class All_Regions:
     # ------------------------
     def cal_Pull(self, nEvents_A, nEvents_B, nEvents_C, nEvents_D, nEventsErr_A, nEventsErr_B, nEventsErr_C, nEventsErr_D):
 
-        if nEvents_D == 0.0 or nEventsErr_A == 0.0:
+        if nEvents_D <= 0.0 or nEventsErr_A <= 0.0:
             return -999.0, -999.0
 
         pull    = ( ( ((nEvents_B * nEvents_C) / nEvents_D) - nEvents_A ) / nEventsErr_A )
@@ -196,8 +197,12 @@ class All_Regions:
         if lastXBin > totalXbins: lastXBin = totalXbins + 1
         if lastYBin > totalYbins: lastYBin = totalYbins + 1
 
-        nXBins = range(firstXBin+1, lastXBin)
-        nYBins = range(firstYBin+1, lastYBin)
+        if self.step is not None:
+            nXBins = range(firstXBin, lastXBin, int(round(totalXbins * self.step)))
+            nYBins = range(firstYBin, lastYBin, int(round(totalYbins * self.step)))
+        else:
+            nXBins = range(firstXBin + 1, lastXBin)
+            nYBins = range(firstYBin + 1, lastYBin)
 
         if not self.fastMode:
             for key, h1 in self.hist.items():
@@ -273,27 +278,27 @@ class All_Regions:
                     #           |
                     #    
                     # first   xBin   last
-                    if startOfScan:
-                        nEvents_A = h1.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nEventsErr_A)
-                        nEvents_B = h1.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nEventsErr_B)
-                        nEvents_C = h1.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nEventsErr_C)
-                        nEvents_D = h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D)
+                    #if startOfScan:
+                    nEvents_A = h1.IntegralAndError(xBin,      lastXBin, yBin,      lastYBin, nEventsErr_A)
+                    nEvents_B = h1.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nEventsErr_B)
+                    nEvents_C = h1.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nEventsErr_C)
+                    nEvents_D = h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D)
 
-                        startOfScan = False
+                    #    startOfScan = False
 
-                    else:
-                        incrementBD = h1.IntegralAndError(firstXBin, xBin-1,   yBin-1, yBin-1, nEventsErr_A)
-                        incrementAC = h1.IntegralAndError(xBin,      lastXBin, yBin-1, yBin-1, nEventsErr_B)
+                    #else:
+                    #    incrementBD = h1.IntegralAndError(firstXBin, xBin-1,   yBin-1, yBin-1, nEventsErr_A)
+                    #    incrementAC = h1.IntegralAndError(xBin,      lastXBin, yBin-1, yBin-1, nEventsErr_B)
                    
-                        nEvents_A -= incrementAC
-                        nEvents_B -= incrementBD
-                        nEvents_C += incrementAC
-                        nEvents_D += incrementBD
+                    #    nEvents_A -= incrementAC
+                    #    nEvents_B -= incrementBD
+                    #    nEvents_C += incrementAC
+                    #    nEvents_D += incrementBD
 
-                    self.add("nEventsA", xBinKey, yBinKey, (math.ceil(round(nEvents_A, 10)), math.ceil(round(nEvents_A, 10))**0.5), key)
-                    self.add("nEventsB", xBinKey, yBinKey, (math.ceil(round(nEvents_B, 10)), math.ceil(round(nEvents_B, 10))**0.5), key)
-                    self.add("nEventsC", xBinKey, yBinKey, (math.ceil(round(nEvents_C, 10)), math.ceil(round(nEvents_C, 10))**0.5), key)
-                    self.add("nEventsD", xBinKey, yBinKey, (math.ceil(round(nEvents_D, 10)), math.ceil(round(nEvents_D, 10))**0.5), key)
+                    self.add("nEventsA", xBinKey, yBinKey, (nEvents_A, nEventsErr_A.value), key)
+                    self.add("nEventsB", xBinKey, yBinKey, (nEvents_B, nEventsErr_B.value), key)
+                    self.add("nEventsC", xBinKey, yBinKey, (nEvents_C, nEventsErr_C.value), key)
+                    self.add("nEventsD", xBinKey, yBinKey, (nEvents_D, nEventsErr_D.value), key)
 
     # -------------------------------------------------------------------------------
     # Region by region calculation of signal fraction, closure Err, significance, etc
@@ -571,8 +576,8 @@ class All_Regions:
             significance_TT = self.cal_Significance(nSigEvents_A, nTTEvents_A)**2.0
             significance_TT = significance_TT**0.5
 
-            D = ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 )**0.5
             if nTTEvents_A > 0.0:
+                D = ( nTTEvents_A + (bkgNormUnc * nTTEvents_A)**2.0 )**0.5
                 significanceUnc_TT = ( (nSigEventsErr_A / D )**2.0 + ( (nSigEvents_A * nTTEventsErr_A) * (1 + (2.0 * nTTEvents_A * bkgNormUnc**2.) / 2 * D**3.0) ) )**0.5
  
             self.add("significance", disc1Key, disc2Key, (significance_TT, significanceUnc_TT), "TT") 

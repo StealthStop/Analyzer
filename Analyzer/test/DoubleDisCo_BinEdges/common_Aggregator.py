@@ -110,7 +110,7 @@ class Aggregator:
     # Get variables for each boundary
     # -------------------------------
     def getPerBoundary(self, variable, **kwargs):
-        
+
         payload = {}
         newKwargs = kwargs.copy()
         sample = newKwargs.pop("sample", "None")
@@ -119,9 +119,9 @@ class Aggregator:
 
             masterKey = self.makeKey(variable = variable, boundary = boundary, **kwargs)
             chefKey   = self.makeKey(variable = "sigFractionA", boundary = boundary, **newKwargs)
-
+            
             if masterKey not in self.data:
-                #print("Skipping key \"%s\""%(masterKey))
+                print("Skipping key \"%s\""%(masterKey))
                 continue
 
             # this statement for data and data/MC closure correction

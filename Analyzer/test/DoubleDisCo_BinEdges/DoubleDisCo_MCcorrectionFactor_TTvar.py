@@ -17,7 +17,7 @@ def naturalSort(unsortedList):
 
 class MCcorrectionFactor_TTvar():
 
-    def __init__(self, year, channel, model, mass, translator, edges):
+    def __init__(self, year, channel, model, mass, translator, edges, hack=False):
 
         self.year        = year
         self.channel     = channel
@@ -25,25 +25,35 @@ class MCcorrectionFactor_TTvar():
         self.mass        = mass
         self.translator  = translator
         self.edges       = edges
+        self.hack        = hack
 
-        self.ttVarsModel = [
-                            "TT_fsrUp",            
-                            "TT_fsrDown",          
-                            "TT_isrUp",            
-                            "TT_isrDown",          
-                            "TT_hdampUP",          
-                            "TT_hdampDOWN",  
-                            "TT_erdON",      
-                            "TT_TuneCP5up",
-                            "TT_TuneCP5down",
-        ]
+        if self.hack:
+            self.ttVarsModel = [
+                                "TT",
+            ]
 
-        self.ttVarsDetect = [
-                             "TT_JECup",            
-                             "TT_JECdown",          
-                             "TT_JERup",            
-                             "TT_JERdown",          
-        ]
+            self.ttVarsDetect = []
+
+        else:
+            self.ttVarsModel = [
+                                "TT",
+                                "TT_fsrUp",            
+                                "TT_fsrDown",          
+                                "TT_isrUp",            
+                                "TT_isrDown",          
+                                "TT_hdampUP",          
+                                "TT_hdampDOWN",  
+                                "TT_erdON",      
+                                "TT_TuneCP5up",
+                                "TT_TuneCP5down",
+            ]
+
+            self.ttVarsDetect = [
+                                "TT_JECup",            
+                                "TT_JECdown",          
+                                "TT_JERup",            
+                                "TT_JERdown",          
+            ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect
 
@@ -137,10 +147,20 @@ class MCcorrectionFactor_TTvar():
         # ---------------
         maxCorrData_ttSyst = maximumCorrectedData_ttSyst(tablesPath, self.channel, self.year, "TT_TTvar_Syst", self.sig)
 
+        if self.hack:
+            if self.channel == "0l":
+                someNjets = ["8", "9"]
+            elif self.channel == "1l":
+                someNjets = ["7", "8"]
+            elif self.channel == "2l":
+                someNjets = ["6", "7"]
+        else:
+            someNjets = njets
+
         # ---------------
         # loop over njets
         # --------------- 
-        for njet in njets: 
+        for njet in someNjets: 
 
             hist_lists = {}
 
@@ -268,7 +288,7 @@ class MCcorrectionFactor_TTvar():
         # -------------------
         # loop over the njets
         # -------------------
-        for njet in njets:
+        for njet in someNjets:
 
             # initialize a sub-dictionaries for sys
             for key, value in TT_TTvar_sys.items():
@@ -298,8 +318,9 @@ class MCcorrectionFactor_TTvar():
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"] = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
 
-                for ttVar in self.ttVars:
-                    MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
+                if not self.hack:
+                    for ttVar in self.ttVars:
+                        MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
 
                 # ----------------------------------------------------------------------------
                 # fill a dictionary to get the average and maximum values of MC corrected data 
@@ -381,8 +402,10 @@ class MCcorrectionFactor_TTvar():
                     # fill the TT_TTvar_sys dictionary
                     TT_TTvar_sys["nEventsA_TT"][njet]["TT"]      = nEventsPerBoundaryTT["TT"][1.00]
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
-                    TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
-                    TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
+                    if not self.hack:
+                        TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
+                        print(MCcorrRatio_MC_BoundaryTT)
+                        TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
                 # set y axis for higher njets bins
                 #yMin = None; yMax = None
@@ -397,11 +420,12 @@ class MCcorrectionFactor_TTvar():
                 # Make plots for all TT variances
                 # -------------------------------
                 # TT
-                plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
-                #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MCcorrRatio_MC_Unc_BoundaryTT, self.ttVars, self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Unc. on Closure Correction Ratio[TTvar/TT]", "MCcorrRatio_MC_Unc_PerBoundary",   njet, self.colors, self.valColors[region])
+                if not self.hack:
+                    plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
+                    #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MCcorrRatio_MC_Unc_BoundaryTT, self.ttVars, self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Unc. on Closure Correction Ratio[TTvar/TT]", "MCcorrRatio_MC_Unc_PerBoundary",   njet, self.colors, self.valColors[region])
 
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
+                    # TTinData = Data - NonTT
+                    plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
 
                 ## ----------------------------------------
                 ## Make plots for all TT modeling variances
@@ -463,6 +487,7 @@ class MCcorrectionFactor_TTvar():
             else:
                 calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
             
+
             # ------------------
             # write the tex file
             # ------------------
@@ -471,6 +496,8 @@ class MCcorrectionFactor_TTvar():
 
             else:
                 maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
+        if self.hack:
+            return calculatedSys["All"]
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
