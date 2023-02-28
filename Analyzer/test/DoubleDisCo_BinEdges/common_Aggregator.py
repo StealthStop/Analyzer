@@ -121,7 +121,7 @@ class Aggregator:
             chefKey   = self.makeKey(variable = "sigFractionA", boundary = boundary, **newKwargs)
             
             if masterKey not in self.data:
-                print("Skipping key \"%s\""%(masterKey))
+                #print("Skipping key \"%s\""%(masterKey))
                 continue
 
             # this statement for data and data/MC closure correction

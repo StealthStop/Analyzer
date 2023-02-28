@@ -268,7 +268,7 @@ class All_Regions:
                         continue
 
 
-                    nEventsErr_A = ctypes.c_double(0.0); nEventsErr_B = ctypes.c_double(0.0); nEventsErr_C = ctypes.c_double(0.0); nEventsErr_D = ctypes.c_double(0.0)
+                    nEventsErr_A = ctypes.c_double(0.0); nEventsErr_B = ctypes.c_double(0.0); nEventsErr_C = ctypes.c_double(0.0); nEventsErr_D = ctypes.c_double(0.0); nEventsErr_Tot = ctypes.c_double(0.0)
 
                     # last      | 
                     #        B  |  A
@@ -283,6 +283,7 @@ class All_Regions:
                     nEvents_B = h1.IntegralAndError(firstXBin, xBin-1,   yBin,      lastYBin, nEventsErr_B)
                     nEvents_C = h1.IntegralAndError(xBin,      lastXBin, firstYBin, yBin-1,   nEventsErr_C)
                     nEvents_D = h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D)
+                    nEvents_Tot = h1.IntegralAndError(firstXBin, lastXBin, firstYBin, lastYBin, nEventsErr_Tot)
 
                     #    startOfScan = False
 
@@ -299,6 +300,27 @@ class All_Regions:
                     self.add("nEventsB", xBinKey, yBinKey, (nEvents_B, nEventsErr_B.value), key)
                     self.add("nEventsC", xBinKey, yBinKey, (nEvents_C, nEventsErr_C.value), key)
                     self.add("nEventsD", xBinKey, yBinKey, (nEvents_D, nEventsErr_D.value), key)
+
+                    # Needed to get the average weight for MC stats
+                    entries = h1.GetEntries()
+
+                    if entries > 0:
+                        weight = h1.GetSumOfWeights() / entries
+                    else:
+                        weight = 1.0
+                    
+                    self.add("weight", xBinKey, yBinKey, (weight), key)
+                    if nEvents_Tot > 0.0:
+                        self.add("nEntriesA", xBinKey, yBinKey, (round(entries * (nEvents_A / nEvents_Tot))), key)
+                        self.add("nEntriesB", xBinKey, yBinKey, (round(entries * (nEvents_B / nEvents_Tot))), key)
+                        self.add("nEntriesC", xBinKey, yBinKey, (round(entries * (nEvents_C / nEvents_Tot))), key)
+                        self.add("nEntriesD", xBinKey, yBinKey, (round(entries * (nEvents_D / nEvents_Tot))), key)
+                    else:
+                        self.add("nEntriesA", xBinKey, yBinKey, (0.0), key)
+                        self.add("nEntriesB", xBinKey, yBinKey, (0.0), key)
+                        self.add("nEntriesC", xBinKey, yBinKey, (0.0), key)
+                        self.add("nEntriesD", xBinKey, yBinKey, (0.0), key)
+
 
     # -------------------------------------------------------------------------------
     # Region by region calculation of signal fraction, closure Err, significance, etc
