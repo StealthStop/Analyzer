@@ -14,7 +14,7 @@ ROOT.TH2.SetDefaultSumw2()
 
 class ControlRegionProducer:
 
-    def __init__(self, year, outpath, inpath, controlRegions, signalRegions, backgrounds, data, mainBG, inclBin):
+    def __init__(self, year, outpath, inpath, controlRegions, signalRegions, backgrounds, data, mainBG, inclBin, channel=None, model=None):
 
         self.year            = year
         self.outpath         = outpath
@@ -24,6 +24,8 @@ class ControlRegionProducer:
         self.backgrounds     = backgrounds
         self.data            = data
         self.approved        = None
+        self.channel         = channel
+        self.model           = model
         
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
@@ -237,6 +239,22 @@ class ControlRegionProducer:
 
         outfile.Close()
 
+    def write_QCD_Data(self):
+
+        outfile = ROOT.TFile.Open(self.outpath + "/Run2UL_QCD_Data.root", "UPDATE")
+        histName = "h_njets_{}incl_{}_{}_ABCD".format(12 if self.channel == "1l" else 13, self.model, self.channel)
+        self.QCDPred = ROOT.TH1D(histName, histName, 24, -0.5, 23.5)
+
+        for bin in range(1,self.QCDPred.GetNbinsX()):
+            tf, etf = self.getTFPerBin(self.transforFactorsHisto["{}_TF_{}_{}Over{}_{}_QCDCR".format(self.year, self.model, self.channel, self.model, self.channel)][2], bin)
+        
+            self.QCDPred.SetBinContent(bin, self.dataQCDOnly.GetBinContent(bin)*tf)
+            self.QCDPred.SetBinError(bin, math.sqrt(self.dataQCDOnly.GetBinError(bin)**2+etf**2))
+
+        self.QCDPred.Write()
+
+        outfile.Close()
+
     def makeOutputPlots(self):
         for name, h in self.transforFactorsHisto.items():
             tfHisto = h[0]
@@ -429,9 +447,10 @@ if __name__ == "__main__":
 
     for cr in controlRegions:
         crName = cr.keys()[0].replace("h_njets_%s_"%(inclBin),"").replace("_ABCD","")
-        crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data, mainBG, inclBin)
+        crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data, mainBG, inclBin, args.channel, args.model)
         crProducer.getCRData()
         crProducer.getTransferFactors()
         crProducer.write(crName)
         crProducer.makeOutputPlots()
         print("-"*150+"\n")
+        crProducer.write_QCD_Data()

@@ -188,6 +188,7 @@ def main():
         theApp.run(args.disc1edge, args.disc2edge, args.fastMode, samples=samples, files=files, histName=histName, njets=args.njets, regions=regions, plotter=plotter, tablesPath=tablesPath, edges=edgeStub)
 
 def BryansHack(files, channel, Sig, mass, histName, regions, translator, disc1, disc2):
+
     if "0l" in channel:
         njets = ["8", "9", "10", "11", "12", "13incl"]
     if "1l" in channel:

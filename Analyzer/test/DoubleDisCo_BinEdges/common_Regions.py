@@ -505,6 +505,7 @@ class All_Regions:
             Closure_NonTT,    ClosureUnc_NonTT    = self.cal_Closure(nNonTTEvents_A, nNonTTEvents_B, nNonTTEvents_C, nNonTTEvents_D, nNonTTEventsErr_A, nNonTTEventsErr_B, nNonTTEventsErr_C, nNonTTEventsErr_D)
             Closure_TTvar,    ClosureUnc_TTvar    = self.cal_Closure(nTTvarEvents_A, nTTvarEvents_B, nTTvarEvents_C, nTTvarEvents_D, nTTvarEventsErr_A, nTTvarEventsErr_B, nTTvarEventsErr_C, nTTvarEventsErr_D)
             Closure_Data,     ClosureUnc_Data     = self.cal_Closure(nDataEvents_A,  nDataEvents_B,  nDataEvents_C,  nDataEvents_D,  nDataEventsErr_A,  nDataEventsErr_B,  nDataEventsErr_C,  nDataEventsErr_D )
+
             Closure_TTinData, ClosureUnc_TTinData = self.cal_Closure(nTTinDataEvents_A,  nTTinDataEvents_B,  nTTinDataEvents_C,  nTTinDataEvents_D,  nTTinDataEventsErr_A,  nTTinDataEventsErr_B,  nTTinDataEventsErr_C,  nTTinDataEventsErr_D )
 
             nonClosure_TT,     nonClosureUnc_TT     = self.cal_NonClosure(nTTEvents_A,    nTTEvents_B,    nTTEvents_C,    nTTEvents_D,    nTTEventsErr_A,    nTTEventsErr_B,    nTTEventsErr_C,    nTTEventsErr_D   )
