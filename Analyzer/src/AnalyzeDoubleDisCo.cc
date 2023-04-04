@@ -86,6 +86,7 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_njets_13incl_SYY",             24, -0.5, 23.5},
         {"h_HT",                          720,    0, 7200},
         {"h_dRbjets",                     180,    0,    6},
+        {"h_Mbb",                         720,    0,  720},
         {"h_Mbl",                         180,    0,  360},
         {"h_Mll",                         180,    0,  360},
         {"h_Stop1_mass_PtRank_matched",   180,    0, 1800},
@@ -281,6 +282,9 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                         continue;
                 }
 
+                if (mycut.first.find("blind") != std::string::npos and Njet != "Incl")
+                    continue;
+
                 // --------------------------------------------------------------------------
                 // loop over the systvars fsrUp/Down, isrUp/Down, etc.
                 // to make indivudual histograms with the label systvars in root file
@@ -386,6 +390,9 @@ void AnalyzeDoubleDisCo::InitHistos(const std::map<std::string, bool>& cutMap, c
                     if (h2dInfo.name.find("DoubleDisCo") == std::string::npos)
                         continue;
                 }
+
+                if (mycut.first.find("blind") != std::string::npos and Njet != "Incl")
+                    continue;
 
                 // --------------------------------------------------------------------------
                 // loop over the systvars fsrUp/Down, isrUp/Down
@@ -668,6 +675,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     Mbl_CR                         ;
             std::vector<double>                                     Mll_CR                         ;
             std::vector<double>                                     dRbjets_CR                     ;
+            std::vector<double>                                     Mbb_CR                         ;
             std::vector<double>                                     HT_pt30_CR                     ;
             std::vector<double>                                     DoubleDisCo_RPV_massReg_CR     ;
             std::vector<double>                                     DoubleDisCo_RPV_disc1_CR       ;
@@ -796,6 +804,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<double>                                     HT_pt30                        ;
             std::vector<double>                                     Mbl                            ;
             std::vector<double>                                     Mll                            ;
+            std::vector<double>                                     Mbb                            ;
             std::vector<double>                                     dRbjets                        ;
             std::vector<double>                                     DoubleDisCo_RPV_massReg        ;
             std::vector<double>                                     DoubleDisCo_RPV_disc1          ;
@@ -891,12 +900,14 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 std::string flavName = "NonIsoMuons";
                 std::string jetsName = "NonIsoMuon";
                 std::string htName   = "NonIsoMuon";
+                std::string nimName  = "nim";
                 if (channel != "1")
                 {
                     mvaName  = "";
                     flavName = "";
                     jetsName = "Good";
                     htName   = "trigger";
+                    nimName  = "";
                 }
 
                 Jets.push_back(tr.getVec<utility::LorentzVector>("Jets"                       + jecvar));
@@ -922,6 +933,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 Baseline_blind.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_blind" + jecvar));
                 Mbl.push_back(tr.getVar<double>("Mbl"                                              + jecvar));
                 Mll.push_back(tr.getVar<double>("mll"                                              + jecvar));
+                Mbb.push_back(tr.getVar<double>("Mbb"                                              + jecvar));
                 dRbjets.push_back(tr.getVar<double>("dR_bjets"                                     + jecvar));
 
                 DoubleDisCo_RPV_massReg.push_back(tr.getVar<double>("DoubleDisCo_massReg_" + channel + "l_RPV" + jecvar));
@@ -1071,7 +1083,8 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
                 Mbl_CR.push_back(tr.getVar<double>("Mbl"                           + jecvar));
                 Mll_CR.push_back(tr.getVar<double>("mll"                           + jecvar));
-                dRbjets_CR.push_back(tr.getVar<double>("dR_bjets"                  + jecvar));
+                Mbb_CR.push_back(tr.getVar<double>(nimName + "Mbb"                 + jecvar));
+                dRbjets_CR.push_back(tr.getVar<double>("dR_" + nimName + "bjets"   + jecvar));
 
                 DoubleDisCo_RPV_massReg_CR.push_back(tr.getVar<double>("DoubleDisCo_massReg_NonIsoMuon_" + channel + "l_RPV"  + jecvar));
                 DoubleDisCo_RPV_disc1_CR.push_back(tr.getVar<double>("DoubleDisCo_disc1_NonIsoMuon_" + channel + "l_RPV"      + jecvar));
@@ -1291,25 +1304,25 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
 
             const std::map<std::string, bool> cut_map
             {
-                {"_0l"            , Baseline[0]},
-                {"_1l"            , Baseline[1]},
-                {"_1l_el"         , Baseline[1] and NGoodElectrons == 1},
-                {"_1l_mu"         , Baseline[1] and NGoodMuons     == 1},
-                {"_2l"            , Baseline[2]},
-                {"_2l_elel"       , Baseline[2] and NGoodElectrons == 2},
-                {"_2l_mumu"       , Baseline[2] and NGoodMuons     == 2},
-                {"_2l_elmu"       , Baseline[2] and NGoodElectrons == 1 and NGoodMuons == 1},
-                {"_0l_blind"      , Baseline_blind[0]},
-                {"_1l_blind"      , Baseline_blind[1]},                         
-                {"_1l_blind_el"   , Baseline_blind[1] and NGoodElectrons == 1},
-                {"_1l_blind_mu"   , Baseline_blind[1] and NGoodMuons     == 1},
-                {"_2l_blind"      , Baseline_blind[2]}, 
-                {"_2l_blind_elel" , Baseline_blind[2] and NGoodElectrons == 2},
-                {"_2l_blind_mumu" , Baseline_blind[2] and NGoodMuons     == 2},
-                {"_2l_blind_elmu" , Baseline_blind[2] and NGoodElectrons == 1 and NGoodMuons == 1},
-                {"_0l_QCDCR"      , Baseline_CR[0]}, 
-                {"_1l_QCDCR"      , Baseline_CR[1]}, 
-                {"_2l_QCDCR"      , Baseline_CR[1]}, 
+                {"_0l"                , Baseline[0]},
+                {"_1l"                , Baseline[1]},
+                {"_1l_el"             , Baseline[1] and NGoodElectrons == 1},
+                {"_1l_mu"             , Baseline[1] and NGoodMuons     == 1},
+                {"_2l"                , Baseline[2]},
+                {"_2l_elel"           , Baseline[2] and NGoodElectrons == 2},
+                {"_2l_mumu"           , Baseline[2] and NGoodMuons     == 2},
+                {"_2l_elmu"           , Baseline[2] and NGoodElectrons == 1 and NGoodMuons == 1},
+                {"_0l_blind"          , Baseline_blind[0]},
+                {"_1l_blind"          , Baseline_blind[1]},                         
+                {"_1l_blind_el"       , Baseline_blind[1] and NGoodElectrons == 1},
+                {"_1l_blind_mu"       , Baseline_blind[1] and NGoodMuons     == 1},
+                {"_2l_blind"          , Baseline_blind[2]}, 
+                {"_2l_blind_elel"     , Baseline_blind[2] and NGoodElectrons == 2},
+                {"_2l_blind_mumu"     , Baseline_blind[2] and NGoodMuons     == 2},
+                {"_2l_blind_elmu"     , Baseline_blind[2] and NGoodElectrons == 1 and NGoodMuons == 1},
+                {"_0l_QCDCR"          , Baseline_CR[0]}, 
+                {"_1l_QCDCR"          , Baseline_CR[1]}, 
+                {"_2l_QCDCR"          , Baseline_CR[1]}, 
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
@@ -1340,7 +1353,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     channel = std::stoi(chunk);
 
                     // One control region for the moment, so pick any of three channels
-                    if (kv.first.find("QCDCR") != std::string::npos)
+                    if (kv.first.find("QCD") != std::string::npos)
                     {
                         isQCD = true;
                     }
@@ -1386,8 +1399,13 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                     bool        inNjetsBin = njetsPass.second;
                     std::string njetsStr = "";
                     if (njets != "Incl")
+                    {
                         njetsStr = "_Njets" + njets;
-
+                        
+                        if (kv.first.find("blind") != std::string::npos)
+                            continue;
+                    }
+                        
                     // --------------------------------------------------------------------------
                     // loop over the tt and systvars fsrUp/Down, isrUp/Down
                     // to make indivudual histograms with the label tt and systvars in TT root file
@@ -1554,6 +1572,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     my_histos["h_JMT_ev2_top6" + name]->Fill(!isQCD ? jmt_ev2_top6[channel] : jmt_ev2_top6_CR[channel], w);
                                     my_histos["h_Mbl"          + name]->Fill(!isQCD ?          Mbl[channel] : Mbl_CR[channel],          w);
                                     my_histos["h_Mll"          + name]->Fill(!isQCD ?          Mll[channel] : Mll_CR[channel],          w);
+                                    my_histos["h_Mbb"          + name]->Fill(!isQCD ?          Mbb[channel] : Mbb_CR[channel],          w);
                                     my_histos["h_dRbjets"      + name]->Fill(!isQCD ?      dRbjets[channel] : dRbjets_CR[channel],      w);
                                     my_histos["h_HT"           + name]->Fill(!isQCD ?      HT_pt30[channel] : HT_pt30_CR[channel],      w);
 
