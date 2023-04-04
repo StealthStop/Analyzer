@@ -82,7 +82,6 @@ def main():
                        "Triboson"                      :    10,
                        "ST"                            :    20,
                        "TTX"                           :     2,
-                       "TTTJ"                          :     2,
                        "JetHT"                         :     5,
                        "SingleMuon"                    :    75,
                        "SingleElectron"                :    50,
@@ -202,6 +201,7 @@ def main():
             print red("Job directory \"%s/%s\" already exists and cannot proceed safely ! Exiting..."%(workingDir, logsDir))
             exit(0)
    
+        dataSetName = ds.partition("_")[-1]
         for s, n, e in sc.sampleList(ds):
 
             # When running skim jobs with the MiniTreeMaker analyzer,
@@ -210,7 +210,9 @@ def main():
             if options.analyze == "MakeMiniTree":
                 proc = n.partition("_")[-1]
         
-                if proc in filesPerJobSkim:
+                if dataSetName in filesPerJobSkim:
+                    nFilesPerJob = filesPerJobSkim[dataSetName]
+                elif proc in filesPerJobSkim:
                     nFilesPerJob = filesPerJobSkim[proc]
                 else:
                     nFilesPerJob = options.numfile
