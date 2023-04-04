@@ -506,6 +506,40 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="MakeQCDValTree")
+        {
+            fastModeCompatible = true;
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger",
+                "Baseline",
+                "MakeMVAVariables",
+                "MakeMVAVariables_NonIsoMuon",
+                "StopJets",
+                "MakeStopHemispheres_TopSeed",
+                "MakeStopHemispheres_OldSeed",
+                "MakeStopHemispheres_TopSeed_NonIsoMuon",
+                "MakeStopHemispheres_OldSeed_NonIsoMuon",
+                "BTagCorrector",
+                "ScaleFactors",
+                "StopGenMatch",
+                "DoubleDisCo_0l_RPV",
+                "DoubleDisCo_NonIsoMuon_0l_RPV",
+                "DoubleDisCo_0l_SYY",
+                "DoubleDisCo_NonIsoMuon_0l_SYY",
+                "DoubleDisCo_1l_RPV",
+                "DoubleDisCo_NonIsoMuon_1l_RPV",
+                "DoubleDisCo_1l_SYY",
+                "DoubleDisCo_NonIsoMuon_1l_SYY",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
         else
         {
             const std::vector<std::string> modulesList = {
@@ -530,7 +564,6 @@ public:
             std::cerr << utility::color("Error: Analyzer \"" + analyzer + "\" is not compatible with fast mode !!! Exiting...", "red") << std::endl;
             exit(-1);
         }
-
     }
 };
 

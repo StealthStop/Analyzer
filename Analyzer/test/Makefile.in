@@ -62,7 +62,7 @@ INCLUDESDIRS += -I$(TDIR) -I$(IFWDIR) -I$(SFWDIR) -I$(IADIR) -I$(SADIR) -I$(INDI
 PROGRAMS = $(ODIR)/rootdict.cc Stack_plot_0l MyAnalysis
 
 ANALYZERS  = $(ODIR)/MiniTupleMaker.o $(ODIR)/CalculateBTagSF.o $(ODIR)/CalculateTopTagSF.o $(ODIR)/BTagCalibrationStandalone.o $(ODIR)/MakeMiniTree.o $(ODIR)/AnalyzeLepTrigger.o $(ODIR)/AnalyzeTest.o 
-ANALYZERS += $(ODIR)/MakeMiniTree.o $(ODIR)/AnalyzeXsec.o $(ODIR)/MakeNNVariables.o $(ODIR)/AnalyzeDoubleDisCo.o $(ODIR)/AnalyzeGenStop.o
+ANALYZERS += $(ODIR)/MakeQCDValTree.o $(ODIR)/AnalyzeXsec.o $(ODIR)/MakeNNVariables.o $(ODIR)/AnalyzeDoubleDisCo.o $(ODIR)/AnalyzeGenStop.o
 ANALYZERS += $(ODIR)/Semra_Analyzer.o $(ODIR)/ResolvedTopTagger_Analyzer.o $(ODIR)/HEM_Analyzer.o $(ODIR)/TopTaggerSF_Analyzer.o $(ODIR)/ISRJets_Analyzer.o $(ODIR)/HadTriggers_Analyzer.o 
 
 HELPERS  = $(ODIR)/NTupleReader.o $(ODIR)/Utility.o $(ODIR)/samples.o $(ODIR)/EventShapeVariables.o $(ODIR)/SetUpTopTagger.o $(ODIR)/NTRException.o 

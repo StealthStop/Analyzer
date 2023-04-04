@@ -11,6 +11,7 @@
 #include "Analyzer/Analyzer/include/AnalyzeLepTrigger.h"
 #include "Analyzer/Analyzer/include/MakeNJetDists.h"
 #include "Analyzer/Analyzer/include/MakeMiniTree.h"
+#include "Analyzer/Analyzer/include/MakeQCDValTree.h"
 #include "Analyzer/Analyzer/include/CalculateBTagSF.h"
 #include "Analyzer/Analyzer/include/CalculateTopTagSF.h"
 #include "Analyzer/Analyzer/include/CalculateSFMean.h"
@@ -180,6 +181,7 @@ int main(int argc, char *argv[])
         {"CalculateTopTagSF",          run<CalculateTopTagSF>         },
         {"CalculateSFMean",            run<CalculateSFMean>           },
         {"MakeMiniTree",               run<MakeMiniTree>              },
+        {"MakeQCDValTree",             run<MakeQCDValTree>            },
         {"MakeNJetDists",              run<MakeNJetDists>             },
         {"Semra_Analyzer",             run<Semra_Analyzer>            },
         {"ResolvedTopTagger_Analyzer", run<ResolvedTopTagger_Analyzer>},
