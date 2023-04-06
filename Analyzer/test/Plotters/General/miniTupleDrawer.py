@@ -2,10 +2,11 @@
 
 import os
 import re
-import ROOT
 import argparse
 import multiprocessing as mp
 
+import ROOT
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 ROOT.gROOT.SetBatch(True)
 ROOT.TH1.SetDefaultSumw2()
 ROOT.TH2.SetDefaultSumw2()
@@ -96,7 +97,7 @@ def processFile(outputDir, inputDir, year, proc, histograms, treeName):
     outfile.Close()
 
 if __name__ == "__main__":
-    usage = "usage: %prog [options]"
+    usage = "%miniTupleDrawer [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--inputDir",  dest="inputDir",  help="Path to ntuples",    required=True                )
     parser.add_argument("--outputDir", dest="outputDir", help="path to output",     default="MyTag",             )

@@ -162,7 +162,7 @@ Options:
 
 ## Plotting from TTrees
 
-A script that wraps around the `TTree->Draw()` concept is provided in the form `miniTupleDrawer.py`.
+A script that wraps around the `TTree->Draw()` concept is provided in the form of `miniTupleDrawer.py`.
 This gives easy abilities to plot from TTrees produced from an analyzer derived from the `MiniTupleMaker` class.
 Current analyzers that produce simple TTrees are `MakeMiniTree`, `MakeNNVariables`, and `MakeQCDValTree`.
 The TTree drawer script requires a "sidecar" auxiliary file that specifies a dictionary of histogram names mapped to a subdictionary of options.
@@ -189,7 +189,8 @@ python Plotters/General/miniTupleDrawer.py --options miniTupleDrawer_aux \
                                            --tree PreSelection \
                                            --year Run2UL
 ```
-Output ROOT files with the drawn histograms are contained in the `outputDir` folder(s) and placed automatically in the `condor` folder.
+Output ROOT files with the drawn histograms are contained in the `outputDir` folder subdirectory structure and placed automatically in the `condor` folder.
+This placement of the output makes it intuitive to then use the other plotting tools (`stackPlotter` mentioned below) for making final, pretty plots.
 
 ## Making stack plots
 
