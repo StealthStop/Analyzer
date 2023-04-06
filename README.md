@@ -160,6 +160,37 @@ Options:
                      Analyze1Lep, MakeNJetDists
 ```
 
+## Plotting from TTrees
+
+A script that wraps around the `TTree->Draw()` concept is provided in the form `miniTupleDrawer.py`.
+This gives easy abilities to plot from TTrees produced from an analyzer derived from the `MiniTupleMaker` class.
+Current analyzers that produce simple TTrees are `MakeMiniTree`, `MakeNNVariables`, and `MakeQCDValTree`.
+The TTree drawer script requires a "sidecar" auxiliary file that specifies a dictionary of histogram names mapped to a subdictionary of options.
+An example aux file is `miniTupleDrawer_aux.py`.
+```
+usage: %miniTupleDrawer [options] [-h] --inputDir INPUTDIR
+                                  [--outputDir OUTPUTDIR] [--tree TREE]
+                                  [--year YEAR] [--options OPTIONS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --inputDir INPUTDIR   Path to ntuples
+  --outputDir OUTPUTDIR
+                        path to output
+  --tree TREE           TTree name to draw
+  --year YEAR           which year
+  --options OPTIONS     options file
+```
+An example call to this script would be:
+```
+python Plotters/General/miniTupleDrawer.py --options miniTupleDrawer_aux \
+                                           --inputDir ~/path/to/minituples/ \
+                                           --outputDir subdir/structure/in/condor/folder \
+                                           --tree PreSelection \
+                                           --year Run2UL
+```
+Output ROOT files with the drawn histograms are contained in the `outputDir` folder(s) and placed automatically in the `condor` folder.
+
 ## Making stack plots
 
 A generic plotter is available for making stack plots with or without a data/MC ratio panel.
