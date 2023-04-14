@@ -236,7 +236,6 @@ void MakeAnaSkimTree::Loop(NTupleReader& tr, double, int maxevents, bool)
         //-----------------------------------
         //-- Fill Histograms Below
         //-----------------------------------
-        // Requirements not on NonIsoMuon jets or HT as those will be more restrictive with a non iso muon present
         if( passBaseline0l or passBaseline1l or passBaseline2l or passQCDCR0l or passQCDCR1l ) {
             myAnaSkimTuple->fill(tr);
         }
