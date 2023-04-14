@@ -68,6 +68,6 @@ processes = [
     "Data_SingleMuon"
 ]
 
-for mass in [550]:
+for mass in [400]:
     processes.append("RPV_2t6j_mStop-%d"%(mass))
     processes.append("StealthSYY_2t6j_mStop-%d"%(mass))
