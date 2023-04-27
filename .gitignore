@@ -223,6 +223,7 @@ TopTaggerCfg*
 PlottersSUS19004
 **tables**
 **plots**
+**Studies**
 **condor_submit.txt
 **.bak
 obj/
