@@ -17,7 +17,7 @@ def naturalSort(unsortedList):
 
 class MCcorrectionFactor_TTvar():
 
-    def __init__(self, year, channel, model, mass, translator, edges):
+    def __init__(self, year, channel, model, mass, translator, edges, hack=False):
 
         self.year        = year
         self.channel     = channel
@@ -25,25 +25,34 @@ class MCcorrectionFactor_TTvar():
         self.mass        = mass
         self.translator  = translator
         self.edges       = edges
+        self.hack        = hack
 
-        self.ttVarsModel = [
-                            "TT_fsrUp",            
-                            "TT_fsrDown",          
-                            "TT_isrUp",            
-                            "TT_isrDown",          
-                            "TT_hdampUP",          
-                            "TT_hdampDOWN",  
-                            "TT_erdON",      
-                            "TT_TuneCP5up",
-                            "TT_TuneCP5down",
-        ]
+        if self.hack:
+            self.ttVarsModel = [
+                                "TT",
+            ]
 
-        self.ttVarsDetect = [
-                             "TT_JECup",            
-                             "TT_JECdown",          
-                             "TT_JERup",            
-                             "TT_JERdown",          
-        ]
+            self.ttVarsDetect = []
+
+        else:
+            self.ttVarsModel = [
+                                "TT_fsrUp",            
+                                "TT_fsrDown",          
+                                "TT_isrUp",            
+                                "TT_isrDown",          
+                                "TT_hdampUP",          
+                                "TT_hdampDOWN",  
+                                "TT_erdON",      
+                                "TT_TuneCP5up",
+                                "TT_TuneCP5down",
+            ]
+
+            self.ttVarsDetect = [
+                                "TT_JECup",            
+                                "TT_JECdown",          
+                                "TT_JERup",            
+                                "TT_JERdown",          
+            ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect
 
@@ -137,10 +146,68 @@ class MCcorrectionFactor_TTvar():
         # ---------------
         maxCorrData_ttSyst = maximumCorrectedData_ttSyst(tablesPath, self.channel, self.year, "TT_TTvar_Syst", self.sig)
 
+        if self.hack:
+            if self.channel == "0l":
+                someNjets = ["8", "9"]
+            elif self.channel == "1l":
+                someNjets = ["7", "8"]
+            elif self.channel == "2l":
+                someNjets = ["6", "7"]
+        else:
+            someNjets = njets
+
+        QCDCRInfo = {}
+        # -----------------
+        # Setup QCDCR stuff
+        # -----------------
+        for njet in njets:
+            
+            hist_lists = {}
+
+            for sample in samples:
+
+                # get the fsr/isr, jec/jer higtograms from TT root file
+                ttvarStr = ""
+
+                if sample == "TT_fsrDown":
+                    ttvarStr = "_fsrDown"
+
+                elif sample == "TT_fsrUp":
+                    ttvarStr = "_fsrUp"
+
+                elif sample == "TT_isrDown":
+                    ttvarStr = "_isrDown"
+
+                elif sample == "TT_isrUp":
+                    ttvarStr = "_isrUp"
+
+                elif sample == "TT_JECdown":
+                    ttvarStr = "_JECdown"
+
+                elif sample == "TT_JECup":
+                    ttvarStr = "_JECup"
+
+                elif sample == "TT_JERdown":
+                    ttvarStr = "_JERdown"
+
+                elif sample == "TT_JERup":
+                    ttvarStr = "_JERup"
+
+                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+                if ttvarStr == "":
+                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                    hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+
+            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
+
+            QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
+
+            del theEdgesClass
+
         # ---------------
         # loop over njets
         # --------------- 
-        for njet in njets: 
+        for njet in someNjets: 
 
             hist_lists = {}
 
@@ -174,7 +241,9 @@ class MCcorrectionFactor_TTvar():
                     ttvarStr = "_JERup"
 
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
-
+                if ttvarStr == "":
+                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
             maxEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(hist_lists["TT"].GetNbinsX()+1)
@@ -195,7 +264,7 @@ class MCcorrectionFactor_TTvar():
                     # -----------------
                     if region == "ABCD":
 
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                         theAggy.aggregate(theEdgesClass, region = region, njet = njet)
 
                         abcdFinalEdges = theEdgesClass.getFinal("edges", "TT")
@@ -208,7 +277,7 @@ class MCcorrectionFactor_TTvar():
                         for r in self.list_boundaries[region]:
                        
                             disc1_edge = ((float(abcdFinalEdges[0]) - 0.2) / (1.0 - 0.4)) * (float(r) - 0.4) + 0.2  
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = r)
 
                     # -----------------------------
@@ -219,7 +288,7 @@ class MCcorrectionFactor_TTvar():
                         for t in self.list_boundaries[region]:
 
                             disc2_edge = ((float(abcdFinalEdges[1]) - 0.2) / (1.0 - 0.4)) * (float(t) - 0.4) + 0.2
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = t)
 
                     # -----------------------------
@@ -231,9 +300,8 @@ class MCcorrectionFactor_TTvar():
                             disc1_edge = ((float(abcdFinalEdges[0]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
                             disc2_edge = ((float(abcdFinalEdges[1]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
 
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
-
 
         # ----------------------------------------
         # Plot non-closure as function of boundary
@@ -268,7 +336,7 @@ class MCcorrectionFactor_TTvar():
         # -------------------
         # loop over the njets
         # -------------------
-        for njet in njets:
+        for njet in someNjets:
 
             # initialize a sub-dictionaries for sys
             for key, value in TT_TTvar_sys.items():
@@ -298,8 +366,9 @@ class MCcorrectionFactor_TTvar():
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"] = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
 
-                for ttVar in self.ttVars:
-                    MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
+                if not self.hack:
+                    for ttVar in self.ttVars:
+                        MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
 
                 # ----------------------------------------------------------------------------
                 # fill a dictionary to get the average and maximum values of MC corrected data 
@@ -381,8 +450,9 @@ class MCcorrectionFactor_TTvar():
                     # fill the TT_TTvar_sys dictionary
                     TT_TTvar_sys["nEventsA_TT"][njet]["TT"]      = nEventsPerBoundaryTT["TT"][1.00]
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
-                    TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
-                    TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
+                    if not self.hack:
+                        TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
+                        TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
                 # set y axis for higher njets bins
                 #yMin = None; yMax = None
@@ -391,47 +461,48 @@ class MCcorrectionFactor_TTvar():
 
                 #else:
                 #    yMin = 0.7; yMax = 1.3
-                yMin = 0.8; yMax = 1.4
+                yMin = -0.1; yMax = 3.0
 
                 # -------------------------------
                 # Make plots for all TT variances
                 # -------------------------------
                 # TT
-                plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
-                #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MCcorrRatio_MC_Unc_BoundaryTT, self.ttVars, self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Unc. on Closure Correction Ratio[TTvar/TT]", "MCcorrRatio_MC_Unc_PerBoundary",   njet, self.colors, self.valColors[region])
+                if not self.hack:
+                    plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
+                    #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MCcorrRatio_MC_Unc_BoundaryTT, self.ttVars, self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Unc. on Closure Correction Ratio[TTvar/TT]", "MCcorrRatio_MC_Unc_PerBoundary",   njet, self.colors, self.valColors[region])
 
-                # TTinData = Data - NonTT
-                plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
+                    # TTinData = Data - NonTT
+                    plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
 
-                ## ----------------------------------------
-                ## Make plots for all TT modeling variances
-                ## ----------------------------------------
-                ## TT
-                #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT, self.ttVarsModel + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",   "TT_ClosureCorrection_PerBoundary_ModelVars",   njet, self.colors, self.valColors[region])
+                    ## ----------------------------------------
+                    ## Make plots for all TT modeling variances
+                    ## ----------------------------------------
+                    ## TT
+                    #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT, self.ttVarsModel + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",   "TT_ClosureCorrection_PerBoundary_ModelVars",   njet, self.colors, self.valColors[region])
 
-                ## TTinData = Data - NonTT
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ModelVars", njet, self.colors, self.valColors[region])
+                    ## TTinData = Data - NonTT
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ModelVars", njet, self.colors, self.valColors[region])
 
-                ## -------------------------------------
-                ## Make plots for all detector variances
-                ## -------------------------------------
-                ## TT
-                #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT, self.ttVarsDetect + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region, "Closure Correction [TT]",   "TT_ClosureCorrection_PerBoundary_DetectorVars",   njet, self.colors, self.valColors[region])
+                    ## -------------------------------------
+                    ## Make plots for all detector variances
+                    ## -------------------------------------
+                    ## TT
+                    #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT, self.ttVarsDetect + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region, "Closure Correction [TT]",   "TT_ClosureCorrection_PerBoundary_DetectorVars",   njet, self.colors, self.valColors[region])
 
-                ## TTinData = Data - NonTT
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_DetectorVars", njet, self.colors, self.valColors[region])
+                    ## TTinData = Data - NonTT
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_DetectorVars", njet, self.colors, self.valColors[region])
 
 
-                # ----------------------------------------------
-                # Make corrected MC corrected data closure plots
-                # ----------------------------------------------
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyTotalAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyTotalAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyTotalAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+                    ## ----------------------------------------------
+                    ## Make corrected MC corrected data closure plots
+                    ## ----------------------------------------------
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyTotalAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyTotalAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyTotalAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions["All"][njet])
 
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyRegionAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyRegionAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
-                #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyRegionAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyRegionAve", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsModel + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyRegionAve_ModelVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
+                    #plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVarsDetect + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary_ScaledbyRegionAve_DetectorVars", njet, self.colors, self.valColors[region], scaleFactor=averageCorrectedDataValue_forAllRegions[region][njet])
 
         # ------------------------------------------------------------------
         # calculate the sys. via the maximum value of corrected data closure
@@ -463,6 +534,7 @@ class MCcorrectionFactor_TTvar():
             else:
                 calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
             
+
             # ------------------
             # write the tex file
             # ------------------
@@ -471,6 +543,8 @@ class MCcorrectionFactor_TTvar():
 
             else:
                 maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
+        if self.hack:
+            return calculatedSys["All"], QCDCRInfo
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file

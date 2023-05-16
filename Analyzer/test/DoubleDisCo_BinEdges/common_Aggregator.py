@@ -9,7 +9,9 @@ class Aggregator:
     def __init__(self, samples, njets, regions, boundaries):
 
         self.data       = {}
-        self.samples    = samples + ["TTinData"]
+        #self.samples    = samples + ["TTinData"]
+        samples = [s for s in samples if (s != "QCD" and s != "TTX" and s != "BG_OTHER")]
+        self.samples    = samples + ["TTinData", "NonTT"]
         self.njets      = njets
         self.boundaries = boundaries
         self.regions    = regions
@@ -110,7 +112,7 @@ class Aggregator:
     # Get variables for each boundary
     # -------------------------------
     def getPerBoundary(self, variable, **kwargs):
-        
+
         payload = {}
         newKwargs = kwargs.copy()
         sample = newKwargs.pop("sample", "None")
@@ -119,7 +121,7 @@ class Aggregator:
 
             masterKey = self.makeKey(variable = variable, boundary = boundary, **kwargs)
             chefKey   = self.makeKey(variable = "sigFractionA", boundary = boundary, **newKwargs)
-
+            
             if masterKey not in self.data:
                 #print("Skipping key \"%s\""%(masterKey))
                 continue

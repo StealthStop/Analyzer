@@ -84,6 +84,7 @@ class BinEdges():
                     ttvarStr = "_JERup"
             
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr) 
+                hist_lists[sample+"_QCDCR"] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr + "_QCDCR") 
             
     
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
