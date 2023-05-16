@@ -9,7 +9,9 @@ class Aggregator:
     def __init__(self, samples, njets, regions, boundaries):
 
         self.data       = {}
-        self.samples    = samples + ["TTinData"]
+        #self.samples    = samples + ["TTinData"]
+        samples = [s for s in samples if (s != "QCD" and s != "TTX" and s != "BG_OTHER")]
+        self.samples    = samples + ["TTinData", "NonTT"]
         self.njets      = njets
         self.boundaries = boundaries
         self.regions    = regions

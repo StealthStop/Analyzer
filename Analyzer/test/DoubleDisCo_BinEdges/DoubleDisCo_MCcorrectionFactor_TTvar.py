@@ -156,6 +156,54 @@ class MCcorrectionFactor_TTvar():
         else:
             someNjets = njets
 
+        QCDCRInfo = {}
+        # -----------------
+        # Setup QCDCR stuff
+        # -----------------
+        for njet in njets:
+            
+            hist_lists = {}
+
+            for sample in samples:
+
+                # get the fsr/isr, jec/jer higtograms from TT root file
+                ttvarStr = ""
+
+                if sample == "TT_fsrDown":
+                    ttvarStr = "_fsrDown"
+
+                elif sample == "TT_fsrUp":
+                    ttvarStr = "_fsrUp"
+
+                elif sample == "TT_isrDown":
+                    ttvarStr = "_isrDown"
+
+                elif sample == "TT_isrUp":
+                    ttvarStr = "_isrUp"
+
+                elif sample == "TT_JECdown":
+                    ttvarStr = "_JECdown"
+
+                elif sample == "TT_JECup":
+                    ttvarStr = "_JECup"
+
+                elif sample == "TT_JERdown":
+                    ttvarStr = "_JERdown"
+
+                elif sample == "TT_JERup":
+                    ttvarStr = "_JERup"
+
+                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+                if ttvarStr == "":
+                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                    hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+
+            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
+
+            QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
+
+            del theEdgesClass
+
         # ---------------
         # loop over njets
         # --------------- 
@@ -193,7 +241,9 @@ class MCcorrectionFactor_TTvar():
                     ttvarStr = "_JERup"
 
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
-
+                if ttvarStr == "":
+                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
             maxEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(hist_lists["TT"].GetNbinsX()+1)
@@ -214,7 +264,7 @@ class MCcorrectionFactor_TTvar():
                     # -----------------
                     if region == "ABCD":
 
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                         theAggy.aggregate(theEdgesClass, region = region, njet = njet)
 
                         abcdFinalEdges = theEdgesClass.getFinal("edges", "TT")
@@ -227,7 +277,7 @@ class MCcorrectionFactor_TTvar():
                         for r in self.list_boundaries[region]:
                        
                             disc1_edge = ((float(abcdFinalEdges[0]) - 0.2) / (1.0 - 0.4)) * (float(r) - 0.4) + 0.2  
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = r)
 
                     # -----------------------------
@@ -238,7 +288,7 @@ class MCcorrectionFactor_TTvar():
                         for t in self.list_boundaries[region]:
 
                             disc2_edge = ((float(abcdFinalEdges[1]) - 0.2) / (1.0 - 0.4)) * (float(t) - 0.4) + 0.2
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = t)
 
                     # -----------------------------
@@ -250,9 +300,8 @@ class MCcorrectionFactor_TTvar():
                             disc1_edge = ((float(abcdFinalEdges[0]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
                             disc2_edge = ((float(abcdFinalEdges[1]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
 
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
-
 
         # ----------------------------------------
         # Plot non-closure as function of boundary
@@ -495,7 +544,7 @@ class MCcorrectionFactor_TTvar():
             else:
                 maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
         if self.hack:
-            return calculatedSys["All"]
+            return calculatedSys["All"], QCDCRInfo
 
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
