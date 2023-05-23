@@ -381,9 +381,6 @@ def main():
                 
                 ttSys[channel]["({}, {})".format(d1, d2)]["max"] = maxSys
                     
-    print(QCDCRInfo["0l"]["(0.600,0.600)"])
-    print(QCDCRInfo["1l"]["(0.600,0.600)"])
-
     print("Files Loaded")
     all_ABCDEdges = get_edge_info(files, Sig, njets, var_dict, args.step, args.min, args.max, QCDCRInfo)
 
