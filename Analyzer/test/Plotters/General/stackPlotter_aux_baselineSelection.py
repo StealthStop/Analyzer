@@ -45,10 +45,9 @@ backgrounds = {
     "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
 }
 
-signals = OrderedDict({
-    "RPV_2t6j_mStop-350"         : {"name" : "RPV m_{ #tilde{t}} = 350 GeV",                 "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "StealthSYY_2t6j_mStop-550"  : {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 550 GeV",   "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "StealthSYY_2t6j_mStop-850"  : {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 850 GeV",   "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "StealthSYY_2t6j_mStop-1250" : {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 1250 GeV",  "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}
-})
-
+signals = OrderedDict([
+    ("RPV_2t6j_mStop-400",        {"name" : "RPV m_{ #tilde{t}} = 400 GeV",               "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("RPV_2t6j_mStop-800",        {"name" : "RPV m_{ #tilde{t}} = 800 GeV",               "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("StealthSYY_2t6j_mStop-400", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 400 GeV", "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("StealthSYY_2t6j_mStop-800", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 800 GeV", "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0})
+])
