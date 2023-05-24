@@ -60,7 +60,7 @@ def get_canvas_eachTTvar(year, ttvar, channel):
 # -----------------------------------
 def get_legend(textsize=0.02):
 
-    legend = ROOT.TLegend(0.36, 0.65, 0.76, 0.92, "", "trNDC")
+    legend = ROOT.TLegend(0.40, 0.65, 0.88, 0.92, "", "trNDC")
     legend.SetNColumns(2)
     legend.SetFillStyle(0)
     legend.SetTextSize(textsize)
@@ -102,7 +102,7 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
 # ---------------------
 # add extra information
 # ---------------------
-def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel):
+def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
 
     canvas.cd(1)
     text = ROOT.TLatex()
@@ -125,9 +125,40 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel):
         modelName = "Stealth SYY"
     else:
         modelName = model
-        
+    
+    divName = ""
+    if "MassExclusion" in div:
+        divName = "Mass Exclusion"
+    else:
+        divName = "Max Significance"
+    
     text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.04, modelName)
-    text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.08, name)
+    text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.08, name     )
+    text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.12, divName  )
+
+# ------------------------------------
+# relabel the njets bins in the x-axis
+# ------------------------------------
+def relabelNjetsBins(hist, channel, labelSize):
+
+    if channel == "0l":
+        njets = [8, 13]
+
+    elif channel == "1l":
+        njets = [7, 12]
+
+    elif channel == "2l":
+        njets = [6, 11]
+
+    for bin in range(1, hist.GetNbinsX()+1):
+        
+        label = str(njets[0] + bin - 1)
+        
+        if label == str(njets[-1]):
+            label = "#geq " + str(njets[0] + bin - 1)
+
+        hist.GetXaxis().SetBinLabel(bin, label)
+        hist.GetXaxis().SetLabelSize(labelSize)
 
 # ---------------------
 # main part of plotting
@@ -136,33 +167,47 @@ def main():
 
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--sig",  dest="sig",  help="signal model RPV, SYY", default="RPV")
-    parser.add_argument("--mass", dest="mass", help="signal mass",           default="550")
+    parser.add_argument("--sig",     dest="sig",     help="signal model RPV, SYY",       default="RPV"                     )
+    parser.add_argument("--mass",    dest="mass",    help="signal mass",                 default="550"                     )
+    parser.add_argument("--div",     dest="div",     help="MassEclusion, MaxSign",       default="MassExclusion"           )
+    parser.add_argument("--outpath", dest="outpath", help="output dir where group dirs", default="Run2UL_MassExclusion_RPV") 
+    
     args = parser.parse_args()
 
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
 
-    labels = [ #"0l_0.6_0.6",
-               #"1l_0.6_0.6", 
-               #"2l_0.6_0.6",
-            
-               # SYY optimized ABCD bin edges
-               "0l_0.85_0.74",
-               "1l_0.7_0.85",
-               "2l_0.69_0.57", 
-             ]
+    # Bin edges for Mass Exclusion 
+    if args.div == "MassExclusion" and args.sig == "RPV": 
+        labels = ["0l_0.74_0.8", 
+                  "1l_0.8_0.72", 
+                  "2l_0.5_0.5",
+                 ]
 
-    path = "year_TT_TTvar_Syst_%s_%s_label.root"%(args.sig, args.mass)
+    if args.div == "MassExclusion" and args.sig == "SYY":
+        labels = ["0l_0.54_0.56", 
+                  "1l_0.68_0.82", 
+                  "2l_0.48_0.48",
+                 ]
+
+    # Bin edges for Max Significance
+    if args.div == "MaxSign" and args.sig == "RPV": 
+        labels = ["0l_0.52_0.54", 
+                  "1l_0.84_0.42", 
+                  "2l_0.52_0.58",
+                 ]
+
+    if args.div == "MaxSign" and args.sig == "SYY": 
+        labels = ["0l_0.76_0.7", 
+                  "1l_0.44_0.42", 
+                  "2l_0.4_0.42",
+                 ]
+
+
+    path = "%s/year_TT_TTvar_Syst_%s_%s_label.root"%(args.outpath, args.sig, args.mass)
    
  
-    years = [
-             #"2016preVFP" ,
-             #"2016postVFP" ,
-             #"2017" ,
-             #"2018" ,
-             "Run2UL",
-            ]
+    years = ["Run2UL"]
     
     ttvars = {
              "TT",
@@ -221,7 +266,7 @@ def main():
     for year in years:
 
         # create output directory for each year
-        outputPath = "%s_plots_MCcorrectionFactorRatio/"%(year)
+        outputPath = "%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year)
         if not os.path.exists(outputPath):
             os.makedirs(outputPath)
 
@@ -242,18 +287,32 @@ def main():
   
             draw = False 
 
+            # get closure correction histogram to put plot including tt and all other ttvar
             MCcorr_TT = f1.Get("%s_MCcorr_TT_TT"%(year))
             MCcorr_TT.SetTitle("")
             MCcorr_TT.SetLineWidth(4)
             MCcorr_TT.SetLineColor(ROOT.kBlack)
-            MCcorr_TT.GetYaxis().SetTitle("Closure Correction [TT]")
+            MCcorr_TT.GetYaxis().SetTitle("Closure Correction")
 
-            nEventsA_TT = f1.Get("%s_nEventsA_TT_TT"%(year))
-            nEventsA_TT.SetTitle("")
-            nEventsA_TT.SetLineWidth(0)
-            nEventsA_TT.SetFillColorAlpha(ROOT.kGray, 0.8)
-            nEventsA_TT.GetYaxis().SetTitle("Closure Correction Ratio [TTvar / TT]")
-            nEventsA_TT.GetXaxis().SetTitle("N_{jets}")
+            # get closure correction histogram to put comparion plot (each ttvar vs tt)
+            # calculate statistical unc. on closure coerection
+            MCcorr_TT_Unc = MCcorr_TT.Clone("MCcorr_TT_Unc")
+            
+            for i in range(1, MCcorr_TT_Unc.GetNbinsX()+1):
+                content        = MCcorr_TT.GetBinContent(i) 
+                contentError   = MCcorr_TT.GetBinError(i)
+                closureCorrUnc = (contentError / content) 
+                
+                MCcorr_TT_Unc.SetBinContent(i, 1.0)
+                MCcorr_TT_Unc.SetBinError(i, closureCorrUnc)
+
+            MCcorr_TT_Unc.SetTitle("")
+            MCcorr_TT_Unc.SetLineWidth(0)
+            MCcorr_TT_Unc.SetFillColorAlpha(ROOT.kGray, 0.8)
+            MCcorr_TT_Unc.GetYaxis().SetTitle("Closure Correction Ratio [TTvar / TT]")
+            MCcorr_TT_Unc.GetXaxis().SetTitle("N_{jets}")
+
+            relabelNjetsBins(MCcorr_TT_Unc, label.partition("_")[0], 1.1 * 0.05)
 
             # ----------------
             # loop over ttvars
@@ -306,12 +365,12 @@ def main():
                 if ttvar != "TT":
                     canvas.cd()
                     if not draw:
-                        nEventsA_TT.GetYaxis().SetRangeUser(0.0, 2.4)
-                        nEventsA_TT.Draw("E2")
+                        MCcorr_TT_Unc.GetYaxis().SetRangeUser(0.0, 2.4)
+                        MCcorr_TT_Unc.Draw("E2")
                         hist.Draw("hist SAME")
                         draw = True
         
-                        legend.AddEntry(nEventsA_TT, "TT Stat. Unc.", "F")
+                        legend.AddEntry(MCcorr_TT_Unc, "Stat. Unc. on Corr.", "F")
                         
                     else:
                         hist.Draw("hist SAME")
@@ -348,7 +407,7 @@ def main():
                 legend_each.AddEntry(MCcorr_TT, "Nominal TT", "l")            
                 legend_each.AddEntry(MCcorr_TTvar, ttvar_names[ttvar], "l")            
                 addCMSlogo(canvas_each, year, TopMargin=0.06, LeftMargin=0.12, RightMargin=0.03, SF=1.0)
-                addExtraInfo(canvas_each, 0.12, 0.91, 0.050, args.sig, label.partition("_")[0])
+                addExtraInfo(canvas_each, 0.12, 0.91, 0.050, args.sig, label.partition("_")[0], args.div)
 
                 legend_each.Draw("SAME")
 
@@ -360,25 +419,50 @@ def main():
                 histBottomPanel.GetYaxis().SetTitleOffset(0.3/0.7)
 
                 histBottomPanel.GetYaxis().SetTitleOffset(histBottomPanel.GetYaxis().GetTitleOffset() / globalScale)
-
-                histBottomPanel.GetYaxis().SetRangeUser(0.04,1.96) 
-                histBottomPanel.GetYaxis().SetNdivisions(7)
+            
+                histBottomPanel.GetYaxis().SetRangeUser(0.55,1.45) 
+                histBottomPanel.GetYaxis().SetNdivisions(5)
                 histBottomPanel.GetYaxis().SetTitle("Ratio [TTvar / TT]")
+                relabelNjetsBins(histBottomPanel, label.partition("_")[0], 1.1 * 0.18)
                 histBottomPanel.Draw("hist E")
 
                 line.Draw("same")
-                canvas_each.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
  
+                if args.div == "MassExclusion" and args.sig == "RPV":
+                    canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
+ 
+                if args.div == "MassExclusion" and args.sig == "SYY":
+                    canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
+
+                if args.div == "MaxSign" and args.sig == "RPV":
+                    canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
+
+                if args.div == "MaxSign" and args.sig == "SYY":
+                    canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
+
+
             # ---------------------------------------------
             # save canvas & legend including all histograms
             # ---------------------------------------------
             canvas.cd()
             addCMSlogo(canvas, year, TopMargin=0.06, LeftMargin=0.12, RightMargin=0.03, SF=1.0)    
-            addExtraInfo(canvas, 0.12, 0.95, 0.035, args.sig, label.partition("_")[0])
+            addExtraInfo(canvas, 0.12, 0.95, 0.035, args.sig, label.partition("_")[0], args.div)
 
             legend.Draw("SAME")
-            canvas.SaveAs("%s_plots_MCcorrectionFactorRatio/"%(year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
-         
+
+            if args.div == "MassExclusion" and args.sig == "RPV":
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
+        
+            if args.div == "MassExclusion" and args.sig == "SYY":
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+
+            if args.div == "MaxSign" and args.sig == "RPV":
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+
+            if args.div == "MaxSign" and args.sig == "SYY":
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+
+ 
         f1.Close()
  
 if __name__ == "__main__":
