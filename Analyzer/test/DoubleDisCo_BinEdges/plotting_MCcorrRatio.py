@@ -127,9 +127,11 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
         modelName = model
     
     divName = ""
-    if "MassExclusion" in div:
+    if "NonOptimized" in div:
+        divName = "NonOptimized "
+    elif "MassExclusion" in div:
         divName = "Mass Exclusion"
-    else:
+    elif "MaxSign" in div:
         divName = "Max Significance"
     
     text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.04, modelName)
@@ -167,15 +169,28 @@ def main():
 
     usage  = "usage: %prog [options]"
     parser = argparse.ArgumentParser(usage)
-    parser.add_argument("--sig",     dest="sig",     help="signal model RPV, SYY",       default="RPV"                     )
-    parser.add_argument("--mass",    dest="mass",    help="signal mass",                 default="550"                     )
-    parser.add_argument("--div",     dest="div",     help="MassEclusion, MaxSign",       default="MassExclusion"           )
-    parser.add_argument("--outpath", dest="outpath", help="output dir where group dirs", default="Run2UL_MassExclusion_RPV") 
+    parser.add_argument("--sig",     dest="sig",     help="signal model RPV, SYY",               default="RPV"                     )
+    parser.add_argument("--mass",    dest="mass",    help="signal mass",                         default="550"                     )
+    parser.add_argument("--div",     dest="div",     help="NonOptimized, MassEclusion, MaxSign", default="MassExclusion"           )
+    parser.add_argument("--outpath", dest="outpath", help="output dir where group dirs",         default="Run2UL_MassExclusion_RPV") 
     
     args = parser.parse_args()
 
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptStat(0)
+
+    # Non-optimized edges (0.6, 0.6)
+    if args.div == "NonOptimized" and args.sig == "RPV":
+        labels = ["0l_0.6_0.6",
+                  "1l_0.6_0.6",
+                  "2l_0.6_0.6",
+                 ]
+    
+    if args.div == "NonOptimized" and args.sig == "SYY":
+        labels = ["0l_0.6_0.6",
+                  "1l_0.6_0.6",
+                  "2l_0.6_0.6",
+                 ]
 
     # Bin edges for Mass Exclusion 
     if args.div == "MassExclusion" and args.sig == "RPV": 
@@ -427,13 +442,24 @@ def main():
                 histBottomPanel.Draw("hist E")
 
                 line.Draw("same")
+
+                # NonOptimized
+                if args.div == "NonOptimized" and args.sig == "RPV":
+                    canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
+
+                if args.div == "NonOptimized" and args.sig == "SYY":
+                    canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
+        
  
+                # MassExclusion
                 if args.div == "MassExclusion" and args.sig == "RPV":
                     canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
  
                 if args.div == "MassExclusion" and args.sig == "SYY":
                     canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
 
+                
+                # MaxSign
                 if args.div == "MaxSign" and args.sig == "RPV":
                     canvas_each.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + tag + ttvar + "_" + label + ".pdf")
 
@@ -450,12 +476,23 @@ def main():
 
             legend.Draw("SAME")
 
+            # NonOptimized
+            if args.div == "NonOptimized" and args.sig == "RPV":
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+
+            if args.div == "NonOptimized" and args.sig == "SYY":
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+
+
+            # MassExclusion
             if args.div == "MassExclusion" and args.sig == "RPV":
                 canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
         
             if args.div == "MassExclusion" and args.sig == "SYY":
                 canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
 
+
+            # MaxSign
             if args.div == "MaxSign" and args.sig == "RPV":
                 canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
 

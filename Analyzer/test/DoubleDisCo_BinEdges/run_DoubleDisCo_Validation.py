@@ -192,7 +192,7 @@ def main():
         theApp.run(args.disc1edge, args.disc2edge, args.fastMode, plotVars2D=args.plotVars2D, plotVarVsBoundary=args.plotVarVsBoundary, samples=samples, files=files, histName=histName, njets=args.njets, regions=regions, plotter=plotter, tablesPath=tablesPath)
 
     elif args.run == "MCcorrectionFactor_TTvar":
-        theApp = MCcorrectionFactor_TTvar(args.year, args.channel, Sig, args.mass, translator, edges=edgeStub)
+        theApp = MCcorrectionFactor_TTvar(args.year, args.channel, Sig, args.mass, translator, edges=edgeStub, outpath=args.outpath)
         theApp.run(args.disc1edge, args.disc2edge, args.fastMode, samples=samples, files=files, histName=histName, njets=args.njets, regions=regions, plotter=plotter, tablesPath=tablesPath, edges=edgeStub)
 
 def BryansHack(files, channel, Sig, mass, histName, regions, translator, disc1, disc2):

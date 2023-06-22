@@ -17,7 +17,7 @@ def naturalSort(unsortedList):
 
 class MCcorrectionFactor_TTvar():
 
-    def __init__(self, year, channel, model, mass, translator, edges, hack=False):
+    def __init__(self, year, channel, model, mass, translator, edges, outpath, hack=False):
 
         self.year        = year
         self.channel     = channel
@@ -26,6 +26,7 @@ class MCcorrectionFactor_TTvar():
         self.translator  = translator
         self.edges       = edges
         self.hack        = hack
+        self.outpath     = outpath
 
         if self.hack:
             self.ttVarsModel = [
@@ -310,6 +311,7 @@ class MCcorrectionFactor_TTvar():
         TT_TTvar_sys = { "nEventsA_TT"     : {},
                          "MCcorr_TT"       : {},
                          "MCcorr_TTvar"    : {}, 
+                         "nEventsA_TTvar"  : {},
                          "MCcorr_Ratio_MC" : {},
         }
 
@@ -426,6 +428,7 @@ class MCcorrectionFactor_TTvar():
 
                 # initialize the dictionaries
                 nEventsPerBoundaryTT                            = {}
+                nEventsPerBoundaryTTvar                         = {}
                 closureCorrPerBoundaryTT                        = {}
                 closurePerBoundaryTTinData                      = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
@@ -441,7 +444,8 @@ class MCcorrectionFactor_TTvar():
                 # loop over the ttVar
                 # -------------------
                 for ttVar in self.ttVars:
-                
+               
+                    nEventsPerBoundaryTTvar[ttVar]                         = theAggy.getPerBoundary(variable = "nEventsA",                   sample = ttVar,                 region = region, njet = njet) 
                     closureCorrPerBoundaryTT[ttVar]                        = theAggy.getPerBoundary(variable = "closureCorr",                sample = ttVar,                 region = region, njet = njet)  
                     MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
                     MCcorrRatio_MC_BoundaryTT[ttVar]                       = theAggy.getPerBoundary(variable = "MCcorrRatio_MC",             sample = ttVar,                 region = region, njet = njet)
@@ -452,6 +456,7 @@ class MCcorrectionFactor_TTvar():
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
                     if not self.hack:
                         TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
+                        TT_TTvar_sys["nEventsA_TTvar"][njet][ttVar]  = nEventsPerBoundaryTTvar[ttVar][1.00]
                         TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
                 # set y axis for higher njets bins
@@ -549,7 +554,7 @@ class MCcorrectionFactor_TTvar():
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
         # -------------------------------------------------------------
-        higgsCombine = HiggsCombineInputs(self.year, njets, self.sig, self.channel, samples, regions, self.edges)        
+        higgsCombine = HiggsCombineInputs(self.year, njets, self.sig, self.channel, samples, regions, self.edges, self.outpath)        
         higgsCombine.put_MCcorrFactors_toRootFiles(TT_TTvar_sys)
         
         for region in regions:
