@@ -171,10 +171,13 @@ class ControlRegionProducer:
             h.SetBinError(  1, tf[1])
             print(name, "TF:", round(tf[0],4), "+/-", round(tf[1],4))
             hABCD = ROOT.TH1D(name+"ABCD", name+"ABCD", 4, 0, 4)
+            tfPrint = ""
             for i in range(len(tf[4])):
                 print(tf[4][i], tf[5][i])
+                tfPrint += " {} \pm {} &".format(round(tf[4][i]*100, 1), round(tf[5][i]*100, 1))
                 hABCD.SetBinContent(i+1, tf[4][i])
                 hABCD.SetBinError(  i+1, tf[5][i])
+            print(tfPrint)
             self.transforFactorsHisto[name] = (h, tf[2], hABCD)
 
     def getTFPerBin(self, tfABCDHisto, i, repeat=6):
@@ -305,6 +308,7 @@ class ControlRegionProducer:
             self.addCMSlogo(canvas)
 
             canvas.SaveAs("%s/%s_%s.png"%(self.outpath, self.year, name))
+            canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, name))
 
 if __name__ == "__main__":
 
@@ -328,10 +332,10 @@ if __name__ == "__main__":
     }
 
     backgrounds = {
-        "TT_skim"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "QCD_skim"      : {"name" : "QCD multijet",    "color" : ROOT.kRed,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "TTX_skim"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-        "BG_OTHER_skim" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "QCD"      : {"name" : "QCD multijet",    "color" : ROOT.kRed,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
+        "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0},
     }
 
     data = {
