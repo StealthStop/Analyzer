@@ -13,6 +13,12 @@ class BinEdges():
         self.ttVar      = ttVar
         self.translator = translator
 
+        self.valColors = { "ABCD"   : "#5b3bd8",
+                           "Val_BD" : "#DDBB87",
+                           "Val_CD" : "#429c93", 
+                           "Val_D"  : "#990099",
+        }
+
     def run(self, disc1edge=None, disc2edge=None, fastMode=False, **kwargs):
 
         tablesPath     = kwargs["tablesPath"]["TT"]
@@ -35,11 +41,61 @@ class BinEdges():
 
         EventsPerNjets = {}
         for sample in samples:
+            if sample in ["TTX", "QCD", "BG_OTHER"]:
+                sample = "NonTT"
             # Hold onto per Njet things so we can plot altogether after the Njets loop
             EventsPerNjets[sample] = {njet : None for njet in njets}
 
         # hold on edges per njet
         edgesPerNjets = {njet : None for njet in njets}
+
+        QCDCRInfo = {}
+        # -----------------
+        # Setup QCDCR stuff
+        # -----------------
+        for njet in njets:
+            
+            hist_lists = {}
+
+            for sample in samples:
+
+                # get the fsr/isr, jec/jer higtograms from TT root file
+                ttvarStr = ""
+
+                if sample == "TT_fsrDown":
+                    ttvarStr = "_fsrDown"
+
+                elif sample == "TT_fsrUp":
+                    ttvarStr = "_fsrUp"
+
+                elif sample == "TT_isrDown":
+                    ttvarStr = "_isrDown"
+
+                elif sample == "TT_isrUp":
+                    ttvarStr = "_isrUp"
+
+                elif sample == "TT_JECdown":
+                    ttvarStr = "_JECdown"
+
+                elif sample == "TT_JECup":
+                    ttvarStr = "_JECup"
+
+                elif sample == "TT_JERdown":
+                    ttvarStr = "_JERdown"
+
+                elif sample == "TT_JERup":
+                    ttvarStr = "_JERup"
+
+                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+                if ttvarStr == "":
+                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                    hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+
+            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
+
+            QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
+
+            del theEdgesClass
 
         # ---------------
         # loop over njets
@@ -78,6 +134,10 @@ class BinEdges():
                     ttvarStr = "_JERup"
             
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr) 
+                if ttvarStr == "":
+                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+                #hist_lists[sample+"_QCDCR"] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr + "_QCDCR") 
             
     
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
@@ -94,6 +154,9 @@ class BinEdges():
             # loop over for initialize the big dictionaries to get all regions' events
             for hist_key in hist_lists.keys():
 
+                if hist_key in ["TTX", "QCD", "BG_OTHER"]:
+                    hist_key = "NonTT"
+
                 allRegionsEvents[hist_key]      = {}
                 allRegionsFinalEvents[hist_key] = {}
 
@@ -107,6 +170,9 @@ class BinEdges():
 
                 # loop over for TT, NonTT, Data to get all regions' events
                 for hist_key in hist_lists.keys():
+
+                    if hist_key in ["TTX", "QCD", "BG_OTHER"]:
+                        hist_key = "NonTT"
 
                     allRegionsEvents[hist_key][region]      = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
                     allRegionsFinalEvents[hist_key][region] = {"A" : {}, "B" : {}, "C" : {}, "D" : {}}
@@ -124,7 +190,7 @@ class BinEdges():
                 # -----------------
                 if region == "ABCD":
 
-                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode)
+                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, QCDCRInfo=QCDCRInfo)
 
                 # --------------------------
                 #        *    ||   |                       
@@ -136,7 +202,7 @@ class BinEdges():
                 # --------------------------             
                 elif region == "Val_BD":
 
-                   theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc2Edge=allRegionsFinalEdges["ABCD"][1], rightBoundary=float(0.4), disc1Edge=float(0.2), fastMode=fastMode)
+                   theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc2Edge=allRegionsFinalEdges["ABCD"][1], rightBoundary=float(0.4), disc1Edge=float(0.2), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
 
                 # -------------------
                 #          B  |  A   
@@ -151,7 +217,7 @@ class BinEdges():
                 # --------------------
                 elif region == "Val_CD":
 
-                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=allRegionsFinalEdges["ABCD"][0], topBoundary=float(0.4), disc2Edge=float(0.2), fastMode=fastMode)
+                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=allRegionsFinalEdges["ABCD"][0], topBoundary=float(0.4), disc2Edge=float(0.2), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
 
                 # ------------------------------------------------
                 # make the validation regions as sub-division of D 
@@ -167,7 +233,7 @@ class BinEdges():
                 # ------------------------------------------------
                 elif region == "Val_D":
                     
-                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=allRegionsFinalEdges["ABCD"][0], topBoundary=allRegionsFinalEdges["ABCD"][1], ABCDdisc1=float(allRegionsFinalEdges["ABCD"][0])/2.0, ABCDdisc2=float(allRegionsFinalEdges["ABCD"][1])/2.0, fastMode=fastMode)
+                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=0.6, topBoundary=0.6, ABCDdisc1=0.3, ABCDdisc2=0.3, fastMode=fastMode, QCDCRInfo=QCDCRInfo)
 
                 # ----------------------------
                 # Optimization based on TT !!!
@@ -204,6 +270,8 @@ class BinEdges():
                 # loop over for getting plots for TT, NonTT, Data
                 # -----------------------------------------------
                 for hist_key in hist_lists.keys():
+                    if hist_key in ["TTX", "QCD", "BG_OTHER"]:
+                        hist_key = "NonTT"
 
                     edges                                   = np.array(theEdgesClass.get("edges"), dtype=float)
                     allRegionsEvents[hist_key][region]      = {"A" : theEdgesClass.get("nEventsA", None, None, hist_key)}
@@ -211,7 +279,7 @@ class BinEdges():
                                                                "B" : theEdgesClass.getFinal("nEventsB", hist_key),
                                                                "C" : theEdgesClass.getFinal("nEventsC", hist_key),
                                                                "D" : theEdgesClass.getFinal("nEventsD", hist_key)}
-                    if hist_key != self.sig:
+                    if hist_key != self.sig and "QCDCR" not in hist_key:
                         nonClosures      = theEdgesClass.get("nonClosure",      None, None, hist_key) # vars with any combination of bin edges
                         pull             = theEdgesClass.get("pull",            None, None, hist_key)
                         finalNonClosure  = theEdgesClass.getFinal("nonClosure",             hist_key) # vars with the final choice of bin edges
@@ -220,6 +288,7 @@ class BinEdges():
                     # ---------------------------  
                     # plot variable vs disc as 1D
                     # --------------------------- 
+
                     if kwargs["plotVars1D"]:
                         for disc in [1, 2]:
 
@@ -240,25 +309,28 @@ class BinEdges():
                     # plot variable vs Disc1Disc2
                     # ---------------------------
                     if kwargs["plotVars2D"]:
+                        absMin = 0.0
                         if hist_key == "TT":
                             # significance including non-closure
-                            plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=region, variable="Sign_includingNonClosure"        )
-                            #plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  5.0, njet, name=region, variable="SignUnc_includingNonClosure"     )
+                            plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  5.0, njet, name=region, variable="Sign_includingNonClosure"        )
+                            #plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  5.0, njet, name=region, variable="SignUnc_includingNonClosure"     )
                             # sigFracs A, B, C, D
                             if region == "ABCD":
-                                #plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["A"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["A"]))
-                                plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["B"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["B"]))
-                                plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["C"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["C"]))
-                                plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["D"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["D"]))
+                                #plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["A"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["A"]))
+                                plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["B"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["B"]))
+                                plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["C"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["C"]))
+                                plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["D"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["D"]))
                             # inverse significance
                             #plotter[hist_key].plot_inverseSignificance_vsNonClosure(finalSignificance, finalNonClosure, significances, nonClosures, edges, allRegionsFinalEdges[region], njet, name=region)
 
-                        if hist_key != self.sig:
-                            plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosure"   )
-                            #plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, 10e-10, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosureUnc")
-                            plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, -20.0,  20.0, -5.0, 5.0, njet, name=region, variable="Pull"         )
+                        if hist_key != self.sig and "QCDCR" not in hist_key:
+                            plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosure"   )
+                            #plotter[hist_key].plot_Var_vsDisc1Disc2(nonClosures[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.5, njet, name=region, variable="NonClosureUnc")
+                            plotter[hist_key].plot_Var_vsDisc1Disc2(pull[:,0],        edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, -500.0,  500.0, -15.0, 15.0, njet, name=region, variable="Pull"         )
 
-                    EventsPerNjets[hist_key][njet] = allRegionsFinalEvents[hist_key]
+                    if "QCDCR" not in hist_key:
+                        print(hist_key)
+                        EventsPerNjets[hist_key][njet] = allRegionsFinalEvents[hist_key]
                 
                 edgesPerNjets[njet] = allRegionsFinalEdges
 
@@ -266,10 +338,8 @@ class BinEdges():
             # plot Disc1s vs Disc2s with all edges
             # ------------------------------------
             if kwargs["plotDisc1VsDisc2"]:
-                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = self.sig, name = "Val_BD_CD", col1="yellow", col2="lime" )
-                plotter["TT"].plot_Disc1VsDisc2(hist_lists["TT"],      allRegionsFinalEdges, njet, tag = "TT",     name = "Val_BD_CD", col1="yellow", col2="lime" )
-                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = self.sig, name = "Val_D",     col1="white",  col2="white")
-                plotter["TT"].plot_Disc1VsDisc2(hist_lists["TT"],      allRegionsFinalEdges, njet, tag = "TT",     name = "Val_D",     col1="white",  col2="white")
+                plotter["TT"].plot_Disc1VsDisc2(hist_lists[self.sig],  allRegionsFinalEdges, njet, tag = self.sig, name = "Val_BD_CD")
+                plotter["TT"].plot_Disc1VsDisc2(hist_lists["TT"],      allRegionsFinalEdges, njet, tag = "TT",     name = "Val_BD_CD")
 
             # get the nEvents for each ABCD region
             sigFracsTable_AllRegions.writeLine(region="ABCD", njet=njet, finalSigFracs=allRegionsFinalSigFracs_TT["ABCD"], nEvents_AC=allRegionsFinalEvents["TT"]["ABCD"]["A"][0]+allRegionsFinalEvents["TT"]["ABCD"]["C"][0], nEvents_AB=allRegionsFinalEvents["TT"]["ABCD"]["A"][0]+allRegionsFinalEvents["TT"]["ABCD"]["B"][0])
@@ -292,12 +362,12 @@ class BinEdges():
         for region in regions:
 
             # usual closure
-            plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    None,                None,                   njets, name = region, closureTag = "b",  bkgTag = "TT")
+            plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    None,                None,                   njets, name = region, closureTag = "b",  bkgTag = "TT", valColor=self.valColors[region])
             #plotter["TT"].make_allClosures(edgesPerNjets,    EventsPerNjets["TT"], None,                    EventsPerNjets[self.sig], None,              njets, name = region, closureTag = "sb", bkgTag = "TT")
             #plotter["NonTT"].make_allClosures(edgesPerNjets, None,                 EventsPerNjets["NonTT"], None,                None,                   njets, name = region, closureTag = "b",  bkgTag = "NonTT")
             #plotter["Data"].make_allClosures(edgesPerNjets,  None,                 None,                    None,                EventsPerNjets["Data"], njets, name = region, closureTag = "b",  bkgTag = "InitialData")
             #plotter[self.ttVar].make_ttVariances_allClosures(edgesPerNjets, EventsPerNjets["TT"], EventsPerNjets[self.ttVar], njets, name = region, closureTag = "b", varTag = self.ttVar)
-            plotter["Data"].make_allClosures(edgesPerNjets, EventsPerNjets["TT"], EventsPerNjets["NonTT"], None, EventsPerNjets["Data"], njets, name = region, closureTag = "b", bkgTag = "TTinData")
+            plotter["Data"].make_allClosures(edgesPerNjets, EventsPerNjets["TT"], EventsPerNjets["NonTT"], None, EventsPerNjets["Data"], njets, name = region, closureTag = "b", bkgTag = "TTinData", valColor=self.valColors[region])
 
             # data-MC closure
             #if region != "ABCD":

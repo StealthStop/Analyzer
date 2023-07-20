@@ -119,7 +119,7 @@ def make1DRatioPlot(dataNum, dataDen, mcNum, mcDen, cr, goodName, outputFile):
         iamLegend.AddEntry(mcRatio, "TT MC", "E1 P")
     elif "QCD" in cr:
         iamLegend.AddEntry(dataRatio, "JetHT Data", "E1 P")
-        iamLegend.AddEntry(mcRatio, "QCD multijet MC", "E1 P")
+        iamLegend.AddEntry(mcRatio, "Non-TT MC", "E1 P")
 
     iamLegend.Draw("SAME")
 

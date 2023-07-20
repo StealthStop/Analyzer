@@ -40,14 +40,19 @@ class Optimized_BinEdges():
             for njet in njets:
     
                 # get significance for each njet bin and add them quadrature 
-                total_significance += (significance[njet][i_list]**2.0)
+                if significance[njet][i_list] >= 0.0:
+                    total_significance += (significance[njet][i_list]**2.0)
  
                 # check the non-closure and pull to get the same ABCD edges for all njet bins
-                if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2): 
+                # avoid invalid -999 values
+                if not (nonClosure[njet][i_list] < 0.3 or abs(nonClosure_Pull[njet][i_list]) < 2) or \
+                       (nonClosure[njet][i_list] < 0.0):
                     pass_nonClosure = False
     
                 # based on the sigFracs table, 30% for 0l, 40% for 1l
-                if not (sigFracB[njet][i_list] < sigFracCut and sigFracC[njet][i_list] < sigFracCut and sigFracD[njet][i_list] < sigFracCut): 
+                # avoid invalid -999 values
+                if not (sigFracB[njet][i_list] < sigFracCut and sigFracC[njet][i_list] < sigFracCut and sigFracD[njet][i_list] < sigFracCut) or \
+                       (sigFracB[njet][i_list] < 0.0 or sigFracC[njet][i_list] < 0.0 or sigFracD[njet][i_list] < 0.0):
                     pass_sigFrac = False
     
             # Add manually the non-optimized edges and associated quantities
@@ -70,8 +75,6 @@ class Optimized_BinEdges():
             # get the current best choice of ABCD edges     
             if (pass_nonClosure and pass_sigFrac):
 
-                print "HEY I am here and pass sigfrac and nonclosure !!!"
-    
                 if (total_significance > max_significance):
 
                     max_significance = total_significance
@@ -197,9 +200,10 @@ class Optimized_BinEdges():
                     sigFracD[region][njet]                         = np.array(theEdgesClass.get("sigFractionD",                     None, None, self.sig ))[:,0]
                     sigFracD_Unc[region][njet]                     = np.array(theEdgesClass.get("sigFractionD",                     None, None, self.sig ))[:,1]
   
-        sigFracsCut = 0.4 
-        if self.channel == "0l": 
-            sigFracsCut = 0.3
+        if self.sig == "RPV": 
+            sigFracsCut = 0.3 
+        else:
+            sigFracsCut = 1.0
 
         # ------------------------------------------------------------
         # optimized ABCD edges with significance including non-closure
@@ -216,6 +220,16 @@ class Optimized_BinEdges():
         # -------------------------------------
         # add all edges to DoubleDisCo cfg file
         # -------------------------------------
-        #if self.makeDiscoCfg:
-        #    addEdges = addEdges_toDoubleDisco(self.year, self.sig, self.mass, self.channel, regions)
-        #    addEdges.addEdges_toDoubleDiscoCfg(edgesPerNjets, njets)
+        iBestChoice = None
+        bestChoices = sorted(best_choices_parameters.keys(), reverse=True)
+        if len(bestChoices) > 1:
+            iBestChoice = bestChoices[1]
+        else:
+            iBestChoice = bestChoices[0]
+
+        bestEdges   = best_choices_parameters[iBestChoice]["ABCDedges"]
+
+        if self.makeDiscoCfg:
+            aWriter = ConfigWriter(self.sig, self.channel, regions)
+            aWriter.addEdges_toDoubleDiscoCfg(False, bestEdges)
+            aWriter.addEdges_toDoubleDiscoCfg(True,  bestEdges)

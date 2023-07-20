@@ -58,16 +58,16 @@ getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2783_DeepResolvedwp0.00_DeepAK8wp0.
 ```
 
 We have two set of Double DisCo NN, one for RPV model and another one SYY model.
-To get all them, run these comments below.
+To get all them, run these comments below. Note that any relese with patch number 1 (e.g. v3.0.1) contains optimized bin edges whereas patch number 0 (e.g. v3.0.0) has non-optimized bin edges.
 
 ```
 cmsenv
-getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_RPV_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_SYY_v3.0 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_SYY_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_RPV_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_SYY_v3.2 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_SYY_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_RPV_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
-getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_SYY_v3.1 -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_SYY_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_RPV_v3.3.1_patch -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_0l_Run2_SYY_v3.3.1_patch -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_0l_SYY_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_RPV_v3.3.1_patch -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_1l_Run2_SYY_v3.3.1_patch -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_1l_SYY_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_RPV_v3.3.1_patch -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_RPV_Run2
+getDeepESMCfg.sh -t DoubleDisCo_Reg_2l_Run2_SYY_v3.3.1_patch -o -m DoubleDisCo_Reg.cfg -M DoubleDisCo_Reg_NonIsoMuon.cfg -f Keras_Tensorflow -F Keras_Tensorflow_NonIsoMuon -s DoubleDisCo_Reg_2l_SYY_Run2
 ```
 
 ## Running an Analyzer Locally
@@ -159,6 +159,38 @@ Options:
   --analyze=ANALYZE  AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep,
                      Analyze1Lep, MakeNJetDists
 ```
+
+## Plotting from TTrees
+
+A script that wraps around the `TTree->Draw()` concept is provided in the form of `miniTupleDrawer.py`.
+This gives easy abilities to plot from TTrees produced from an analyzer derived from the `MiniTupleMaker` class.
+Current analyzers that produce simple TTrees are `MakeMiniTree`, `MakeNNVariables`, and `MakeQCDValTree`.
+The TTree drawer script requires a "sidecar" auxiliary file that specifies a dictionary of histogram names mapped to a subdictionary of options.
+An example aux file is `miniTupleDrawer_aux.py`.
+```
+usage: %miniTupleDrawer [options] [-h] --inputDir INPUTDIR
+                                  [--outputDir OUTPUTDIR] [--tree TREE]
+                                  [--year YEAR] [--options OPTIONS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --inputDir INPUTDIR   Path to ntuples
+  --outputDir OUTPUTDIR
+                        path to output
+  --tree TREE           TTree name to draw
+  --year YEAR           which year
+  --options OPTIONS     options file
+```
+An example call to this script would be:
+```
+python Plotters/General/miniTupleDrawer.py --options miniTupleDrawer_aux \
+                                           --inputDir ~/path/to/minituples/ \
+                                           --outputDir subdir/structure/in/condor/folder \
+                                           --tree PreSelection \
+                                           --year Run2UL
+```
+Output ROOT files with the drawn histograms are contained in the `outputDir` folder subdirectory structure and placed automatically in the `condor` folder.
+This placement of the output makes it intuitive to then use the other plotting tools (`stackPlotter` mentioned below) for making final, pretty plots.
 
 ## Making stack plots
 

@@ -274,14 +274,71 @@ class StackPlotter:
 
     # Some customized sizes and distances but scaled
     # when going between ratio plot and pure stack with no ratio
-    def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
+    def makeLegends2Col(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.025 / self.upperSplit
+        textSize = 0.040 / self.upperSplit
+        maxLegendFrac = 0.25 * (1.0 - self.TopMargin - self.BottomMargin)
+
         space    = 0.015
 
-        bkgXmin = 0.60 if self.printNEvents else 0.75
+        bkgXmin = 0.25 - self.RightMargin
+        if self.printNEvents:
+            bkgXmin = 0.15 - self.RightMargin
+            
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
-        bkgXmax = 1.0-self.RightMargin-0.01
+        bkgXmax = 0.55-self.RightMargin-0.01
+        bkgYmin = bkgYmax-(float(nBkgs))*(1.2*textSize+space)
+        
+        if self.printInfo:
+            bkgYmax -= 0.025
+
+        bkgYFrac = (1.0-self.TopMargin-bkgYmin) / (1.0 - self.TopMargin - self.BottomMargin)
+
+        bkgLegend = ROOT.TLegend(bkgXmin, bkgYmin, bkgXmax, bkgYmax)
+        bkgLegend.SetBorderSize(0)
+        bkgLegend.SetTextSize(textSize)
+
+        sigXmin = bkgXmax + 0.01
+            
+        sigYmax = bkgYmax
+        sigXmax = 1.0-self.RightMargin-0.01
+        sigYmin = sigYmax-(float(nSigs))*(1.2*textSize+space)
+        #sigXmin = self.LeftMargin+0.03
+        #sigYmax = bkgYmax
+        #sigXmax = bkgXmin
+        #sigYmin = bkgYmax-nSigs*(textSize+space) 
+
+        if self.printInfo:
+            bkgYmax -= 0.025
+
+        sigYFrac = (1.0-self.TopMargin-sigYmin) / (1.0 - self.TopMargin - self.BottomMargin)
+
+        sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
+        sigLegend.SetBorderSize(0)
+        sigLegend.SetMargin(0.10)
+        sigLegend.SetTextSize(textSize/1.2)
+
+        yMax = 1.0; factor = 1.0; power = 1.0
+        if doLogY and theMax != 0.0 and theMin != 0.0:
+            power = math.log10(theMax / theMin) * 3.0
+
+        theFrac = bkgYFrac if bkgYFrac > sigYFrac else sigYFrac
+
+        if self.printInfo:
+            yMax = (theMax-theMin) * (1.1 - theFrac)**(-power) * factor
+        else:                             
+            yMax = (theMax-theMin) * (0.95 - theFrac)**(-power) * factor
+
+        return bkgLegend, sigLegend, yMax
+
+    def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
+
+        textSize = 0.028 / self.upperSplit
+        space    = 0.015
+
+        bkgXmin = 0.70 if self.printNEvents else 0.755
+        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
+        bkgXmax = 1.0-self.RightMargin-0.02
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
         
         if self.printInfo:
@@ -293,7 +350,7 @@ class StackPlotter:
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
 
-        sigXmin = self.LeftMargin+0.03
+        sigXmin = self.LeftMargin+0.26
         sigYmax = bkgYmax
         sigXmax = bkgXmin
         sigYmin = bkgYmax-nSigs*(textSize+space) 
@@ -306,7 +363,9 @@ class StackPlotter:
         sigLegend = ROOT.TLegend(sigXmin, sigYmin, sigXmax, sigYmax)
         sigLegend.SetBorderSize(0)
         sigLegend.SetMargin(0.10)
-        sigLegend.SetTextSize(textSize)
+        sigLegend.SetTextSize(textSize/1.2)
+        if tooManyBkgds:
+            sigLegend.SetNColumns(nColumns-1)
 
         yMax = 1.0; factor = 1.05; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
@@ -352,6 +411,52 @@ class StackPlotter:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
         else:
             mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+
+    def addExtraInfo(self, canvas, packedInfo):
+
+        njetStr = ""
+        if "Njets" in packedInfo:
+            njets = packedInfo.partition("Njets")[-1].partition("_")[0]
+    
+            op = "="
+            if "incl" in njets:
+                op = "#geq"
+
+            njetStr = "N_{ jets} %s %s"%(op, njets.replace("incl", ""))
+
+        modelStr = ""
+        if "RPV" in packedInfo:
+            modelStr = "RPV"
+        elif "SYY" in packedInfo:
+            modelStr = "Stealth SYY"
+
+        channelStr = ""
+        if "0l" in packedInfo:
+            channelStr = "Fully-Hadronic"
+        elif "1l" in packedInfo:
+            channelStr = "Semi-Leptonic"
+        elif "2l" in packedInfo:
+            channelStr = "Fully-Leptonic"
+
+        canvas.cd()
+
+        text = ROOT.TLatex()
+        text.SetNDC(True)
+
+        text.SetTextAlign(13)
+        text.SetTextSize(0.035)
+        text.SetTextFont(42)
+        text.SetTextColor(ROOT.TColor.GetColor("#7C99D1"))
+
+        offset = 0.0
+        if modelStr != "":
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), modelStr)
+            offset += 0.05
+        if channelStr != "":
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), channelStr)
+            offset += 0.05
+        if njetStr != "":
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), njetStr)
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -405,7 +510,7 @@ class StackPlotter:
                         if Hobj.IsGood():
                             dataScale = Hobj.Integral()
 
-                            if self.normalize:
+                            if self.normalize and dataScale != 0.0:
                                 Hobj.Scale(1.0 / dataScale)
 
                             tempMax = Hobj.histogram.GetMaximum()
@@ -420,7 +525,7 @@ class StackPlotter:
                     for bname, binfo in self.backgrounds.items(): 
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
-    
+   
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
                         if Hobj.IsGood(): mcScale += Hobj.Integral()
@@ -452,7 +557,7 @@ class StackPlotter:
                         if Hobj.IsGood():
                             sigScale = Hobj.Integral()
 
-                            if self.normalize:
+                            if self.normalize and sigScale != 0.0:
                                 Hobj.Scale(1.0 / sigScale)
 
                             tempMax = Hobj.histogram.GetMaximum()
@@ -526,7 +631,7 @@ class StackPlotter:
                         theMin /= mcScale
 
                     # Here we get the bkgd and sig legends as well as a tuned maximum for the canvas to avoid overlap
-                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds), len(self.signals), newInfo["logY"], theMin, theMax)
+                    bkgLegend, sigLegend, yMax = self.makeLegends(len(self.backgrounds)+1, len(self.signals), newInfo["logY"], theMin, theMax)
 
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=True):
                         lname = h[0]
@@ -535,7 +640,10 @@ class StackPlotter:
 
                         bkgLegend.AddEntry(h[1], lname, h[3])
 
-                    dummy.SetMaximum(yMax)
+                    if "max" not in hinfo["Y"]:
+                        dummy.SetMaximum(yMax)
+                    else:
+                        dummy.SetMaximum(hinfo["Y"]["max"])
                     dummy.SetMinimum(theMin)
                     dummy.Draw()
 
@@ -601,6 +709,7 @@ class StackPlotter:
                     if nSigLegend != 0: sigLegend.Draw("SAME")
 
                     self.addCMSlogo(canvas)
+                    self.addExtraInfo(canvas, newName)
 
                     # put the siginificance and cut label on the canvas
                     if self.printInfo:

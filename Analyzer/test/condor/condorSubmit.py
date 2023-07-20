@@ -82,7 +82,6 @@ def main():
                        "Triboson"                      :    10,
                        "ST"                            :    20,
                        "TTX"                           :     2,
-                       "TTTJ"                          :     2,
                        "JetHT"                         :     5,
                        "SingleMuon"                    :    75,
                        "SingleElectron"                :    50,
@@ -101,10 +100,6 @@ def main():
     redirector = "root://cmseos.fnal.gov/"
     workingDir = options.outPath
     eosDir     = "%s/store/user/%s/StealthStop/%s"%(redirector, userName, options.outPath)
-
-    if os.path.isdir(workingDir):
-        print red("Job directory already exists and cannot proceed safely ! Exiting...")
-        exit(0)
 
     # Prepare the list of files to transfer
     mvaFileName2016preVFP  = getTopTaggerTrainingFile(environ["CMSSW_BASE"] + "/src/%s/test/TopTaggerCfg_2016preVFP.cfg" % repo)
@@ -189,6 +184,7 @@ def main():
     fileParts.append("Universe             = vanilla\n")
     fileParts.append("Executable           = run_Analyzer_condor.sh\n")
     fileParts.append("Transfer_Input_Files = %s/%s.tar.gz, %s/exestuff.tar.gz\n" % (options.outPath,environ["CMSSW_VERSION"],options.outPath))
+    fileParts.append("Request_Memory       = 2.5 Gb\n")
     fileParts.append("x509userproxy        = $ENV(X509_USER_PROXY)\n\n")
 
     nFilesPerJob = options.numfile
@@ -201,7 +197,11 @@ def main():
         # create the directory
         if not os.path.isdir("%s/%s" %(workingDir, logsDir)):
             system('mkdir -p %s/%s' %(workingDir, logsDir))
+        else:
+            print red("Job directory \"%s/%s\" already exists and cannot proceed safely ! Exiting..."%(workingDir, logsDir))
+            exit(0)
    
+        dataSetName = ds.partition("_")[-1]
         for s, n, e in sc.sampleList(ds):
 
             # When running skim jobs with the MiniTreeMaker analyzer,
@@ -210,7 +210,9 @@ def main():
             if options.analyze == "MakeMiniTree":
                 proc = n.partition("_")[-1]
         
-                if proc in filesPerJobSkim:
+                if dataSetName in filesPerJobSkim:
+                    nFilesPerJob = filesPerJobSkim[dataSetName]
+                elif proc in filesPerJobSkim:
                     nFilesPerJob = filesPerJobSkim[proc]
                 else:
                     nFilesPerJob = options.numfile
