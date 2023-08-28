@@ -43,6 +43,7 @@ def main():
     parser.add_argument("--year",              dest="year",              help="which year",                                   required=True                                                         )
     #parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_1L") # with OldSeed - Old Ntuples
     parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms/home/bcrossma/nobackup/analysis/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/hadd_DoubleDisCo_MassExclusion_Min3_Run2UL") # Run2UL 
+    parser.add_argument("--outpath",           dest="outpath",           help="output dir where group dirs",                  default="Run2UL_MassExclusion_RPV"                                    )
     parser.add_argument("--tt",                dest="tt",                help="name of TT sample",                            default="TT"                                                          )
     parser.add_argument("--nontt",             dest="nontt",             help="name of NonTT sample",                         default="NonTT"                                                       )
     parser.add_argument("--ttVar",             dest="ttVar",             help="TT MCcorrectionFactor_TTvar (default no var)", default="TT"                                                          )
@@ -93,7 +94,7 @@ def main():
             sample = "NonTT"
 
         if args.disc1edge != None or args.disc2edge != None:
-            plotsPath[sample]  = "%s_plots_%s_%s_%s_%s/%s_%s/%s/"%(args.year, args.run, args.disc1edge, args.disc2edge, sample, args.sig, args.mass, args.channel)
+            plotsPath[sample]  = "%s/%s_plots_%s_%s_%s_%s/%s_%s/%s/"%(args.outpath, args.year, args.run, args.disc1edge, args.disc2edge, sample, args.sig, args.mass, args.channel)
             
             # Make all paths for saving plots and tables
             # if paths do not already exist
@@ -109,7 +110,7 @@ def main():
     # ------------------------------------------------------
     # Create a path to save LaTeX tables (only in TT folder)
     # ------------------------------------------------------
-    tablesPath["TT"] = "%s_tables_%s%s_TT/%s"%(args.year, args.run, edgeStub, args.channel)
+    tablesPath["TT"] = "%s/%s_tables_%s%s_TT/%s"%(args.outpath, args.year, args.run, edgeStub, args.channel)
     if not os.path.exists(tablesPath["TT"]):
         os.makedirs(tablesPath["TT"])
 
@@ -147,7 +148,7 @@ def main():
         "TT_JERup"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
         #"NonTT"          : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"        ),
         "TTX"            : ROOT.TFile.Open(args.path + "/" + args.year + "_TTX.root"           ),
-        "BG_OTHER"          : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"      ),
+        "BG_OTHER"       : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"      ),
         "QCD"            : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD.root"           ),
         "Data"           : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"          ),
         Sig              : ROOT.TFile.Open(args.path + "/" + args.year + "_%s%s_%s_mStop-%s.root"%(modelLabel, args.sig, modelDecay, args.mass)),
@@ -191,7 +192,7 @@ def main():
         theApp.run(args.disc1edge, args.disc2edge, args.fastMode, plotVars2D=args.plotVars2D, plotVarVsBoundary=args.plotVarVsBoundary, samples=samples, files=files, histName=histName, njets=args.njets, regions=regions, plotter=plotter, tablesPath=tablesPath)
 
     elif args.run == "MCcorrectionFactor_TTvar":
-        theApp = MCcorrectionFactor_TTvar(args.year, args.channel, Sig, args.mass, translator, edges=edgeStub)
+        theApp = MCcorrectionFactor_TTvar(args.year, args.channel, Sig, args.mass, translator, edges=edgeStub, outpath=args.outpath)
         theApp.run(args.disc1edge, args.disc2edge, args.fastMode, samples=samples, files=files, histName=histName, njets=args.njets, regions=regions, plotter=plotter, tablesPath=tablesPath, edges=edgeStub)
 
 def BryansHack(files, channel, Sig, mass, histName, regions, translator, disc1, disc2):

@@ -38,12 +38,12 @@ histograms = {
 for selection in selections:
     comboJet = comboJets[selections.index(selection)]
 
-    histograms["h_combined%sthJet_PtrHT_cm_%s"%(comboJet, selection)]   = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet p_{T}/H_{T}"%(comboJet),  "rebin" : 4, "min" :  0,    "max" :    1}},
-    histograms["h_combined%sthJet_Pt_cm_%s"%(comboJet, selection)]      = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet p_{T} [GeV]"%(comboJet),  "rebin" : 8, "min" :  0,    "max" : 1500}},
-    histograms["h_combined%sthJet_Eta_cm_%s"%(comboJet, selection)]     = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet #eta"%(comboJet),         "rebin" : 1, "min" : -4,    "max" :    4}},
-    histograms["h_combined%sthJet_Phi_cm_%s"%(comboJet, selection)]     = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet #phi"%(comboJet),         "rebin" : 1, "min" : -6,    "max" :    6}},
-    histograms["h_combined%sthJet_Mass_cm_%s"%(comboJet, selection)]    = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet mass [GeV]"%(comboJet),   "rebin" : 2, "min" :  0,    "max" :  150}},
-    histograms["h_combined%sthJet_Energy_cm_%s"%(comboJet, selection)]  = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet Energy [GeV]"%(comboJet), "rebin" : 8, "min" :  0,    "max" : 1500}},
+    histograms["h_combined%sthJet_PtrHT_cm_%s"%(comboJet, selection)]   = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet p_{T}/H_{T}"%(comboJet),  "rebin" : 4, "min" :  0,    "max" :    1}}
+    histograms["h_combined%sthJet_Pt_cm_%s"%(comboJet, selection)]      = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet p_{T} [GeV]"%(comboJet),  "rebin" : 8, "min" :  0,    "max" : 1500}}
+    histograms["h_combined%sthJet_Eta_cm_%s"%(comboJet, selection)]     = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet #eta"%(comboJet),         "rebin" : 1, "min" : -4,    "max" :    4}}
+    histograms["h_combined%sthJet_Phi_cm_%s"%(comboJet, selection)]     = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet #phi"%(comboJet),         "rebin" : 1, "min" : -6,    "max" :    6}}
+    histograms["h_combined%sthJet_Mass_cm_%s"%(comboJet, selection)]    = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet mass [GeV]"%(comboJet),   "rebin" : 2, "min" :  0,    "max" :  150}}
+    histograms["h_combined%sthJet_Energy_cm_%s"%(comboJet, selection)]  = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet Energy [GeV]"%(comboJet), "rebin" : 8, "min" :  0,    "max" : 1500}}
 
 data = {
     "Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
@@ -56,10 +56,9 @@ backgrounds = {
     "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 0}
 }
 
-signals = OrderedDict({
-    "RPV_2t6j_mStop-350"         : {"name" : "RPV m_{ #tilde{t}} = 350 GeV",                 "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "StealthSYY_2t6j_mStop-550"  : {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 550 GeV",   "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "StealthSYY_2t6j_mStop-850"  : {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 850 GeV",   "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0},
-    "StealthSYY_2t6j_mStop-1250" : {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 1250 GeV",  "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}
-})
-
+signals = OrderedDict([
+    ("RPV_2t6j_mStop-400",        {"name" : "RPV m_{ #tilde{t}} = 400 GeV",               "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("RPV_2t6j_mStop-800",        {"name" : "RPV m_{ #tilde{t}} = 800 GeV",               "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("StealthSYY_2t6j_mStop-400", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 400 GeV", "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("StealthSYY_2t6j_mStop-800", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 800 GeV", "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0})
+])
