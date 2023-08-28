@@ -11,31 +11,54 @@ from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from runQCDCRPrediction import get_QCDCR
 
-
-#ROOT.TH1.AddDirectory(False)
+ROOT.TH1.AddDirectory(False)
 
 # Get necessary histograms from files
 def load_hists(files, sig, ch, njet, var_dict):
 
+    # Sorting out TT variations based on if they are in the nominal file or in separate files
+    file_var = ["erdON", "TuneCP5down", "TuneCP5up", "hdampDOWN", "hdampUP"]
+    weight_var = ["JECup", "JECdown", "JERup", "JERdown", "isrUp", "isrDown", "fsrUp", "fsrDown"]
+
     hists = {}
 
     for (sample, f) in files.items():
-        
-        histName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD"
-        if ch == "2l" and sample == "QCD": continue
-        hists[sample] = f.Get(histName.format(sig, ch, njet))
+       
+        if sample is not "TT" and "TT_" not in sample:
+ 
+            histName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD"
+            if ch == "2l" and sample == "QCD": continue
+            hists[sample] = f.Get(histName.format(sig, ch, njet))
 
-        if sig in sample or "TTX" in sample or "BG_OTHER" in sample:
+            if sig in sample or "TTX" in sample or "BG_OTHER" in sample:
 
-            varHistName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD_{}"
-            for var in var_dict[ch]:
-                if var == "": continue
-                hists[sample + var] = f.Get(varHistName.format(sig, ch, njet, var))
+                varHistName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD_{}"
+                for var in var_dict[ch]:
+                    if var == "": continue
+                    hists[sample + var] = f.Get(varHistName.format(sig, ch, njet, var))
 
-        #if "TT_" not in sample:
-        QCDCRHistName = "h_DoubleDisCo_{}_disc1_disc2_{}_QCDCR_Njets{}_ABCD"
-        hists[sample + "_QCDCR"] = f.Get(QCDCRHistName.format(sig, ch, njet))
+            QCDCRHistName = "h_DoubleDisCo_{}_disc1_disc2_{}_QCDCR_Njets{}_ABCD"
+            hists[sample + "_QCDCR"] = f.Get(QCDCRHistName.format(sig, ch, njet))
 
+        else:
+            try:
+                var = sample.split("_")[1]
+            except:
+                var = ""
+            
+            if var in file_var and var is not "":
+                histName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD"
+                hists[sample] = f.Get(histName.format(sig, ch, njet))
+            else:
+                if var is "":
+                    histName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD"
+                    hists[sample] = f.Get(histName.format(sig, ch, njet))
+                    QCDCRHistName = "h_DoubleDisCo_{}_disc1_disc2_{}_QCDCR_Njets{}_ABCD"
+                    hists[sample + "_QCDCR"] = f.Get(QCDCRHistName.format(sig, ch, njet))
+                else:
+                    varHistName = "h_DoubleDisCo_{}_disc1_disc2_{}_Njets{}_ABCD_{}"
+                    hists[sample] = f.Get(varHistName.format(sig, ch, njet, var))
+                
     return hists
 
 # Instantiate the all regions object and let it find event counts
@@ -43,6 +66,13 @@ def load_hists(files, sig, ch, njet, var_dict):
 def get_edge_info(files, sig, njets, var_dict, step, min, max, QCDCRInfo):
 
     all_ABCDEdges = {}
+
+    ttVar_dict = {}
+
+    for key, val in files.items():
+        if "TT_" in key:
+            ttVar_dict[key] = val
+
 
     print("Getting edge info")
 
@@ -60,9 +90,13 @@ def get_edge_info(files, sig, njets, var_dict, step, min, max, QCDCRInfo):
 
             hists = load_hists(files, sig.split("_")[0], ch, njet, var_dict)
             
-            region = All_Regions(hists, Sig=sig, step=step, ttVar="TT", QCDCRInfo=QCDCRInfo[ch], leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=True, binStart=min, binEnd=max)
+            region = All_Regions(hists, Sig=sig, step=step, ttVar=ttVar_dict, QCDCRInfo=QCDCRInfo[ch], leftBoundary=None, rightBoundary=None, topBoundary=None, bottomBoundary=None, fastMode=True, binStart=min, binEnd=max)
 
             all_ABCDEdges[ch][nj] = region
+            
+            for key in hists.keys():
+                ROOT.SetOwnership(hists[key], True)
+                del hists[key]
 
     return all_ABCDEdges
 
@@ -78,10 +112,13 @@ def make_ABCD_hists(all_ABCDEdges, files, sig, step, start, finish, njets, var_d
 
     disc_range = range(0, int(round((finish - start) / step)))
 
+    file_var = ["erdON", "TuneCP5down", "TuneCP5up", "hdampDOWN", "hdampUP"]
+    weight_var = ["", "JECup", "JECdown", "JERup", "JERdown", "isrUp", "isrDown", "fsrUp", "fsrDown"]
+
     for process in files.keys():
 
-        if "TT" in process and process is not "TTX" and process is not "NonTT":
-            procFile = ROOT.TFile.Open("inputsAll/Run2UL_TT.root".format(process), "UPDATE")
+        if "TT_" in process and any(x in process and x is not "" for x in weight_var):
+            procFile = ROOT.TFile.Open("inputsAll/Run2UL_TT.root", "UPDATE")
         else:
             procFile = ROOT.TFile.Open("inputsAll/Run2UL_{}.root".format(process), "Update")
         procFile.cd()
@@ -93,149 +130,276 @@ def make_ABCD_hists(all_ABCDEdges, files, sig, step, start, finish, njets, var_d
                 disc1 = d1 * step + start
                 disc2 = d2 * step + start
 
-
                 for ch in njets.keys():
                   
                     if process == "QCD" and ch == "2l": continue
- 
-                    for var in var_dict[ch]:
 
-                        var_str = var
+                    if "TT" is process or "TT_" in process:
 
-                        if var is not "" and "TTX" not in process and "BG_OTHER" not in process and signal not in process:
-                            continue
-                        elif var is "":
-                            var_str = var
-                        else:
-                            var_str = "_" + var
-
-                        tempHist = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
-                        if "QCD" in process:
-                            tempWeight = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 8, 0, 8)
-                        else:
-                            tempWeight = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 5, 0, 5)
-                        first_jet = 0
-
-                        if "TT" in process and process is not "TTX" or process is not "NonTT":
-                            tempClosureSys = ROOT.TH1D("Run2UL_maximum_MCcorrectedData_Syst_All_{}_{}{}_{}_{}".format(signal,ch,var_str,int(100*disc1),int(100*disc2)), "Run2UL_maximum_MCcorrectedData_Syst_All_{}_{}{}_{}_{}".format(signal,ch,var_str,int(100*disc1),int(100*disc2)), 6, 0, 6)
-                            tempMCcorr = ROOT.TH1D("Run2UL_MCcorr_TT_TT{}_{}_{}_{}_{}".format(var,signal,ch,int(100*disc1),int(100*disc2)), "Run2UL_MCcorr_TT_TT{}_{}_{}_{}_{}".format(var,signal,ch,int(100*disc1),int(100*disc2)), 6, 0, 6)
-
-                        tempQCDCRHist = ROOT.TH1D("h_njets_{}incl_{}_{}_QCDCR_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_QCDCR_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
-
-                        for nj in njets[ch]: 
-
-                            if first_jet == 0:
-                                first_jet = nj
-
-                            bin_val_A, bin_error_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                            bin_val_B, bin_error_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                            bin_val_C, bin_error_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                            bin_val_D, bin_error_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-
-                            tempHist.SetBinContent(nj-first_jet + 1, bin_val_A)
-                            tempHist.SetBinError(nj-first_jet + 1, bin_error_A)
-
-                            tempHist.SetBinContent(nj-first_jet + 7, bin_val_B)
-                            tempHist.SetBinError(nj-first_jet + 7, bin_error_B)
-
-                            tempHist.SetBinContent(nj-first_jet + 13, bin_val_C)
-                            tempHist.SetBinError(nj-first_jet + 13, bin_error_C)
-
-                            tempHist.SetBinContent(nj-first_jet + 19, bin_val_D)
-                            tempHist.SetBinError(nj-first_jet + 19, bin_error_D)
-
-                            # Using average weight and raw event count for MC stat uncertainty
-                            # Histogram bin definitions:
-                            #   1: Raw event count A
-                            #   2: Raw event count B
-                            #   3: Raw event count C
-                            #   4: Raw event count D
-                            #   5: Average weight
-                            # For QCD, the binning has to be a little bit different:
-                            #   1: Raw event count A (QCDCR in Data)
-                            #   2: Raw event count B
-                            #   3: Raw event count C
-                            #   4: Raw event count D
-                            #   5: TF for the A region (SR/CR)
-                            #   5: TF for the B region
-                            #   5: TF for the C region
-                            #   5: TF for the D region
-                            if "QCD" in process:
-                                
-                                nEvents_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
-                                nEvents_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
-                                nEvents_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
-                                nEvents_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
-
-                                tf_A = all_ABCDEdges[ch][nj].get("QCDTF_A", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
-                                tf_B = all_ABCDEdges[ch][nj].get("QCDTF_B", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
-                                tf_C = all_ABCDEdges[ch][nj].get("QCDTF_C", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
-                                tf_D = all_ABCDEdges[ch][nj].get("QCDTF_D", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
-
-                                tempWeight.SetBinContent(1, nEntries_A)
-                                tempWeight.SetBinContent(2, nEntries_B)
-                                tempWeight.SetBinContent(3, nEntries_C)
-                                tempWeight.SetBinContent(4, nEntries_D)
-                                tempWeight.SetBinContent(5, tf_A)
-                                tempWeight.SetBinContent(6, tf_B)
-                                tempWeight.SetBinContent(7, tf_C)
-                                tempWeight.SetBinContent(8, tf_D)
-
-                            else:
-                                weight = all_ABCDEdges[ch][nj].get("weight", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                                nEntries_A = all_ABCDEdges[ch][nj].get("nEntriesA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                                nEntries_B = all_ABCDEdges[ch][nj].get("nEntriesB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                                nEntries_C = all_ABCDEdges[ch][nj].get("nEntriesC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-                                nEntries_D = all_ABCDEdges[ch][nj].get("nEntriesD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
-
-                                tempWeight.SetBinContent(1, nEntries_A)
-                                tempWeight.SetBinContent(2, nEntries_B)
-                                tempWeight.SetBinContent(3, nEntries_C)
-                                tempWeight.SetBinContent(4, nEntries_D)
-                                tempWeight.SetBinContent(5, weight)
-
-                            if process is "TT":
-                                
-                                mcCorr, mcCorrUnc = all_ABCDEdges[ch][nj].get("closureCorr", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
-                                if str(nj) in ttSys[ch]["({}, {})".format(disc1,disc2)].keys():
-                                    ncSys = ttSys[ch]["({}, {})".format(disc1,disc2)][str(nj)]
-                                else:
-                                    ncSys = ttSys[ch]["({}, {})".format(disc1,disc2)]["max"]
-
-                                tempMCcorr.SetBinContent(nj-first_jet + 1, mcCorr)
-                                tempMCcorr.SetBinError(nj-first_jet + 1, mcCorrUnc)
-
-                                tempClosureSys.SetBinContent(nj-first_jet + 1, ncSys)
+                        # Need to handle TT separately
+                        # The ttbar variations here need to be considered rather than all the other systematics
+                        # Will write files as they come out of the analyzer to make sure that it is easy to make data cards correctly
+                        for var in file_var + weight_var:
                             
-                            if "TT_" not in process:
-                                qcdcr_bin_val_A, qcdcr_bin_error_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
-                                qcdcr_bin_val_B, qcdcr_bin_error_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
-                                qcdcr_bin_val_C, qcdcr_bin_error_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
-                                qcdcr_bin_val_D, qcdcr_bin_error_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                            if var not in process: continue
+                            if var is "" and "_" in process: continue
+                            
+                            is_file_var = any(x in process for x in file_var)
 
-                                tempQCDCRHist.SetBinContent(nj-first_jet + 1, qcdcr_bin_val_A)
-                                tempQCDCRHist.SetBinError(nj-first_jet + 1, qcdcr_bin_error_A)
+                            if var is "":
+                                # If this variation has a separate file, we want the "nominal" histogram from that file
+                                var_str = ""
+                            else:
+                                # Else, we want the variation histogram from the nominal file
+                                var_str = "_" + var 
 
-                                tempQCDCRHist.SetBinContent(nj-first_jet + 7, qcdcr_bin_val_B)
-                                tempQCDCRHist.SetBinError(nj-first_jet + 7, qcdcr_bin_error_B)
+                            if is_file_var:    
+                                tempHist = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD_{}_{}".format(njets[ch][-1],signal,ch,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD_{}_{}".format(njets[ch][-1],signal,ch,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
+                            else:
+                                tempHist = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
 
-                                tempQCDCRHist.SetBinContent(nj-first_jet + 13, qcdcr_bin_val_C)
-                                tempQCDCRHist.SetBinError(nj-first_jet + 13, qcdcr_bin_error_C)
+                            if "TT" is process and var is "":
+                                tempClosureSys = ROOT.TH1D("Run2UL_maximum_MCcorrectedData_Syst_All_{}_{}{}_{}_{}".format(signal,ch,var_str,int(100*disc1),int(100*disc2)), "Run2UL_maximum_MCcorrectedData_Syst_All_{}_{}{}_{}_{}".format(signal,ch,var_str,int(100*disc1),int(100*disc2)), 6, 0, 6)
+                                tempWeight = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 8, 0, 8)
 
-                                tempQCDCRHist.SetBinContent(nj-first_jet + 19, qcdcr_bin_val_D)
-                                tempQCDCRHist.SetBinError(nj-first_jet + 19, qcdcr_bin_error_D)
+                            if var is "":
+                                tempMCcorr = ROOT.TH1D("Run2UL_MCcorr_TT_TT{}_{}_{}_{}_{}".format(var_str,signal,ch,int(100*disc1),int(100*disc2)), "Run2UL_MCcorr_TT_TT{}_{}_{}_{}_{}".format(var_str,signal,ch,int(100*disc1),int(100*disc2)), 6, 0, 6)
+                            else:
+                                tempMCcorr = ROOT.TH1D("Run2UL_MCcorr_Ratio_MC_TT{}_{}_{}_{}_{}".format(var_str,signal,ch,int(100*disc1),int(100*disc2)), "Run2UL_MCcorr_Ratio_MC_TT{}_{}_{}_{}_{}".format(var_str,signal,ch,int(100*disc1),int(100*disc2)), 6, 0, 6)
 
+                            if "TT" is process and var is "":
+                                tempQCDCRHist = ROOT.TH1D("h_njets_{}incl_{}_{}_QCDCR_ABCD_{}_{}".format(njets[ch][-1],signal,ch,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_QCDCR_ABCD_{}_{}".format(njets[ch][-1],signal,ch,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
 
-                        if process is "TT" and var is "":
+                            first_jet = 0
+
+                            for nj in njets[ch]: 
+
+                                if first_jet == 0:
+                                    first_jet = nj
+
+                                bin_val_A, bin_error_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                bin_val_B, bin_error_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                bin_val_C, bin_error_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                bin_val_D, bin_error_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+
+                                tempHist.SetBinContent(nj-first_jet + 1, bin_val_A)
+                                tempHist.SetBinError(nj-first_jet + 1, bin_error_A)
+
+                                tempHist.SetBinContent(nj-first_jet + 7, bin_val_B)
+                                tempHist.SetBinError(nj-first_jet + 7, bin_error_B)
+
+                                tempHist.SetBinContent(nj-first_jet + 13, bin_val_C)
+                                tempHist.SetBinError(nj-first_jet + 13, bin_error_C)
+
+                                tempHist.SetBinContent(nj-first_jet + 19, bin_val_D)
+                                tempHist.SetBinError(nj-first_jet + 19, bin_error_D)
+
+                                # Using average weight and raw event count for MC stat uncertainty
+                                # Histogram bin definitions:
+                                #   1: Raw event count A
+                                #   2: Raw event count B
+                                #   3: Raw event count C
+                                #   4: Raw event count D
+                                #   5: Average weight
+                                if "TT" is process and var is "":
+                                    weight = all_ABCDEdges[ch][nj].get("weight", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                    nEntries_A = all_ABCDEdges[ch][nj].get("nEntriesA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                    nEntries_B = all_ABCDEdges[ch][nj].get("nEntriesB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                    nEntries_C = all_ABCDEdges[ch][nj].get("nEntriesC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+                                    nEntries_D = all_ABCDEdges[ch][nj].get("nEntriesD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+
+                                    tempWeight.SetBinContent(1, nEntries_A)
+                                    tempWeight.SetBinContent(2, nEntries_B)
+                                    tempWeight.SetBinContent(3, nEntries_C)
+                                    tempWeight.SetBinContent(4, nEntries_D)
+                                    tempWeight.SetBinContent(5, weight)
+
+                                if process is "TT":
+                                    if var is "":
+                                        if str(nj) in ttSys[ch]["({}, {})".format(disc1,disc2)].keys():
+                                            ncSys = ttSys[ch]["({}, {})".format(disc1,disc2)][str(nj)]
+                                        else:
+                                            ncSys = ttSys[ch]["({}, {})".format(disc1,disc2)]["max"]
+                                        tempClosureSys.SetBinContent(nj-first_jet + 1, ncSys)
+                                if var is "" and process is "TT":    
+                                    mcCorr, mcCorrUnc = all_ABCDEdges[ch][nj].get("closureCorr", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)
+
+                                    tempMCcorr.SetBinContent(nj-first_jet + 1, mcCorr)
+                                    tempMCcorr.SetBinError(nj-first_jet + 1, mcCorrUnc)
+                                else:
+                                    mcCorrRatio = all_ABCDEdges[ch][nj].get("MCcorrRatio_MC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)[0][process]
+
+                                    tempMCcorr.SetBinContent(nj-first_jet + 1, mcCorrRatio)
+                                    #tempMCcorr.SetBinError(nj-first_jet + 1, mcCorrRatioUnc)
+                                
+                                if "TT" is process and var is "":
+                                    qcdcr_bin_val_A, qcdcr_bin_error_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                                    qcdcr_bin_val_B, qcdcr_bin_error_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                                    qcdcr_bin_val_C, qcdcr_bin_error_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                                    qcdcr_bin_val_D, qcdcr_bin_error_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 1, qcdcr_bin_val_A)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 1, qcdcr_bin_error_A)
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 7, qcdcr_bin_val_B)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 7, qcdcr_bin_error_B)
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 13, qcdcr_bin_val_C)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 13, qcdcr_bin_error_C)
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 19, qcdcr_bin_val_D)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 19, qcdcr_bin_error_D)
+                            
                             tempMCcorr.Write()
-                            tempClosureSys.Write()
+                            if "TT" is process and var is "":
+                                tempClosureSys.Write()
+                                ROOT.SetOwnership(tempClosureSys, True)
+                                del tempClosureSys
+                            ROOT.SetOwnership(tempMCcorr, True)
+                            del tempMCcorr
 
-                        if ("TT_" not in process and var is "") or (process is "TTX" or process is "BG_OTHER" or signal in process or process is "QCD"):
-                            tempQCDCRHist.Write()
-                            tempWeight.Write()
+                            if "TT" is process:
+                                tempQCDCRHist.Write()
+                                ROOT.SetOwnership(tempQCDCRHist, True)
+                                del tempQCDCRHist
+                                tempWeight.Write()
+                                ROOT.SetOwnership(tempWeight, True)
+                                del tempWeight
 
                             print("Writing for {} {}".format(process, var))
                             tempHist.Write()
+
+                            ROOT.SetOwnership(tempHist, True)
+
+                            del tempHist
+
+
+                    else:
+ 
+                        for var in var_dict[ch]:
+
+                            if var is not "" and ("QCD" is process or "Data" is process): continue
+                            elif var is "":
+                                var_str = var
+                            else:
+                                var_str = "_" + var
+
+                            tempHist = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
+                            if "QCD" in process:
+                                tempWeight = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 8, 0, 8)
+                            elif var is "":
+                                tempWeight = ROOT.TH1D("h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_ABCD{}_{}_{}_weight".format(njets[ch][-1],signal,ch,var_str,int(100*disc1),int(100*disc2)), 5, 0, 5)
+                            first_jet = 0
+
+                            if var is "":
+                                tempQCDCRHist = ROOT.TH1D("h_njets_{}incl_{}_{}_QCDCR_ABCD_{}_{}".format(njets[ch][-1],signal,ch,int(100*disc1),int(100*disc2)),"h_njets_{}incl_{}_{}_QCDCR_ABCD_{}_{}".format(njets[ch][-1],signal,ch,int(100*disc1),int(100*disc2)), 24, -0.5, 23.5)
+
+                            for nj in njets[ch]: 
+
+                                if first_jet == 0:
+                                    first_jet = nj
+
+                                bin_val_A, bin_error_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                bin_val_B, bin_error_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                bin_val_C, bin_error_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                bin_val_D, bin_error_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+
+                                tempHist.SetBinContent(nj-first_jet + 1, bin_val_A)
+                                tempHist.SetBinError(nj-first_jet + 1, bin_error_A)
+
+                                tempHist.SetBinContent(nj-first_jet + 7, bin_val_B)
+                                tempHist.SetBinError(nj-first_jet + 7, bin_error_B)
+
+                                tempHist.SetBinContent(nj-first_jet + 13, bin_val_C)
+                                tempHist.SetBinError(nj-first_jet + 13, bin_error_C)
+
+                                tempHist.SetBinContent(nj-first_jet + 19, bin_val_D)
+                                tempHist.SetBinError(nj-first_jet + 19, bin_error_D)
+
+                                # Using average weight and raw event count for MC stat uncertainty
+                                # Histogram bin definitions:
+                                #   1: Raw event count A
+                                #   2: Raw event count B
+                                #   3: Raw event count C
+                                #   4: Raw event count D
+                                #   5: Average weight
+                                # For QCD, the binning has to be a little bit different:
+                                #   1: Raw event count A (QCDCR in Data)
+                                #   2: Raw event count B
+                                #   3: Raw event count C
+                                #   4: Raw event count D
+                                #   5: TF for the A region (SR/CR)
+                                #   5: TF for the B region
+                                #   5: TF for the C region
+                                #   5: TF for the D region
+                                if "QCD" in process:
+                                    
+                                    nEvents_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)[0]
+                                    nEvents_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)[0]
+                                    nEvents_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)[0]
+                                    nEvents_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process)[0]
+
+                                    tf_A = all_ABCDEdges[ch][nj].get("QCDTF_A", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
+                                    tf_B = all_ABCDEdges[ch][nj].get("QCDTF_B", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
+                                    tf_C = all_ABCDEdges[ch][nj].get("QCDTF_C", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
+                                    tf_D = all_ABCDEdges[ch][nj].get("QCDTF_D", "{:.3f}".format(disc1), "{:.3f}".format(disc2), "QCD")
+
+                                    tempWeight.SetBinContent(1, nEvents_A)
+                                    tempWeight.SetBinContent(2, nEvents_B)
+                                    tempWeight.SetBinContent(3, nEvents_C)
+                                    tempWeight.SetBinContent(4, nEvents_D)
+                                    tempWeight.SetBinContent(5, tf_A)
+                                    tempWeight.SetBinContent(6, tf_B)
+                                    tempWeight.SetBinContent(7, tf_C)
+                                    tempWeight.SetBinContent(8, tf_D)
+
+                                elif var is "":
+                                    weight = all_ABCDEdges[ch][nj].get("weight", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                    nEntries_A = all_ABCDEdges[ch][nj].get("nEntriesA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                    nEntries_B = all_ABCDEdges[ch][nj].get("nEntriesB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                    nEntries_C = all_ABCDEdges[ch][nj].get("nEntriesC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+                                    nEntries_D = all_ABCDEdges[ch][nj].get("nEntriesD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+var)
+
+                                    tempWeight.SetBinContent(1, nEntries_A)
+                                    tempWeight.SetBinContent(2, nEntries_B)
+                                    tempWeight.SetBinContent(3, nEntries_C)
+                                    tempWeight.SetBinContent(4, nEntries_D)
+                                    tempWeight.SetBinContent(5, weight)
+
+                                if var is "":
+                                    qcdcr_bin_val_A, qcdcr_bin_error_A = all_ABCDEdges[ch][nj].get("nEventsA", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                                    qcdcr_bin_val_B, qcdcr_bin_error_B = all_ABCDEdges[ch][nj].get("nEventsB", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                                    qcdcr_bin_val_C, qcdcr_bin_error_C = all_ABCDEdges[ch][nj].get("nEventsC", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+                                    qcdcr_bin_val_D, qcdcr_bin_error_D = all_ABCDEdges[ch][nj].get("nEventsD", "{:.3f}".format(disc1), "{:.3f}".format(disc2), process+"_QCDCR")
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 1, qcdcr_bin_val_A)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 1, qcdcr_bin_error_A)
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 7, qcdcr_bin_val_B)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 7, qcdcr_bin_error_B)
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 13, qcdcr_bin_val_C)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 13, qcdcr_bin_error_C)
+
+                                    tempQCDCRHist.SetBinContent(nj-first_jet + 19, qcdcr_bin_val_D)
+                                    tempQCDCRHist.SetBinError(nj-first_jet + 19, qcdcr_bin_error_D)
+
+
+                            if var_str is "_" or ("TT" is not process and var_str is ""):
+                                if "TT_" not in process:
+                                    tempQCDCRHist.Write()
+                                    ROOT.SetOwnership(tempQCDCRHist, True)
+                                    del tempQCDCRHist
+                                    tempWeight.Write()
+                                    ROOT.SetOwnership(tempWeight, True)
+                                    del tempWeight
+
+                            print("Writing for {} {}".format(process, var))
+                            tempHist.Write()
+
+                            ROOT.SetOwnership(tempHist, True)
+
+                            del tempHist
 
         procFile.Close()
 
@@ -246,7 +410,6 @@ def make_ABCD_hists(all_ABCDEdges, files, sig, step, start, finish, njets, var_d
 
             disc1 = d1 * step + start
             disc2 = d2 * step + start
-
 
             for ch in njets.keys():
                
@@ -324,14 +487,12 @@ def main():
             files[Sig] = ROOT.TFile.Open(args.path + "/" + args.year + "_Stealth%s_2t6j_mStop-%s.root"%(args.sig, args.mass))
         else:
             files[Sig] = ROOT.TFile.Open(args.path + "/" + args.year + "_%s_2t6j_mStop-%s.root"%(args.sig, args.mass))
-        for mass in range(400, 1000, 200):
+        for mass in range(400, 900, 200):
             if "SYY" in args.sig:
                 files["{}_{}".format(args.sig, mass)] = ROOT.TFile.Open(args.path + "/" + args.year + "_Stealth%s_2t6j_mStop-%s.root"%(args.sig, mass))
             else:
                 files["{}_{}".format(args.sig, mass)] = ROOT.TFile.Open(args.path + "/" + args.year + "_%s_2t6j_mStop-%s.root"%(args.sig, mass))
         
-
-    print(files)
 
     # Variations that are the same for all channels
     var_list = ["", "JECup", "JECdown", "JERup", "JERdown", "btgUp", "btgDown", "pdfUp", "pdfDown", "prfUp", "prfDown", "puUp", "puDown", "sclUp", "sclDown", "isrUp", "isrDown", "fsrUp", "fsrDown"]

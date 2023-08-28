@@ -210,7 +210,9 @@ def BryansHack(files, channel, Sig, mass, histName, regions, translator, disc1, 
     plotter = None
 
     theApp = MCcorrectionFactor_TTvar("Run2UL", channel, Sig, mass, translator, edges="", hack=hack)
-    return theApp.run(disc1, disc2, True, samples=samples, files=files, histName=histName, njets=njets, regions=regions, plotter=plotter, tablesPath=tablesPath, edges="")
+    output = theApp.run(disc1, disc2, True, samples=samples, files=files, histName=histName, njets=njets, regions=regions, plotter=plotter, tablesPath=tablesPath, edges="")
    
+    return output
+
 if __name__ == "__main__":
     main() 

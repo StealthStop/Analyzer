@@ -1,5 +1,6 @@
 import numpy as np
 import re
+import gc
 
 from collections               import defaultdict
 from common_Regions            import *
@@ -303,6 +304,8 @@ class MCcorrectionFactor_TTvar():
                             theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
 
+                    del theEdgesClass
+
         # ----------------------------------------
         # Plot non-closure as function of boundary
         # ----------------------------------------
@@ -471,6 +474,14 @@ class MCcorrectionFactor_TTvar():
                     plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary",   njet, self.colors, self.valColors[region])
                     #plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MCcorrRatio_MC_Unc_BoundaryTT, self.ttVars, self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Unc. on Closure Correction Ratio[TTvar/TT]", "MCcorrRatio_MC_Unc_PerBoundary",   njet, self.colors, self.valColors[region])
 
+                    self.ttVars_weights = ["TT_fsrUp", "TT_fsrDown", "TT_isrUp", "TT_isrDown", ]
+                    self.ttVars_separate = ["TT_hdampUP", "TT_hdampDOWN", "TT_erdON", "TT_TuneCP5up", "TT_TuneCP5down"]
+                    self.ttVars_jet = ["TT_JECup", "TT_JECdown", "TT_JERup", "TT_JERdown"]
+
+                    plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars_weights + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary_Weights",   njet, self.colors, self.valColors[region])
+                    plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars_separate + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary_Separate",   njet, self.colors, self.valColors[region])
+                    plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars_jet + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary_Jet",   njet, self.colors, self.valColors[region])
+
                     # TTinData = Data - NonTT
                     plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
 
@@ -544,6 +555,8 @@ class MCcorrectionFactor_TTvar():
             else:
                 maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
         if self.hack:
+            del theAggy
+            gc.collect()
             return calculatedSys["All"], QCDCRInfo
 
         # -------------------------------------------------------------
