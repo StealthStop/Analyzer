@@ -17,7 +17,7 @@ def naturalSort(unsortedList):
 
 class MCcorrectionFactor_TTvar():
 
-    def __init__(self, year, channel, model, mass, translator, edges, hack=False):
+    def __init__(self, year, channel, model, mass, translator, edges, outpath, hack=False):
 
         self.year        = year
         self.channel     = channel
@@ -26,6 +26,9 @@ class MCcorrectionFactor_TTvar():
         self.translator  = translator
         self.edges       = edges
         self.hack        = hack
+        self.outpath     = outpath
+
+        self.model = self.sig.split("_")[0]
 
         if self.hack:
             self.ttVarsModel = [
@@ -54,24 +57,31 @@ class MCcorrectionFactor_TTvar():
                                 "TT_JERdown",          
             ]
 
-        self.ttVars = self.ttVarsModel + self.ttVarsDetect
+            self.ttVarSigInject = [
+                                "TT_%s400"%(self.model),
+                                "TT_%s800"%(self.model),
+            ]
+
+        self.ttVars = self.ttVarsModel + self.ttVarsDetect + self.ttVarSigInject
 
         # make colors for each TT variance
-        self.colors = { "TT"             : "#525252",
-                        "None"           : "#525252",
-                        "TT_erdON"       : "#A6CEE3",
-                        "TT_fsrUp"       : "#B2DF8A",
-                        "TT_fsrDown"     : "#B2DF8A",
-                        "TT_isrUp"       : "#FB9A99",
-                        "TT_isrDown"     : "#FB9A99",
-                        "TT_hdampUP"     : "#CAB2D6",
-                        "TT_hdampDOWN"   : "#CAB2D6",
-                        "TT_JECup"       : "#1F78B4",
-                        "TT_JECdown"     : "#1F78B4",
-                        "TT_JERup"       : "#33A02C",
-                        "TT_JERdown"     : "#33A02C",
-                        "TT_TuneCP5up"   : "#FDBF6F",
-                        "TT_TuneCP5down" : "#FDBF6F",
+        self.colors = { "TT"                    : "#525252",
+                        "None"                  : "#525252",
+                        "TT_erdON"              : "#A6CEE3",
+                        "TT_fsrUp"              : "#B2DF8A",
+                        "TT_fsrDown"            : "#B2DF8A",
+                        "TT_isrUp"              : "#FB9A99",
+                        "TT_isrDown"            : "#FB9A99",
+                        "TT_hdampUP"            : "#CAB2D6",
+                        "TT_hdampDOWN"          : "#CAB2D6",
+                        "TT_JECup"              : "#1F78B4",
+                        "TT_JECdown"            : "#1F78B4",
+                        "TT_JERup"              : "#33A02C",
+                        "TT_JERdown"            : "#33A02C",
+                        "TT_TuneCP5up"          : "#FDBF6F",
+                        "TT_TuneCP5down"        : "#FDBF6F",
+                        "TT_%s400"%(self.model) : "#000000",
+                        "TT_%s800"%(self.model) : "#000000"
         }
 
         self.correctionLabels = { "TT"             : "Nominal",
@@ -88,6 +98,8 @@ class MCcorrectionFactor_TTvar():
                                   "TT_JERdown"     : "JER Down",
                                   "TT_TuneCP5up"   : "Tune Up",
                                   "TT_TuneCP5down" : "Tune Down",
+                                  "TT_%s400"%(self.model) : "%s400 Inj."%(self.model),
+                                  "TT_%s800"%(self.model) : "%s800 Inj."%(self.model)
         }
 
         self.closureLabels = { "TT"             : "w/ Nominal Corr.",
@@ -105,6 +117,8 @@ class MCcorrectionFactor_TTvar():
                                "TT_JERdown"     : "w/ JER Down Corr.",
                                "TT_TuneCP5up"   : "w/ Tune Up Corr.",
                                "TT_TuneCP5down" : "w/ Tune Down Corr.",
+                               "TT_%s400"%(self.model) : "w/ %s400 Inj. Corr."%(self.model),
+                               "TT_%s800"%(self.model) : "w/ %s800 Inj. Corr."%(self.model)
         }
 
         self.valColors = { "Val_BD" : "#DDBB87",
@@ -307,10 +321,13 @@ class MCcorrectionFactor_TTvar():
         # Plot non-closure as function of boundary
         # ----------------------------------------
         # initilaize a dictionary to include all variables for sys to put in Higgs Combine
-        TT_TTvar_sys = { "nEventsA_TT"     : {},
-                         "MCcorr_TT"       : {},
-                         "MCcorr_TTvar"    : {}, 
-                         "MCcorr_Ratio_MC" : {},
+        TT_TTvar_sys = { "nEventsA_TT"        : {},
+                         "nEventsApred_TT"    : {},
+                         "MCcorr_TT"          : {},
+                         "MCcorr_TTvar"       : {}, 
+                         "nEventsA_TTvar"     : {},
+                         "nEventsApred_TTvar" : {},
+                         "MCcorr_Ratio_MC"    : {},
         }
 
         # initialitze a dictionary to get the average and maximum values of MC corrected data 
@@ -425,14 +442,22 @@ class MCcorrectionFactor_TTvar():
                     continue
 
                 # initialize the dictionaries
-                nEventsPerBoundaryTT                            = {}
+                nEventsAPerBoundaryTT                            = {}
+                nEventsBPerBoundaryTT                            = {}
+                nEventsCPerBoundaryTT                            = {}
+                nEventsDPerBoundaryTT                            = {}
+
                 closureCorrPerBoundaryTT                        = {}
                 closurePerBoundaryTTinData                      = {}
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
                 MCcorrRatio_MC_BoundaryTT                       = {}
                 MCcorrRatio_MC_Unc_BoundaryTT                   = {}
 
-                nEventsPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsA",             sample = "TT",       region = region, njet = njet)
+                nEventsAPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsA",             sample = "TT",       region = region, njet = njet)
+                nEventsBPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsB",             sample = "TT",       region = region, njet = njet)
+                nEventsCPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsC",             sample = "TT",       region = region, njet = njet)
+                nEventsDPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsD",             sample = "TT",       region = region, njet = njet)
+
                 closureCorrPerBoundaryTT["TT"]                          = theAggy.getPerBoundary(variable = "closureCorr",          sample = "TT",       region = region, njet = njet)            
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["None"] = theAggy.getPerBoundary(variable = "Closure",              sample = "TTinData", region = region, njet = njet)
@@ -441,17 +466,50 @@ class MCcorrectionFactor_TTvar():
                 # loop over the ttVar
                 # -------------------
                 for ttVar in self.ttVars:
-                
+               
+                    nEventsAPerBoundaryTT[ttVar]                         = theAggy.getPerBoundary(variable = "nEventsA",                   sample = ttVar,                 region = region, njet = njet) 
+                    nEventsBPerBoundaryTT[ttVar]                         = theAggy.getPerBoundary(variable = "nEventsB",                   sample = ttVar,                 region = region, njet = njet) 
+                    nEventsCPerBoundaryTT[ttVar]                         = theAggy.getPerBoundary(variable = "nEventsC",                   sample = ttVar,                 region = region, njet = njet) 
+                    nEventsDPerBoundaryTT[ttVar]                         = theAggy.getPerBoundary(variable = "nEventsD",                   sample = ttVar,                 region = region, njet = njet) 
+
                     closureCorrPerBoundaryTT[ttVar]                        = theAggy.getPerBoundary(variable = "closureCorr",                sample = ttVar,                 region = region, njet = njet)  
                     MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
                     MCcorrRatio_MC_BoundaryTT[ttVar]                       = theAggy.getPerBoundary(variable = "MCcorrRatio_MC",             sample = ttVar,                 region = region, njet = njet)
                     MCcorrRatio_MC_Unc_BoundaryTT[ttVar]                   = theAggy.getPerBoundary(variable = "MCcorrRatio_MC_Unc",         sample = ttVar,                 region = region, njet = njet)
 
+                    NB = 1.0 if round(nEventsBPerBoundaryTT["TT"][1.00][0]) == 0.0 else round(nEventsBPerBoundaryTT["TT"][1.00][0])
+                    NC = 1.0 if round(nEventsCPerBoundaryTT["TT"][1.00][0]) == 0.0 else round(nEventsCPerBoundaryTT["TT"][1.00][0])
+                    ND = 1.0 if round(nEventsDPerBoundaryTT["TT"][1.00][0]) == 0.0 else round(nEventsDPerBoundaryTT["TT"][1.00][0])
+
+                    NBerr = NB**0.5
+                    NCerr = NC**0.5
+                    NDerr = ND**0.5
+
+                    NApredTT = NB * NC / ND
+
+                    NAprederrTT = ((NBerr * NC / ND)**2.0 + (NB * NCerr / ND)**2.0 + (NDerr * NB * NC / ND**2.0)**2.0)**0.5
+
+                    NB = 1.0 if round(nEventsBPerBoundaryTT[ttVar][1.00][0]) == 0.0 else round(nEventsBPerBoundaryTT[ttVar][1.00][0])
+                    NC = 1.0 if round(nEventsCPerBoundaryTT[ttVar][1.00][0]) == 0.0 else round(nEventsCPerBoundaryTT[ttVar][1.00][0])
+                    ND = 1.0 if round(nEventsDPerBoundaryTT[ttVar][1.00][0]) == 0.0 else round(nEventsDPerBoundaryTT[ttVar][1.00][0])
+
+                    NBerr = NB**0.5
+                    NCerr = NC**0.5
+                    NDerr = ND**0.5
+
+                    NApredTTvar = NB * NC / ND
+
+                    NAprederrTTvar = ((NBerr * NC / ND)**2.0 + (NB * NCerr / ND)**2.0 + (NDerr * NB * NC / ND**2.0)**2.0)**0.5
+
                     # fill the TT_TTvar_sys dictionary
-                    TT_TTvar_sys["nEventsA_TT"][njet]["TT"]      = nEventsPerBoundaryTT["TT"][1.00]
+                    TT_TTvar_sys["nEventsA_TT"][njet]["TT"]      = nEventsAPerBoundaryTT["TT"][1.00]
+                    TT_TTvar_sys["nEventsApred_TT"][njet]["TT"]  = (NApredTT, NAprederrTT)
+
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
                     if not self.hack:
                         TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
+                        TT_TTvar_sys["nEventsA_TTvar"][njet][ttVar]  = nEventsAPerBoundaryTT[ttVar][1.00]
+                        TT_TTvar_sys["nEventsApred_TTvar"][njet][ttVar]  = (NApredTTvar, NAprederrTTvar)
                         TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
                 # set y axis for higher njets bins
@@ -549,7 +607,7 @@ class MCcorrectionFactor_TTvar():
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
         # -------------------------------------------------------------
-        higgsCombine = HiggsCombineInputs(self.year, njets, self.sig, self.channel, samples, regions, self.edges)        
+        higgsCombine = HiggsCombineInputs(self.year, njets, self.sig, self.channel, samples, regions, self.edges, self.outpath)        
         higgsCombine.put_MCcorrFactors_toRootFiles(TT_TTvar_sys)
         
         for region in regions:

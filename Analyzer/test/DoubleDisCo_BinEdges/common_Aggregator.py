@@ -77,7 +77,7 @@ class Aggregator:
             for subregion in self.subregions:
                 self.data[self.makeKey(variable = "nEvents%s"%(subregion),  sample = sample, **kwargs)] = regionObj.getFinal("nEvents%s"%(subregion), sample)
 
-            if not any(s in sample for s in ["RPV", "SYY", "SHH"]):
+            if not any(s in sample for s in ["RPV", "SYY", "SHH"]) or any(s in sample for s in ["TT_RPV", "TT_SYY", "TT_SHH"]):
                 self.data[self.makeKey(variable = "nonClosures",    sample = sample, **kwargs)] = regionObj.get("nonClosure",       None, None, sample) # vars with any combination of bin edges
                 self.data[self.makeKey(variable = "pulls",          sample = sample, **kwargs)] = regionObj.get("pull",             None, None, sample)
                 self.data[self.makeKey(variable = "closureCorrs",   sample = sample, **kwargs)] = regionObj.get("closureCorr",      None, None, sample)

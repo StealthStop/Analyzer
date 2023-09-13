@@ -9,7 +9,7 @@ class HiggsCombineInputs:
     # --------------------
     # Initialize the class 
     # --------------------
-    def __init__(self, year, njets, signal, channel, samples, regions, edges):
+    def __init__(self, year, njets, signal, channel, samples, regions, edges, outpath):
 
         self.year     = year
         self.njets    = njets
@@ -18,11 +18,12 @@ class HiggsCombineInputs:
         self.samples  = samples 
         self.regions  = regions
         self.edges    = edges
+        self.outpath  = outpath 
 
         # ----------------
         # open a root file
         # ----------------
-        fileName = year + "_" + "TT_TTvar_Syst" + "_" +  signal + "_" + channel + edges + ".root" 
+        fileName = outpath + "/" + year + "_" + "TT_TTvar_Syst" + "_" +  signal + "_" + channel + edges + ".root" 
         self.f   = ROOT.TFile.Open(fileName, "RECREATE")        
 
     # -------------------------------------------------------
@@ -70,9 +71,19 @@ class HiggsCombineInputs:
                     elif self.channel == "2l":
                         binIndex = Njet - len(self.njets) + 1
 
-                    if "nEventsA" in var:
+                    if var == "nEventsA":
                         hist.SetBinContent(binIndex, 1.0)
-                        hist.SetBinError(binIndex,   value[njet][ttVar][1]/value[njet][ttVar][0])
+
+                        content = round(value[njet][ttVar][0]) 
+                        if content == 0.0 and value[njet][ttVar][0] != 0.0:
+                            content = 1.0
+                        hist.SetBinError(binIndex,   1.0 / content**0.5)
+                    elif "nEventsApred" in var:
+                        hist.SetBinContent(binIndex, 1.0)
+
+                        content = value[njet][ttVar][0]
+                        error   = value[njet][ttVar][1]
+                        hist.SetBinError(binIndex,   error / content)
                     else:
                         hist.SetBinContent(binIndex, value[njet][ttVar][0])
                         hist.SetBinError(binIndex,   value[njet][ttVar][1])
