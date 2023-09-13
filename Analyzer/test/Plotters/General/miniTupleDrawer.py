@@ -32,6 +32,9 @@ def makeNDhisto(year, proc, histName, histOps, outfile, tree, isData):
     # The idea is to turn the concatStr into a comma separated list of branches
     # Parenthesis can simply be removed, operators are simply replace with a comma
     # After all replacements, the string is split on the comma and filtered for empty strings
+    expressions = re.findall(r'(\w+::\w+)', concatStr)
+    for exp in expressions:
+        concatStr = concatStr.replace(exp, "")
     concatStr = re.sub("[()]", "", concatStr)
     for replaceStr in ["&&", "||", "==", "<=", ">=", ">", "<", "*", ".", "/", "+", "-", ":"]:
         concatStr = concatStr.replace(replaceStr, ",")
@@ -48,7 +51,7 @@ def makeNDhisto(year, proc, histName, histOps, outfile, tree, isData):
             tree.SetBranchStatus(branch, 1)
 
     is2D = False
-    if ":" in variable:
+    if re.search(r'^[^:]*:[^:]*$', variable):
         is2D = True
 
     outfile.cd()

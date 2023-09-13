@@ -57,13 +57,12 @@ def listPath(path, onEOS=False):
 def getMissingJobs(rootFiles, logFiles):
 
     # Subfunction to take a list of files and extract the job ID
-    # Strip off the file extension---"junk"
-    def extractJobs(listOfFiles, junk):
+    def extractJobs(listOfFiles, checkError = False):
 
         jobIDs = {}
         for f in listOfFiles:
 
-            filename = f.split("/")[-1].strip(junk)
+            filename = os.path.basename(f).rpartition(".")[0]
             temp   = filename.partition("_")[-1]
             chunks = temp.rpartition("_")
 
@@ -73,7 +72,13 @@ def getMissingJobs(rootFiles, logFiles):
             if sampleset not in jobIDs:
                 jobIDs[sampleset] = []
 
-            jobIDs[sampleset].append(jobid)
+            if checkError:
+                try:
+                    subprocess.check_output("grep \"TNet\" %s"%(os.path.abspath(f).replace(".log", ".stderr")), shell=True)
+                except:
+                    jobIDs[sampleset].append(jobid)
+            else:
+                jobIDs[sampleset].append(jobid)
 
         sortedJobIDs = {}
         for sample, idList in jobIDs.items():
@@ -81,9 +86,10 @@ def getMissingJobs(rootFiles, logFiles):
 
         return sortedJobIDs
 
-    finishedJobs = extractJobs(rootFiles, ".root")
-    totalJobs    = extractJobs(logFiles,  ".log")
-       
+    finishedJobs = extractJobs(rootFiles)
+    totalJobs    = extractJobs(logFiles)
+    errFreeJobs  = extractJobs(logFiles, checkError=True)
+      
     nFilesPerJob = {}
     missingJobs = {}
     for sample, allJobIDs in totalJobs.items():
@@ -99,8 +105,9 @@ def getMissingJobs(rootFiles, logFiles):
             continue
             
         finishedJobIDs = finishedJobs[sample]
+        errFreeJobIDs  = errFreeJobs[sample]
         for jobID in allJobIDs:
-            if jobID not in finishedJobIDs: 
+            if jobID not in finishedJobIDs or jobID not in errFreeJobIDs: 
 
                 if sample not in missingJobs:
                     missingJobs[sample] = []

@@ -42,7 +42,7 @@ def main():
     parser.add_argument("--run",               dest="run",               help="which code to run",                            required=True                                                         )
     parser.add_argument("--year",              dest="year",              help="which year",                                   required=True                                                         )
     #parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms_data/d3/jhiltb/PO_Boxes/shared/2016_DisCo_0L_Cand1_1L") # with OldSeed - Old Ntuples
-    parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscms/home/bcrossma/nobackup/analysis/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/hadd_DoubleDisCo_MassExclusion_Min3_Run2UL") # Run2UL 
+    parser.add_argument("--path",              dest="path",              help="Input dir with histos",                        default="/uscmst1b_scratch/lpc1/3DayLifetime/jhiltbra/hadd_DoubleDisCo_MassExclusion_Min3_Run2UL") # Run2UL 
     parser.add_argument("--outpath",           dest="outpath",           help="output dir where group dirs",                  default="Run2UL_MassExclusion_RPV"                                    )
     parser.add_argument("--tt",                dest="tt",                help="name of TT sample",                            default="TT"                                                          )
     parser.add_argument("--nontt",             dest="nontt",             help="name of NonTT sample",                         default="NonTT"                                                       )
@@ -132,26 +132,28 @@ def main():
     # root files
     # ----------
     files = {
-        "TT"             : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ), # TT.root file includes also fsrUp/Down, isrUp/Down JECup/down, JERup/down histograms anymore
-        "TT_fsrDown"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_fsrUp"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_isrDown"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_isrUp"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_erdON"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_erdON.root"      ),
-        "TT_hdampDOWN"   : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_hdampDOWN.root"  ),
-        "TT_hdampUP"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_hdampUP.root"    ),
-        "TT_TuneCP5down" : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_TuneCP5down.root"),
-        "TT_TuneCP5up"   : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_TuneCP5up.root"  ),
-        "TT_JECdown"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_JECup"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_JERdown"     : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        "TT_JERup"       : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
-        #"NonTT"          : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"        ),
-        "TTX"            : ROOT.TFile.Open(args.path + "/" + args.year + "_TTX.root"           ),
-        "BG_OTHER"       : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"      ),
-        "QCD"            : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD.root"           ),
-        "Data"           : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"          ),
-        Sig              : ROOT.TFile.Open(args.path + "/" + args.year + "_%s%s_%s_mStop-%s.root"%(modelLabel, args.sig, modelDecay, args.mass)),
+        "TT"                : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ), # TT.root file includes also fsrUp/Down, isrUp/Down JECup/down, JERup/down histograms anymore
+        "TT_fsrDown"        : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_fsrUp"          : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_isrDown"        : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_isrUp"          : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_erdON"          : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_erdON.root"      ),
+        "TT_hdampDOWN"      : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_hdampDOWN.root"  ),
+        "TT_hdampUP"        : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_hdampUP.root"    ),
+        "TT_TuneCP5down"    : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_TuneCP5down.root"),
+        "TT_TuneCP5up"      : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_TuneCP5up.root"  ),
+        "TT_JECdown"        : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_JECup"          : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_JERdown"        : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        "TT_JERup"          : ROOT.TFile.Open(args.path + "/" + args.year + "_TT.root"            ),
+        #"NonTT"             : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"        ),
+        "TTX"               : ROOT.TFile.Open(args.path + "/" + args.year + "_TTX.root"           ),
+        "BG_OTHER"          : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"      ),
+        "QCD"               : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD.root"           ),
+        "Data"              : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"          ),
+        "TT_%s400"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s400.root"%(args.sig)      ),
+        "TT_%s800"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s800.root"%(args.sig)      ),
+        Sig                 : ROOT.TFile.Open(args.path + "/" + args.year + "_%s%s_%s_mStop-%s.root"%(modelLabel, args.sig, modelDecay, args.mass)),
     }
 
     # ---------------------
