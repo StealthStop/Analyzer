@@ -238,6 +238,15 @@ public:
             TopTaggerCfg                      = "TopTaggerCfg_2018.cfg";
         }
 
+        // When making skims for top tag SF measurement,
+        // need to consider full discriminant range of best tops
+        // so neutralize the working point in this case
+        if (analyzer == "MakeTopTagSFTree")
+        {
+            resolvedTop_WP = 0.0;
+            mergedTop_WP   = 0.0;
+        }
+
         tr.registerDerivedVar("runYear",                           runYear                          );
         tr.registerDerivedVar("Lumi",                              Lumi                             );
         tr.registerDerivedVar("Lumi_preHEM",                       Lumi_preHEM                      );
@@ -541,6 +550,25 @@ public:
             };
             registerModules(tr, std::move(modulesList));
         }
+        else if(analyzer=="MakeTopTagSFTree")
+        {
+            fastModeCompatible = true;
+            const std::vector<std::string> modulesList = {
+                "PrepNTupleVars",
+                "Muon",
+                "Electron",
+                "Photon",
+                "Jet",
+                "BJet",
+                "CommonVariables",
+                "RunTopTagger",
+                "Baseline",
+                "BTagCorrector",
+                "ScaleFactors",
+            };
+            registerModules(tr, std::move(modulesList));
+        }
+
         else if(analyzer=="MakeAnaSkimTree")
         {
             fastModeCompatible = true;
