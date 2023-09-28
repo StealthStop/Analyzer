@@ -239,11 +239,11 @@ void MakeTopTagSFTree::Loop(NTupleReader& tr, double, int maxevents, bool)
 
 
             bool pass_toSaveQCDCR = pass_DataQuality   && 
-                                    pass_QCDTrigger    &&
                                     pass_MadHT         &&
-                                    pass_ge4jets       &&
+                                    pass_QCDTrigger    &&
                                     pass_ZeroMuons     &&
                                     pass_ZeroElectrons &&
+                                    pass_ge4jets       &&
                                     pass_HT             ;
 
             // For use with JetHT-triggered data and measuring mistag SF
@@ -319,12 +319,6 @@ void MakeTopTagSFTree::Loop(NTupleReader& tr, double, int maxevents, bool)
                 {
                     variables.insert("weightTTbar" + jecvar);
                     variables.insert("weightQCD" + jecvar);
-                    variables.insert("totGoodMuonSF" + jecvar);
-                    variables.insert("totGoodMuonSF_Up" + jecvar);
-                    variables.insert("totGoodMuonSF_Down" + jecvar);
-                    variables.insert("bTagSF_EventWeightSimple_Central" + jecvar);
-                    variables.insert("bTagSF_EventWeightSimple_Up" + jecvar);
-                    variables.insert("bTagSF_EventWeightSimple_Down" + jecvar);
 
                     if (jecvar == "")
                     {
@@ -343,6 +337,12 @@ void MakeTopTagSFTree::Loop(NTupleReader& tr, double, int maxevents, bool)
                         variables.insert("prefiringScaleFactor");
                         variables.insert("prefiringScaleFactorUp");
                         variables.insert("prefiringScaleFactorDown");
+                        variables.insert("totGoodMuonSF");
+                        variables.insert("totGoodMuonSF_Up");
+                        variables.insert("totGoodMuonSF_Down");
+                        variables.insert("bTagSF_EventWeightSimple_Central");
+                        variables.insert("bTagSF_EventWeightSimple_Up");
+                        variables.insert("bTagSF_EventWeightSimple_Down");
                     }
                 }   
                 else if (runtype == "Data")
