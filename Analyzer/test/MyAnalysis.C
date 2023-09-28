@@ -12,6 +12,7 @@
 #include "Analyzer/Analyzer/include/MakeNJetDists.h"
 #include "Analyzer/Analyzer/include/MakeMiniTree.h"
 #include "Analyzer/Analyzer/include/MakeQCDValTree.h"
+#include "Analyzer/Analyzer/include/MakeTopTagSFTree.h"
 #include "Analyzer/Analyzer/include/MakeAnaSkimTree.h"
 #include "Analyzer/Analyzer/include/CalculateBTagSF.h"
 #include "Analyzer/Analyzer/include/CalculateTopTagSF.h"
@@ -183,6 +184,7 @@ int main(int argc, char *argv[])
         {"CalculateSFMean",            run<CalculateSFMean>           },
         {"MakeMiniTree",               run<MakeMiniTree>              },
         {"MakeQCDValTree",             run<MakeQCDValTree>            },
+        {"MakeTopTagSFTree",           run<MakeTopTagSFTree>          },
         {"MakeAnaSkimTree",            run<MakeAnaSkimTree>           },
         {"MakeNJetDists",              run<MakeNJetDists>             },
         {"Semra_Analyzer",             run<Semra_Analyzer>            },
