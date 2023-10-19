@@ -8,14 +8,14 @@
 
 #include "Analyzer/Analyzer/include/AnalyzeBackground.h"
 #include "Analyzer/Analyzer/include/AnalyzeWControlRegion.h"
-#include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
+//#include "Analyzer/Analyzer/include/AnalyzeTopTagger.h"
 #include "Analyzer/Analyzer/include/AnalyzeEventSelection.h"
 #include "Analyzer/Analyzer/include/AnalyzeEventShape.h"
 #include "Analyzer/Analyzer/include/Analyze0Lep.h"
 #include "Analyzer/Analyzer/include/Analyze1Lep.h"
 #include "Analyzer/Analyzer/include/AnalyzeNjetsMinusOneCSFillDijetHists.h"
 #include "Analyzer/Analyzer/include/AnalyzeNjetsMinusOneCSJetReplacement.h"
-#include "Analyzer/Analyzer/include/AnalyzeStealthTopTagger.h"
+//#include "Analyzer/Analyzer/include/AnalyzeStealthTopTagger.h"
 #include "Analyzer/Analyzer/include/AnalyzeHEM.h"
 #include "Analyzer/Analyzer/include/AnalyzeSignalModels.h"
 #include "Analyzer/Analyzer/include/AnalyzeTest.h"
@@ -105,7 +105,7 @@ std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool 
 {
     // It is only relevant to pass lumi information when running on the StealthSHH and StealthSYY
     // LLP samples, as this is when the weight calculated in samples.cc is important.
-    lumi = -1.0;
+    double lumi = -1.0;
     if(dataSets.find("2017") != std::string::npos && dataSets.find("ctau") != std::string::npos)
     {
         // Exactly from Config.h for 2017
@@ -187,13 +187,13 @@ int main(int argc, char *argv[])
     std::vector<std::pair<std::string, std::function<void(const std::set<AnaSamples::FileSummary>&,const int,const int,const int,TFile* const,const bool,const std::string&)>>> AnalyzerPairVec = {
         {"AnalyzeBackground",       run<AnalyzeBackground>},
         {"AnalyzeWControlRegion",   run<AnalyzeWControlRegion>},
-        {"AnalyzeTopTagger",        run<AnalyzeTopTagger>},
+        //{"AnalyzeTopTagger",        run<AnalyzeTopTagger>},
         {"AnalyzeEventSelection",   run<AnalyzeEventSelection>},
         {"AnalyzeEventShape",       run<AnalyzeEventShape>},
         {"Analyze0Lep",             run<Analyze0Lep>},
         {"Analyze1Lep",             run<Analyze1Lep>},
         {"AnalyzeLepTrigger",       run<AnalyzeLepTrigger>},
-        {"AnalyzeStealthTopTagger", run<AnalyzeStealthTopTagger>},
+        //{"AnalyzeStealthTopTagger", run<AnalyzeStealthTopTagger>},
         {"AnalyzeBTagSF",           run<AnalyzeBTagSF>},
         {"AnalyzeHEM",              run<AnalyzeHEM>},
         {"AnalyzeEENoise",          run<AnalyzeEENoise>},
