@@ -80,6 +80,10 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
         tr.registerDerivedVar("filetag",file.tag);
         tr.registerDerivedVar("analyzer",analyzer);
 
+        // Register the weight calculated from xsec, lumi, nEffEvts in samples.cc
+        // Useful when weight from TreeMaker is not correct and should be overridden
+        tr.registerDerivedVar("weightAbsVal",file.getWeight());
+
         printf( "runtype: %s nFiles: %i startFile: %i maxEvts: %i \n",runtype.c_str(),nFiles,startFile,maxEvts ); fflush( stdout );
 
         // Define classes/functions that add variables on the fly        
@@ -99,7 +103,16 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
 
 std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool isCondor)
 {
-    AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor);
+    // It is only relevant to pass lumi information when running on the StealthSHH and StealthSYY
+    // LLP samples, as this is when the weight calculated in samples.cc is important.
+    lumi = -1.0;
+    if(dataSets.find("2017") != std::string::npos && dataSets.find("ctau") != std::string::npos)
+    {
+        // Exactly from Config.h for 2017
+        lumi = 41480.0;
+    }
+
+    AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor, lumi);
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;
