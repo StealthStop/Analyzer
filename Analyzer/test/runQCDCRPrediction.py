@@ -262,7 +262,62 @@ class ControlRegionProducer:
 
         outfile.Close()
 
-    def makeOutputPlots(self):
+    def makeQCDsystematic(self, crHisto, srHisto):
+
+        def sumBins(histo):
+            histoCollapsedName = histo.GetName() + "_qcdShapeSystematic"
+            nbins = histo.GetNbinsX() / 4
+            total = histo.Integral()
+            histoCollapsed = ROOT.TH1F(histoCollapsedName, histoCollapsedName, histo.GetNbinsX(), -0.5, histo.GetNbinsX()-0.5)
+
+            for ibin in range(1, nbins+1):
+
+                content = 0.0
+                error   = 0.0
+                for jbin in range(4):
+                    content += histo.GetBinContent(ibin + jbin * nbins)
+                    error   += histo.GetBinError(ibin + jbin * nbins)**2.0
+
+                for jbin in range(4):
+                    histoCollapsed.SetBinContent(ibin + jbin * nbins, content / total)
+                    histoCollapsed.SetBinError(ibin + jbin * nbins, error**0.5 / total)
+
+            return histoCollapsed
+
+        crHistoCollapsed = sumBins(crHisto)
+        srHistoCollapsed = sumBins(srHisto)
+
+        qcdSyst = crHistoCollapsed.Clone(crHisto.GetName() + "_qcdShapeSystematic")
+        qcdSyst.Reset()
+        qcdSyst.Divide(srHistoCollapsed, crHistoCollapsed)
+        qcdSystReduced = qcdSyst.Clone(qcdSyst.GetName() + "_reduced")
+        qcdSystAdditive = qcdSyst.Clone(qcdSyst.GetName() + "_additive")
+
+        for ibin in range(1, qcdSyst.GetNbinsX()+1):
+            systVal = qcdSyst.GetBinContent(ibin)
+            systErr = qcdSyst.GetBinError(ibin)
+            newSystVal = systVal
+            newSystErr = systErr
+            if systVal > 2.0:
+                newSystVal = 2.0
+            elif systVal < 0.5:
+                newSystVal = 0.5
+
+            qcdSystReduced.SetBinContent(ibin, newSystVal)
+            qcdSystReduced.SetBinError(ibin, newSystErr)
+
+            qcdSystAdditive.SetBinContent(ibin, 1.0)
+            qcdSystAdditive.SetBinError(ibin, abs(1.0 - systVal))
+
+        f = ROOT.TFile.Open("QCD_Shape_Systematic.root", "RECREATE")
+        f.cd()
+        qcdSyst.Write()
+        qcdSystReduced.Write()
+        f.Close()
+
+        return qcdSystAdditive
+
+    def makeOutputPlots(self, systHisto = None):
         for name, h in self.transforFactorsHisto.items():
             print(name)
             print(h)
@@ -276,6 +331,11 @@ class ControlRegionProducer:
             hCRPred    .Scale(tfHisto.GetBinContent(1))
             hCRPredUp  .Scale(tfHisto.GetBinContent(1)+tfHisto.GetBinError(1))
             hCRPredDown.Scale(tfHisto.GetBinContent(1)-tfHisto.GetBinError(1))
+
+            # Only make QCD systematic when getting nominal histograms and not already varied ones
+            qcdShapeSystHisto = None
+            if "ABCD_" not in qcdCRMC.histogram.GetName():
+                qcdShapeSystHisto = self.makeQCDsystematic(qcdCRMC.histogram, qcdSRMC.histogram)
 
             for iBin in range(1,hCRPred.GetNbinsX()+1):
                 print(iBin, hCRPred.GetBinError(iBin), hCRPred.GetBinContent(iBin))
@@ -351,6 +411,7 @@ class ControlRegionProducer:
             qcdSRMC.histogram.SetMarkerStyle(21)
             qcdSRMC.histogram.SetMarkerSize(2)
             qcdSRMC.histogram.GetYaxis().SetTitleOffset(1.2)
+            qcdSRMC.histogram.GetXaxis().SetRangeUser(-0.5, 19.5)
             qcdSRMC.histogram.Draw()
             #hCRPredUp.Draw("same")
             #hCRPredDown.Draw("same")
@@ -393,9 +454,31 @@ class ControlRegionProducer:
             ratio.GetYaxis().SetTitleOffset(0.6)
             ratio.GetYaxis().SetLabelSize(0.1)
             ratio.GetXaxis().SetLabelSize(0.12)
+            ratio.GetXaxis().SetRangeUser(-0.5, 19.5)
             ratio.Draw()
             #ratio2.Draw("same")
             ratio3.Draw("same hist P")
+
+            if qcdShapeSystHisto != None:
+                qcdShapeSystHisto.SetFillStyle(3253)
+                qcdShapeSystHisto.SetFillColor(ROOT.kGray+1)
+                qcdShapeSystHisto.SetMarkerSize(0)
+                qcdShapeSystHisto.SetMarkerStyle(20)
+                if systHisto == None: qcdShapeSystHisto.Draw("E2 SAME")
+
+            if systHisto != None:
+                combSystHisto = qcdShapeSystHisto.Clone("combinedSyst")
+    
+                for ibin in range(1, combSystHisto.GetNbinsX()+1):
+                    combSystHisto.SetBinContent(ibin, 1.0)
+                    print(qcdShapeSystHisto.GetBinError(ibin), systHisto.GetBinContent(ibin))
+                    combSystHisto.SetBinError(ibin, (qcdShapeSystHisto.GetBinError(ibin)**2.0 + systHisto.GetBinError(ibin)**2.0)**0.5)
+
+                combSystHisto.SetFillStyle(3253)
+                combSystHisto.SetFillColor(ROOT.kGray+1)
+                combSystHisto.SetMarkerSize(0)
+                combSystHisto.SetMarkerStyle(20)
+                combSystHisto.Draw("E2 SAME")
 
             self.addCMSlogo(canvas)
 
@@ -414,11 +497,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if   args.channel == "2l":
-        inclBin = "11incl"
+        inclBin = "10incl"
     elif args.channel == "1l":
-        inclBin = "12incl"
+        inclBin = "11incl"
     elif args.channel == "0l":
-        inclBin = "13incl"
+        inclBin = "12incl"
 
     controlRegions = [
         {"h_njets_%s_%s_%s_QCDCR_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} in each A,B,C,D region", "rebin" : 1,  "min" : 0,  "max" : 24}},},
@@ -441,13 +524,18 @@ if __name__ == "__main__":
 
     mainBG = "QCD" if "QCD" in backgrounds else "QCD_skim"
 
-    sys = [""]#, "_JECup", "_JECdown", "_JERup", "_JERdown", "_fsrUp", "_fsrDown", "_isrUp", "_isrDown", "_pdfUp", "_pdfDown", "_prfUp", "_prfDown", "_puUp", "_puDown", "_sclUp", "_sclDown"]
-    # if args.channel == "0l":
-    #     sys += ["_jetUp", "_jetDown"]
-    # else:
-    #     sys += ["_lepUp", "_lepDown"]
+    sys = ["", "_JECup", "_JECdown", "_JERup", "_JERdown", "_fsrUp", "_fsrDown", "_isrUp", "_isrDown", "_pdfUp", "_pdfDown", "_prfUp", "_prfDown", "_puUp", "_puDown", "_sclUp", "_sclDown"]
+    #if args.channel == "0l":
+    #    sys += ["_jetUp", "_jetDown"]
+    #else:
+    #    sys += ["_lepUp", "_lepDown"]
+
+    colors = [ROOT.kBlack, ROOT.kCyan+1, ROOT.kCyan+2, ROOT.kBlue-7, ROOT.kBlue-5, ROOT.kPink-9, ROOT.kPink-8, ROOT.kOrange+4, ROOT.kOrange+5, ROOT.kBlue-7, ROOT.kBlue-5, ROOT.kMagenta+3, ROOT.kMagenta-1, ROOT.kRed, ROOT.kRed+2, ROOT.kGreen-6, ROOT.kGreen+2]
+
+    names = ["nominal", "JEC Up", "JEC Down", "JER Up", "JER Down", "FSR Up", "FSR Down", "ISR Up", "ISR Down", "PDF Up", "PDF Down", "Prf. Up", "Prf. Down", "PU Up", "PU Down", "Scl. Up", "Scl. Down"]
 
     outfileNames = []
+    crProducers = {}
     for sysName in sys:
         for cr in controlRegions:
             crName = cr.keys()[0].replace("h_njets_%s_"%(inclBin),"").replace("_ABCD",sysName)
@@ -455,12 +543,84 @@ if __name__ == "__main__":
             crProducer.getCRData()
             crProducer.getTransferFactors()
             outfileNames.append(crProducer.write(crName))
-            crProducer.makeOutputPlots()
+            if sysName != "": crProducer.makeOutputPlots()
             crProducer.write_QCD_Data()
+            crProducers[sysName] = crProducer
             print("\t\t\n________________\t\t\n")
+
+    def makeSystPlot(producers, model, channel, outpath):
+
+        canvas = ROOT.TCanvas("", "", 900, 900)
+        canvas.cd()
+        canvas.SetTopMargin(0.06)
+        canvas.SetBottomMargin(0.12)
+        canvas.SetRightMargin(0.04)
+        canvas.SetLeftMargin(0.16)
+
+        nominal = producers[""].dataQCDOnly.Clone(producers[""].dataQCDOnly.GetName() + "_temp")
+        nominal.GetXaxis().SetTitle("N_{ jets} each A,B,C,D region")
+        nominal.GetYaxis().SetTitle("A.U.")
+        nominal.GetYaxis().SetRangeUser(0.8, 1.25)
+        nominal.GetXaxis().SetRangeUser(-0.5, 19.5)
+        nominal.SetLineWidth(0)
+        nominal.SetMarkerSize(0)
+        nominal.Draw("HIST")
+
+        iamLegend = ROOT.TLegend(0.16, 0.7, 0.96, 0.96)
+        iamLegend.SetNColumns(3)
+        
+        garbage = {}
+        for sysName in sys:
+            if sysName == "": continue
+
+            variation = producers[sysName].dataQCDOnly.Clone(producers[sysName].dataQCDOnly.GetName() + "_temp")
+
+            systematic = variation.Clone(variation.GetName() + "_systematic")
+            systematic.Reset()
+
+            systematic.Divide(variation, nominal)
+
+            systematic.SetLineWidth(3)
+            systematic.SetMarkerSize(0)
+            systematic.SetMarkerStyle(20)
+            systematic.SetLineColor(colors[sys.index(sysName)])
+            iamLegend.AddEntry(systematic, names[sys.index(sysName)], "L")
+            systematic.Draw("SAME HIST ][")
+
+            garbage[sysName] = systematic
+
+        iamLegend.Draw("SAME")
+
+        canvas.SaveAs("%s/Transfered_QCD_Variations_%s_%s.pdf"%(outpath, model, channel))
+
+        quadSyst = [0.0 for n in range(producers[""].dataQCDOnly.GetNbinsX())]
+        for sysName in garbage.keys():
+            if "up" not in sys and "Up" not in sysName: continue
+
+            sysName.replace("Up", "").replace("up", "")
+
+            upHisto   = garbage[sysName]
+            downHisto = garbage[sysName.replace("up", "down").replace("Up", "Down")]
+
+            for ibin in range(1, upHisto.GetNbinsX()+1):
+                isyst = max(abs(1.0-upHisto.GetBinContent(ibin)), abs(1.0-downHisto.GetBinContent(ibin)))
+
+                quadSyst[ibin-1] += isyst**2.0
+
+        totalSystHisto = ROOT.TH1F("totalSystHisto", "totalSystHisto", len(quadSyst), 0, len(quadSyst))
+
+        for ival in range(len(quadSyst)):
+            totalSystHisto.SetBinContent(ival+1, 1.0)
+            totalSystHisto.SetBinError(ival+1, quadSyst[ival]**0.5)
+
+        return totalSystHisto
+
+    totalSystHisto = makeSystPlot(crProducers, args.model, args.channel, args.outpath)
+
+    crProducers[""].makeOutputPlots(totalSystHisto)
 
     ##########
     # Finally hadd all the output systematic variations together to have one root file for combine data card
-    finalHadd = "hadd -f {}/Total_{} {}".format(args.outpath, outfileNames[0].replace(args.outpath+"/",""), " ".join(outfileNames))
+    finalHadd = "hadd -f {}/Total_{} {} QCD_Shape_Systematic.root".format(args.outpath, outfileNames[0].replace(args.outpath+"/",""), " ".join(outfileNames))
     print(finalHadd)
     os.system(finalHadd)
