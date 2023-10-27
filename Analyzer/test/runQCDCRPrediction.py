@@ -317,7 +317,7 @@ class ControlRegionProducer:
 
         return qcdSystAdditive
 
-    def makeOutputPlots(self, systHisto = None):
+    def makeOutputPlots(self, reducedPlot = True, systHisto = None):
         for name, h in self.transforFactorsHisto.items():
             print(name)
             print(h)
@@ -325,6 +325,8 @@ class ControlRegionProducer:
             qcdSRMC = h[1]
             tfABCDHisto = h[2]
             qcdCRMC = h[3]
+            tfHisto.Print("ALL")
+            tfABCDHisto.Print("ALL")
             hCRPred     = self.dataQCDOnly.Clone(""    )
             hCRPredUp   = self.dataQCDOnly.Clone("Up"  )
             hCRPredDown = self.dataQCDOnly.Clone("Down")
@@ -353,8 +355,12 @@ class ControlRegionProducer:
             hCRPredABCD.SetMarkerStyle(8)
             hCRPredABCD.SetMarkerSize(2)
             hCRPredABCD.SetLineColor(ROOT.TColor.GetColor("#006d2c"))
+            hCRPredABCD.Print("ALL")
             for iBin in range(1,hCRPredABCD.GetNbinsX()+1):
-                tf, etf   = self.getTFPerBin(tfABCDHisto, iBin)
+
+                # NOTE: Using single TF here, not per-ABCD TFs
+                tf, etf   = self.getTFPerBin(tfHisto, 1)
+
                 val       = tf*hCRPredABCD.GetBinContent(iBin)
                 valUp     = (tf+etf)*hCRPredABCD.GetBinContent(iBin)
                 sigmaStat = 0.0
@@ -419,8 +425,9 @@ class ControlRegionProducer:
             hCRPredABCD.Draw("same")
             print(hCRPred.Integral(), qcdSRMC.histogram.Integral())
 
-            qcdCRMC.histogram.SetLineColor(ROOT.kBlack)
-            qcdCRMC.histogram.Draw("same hist")
+            if not reducedPlot:
+                qcdCRMC.histogram.SetLineColor(ROOT.kBlack)
+                qcdCRMC.histogram.Draw("same hist")
 
             # get model, channel labels
             self.addExtraInfo(canvas,name)         
@@ -430,25 +437,32 @@ class ControlRegionProducer:
             leg.SetTextSize(0.05)
             #leg.AddEntry(hCRPred,     "Scaled QCD CR Data", "p")
             leg.AddEntry(qcdSRMC.histogram, "QCD_{MC}^{SR}",                        "lp")
-            leg.AddEntry(qcdCRMC.histogram, "QCD_{MC}^{CR} (Scaled by TF)",         "lp")
+            if not reducedPlot:
+                leg.AddEntry(qcdCRMC.histogram, "QCD_{MC}^{CR} (Scaled by TF)",         "lp")
             leg.AddEntry(hCRPredABCD,       "QCD_{Data}^{Pred.} (Scaled by TF)",    "lp")
             leg.Draw()
 
             canvas.cd(2)
             ROOT.gPad.SetGridy()
-            ratio = hCRPredABCD.Clone("ratio")
-            ratio.Divide(qcdSRMC.histogram)
-            ratio2 = hCRPred.Clone("ratio")
-            ratio2.Divide(qcdSRMC.histogram)
-            ratio3 = qcdSRMC.histogram.Clone("ratio")
-            ratio3.Divide(qcdCRMC.histogram)
+            ratio = hCRPredABCD.Clone(hCRPredABCD.GetName() + "_ratio")
+            ratio.Reset()
+            ratio.Divide(qcdSRMC.histogram, hCRPredABCD)
+
+            ratio2 = hCRPred.Clone(hCRPred.GetName() + "_ratio")
+            ratio2.Reset()
+            ratio2.Divide(qcdSRMC.histogram, hCRPred)
+
+            ratio3 = qcdSRMC.histogram.Clone(qcdSRMC.histogram.GetName() + "_ratio")
+            ratio3.Reset()
+            ratio3.Divide(qcdSRMC.histogram, qcdCRMC.histogram)
+
             ratio.SetMaximum(2.2)
             ratio.SetMinimum(0.0)
             ratio.SetMarkerColor(ROOT.kBlack)
             #ratio.SetMarkerSize(1)
             ratio.SetLineColor(ROOT.kBlack)
             ratio.GetYaxis().SetNdivisions(5, 5, 0)
-            ratio.GetYaxis().SetTitle("QCD_{Data}^{CR} / QCD_{MC}^{SR}")
+            ratio.GetYaxis().SetTitle("QCD_{MC}^{SR} / QCD_{Data}^{CR}")
             ratio.GetYaxis().SetTitleSize(0.1)
             ratio.GetXaxis().SetTitleSize(0.12)
             ratio.GetYaxis().SetTitleOffset(0.6)
@@ -456,8 +470,9 @@ class ControlRegionProducer:
             ratio.GetXaxis().SetLabelSize(0.12)
             ratio.GetXaxis().SetRangeUser(-0.5, 19.5)
             ratio.Draw()
-            #ratio2.Draw("same")
-            ratio3.Draw("same hist P")
+            if not reducedPlot:
+                #ratio2.Draw("same")
+                ratio3.Draw("same hist P")
 
             if qcdShapeSystHisto != None:
                 qcdShapeSystHisto.SetFillStyle(3253)
@@ -617,7 +632,7 @@ if __name__ == "__main__":
 
     totalSystHisto = makeSystPlot(crProducers, args.model, args.channel, args.outpath)
 
-    crProducers[""].makeOutputPlots(totalSystHisto)
+    crProducers[""].makeOutputPlots(reducedPlot = True, systHisto = totalSystHisto)
 
     ##########
     # Finally hadd all the output systematic variations together to have one root file for combine data card
