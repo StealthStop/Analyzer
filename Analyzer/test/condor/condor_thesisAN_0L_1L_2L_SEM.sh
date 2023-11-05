@@ -7,7 +7,7 @@ command=$1
 
 #YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
 YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
-DATE=("_MaxSign_Fix_11_05_23")
+DATE=("MassExclusion_Fix_11_05_23")
 
 
 for year in ${YEARS[@]}; do
