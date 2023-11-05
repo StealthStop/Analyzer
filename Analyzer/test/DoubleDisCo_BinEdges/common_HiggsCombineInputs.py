@@ -71,9 +71,19 @@ class HiggsCombineInputs:
                     elif self.channel == "2l":
                         binIndex = Njet - len(self.njets) 
 
-                    if "nEventsA" in var:
+                    if var == "nEventsA":
                         hist.SetBinContent(binIndex, 1.0)
-                        hist.SetBinError(binIndex,   value[njet][ttVar][1]/value[njet][ttVar][0])
+
+                        content = round(value[njet][ttVar][0]) 
+                        if content == 0.0 and value[njet][ttVar][0] != 0.0:
+                            content = 1.0
+                        hist.SetBinError(binIndex,   1.0 / content**0.5)
+                    elif "nEventsApred" in var:
+                        hist.SetBinContent(binIndex, 1.0)
+
+                        content = value[njet][ttVar][0]
+                        error   = value[njet][ttVar][1]
+                        hist.SetBinError(binIndex,   error / content)
                     else:
                         hist.SetBinContent(binIndex, value[njet][ttVar][0])
                         hist.SetBinError(binIndex,   value[njet][ttVar][1])

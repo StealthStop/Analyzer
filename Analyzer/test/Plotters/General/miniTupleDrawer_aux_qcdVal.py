@@ -1,53 +1,61 @@
 #! /bin/env/python
 import copy
 
-regions = {"0l_RPV_A"        : "DoubleDisCo_disc2_0l_RPV>0.6&&DoubleDisCo_disc1_0l_RPV>0.6",
-           "0l_StealthSYY_A" : "DoubleDisCo_disc2_0l_SYY>0.6&&DoubleDisCo_disc1_0l_SYY>0.6",
-           "1l_RPV_A"        : "DoubleDisCo_disc2_1l_RPV>0.6&&DoubleDisCo_disc1_1l_RPV>0.6",
-           "1l_StealthSYY_A" : "DoubleDisCo_disc2_1l_SYY>0.6&&DoubleDisCo_disc1_1l_SYY>0.6",
-
-           "0l_RPV_B"        : "DoubleDisCo_disc2_0l_RPV>0.6&&DoubleDisCo_disc1_0l_RPV<0.6",
-           "0l_StealthSYY_B" : "DoubleDisCo_disc2_0l_SYY>0.6&&DoubleDisCo_disc1_0l_SYY<0.6",
-           "1l_RPV_B"        : "DoubleDisCo_disc2_1l_RPV>0.6&&DoubleDisCo_disc1_1l_RPV<0.6",
-           "1l_StealthSYY_B" : "DoubleDisCo_disc2_1l_SYY>0.6&&DoubleDisCo_disc1_1l_SYY<0.6",
-
-           "0l_RPV_C"        : "DoubleDisCo_disc2_0l_RPV<0.6&&DoubleDisCo_disc1_0l_RPV>0.6",
-           "0l_StealthSYY_C" : "DoubleDisCo_disc2_0l_SYY<0.6&&DoubleDisCo_disc1_0l_SYY>0.6",
-           "1l_RPV_C"        : "DoubleDisCo_disc2_1l_RPV<0.6&&DoubleDisCo_disc1_1l_RPV>0.6",
-           "1l_StealthSYY_C" : "DoubleDisCo_disc2_1l_SYY<0.6&&DoubleDisCo_disc1_1l_SYY>0.6",
-
-           "0l_RPV_D"        : "DoubleDisCo_disc2_0l_RPV<0.6&&DoubleDisCo_disc1_0l_RPV<0.6",
-           "0l_StealthSYY_D" : "DoubleDisCo_disc2_0l_SYY<0.6&&DoubleDisCo_disc1_0l_SYY<0.6",
-           "1l_RPV_D"        : "DoubleDisCo_disc2_1l_RPV<0.6&&DoubleDisCo_disc1_1l_RPV<0.6",
-           "1l_StealthSYY_D" : "DoubleDisCo_disc2_1l_SYY<0.6&&DoubleDisCo_disc1_1l_SYY<0.6",
+edgesLim = {
+    "RPV" : {
+        "0l" : (0.74, 0.80),
+        "1l" : (0.80, 0.72)
+    },
+    "StealthSYY" : {
+        "0l" : (0.54, 0.56),
+        "1l" : (0.68, 0.82)
+    }
 }
+
+edgesSig = {
+    "RPV" : {
+        "0l" : (0.52, 0.54),
+        "1l" : (0.84, 0.42)
+    },
+    "StealthSYY" : {
+        "0l" : (0.76, 0.70),
+        "1l" : (0.44, 0.42)
+    }
+}
+
+channels = ["0l", "1l"]
+models   = ["RPV", "StealthSYY"]
+regops   = [("A", ">", ">"), ("B", "<", ">"), ("C", ">", "<"), ("D", "<", "<")]
+
+regions = {}
+
+for regop in regops:
+    for channel in channels:
+        for model in models:
+
+            chanmod = "%s_%s"%(channel, model)
+
+            disc1 = edgesSig[model][channel][0]
+            disc2 = edgesSig[model][channel][1]
+
+            regions["%s_%s"%(chanmod, regop[0])] = "DoubleDisCo_disc2_%s%s%f&&DoubleDisCo_disc1_%s%s%f"%(chanmod.replace("Stealth", ""), regop[2], disc2, chanmod.replace("Stealth", ""), regop[1], disc1)
 
 nbjets = {"Nbjets2incl" : "NGoodBJets_pt30>=2",
 }
 
-njets = {"Njets7"      : "NGoodJets_pt30==7",
-         "Njets7incl"  : "NGoodJets_pt30>=7",
-         "Njets8"      : "NGoodJets_pt30==8",
-         "Njets8incl"  : "NGoodJets_pt30>=8",
-         "Njets9"      : "NGoodJets_pt30==9",
-         "Njets9incl"  : "NGoodJets_pt30>=9",
-         "Njets10"     : "NGoodJets_pt30==10",
-         "Njets10incl" : "NGoodJets_pt30>=10",
-         "Njets11"     : "NGoodJets_pt30==11",
-         "Njets11incl" : "NGoodJets_pt30>=11",
-         "Njets12"     : "NGoodJets_pt30==12",
-         "Njets12incl" : "NGoodJets_pt30>=12",
-         "Njets13"     : "NGoodJets_pt30==13",
-         "Njets13incl" : "NGoodJets_pt30>=13",
-}
+njets = {}
 
-histos = {"h_DoubleDisCo_RPV_disc1_disc2_0l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_0l_RPV:DoubleDisCo_disc1_0l_RPV", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  }, 
-          "h_DoubleDisCo_SYY_disc1_disc2_0l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_0l_SYY:DoubleDisCo_disc1_0l_SYY", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  }, 
-          "h_DoubleDisCo_RPV_disc1_disc2_1l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_1l_RPV:DoubleDisCo_disc1_1l_RPV", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  },
-          "h_DoubleDisCo_SYY_disc1_disc2_1l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_1l_SYY:DoubleDisCo_disc1_1l_SYY", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  },
-          "h_Mbb"                            : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "Mbb",                                               "xbins" : 100, "xmin" : 0, "xmax" : 500                                       }, 
+njetVals = range(7, 14)
+for njet in njetVals:
+    njets["Njets%d"%(njet)]     = "NGoodJets_pt30==%d"%(njet)
+    njets["Njets%dincl"%(njet)] = "NGoodJets_pt30>=%d"%(njet)
+
+histos = {#"h_DoubleDisCo_RPV_disc1_disc2_0l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_NonIsoMuon_0l_RPV:DoubleDisCo_disc1_NonIsoMuon_0l_RPV", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  }, 
+          #"h_DoubleDisCo_SYY_disc1_disc2_0l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_NonIsoMuon_0l_SYY:DoubleDisCo_disc1_NonIsoMuon_0l_SYY", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  }, 
+          #"h_DoubleDisCo_RPV_disc1_disc2_1l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_NonIsoMuon_1l_RPV:DoubleDisCo_disc1_NonIsoMuon_1l_RPV", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  },
+          #"h_DoubleDisCo_SYY_disc1_disc2_1l" : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "DoubleDisCo_disc2_NonIsoMuon_1l_SYY:DoubleDisCo_disc1_NonIsoMuon_1l_SYY", "xbins" : 100, "xmin" : 0, "xmax" : 1, "ybins" : 100, "ymin" : 0, "ymax" : 1  },
+          #"h_Mbb"                            : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "Mbb",                                               "xbins" : 100, "xmin" : 0, "xmax" : 500                                       }, 
           "h_dRbjets"                        : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "dR_bjets",                                          "xbins" : 50,  "xmin" : 0, "xmax" : 5                                         },
-          "h_dRbjets_Mbb"                    : {"weight" : "TotalWeight_QCDCR", "selection" : "${SELECTION}", "variable" : "Mbb:dR_bjets",                                      "xbins" : 100, "xmin" : 0, "xmax" : 5, "ybins" : 100, "ymin" : 0, "ymax" : 500}, 
 }
 
 histograms = {}
