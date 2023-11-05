@@ -55,7 +55,7 @@ def main():
     parser.add_argument("--disc1edge",         dest="disc1edge",         help="fixed d1 edge",                                default=None,  type=float                                             )
     parser.add_argument("--disc2edge",         dest="disc2edge",         help="fixed d2 edge",                                default=None,  type=float                                             )
     parser.add_argument("--fastMode",          dest="fastMode",          help="Fast mode, don't scan all choices",            default=False, action="store_true"                                    ) 
-    parser.add_argument("--njets",             dest="njets",             help="which njet bins to run on",     nargs="+",     default=["7", "8", "9", "10", "11", "12incl"], type=str               ) 
+    parser.add_argument("--njets",             dest="njets",             help="which njet bins to run on",     nargs="+",     default=["7", "8", "9", "10", "11incl"], type=str               ) 
     parser.add_argument("--plotVars1D",        dest="plotVars1D",        help="Plot 1D var vs disc (slices)",                 default=False, action="store_true"                                    ) 
     parser.add_argument("--plotVars2D",        dest="plotVars2D",        help="Plot var vs disc1 and disc2 (2D)",             default=False, action="store_true"                                    ) 
     parser.add_argument("--plotDisc1VsDisc2",  dest="plotDisc1VsDisc2",  help="Plot disc1 and disc2 (2D)",                    default=False, action="store_true"                                    ) 
@@ -198,11 +198,11 @@ def main():
 def BryansHack(files, channel, Sig, mass, histName, regions, translator, disc1, disc2):
 
     if "0l" in channel:
-        njets = ["8", "9", "10", "11", "12", "13incl"]
+        njets = ["8", "9", "10", "11", "12incl"]
     if "1l" in channel:
-        njets = ["7", "8", "9", "10", "11", "12incl"]
+        njets = ["7", "8", "9", "10", "11incl"]
     if "2l" in channel:
-        njets = ["6", "7", "8", "9", "10", "11incl"]
+        njets = ["6", "7", "8", "9", "10incl"]
 
     hack = True
 

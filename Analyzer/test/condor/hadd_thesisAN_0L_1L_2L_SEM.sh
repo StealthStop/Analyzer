@@ -3,7 +3,8 @@
 command=$1
 
 YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
-DATE=("withOptEdges_forFullStatusTalkSYY")
+#YEARS=("2018")
+DATE=("TopTagSFs_MassExclusion_10_11_23")
 #samples=("Data" "QCD" "TTX" "BG_OTHER" "TT" "TT_erdON" "TT_hdampDOWN" "TT_hdampUP" "TT_TuneCP5down" "TT_TuneCP5up") 
 samples=("TT_skim" "TT_erdON_skim" "TT_hdampUP_skim" "TT_hdampDOWN_skim" "TT_TuneCP5up_skim" "TT_TuneCP5down_skim" "QCD_skim" "TTX_skim" "BG_OTHER_skim" "Data_skim")
 
@@ -22,11 +23,12 @@ for year in ${YEARS[@]}; do
     # trigger SFs
     # -----------
     if [ $command == "trigger" ] || [ $command == "all" ]; then
-        #echo "hadding for hadronic trigger SFs :---------------------------------"
-        #python hadder.py -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon -H Thesis_AN_FullStatusTalk/hadd_Run2UL_HadronicTriggerEfficiencySF/ -f -m -p ${year}_HadronicTriggerEfficiencySF_$DATE/output-files
+        echo "hadding for hadronic trigger SFs :---------------------------------"
+        python hadder.py -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon -H Thesis_AN_FullStatusTalk/hadd_Run2UL_HadronicTriggerEfficiencySF/ -f -m -p ${year}_HadronicTriggerEfficiencySF_$DATE/output-files
 
         echo "hadding for leptonic trigger SFs :---------------------------------"
-        python hadder.py -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon,${year}_Data_SingleElectron -H Thesis_AN_FullStatusTalk/hadd_Run2UL_LeptonicTriggerEfficiencySF/ -f -m -p ${year}_LeptonicTriggerEfficiencySF_$DATE/output-files
+        #python hadder.py -d ${year}_QCD,${year}_AllSignal,${year}_Data_SingleMuon,${year}_Data_SingleElectron -H Thesis_AN_FullStatusTalk/hadd_Run2UL_LeptonicTriggerEfficiencySF/ -f -m -p ${year}_LeptonicTriggerEfficiencySF_$DATE/output-files
+        #python hadder.py -d ${year}_TT,${year}_Data_SingleMuon,${year}_Data_SingleElectron -H Thesis_AN_FullStatusTalk/hadd_Run2UL_LeptonicTriggerEfficiencySF/ -f -m -p ${year}_LeptonicTriggerEfficiencySF_$DATE/output-files
     fi
 
     # ---------------
@@ -53,7 +55,8 @@ for year in ${YEARS[@]}; do
     # -----------------
     if [ $command == "disco" ] || [ $command == "all" ]; then
         echo "hadding for validation/higgs inputs :---------------------------------"
-        python hadder.py -y ${year} -d ${year}_TT_skim,${year}_TT_erdON_skim,${year}_TT_hdampUP_skim,${year}_TT_hdampDOWN_skim,${year}_TT_TuneCP5up_skim,${year}_TT_TuneCP5down_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -H DisCo_outputs_0l_1l_2lC_$DATE/ -f -m -p ${year}_DisCo_outputs_0l_1l_2lC_$DATE/output-files --haddOther 
+        python hadder.py -y ${year} -d ${year}_TT_skim,${year}_TT_erdON_skim,${year}_TT_hdampUP_skim,${year}_TT_hdampDOWN_skim,${year}_TT_TuneCP5up_skim,${year}_TT_TuneCP5down_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -H DisCo_outputs_0l_1l_2l_$DATE/ -f -m -p ${year}_DisCo_outputs_0l_1l_2l_$DATE/output-files --haddOther
+        #python hadder.py -y ${year} -d ${year}_AllSignal -H DisCo_outputs_0l_1l_2l_$DATE/ -f -m -p ${year}_DisCo_outputs_0l_1l_2l_$DATE/output-files --haddOther > ${year}_haddDisCo.log
     fi
 
  
@@ -65,7 +68,7 @@ done
 if [ $command == "merge" ] || [ $command == "all" ]; then
     echo "merging all years as Run2UL :---------------------------------"
 
-    cd DisCo_outputs_0l_1l_2lC_${DATE}/
+    cd DisCo_outputs_0l_1l_2l_${DATE}/
     
     # background
     for sample in ${samples[@]}; do

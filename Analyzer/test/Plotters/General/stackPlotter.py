@@ -364,8 +364,8 @@ class StackPlotter:
         sigLegend.SetBorderSize(0)
         sigLegend.SetMargin(0.10)
         sigLegend.SetTextSize(textSize/1.2)
-        if tooManyBkgds:
-            sigLegend.SetNColumns(nColumns-1)
+        #if tooManyBkgds:
+        #    sigLegend.SetNColumns(nColumns-1)
 
         yMax = 1.0; factor = 1.05; power = 1.0
         if doLogY and theMax != 0.0 and theMin != 0.0:
@@ -415,7 +415,7 @@ class StackPlotter:
     def addExtraInfo(self, canvas, packedInfo):
 
         njetStr = ""
-        if "Njets" in packedInfo:
+        if "Njets" in packedInfo and "h_Njets" not in packedInfo:
             njets = packedInfo.partition("Njets")[-1].partition("_")[0]
     
             op = "="
@@ -526,6 +526,10 @@ class StackPlotter:
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
    
+                        # Don't blind for MC
+                        if "blind" in newName:
+                            newName = newName.replace("_blind", "")
+
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
                         if Hobj.IsGood(): mcScale += Hobj.Integral()
@@ -552,6 +556,10 @@ class StackPlotter:
                     for sname, sinfo in self.signals.items():
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
+
+                        # Don't blind for MC
+                        if "blind" in newName:
+                            newName = newName.replace("_blind", "")
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
                         if Hobj.IsGood():
@@ -589,6 +597,10 @@ class StackPlotter:
     
                         if "option"  not in binfo: binfo["option"]  = option
                         if "loption" not in binfo: binfo["loption"] = loption
+
+                        # Don't blind for MC
+                        if "blind" in newName:
+                            newName = newName.replace("_blind", "")
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
@@ -661,6 +673,10 @@ class StackPlotter:
                         if "option"  not in sinfo: sinfo["option"]  = option 
                         if "loption" not in sinfo: sinfo["loption"] = loption
 
+                        # Don't blind for MC
+                        if "blind" in newName:
+                            newName = newName.replace("_blind", "")
+
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
                         if "350" in sname or len(self.signals) == 1:
@@ -687,13 +703,20 @@ class StackPlotter:
                         if "option"  not in dinfo: dinfo["option"]  = option 
                         if "loption" not in dinfo: dinfo["loption"] = loption
 
+                        newName = hname.replace("@", str(order)).replace("?", "%s"%(selection))
+                        print(newName)
+                        print(newInfo)
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
+
+                        print(Hobj.histogram)
 
                         scale = Hobj.Integral()
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
                         nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend)
+
+                        ROOT.gPad.RedrawAxis()
 
                         if Hobj.IsGood():
 

@@ -249,7 +249,7 @@ class ControlRegionProducer:
     def write_QCD_Data(self):
 
         outfile = ROOT.TFile.Open(self.outpath + "/Run2UL_QCD_Data.root", "UPDATE")
-        histName = "h_njets_{}incl_{}_{}_ABCD{}".format(12 if self.channel == "1l" else 13, self.model, self.channel,self.sysName)
+        histName = "h_njets_{}_{}_{}_ABCD{}".format(self.inclBin, self.model, self.channel,self.sysName)
         self.QCDPred = ROOT.TH1D(histName, histName, 24, -0.5, 23.5)
 
         for bin in range(1,self.QCDPred.GetNbinsX()):
@@ -414,11 +414,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if   args.channel == "2l":
-        inclBin = "11incl"
+        inclBin = "10incl"
     elif args.channel == "1l":
-        inclBin = "12incl"
+        inclBin = "11incl"
     elif args.channel == "0l":
-        inclBin = "13incl"
+        inclBin = "12incl"
 
     controlRegions = [
         {"h_njets_%s_%s_%s_QCDCR_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} in each A,B,C,D region", "rebin" : 1,  "min" : 0,  "max" : 24}},},
@@ -441,7 +441,7 @@ if __name__ == "__main__":
 
     mainBG = "QCD" if "QCD" in backgrounds else "QCD_skim"
 
-    sys = [""]#, "_JECup", "_JECdown", "_JERup", "_JERdown", "_fsrUp", "_fsrDown", "_isrUp", "_isrDown", "_pdfUp", "_pdfDown", "_prfUp", "_prfDown", "_puUp", "_puDown", "_sclUp", "_sclDown"]
+    sys = ["", "_JECup", "_JECdown", "_JERup", "_JERdown", "_fsrUp", "_fsrDown", "_isrUp", "_isrDown", "_pdfUp", "_pdfDown", "_prfUp", "_prfDown", "_puUp", "_puDown", "_sclUp", "_sclDown", "_nimUp", "_nimDown"]
     # if args.channel == "0l":
     #     sys += ["_jetUp", "_jetDown"]
     # else:
@@ -450,6 +450,7 @@ if __name__ == "__main__":
     outfileNames = []
     for sysName in sys:
         for cr in controlRegions:
+            print(sysName)
             crName = cr.keys()[0].replace("h_njets_%s_"%(inclBin),"").replace("_ABCD",sysName)
             crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data, mainBG, inclBin, args.channel, args.model, sysName)
             crProducer.getCRData()

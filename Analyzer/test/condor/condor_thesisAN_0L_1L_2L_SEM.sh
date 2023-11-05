@@ -6,8 +6,8 @@ voms-proxy-init --voms cms --hours 168
 command=$1
 
 #YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
-YEARS=("2016postVFP" "2017")
-DATE=("withOptEdges_forFullStatusTalkSYY")
+YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
+DATE=("_MaxSign_Fix_11_05_23")
 
 
 for year in ${YEARS[@]}; do
@@ -28,7 +28,8 @@ for year in ${YEARS[@]}; do
         python condorSubmit.py --analyze HadTriggers_Analyzer -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon -n 40 --output ${year}_HadronicTriggerEfficiencySF_$DATE
 
         echo "running AnalyzeLepTrigger :---------------------------------"
-        python condorSubmit.py --analyze AnalyzeLepTrigger -d ${year}_TT,${year}_AllSignal,${year}_Data_SingleMuon,${year}_Data_SingleElectron -n 40 --output ${year}_LeptonicTriggerEfficiencySF_$DATE
+        #python condorSubmit.py --analyze AnalyzeLepTrigger -d ${year}_QCD,${year}_AllSignal,${year}_Data_SingleMuon,${year}_Data_SingleElectron -n 40 --output ${year}_LeptonicTriggerEfficiencySF_$DATE
+        #python condorSubmit.py --analyze AnalyzeLepTrigger -d ${year}_TT,${year}_Data_SingleMuon,${year}_Data_SingleElectron -n 40 --output ${year}_LeptonicTriggerEfficiencySF_$DATE
     fi
  
     # ---------
@@ -55,7 +56,7 @@ for year in ${YEARS[@]}; do
     # -----------------
     if [ $command == "disco" ] || [ $command == "all" ]; then
         echo "running AnalyzeDoubleDisCo :---------------------------------"
-        python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_TT_skim, ${year}_TT_erdON_skim,${year}_TT_hdampUP_skim,${year}_TT_hdampDOWN_skim,${year}_TT_TuneCP5up_skim,${year}_TT_TuneCP5down_skim, ${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -n 4 --output ${year}_DisCo_outputs_0l_1l_2l_$DATE -s
+        python condorSubmit.py --analyze AnalyzeDoubleDisCo -d ${year}_TT_skim,${year}_TT_erdON_skim,${year}_TT_hdampUP_skim,${year}_TT_hdampDOWN_skim,${year}_TT_TuneCP5up_skim,${year}_TT_TuneCP5down_skim,${year}_QCD_skim,${year}_TTX_skim,${year}_DYJetsToLL_M-50_skim,${year}_Diboson_skim,${year}_ST_skim,${year}_Triboson_skim,${year}_WJets_skim,${year}_AllSignal,${year}_Data_skim -n 4 --output ${year}_DisCo_outputs_0l_1l_2l_$DATE -s
 
     fi
 

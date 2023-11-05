@@ -209,6 +209,7 @@ class Yields:
             if "AllBkg" in sample:
                 continue
 
+            if "TT_" in sample: continue
             newSample = self.niceNames[sample].replace("_", "\\_")
             if "mStop" in sample:
                 chunks = sample.split("_")
@@ -286,14 +287,14 @@ if __name__ == "__main__":
     if args.QCDCR:
         extraStr = "_QCDCR"
 
-    njets = ["7", "8", "9", "10", "11", "12incl"]
-    inclusiveBin = 12
+    njets = ["7", "8", "9", "10", "11incl"]
+    inclusiveBin = 11
     if args.channel == "0l":
-        njets = ["8", "9", "10", "11", "12", "13incl"]
-        inclusiveBin = 13
+        njets = ["8", "9", "10", "11", "12incl"]
+        inclusiveBin = 12
     if args.channel == "2l":
-        njets = ["6", "7", "8", "9", "10", "11incl"]
-        inclusiveBin = 11
+        njets = ["6", "7", "8", "9", "10incl"]
+        inclusiveBin = 10
 
     theYields = Yields(args.outputDir, njets, args.channel)
 

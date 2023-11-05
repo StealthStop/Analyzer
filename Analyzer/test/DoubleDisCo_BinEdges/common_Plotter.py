@@ -56,6 +56,7 @@ class Common_Calculations_Plotters:
         abcdError = []; abcdErrorUnc = []
         abcdPull  = []; abcdPullUnc  = []
         pullDenom = []; zeros        = []
+        closureCorrections = []; closureCorrectionsUnc = []
         
         totalChi2 = 0.0; ndof = 0
 
@@ -91,6 +92,8 @@ class Common_Calculations_Plotters:
                 pullUnc         = 1.0
                 closureError    = 1.0 - ( bkgPred[i][0] / bkgObs[i][0] )
                 closureErrorUnc = ((bkgPred[i][1] / bkgObs[i][0])**2.0 + (bkgObs[i][1] * bkgPred[i][0] / bkgObs[i][0]**2.0)**2.0)**0.5
+                closureCorrection = ( bkgPred[i][0] / bkgObs[i][0] )
+                closureCorrectionUnc = closureErrorUnc
                 pullDenominator = ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5 / bkgPred[i][0]
                 zero            = 0.0
 
@@ -106,6 +109,8 @@ class Common_Calculations_Plotters:
                     abcdErrorUnc.append(0)
                     pullDenom.append(0)
                     zeros.append(999)
+                    closureCorrections.append(999)
+                    closureCorrectionsUnc.append(0)
 
                 else:
                     pred.append(bkgPred[i][0])
@@ -118,6 +123,8 @@ class Common_Calculations_Plotters:
                     abcdErrorUnc.append(closureErrorUnc)
                     pullDenom.append(pullDenominator)
                     zeros.append(zero)
+                    closureCorrections.append(closureCorrection)
+                    closureCorrectionsUnc.append(closureCorrectionUnc)
                     totalChi2 += pull ** 2.0
                     ndof      += 1                    
 
@@ -164,7 +171,7 @@ class Common_Calculations_Plotters:
         ax1.text(0.66, 0.80, textLabel, transform=ax.transAxes, color="black",  fontsize=9,  fontweight='normal', va='center', ha='left' )
         #ax1.text(0.5, 0.95, name,      transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center') 
 
-        ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
+        ax1.set_ylabel('Num. Events', fontsize=11)
         ax1.errorbar(x, pred, yerr=predUnc, label=r'Predicted $t\bar{t}+jets$', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label=r'Observed $t\bar{t}+jets$',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
@@ -177,15 +184,25 @@ class Common_Calculations_Plotters:
         ax2.set_ylabel('Non-Closure', fontsize=12)
         ax2.set_ylim([-0.59, 0.59])   
 
-        # pull 
+        # Closure Correction Value
         ax3 = fig.add_subplot(4, 1, 4)
         ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-        ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
-        ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
+        ax3.errorbar(x, closureCorrections, yerr=closureCorrectionsUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
+        ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax3.set_xlabel('Number of jets', fontsize=12)
-        ax3.set_ylabel('Pull',           fontsize=12) 
-        ax3.set_ylim([-5.9, 5.9])
+        ax3.set_ylabel('Correction', fontsize=12) 
+        ax3.set_ylim([-0.1, 2.1])
+
+        # pull 
+        #ax3 = fig.add_subplot(4, 1, 4)
+        #ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+        #ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
+        #ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
+        #ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
+        #ax3.set_xlabel('Number of jets', fontsize=12)
+        #ax3.set_ylabel('Pull',           fontsize=12) 
+        #ax3.set_ylim([-5.9, 5.9])
  
         #plt.show()
         plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
@@ -761,7 +778,7 @@ class Common_Calculations_Plotters:
                 #ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data',             xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=2, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=5.0)
                 #ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',              xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=2, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=5.0)
                 ax1.set_xticklabels([])
-                ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
+                ax1.set_ylabel('Num. Events', fontsize=11)
                 ax1.set_yscale('log')
                 ax1.set_ylim([5.0, 2e4])
             

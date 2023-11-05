@@ -21,14 +21,16 @@ void AnalyzeLepTrigger::InitHistos()
 
     // Define some strings that are used for different scenarios that we want to calculate trigger efficiencies for
     std::vector<std::string> effTags    { "den", "num"                                                   }; // eff = den / num
-    std::vector<std::string> lepTags    { "el", "mu"                                                     }; // Electron, muon
+    std::vector<std::string> lepTags    { "el", "mu", "nonIsoMu", "dilep"                                }; // Electron, muon
     std::vector<std::string> ptTags     { "pt40"                                                         }; // Pt threshold 
     std::vector<std::string> trigTags   { "trig"                                                         }; 
     std::vector<std::string> nJetCutTags{ "ge1jetCut", "ge2jetCut", "ge3jetCut", "ge4jetCut", "ge5jetCut"}; 
  
     // Define binning for the histograms
-    const Int_t nPtBins = 5;
-    Double_t ptBinEdges[ nPtBins + 1 ] = { 30.0, 45.0, 60.0, 85.0, 120, 200 };
+    const Int_t nPtBins = 9;
+    Double_t ptBinEdges[ nPtBins + 1 ] = { 30.0, 45.0, 60.0, 85.0, 120, 160, 200, 240, 280, 320};
+    const Int_t nPtBinsNonIso = 5;
+    Double_t ptBinEdgesNonIso[ nPtBinsNonIso + 1 ] = {50.0, 52.0, 56.0, 60.0, 120, 200};
     const Int_t nEtaBins = 4;
     Double_t etaBinEdges[ nEtaBins + 1 ] = { -2.4, -1.4, 0, 1.4, 2.4 };
 
@@ -42,12 +44,22 @@ void AnalyzeLepTrigger::InitHistos()
                 {
                     for( std::string nJetCutTag : nJetCutTags ) 
                     {
-                        // 1D - Efficiency  
-                        my_histos.emplace( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin", std::make_shared<TH1D>( ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin" ).c_str(), ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin" ).c_str(), nPtBins, ptBinEdges ) );
-                        my_histos.emplace( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin", std::make_shared<TH1D>( ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin" ).c_str(), ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin" ).c_str(), nEtaBins, etaBinEdges ) );
+                        if(lepTag.find("nonIsoMu") != std::string::npos){
+                            // 1D - H1D  
+                            my_histos.emplace( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin", std::make_shared<TH1D>( ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin" ).c_str(), ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin" ).c_str(), nPtBinsNonIso, ptBinEdgesNonIso ) );
+                            my_histos.emplace( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin", std::make_shared<TH1D>( ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin" ).c_str(), ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin" ).c_str(), nEtaBins, etaBinEdges ) );
 
-                        // 2D - Scale Factor
-                        my_2d_histos.emplace( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin", std::make_shared<TH2D>( ( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin" ).c_str(), ( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin" ).c_str(), nPtBins, ptBinEdges, nEtaBins, etaBinEdges ) );
+                            // 2D - Scale Factor
+                            my_2d_histos.emplace( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin", std::make_shared<TH2D>( ( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin" ).c_str(), ( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin" ).c_str(), nPtBinsNonIso, ptBinEdgesNonIso, nEtaBins, etaBinEdges ) );
+                        }
+                        else{
+                            // 1D - H1D  
+                            my_histos.emplace( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin", std::make_shared<TH1D>( ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin" ).c_str(), ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtBin" ).c_str(), nPtBins, ptBinEdges ) );
+                            my_histos.emplace( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin", std::make_shared<TH1D>( ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin" ).c_str(), ( "h_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepEtaBin" ).c_str(), nEtaBins, etaBinEdges ) );
+
+                            // 2D - Scale Factor
+                            my_2d_histos.emplace( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin", std::make_shared<TH2D>( ( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin" ).c_str(), ( "h2_"+effTag+"_"+lepTag+"_"+ptTag+"_"+trigTag+"_"+nJetCutTag+"_wLepPtLepEtaBin" ).c_str(), nPtBins, ptBinEdges, nEtaBins, etaBinEdges ) );
+                        }
                     }
                 }
             }
@@ -69,25 +81,38 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
         const auto& filetag                = tr.getVar<std::string>("filetag");
         const auto& etaCut                 = tr.getVar<double>("etaCut");
         const auto& GoodLeptons            = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodLeptons");
+        //const auto& GoodNonIsoMuons        = tr.getVec<std::pair<std::string, utility::LorentzVector>>("GoodNonIsoMuons");
         const auto& NGoodLeptons           = tr.getVar<int>("NGoodLeptons");
         const auto& NGoodJets_pt30         = tr.getVar<int>("NGoodJets_pt30");
+        const auto& NNonIsoMuonJets_pt30   = tr.getVar<int>("NNonIsoMuonJets_pt30");
         const auto& Muons                  = tr.getVec<utility::LorentzVector>("Muons");
         const auto& Electrons              = tr.getVec<utility::LorentzVector>("Electrons");
         const auto& NGoodMuons             = tr.getVar<int>("NGoodMuons");
+        const auto& NNonIsoMuons           = tr.getVar<int>("NNonIsoMuons");
         const auto& NGoodElectrons         = tr.getVar<int>("NGoodElectrons");
         const auto& passMadHT              = tr.getVar<bool>("passMadHT");
         const auto& GoodMuons              = tr.getVec<bool>("GoodMuons");
+        const auto& GoodNonIsoMuons        = tr.getVec<bool>("NonIsoMuons");
         const auto& GoodElectrons          = tr.getVec<bool>("GoodElectrons");
         const auto& passBaseline1l_trigEff = tr.getVar<bool>("passBaseline1l_trigEff");      
+        const auto& triggerNames = utility::splitString(tr.getBranchTitle("TriggerPass"));      
 
-        bool passMuonTriggers      = tr.getVar<bool>("passTriggerMuon");
-        bool passElectronTriggers  = tr.getVar<bool>("passTriggerElectron");
+        bool passMuonTriggers       = tr.getVar<bool>("passTriggerMuon");
+        bool passNonIsoMuonTriggers = tr.getVar<bool>("passTriggerNonIsoMuon");
+        bool passElectronTriggers   = tr.getVar<bool>("passTriggerElectron");
+        bool passDileptonTriggers   = tr.getVar<bool>("passTriggerDilepton");
 
         bool pass_ge1JetCut = ( NGoodJets_pt30 >= 1 );
         bool pass_ge2JetCut = ( NGoodJets_pt30 >= 2 );
         bool pass_ge3JetCut = ( NGoodJets_pt30 >= 3 );
         bool pass_ge4JetCut = ( NGoodJets_pt30 >= 4 );
         bool pass_ge5JetCut = ( NGoodJets_pt30 >= 5 );
+
+        bool pass_ge1NIMJetCut = ( NNonIsoMuonJets_pt30 >= 1 );
+        bool pass_ge2NIMJetCut = ( NNonIsoMuonJets_pt30 >= 2 );
+        bool pass_ge3NIMJetCut = ( NNonIsoMuonJets_pt30 >= 3 );
+        bool pass_ge4NIMJetCut = ( NNonIsoMuonJets_pt30 >= 4 );
+        bool pass_ge5NIMJetCut = ( NNonIsoMuonJets_pt30 >= 5 );
 
         // ------------------
         // Print Event Number
@@ -130,7 +155,7 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
 
 
         // --------------------------------------------------------------------
-        // Do the Electron Trigger Efficiency on the Single Muon Dataset and MC
+        // Do the Electron Trigger H1D on the Single Muon Dataset and MC
         // --------------------------------------------------------------------
         if( (filetag.find("SingleMuon") != std::string::npos || runtype == "MC") ) 
         {
@@ -150,7 +175,6 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
                         { "el_pt40_trig_ge3jetCut",   passBaseline1l_trigEff && foundMuonPt40 && passMuonTriggers && pass_ge3JetCut }, 
                         { "el_pt40_trig_ge4jetCut",   passBaseline1l_trigEff && foundMuonPt40 && passMuonTriggers && pass_ge4JetCut }, 
                         { "el_pt40_trig_ge5jetCut",   passBaseline1l_trigEff && foundMuonPt40 && passMuonTriggers && pass_ge5JetCut }, 
-    
                     };
     
                     fillHistos(cut_map_elTriggers, passElectronTriggers, Electrons.at( myGoodElectronIndex ), theweight);
@@ -159,7 +183,7 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
         } // 
         
         // -------------------------------------------------------------
-        // Muon Trigger Efficiency on the Single Electron Dataset and MC
+        // Muon Trigger H1D on the Single Electron Dataset and MC
         // -------------------------------------------------------------
         
         if( (filetag.find("SingleElectron") != std::string::npos || runtype == "MC") ) 
@@ -170,6 +194,7 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
                 
                 // Look at the first good muon
                 int myGoodMuonIndex = goodLeptonIndex(Muons, GoodMuons);
+                int myGoodNonIsoMuonIndex = goodLeptonIndex(Muons, GoodNonIsoMuons);
                 
                 if( myGoodMuonIndex != -1 ) 
                 {
@@ -184,6 +209,22 @@ void AnalyzeLepTrigger::Loop(NTupleReader& tr, double, int maxevents, bool)
                     };
                 
                     fillHistos(cut_map_muTriggers, passMuonTriggers, Muons.at( myGoodMuonIndex ), theweight);
+                }
+                else if ( myGoodNonIsoMuonIndex != -1 )
+                {
+
+                    const std::map<std::string, bool> cut_map_nonIsoMuTriggers 
+                    {
+                        { "nonIsoMu_pt40_trig_ge1jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers                   }, // ge1jetCut
+                        { "nonIsoMu_pt40_trig_ge2jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge2NIMJetCut }, 
+                        { "nonIsoMu_pt40_trig_ge3jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge3NIMJetCut }, 
+                        { "nonIsoMu_pt40_trig_ge4jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge4NIMJetCut }, 
+                        { "nonIsoMu_pt40_trig_ge5jetCut",  passBaseline1l_trigEff && foundElectronPt40 && passElectronTriggers && pass_ge5NIMJetCut }, 
+                       
+                    };
+                
+                    fillHistos(cut_map_nonIsoMuTriggers, passNonIsoMuonTriggers, Muons.at( myGoodNonIsoMuonIndex ), theweight);
+                    
                 }
             }
         } //
@@ -203,6 +244,7 @@ void AnalyzeLepTrigger::WriteHistos(TFile* outfile)
     {
         p.second->Write();
     }
+
 }
 
 bool AnalyzeLepTrigger::containsGoodLepton( const std::vector<utility::LorentzVector>& leptons, const std::vector<bool>& goodLeptons, double ptThreshold, double etaSelection) 
