@@ -4,7 +4,7 @@ command=$1
 
 YEARS=("2016preVFP" "2016postVFP" "2017" "2018")
 #YEARS=("2018")
-DATE=("MassExclusion_Fix_11_3_23")
+DATE=("MaxSig_Fix_11_3_23")
 #samples=("Data" "QCD" "TTX" "BG_OTHER" "TT" "TT_erdON" "TT_hdampDOWN" "TT_hdampUP" "TT_TuneCP5down" "TT_TuneCP5up") 
 samples=("TT_skim" "TT_erdON_skim" "TT_hdampUP_skim" "TT_hdampDOWN_skim" "TT_TuneCP5up_skim" "TT_TuneCP5down_skim" "QCD_skim" "TTX_skim" "BG_OTHER_skim" "Data_skim")
 
