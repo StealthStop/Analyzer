@@ -103,16 +103,7 @@ template<typename Analyze> void run(const std::set<AnaSamples::FileSummary>& vvf
 
 std::set<AnaSamples::FileSummary> setFS(const std::string& dataSets, const bool isCondor)
 {
-    // It is only relevant to pass lumi information when running on the StealthSHH and StealthSYY
-    // LLP samples, as this is when the weight calculated in samples.cc is important.
-    double lumi = -1.0;
-    if(dataSets.find("2017") != std::string::npos && dataSets.find("ctau") != std::string::npos)
-    {
-        // Exactly from Config.h for 2017
-        lumi = 41480.0;
-    }
-
-    AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor, lumi);
+    AnaSamples::SampleSet        ss("sampleSets.cfg", isCondor);
     AnaSamples::SampleCollection sc("sampleCollections.cfg", ss);
 
     std::map<std::string, std::vector<AnaSamples::FileSummary>> fileMap;
