@@ -168,6 +168,8 @@ class ControlRegionProducer:
         print("-----Calcualte all transfer factors-----")
         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, self.mainBG)
 
+        qcdCRMChisto = None
+        qcdSRMChisto = None
         den = {}
         for hname, hinfo in self.controlRegions.items():
             newName = hname + self.sysName
@@ -180,6 +182,8 @@ class ControlRegionProducer:
             cABCD, eABCD = self.getABCDCounts(Hobj.Clone("temp"))
             print(newName, nEvents, "+/-", error)
             den[newName.replace("h_njets_%s_"%(self.inclBin), "").replace("_ABCD","")] = (nEvents, error, Hobj, cABCD, eABCD)
+
+            qcdCRMChisto = Hobj.histogram
 
         num = {}
         for hname, hinfo in self.signalRegions.items():
@@ -194,16 +198,23 @@ class ControlRegionProducer:
             print(newName, nEvents, "+/-", error)
             num[newName.replace("h_njets_%s_"%(self.inclBin), "").replace("_ABCD","")] = (nEvents, error, Hobj, cABCD, eABCD)
 
+            qcdSRMChisto = Hobj.histogram
+
+        # Only make QCD systematic when getting nominal histograms and not already varied ones
+        tfShapeHisto = self.makeQCDshapeCorr(qcdCRMChisto, qcdSRMChisto)
+
         transferFactors = {}
         for nameNum, n in num.items():
             for nameDen, d in den.items():
-                tfABCD, tfErrABCD = [],[]
+                tfABCD, tfErrABCD, tfShape = [],[],[]
                 for i in range(len(n[3])):
                     tf, tfError = self.calculateTF(n[3][i], d[3][i], n[4][i], d[4][i])
                     tfABCD.append(tf)
                     tfErrABCD.append(tfError)
+                for ibin in range(1, tfShapeHisto.GetNbinsX()+1):
+                    tfShape.append(tfShapeHisto.GetBinContent(ibin))
                 tf, tfError = self.calculateTF(n[0], d[0], n[1], d[1])
-                transferFactors["{}_TF_{}Over{}".format(self.year,nameNum,nameDen)] = (tf, tfError, n[2], d[2], tfABCD, tfErrABCD)
+                transferFactors["{}_TF_{}Over{}".format(self.year,nameNum,nameDen)] = (tf, tfError, n[2], d[2], tfABCD, tfErrABCD, tfShape)
 
         for name, tf in transferFactors.items():
             h = ROOT.TH1D(name, name, 1, 0, 1)
@@ -212,13 +223,24 @@ class ControlRegionProducer:
             print(name, "TF:", round(tf[0],4), "+/-", round(tf[1],4))
             hABCD = ROOT.TH1D(name+"ABCD", name+"ABCD", 4, 0, 4)
             tfPrint = ""
+
+            shapeBins = tfShapeHisto.GetNbinsX()
+            nbins = shapeBins*4
+            hABCDshape = ROOT.TH1D(name+"ABCD_perNjets", name+"ABCD_perNjets", nbins, 0, nbins)
+
             for i in range(len(tf[4])):
                 print(tf[4][i], tf[5][i])
                 tfPrint += " {} \pm {} &".format(round(tf[4][i]*100, 1), round(tf[5][i]*100, 1))
                 hABCD.SetBinContent(i+1, tf[4][i])
                 hABCD.SetBinError(  i+1, tf[5][i])
+
+                for j in range(1, tfShapeHisto.GetNbinsX()+1):
+                    hABCDshape.SetBinContent(i*shapeBins + j, tfShapeHisto.GetBinContent(j))
+                    hABCDshape.SetBinError(i*shapeBins + j,   tfShapeHisto.GetBinError(j))
+
             print(tfPrint)
-            self.transforFactorsHisto[name] = (h, tf[2], hABCD, tf[3])
+
+            self.transforFactorsHisto[name] = (h, tf[2], hABCD, tf[3], hABCDshape)
 
     def getTFPerBin(self, tfABCDHisto, i, repeat=6):
         tf, etf = 0.0, 0.0
@@ -242,6 +264,7 @@ class ControlRegionProducer:
             h[1].Write()
             h[2].Write()
             h[3].Write()
+            h[4].Write()
 
         outfile.Close()
         return outfileName
@@ -262,13 +285,12 @@ class ControlRegionProducer:
 
         outfile.Close()
 
-    def makeQCDsystematic(self, crHisto, srHisto):
+    def makeQCDshapeCorr(self, crHisto, srHisto):
 
-        def sumBins(histo):
-            histoCollapsedName = histo.GetName() + "_qcdShapeSystematic"
+        def sumBins(histo, name):
+            histoCollapsedName = histo.GetName() + "_" + name + "_collapsed"
             nbins = histo.GetNbinsX() / 4
-            total = histo.Integral()
-            histoCollapsed = ROOT.TH1F(histoCollapsedName, histoCollapsedName, histo.GetNbinsX(), -0.5, histo.GetNbinsX()-0.5)
+            histoCollapsed = ROOT.TH1F(histoCollapsedName, histoCollapsedName, histo.GetNbinsX()/4, 0, histo.GetNbinsX()/4)
 
             for ibin in range(1, nbins+1):
 
@@ -278,55 +300,240 @@ class ControlRegionProducer:
                     content += histo.GetBinContent(ibin + jbin * nbins)
                     error   += histo.GetBinError(ibin + jbin * nbins)**2.0
 
-                for jbin in range(4):
-                    histoCollapsed.SetBinContent(ibin + jbin * nbins, content / total)
-                    histoCollapsed.SetBinError(ibin + jbin * nbins, error**0.5 / total)
+                histoCollapsed.SetBinContent(ibin, content)
+                histoCollapsed.SetBinError(ibin, error**0.5)
 
             return histoCollapsed
 
-        crHistoCollapsed = sumBins(crHisto)
-        srHistoCollapsed = sumBins(srHisto)
+        def getFitHisto(histo, hName, name):
 
-        qcdSyst = crHistoCollapsed.Clone(crHisto.GetName() + "_qcdShapeSystematic")
-        qcdSyst.Reset()
-        qcdSyst.Divide(srHistoCollapsed, crHistoCollapsed)
-        qcdSystReduced = qcdSyst.Clone(qcdSyst.GetName() + "_reduced")
-        qcdSystAdditive = qcdSyst.Clone(qcdSyst.GetName() + "_additive")
+            nbins = histo.GetNbinsX()
 
-        for ibin in range(1, qcdSyst.GetNbinsX()+1):
-            systVal = qcdSyst.GetBinContent(ibin)
-            systErr = qcdSyst.GetBinError(ibin)
-            newSystVal = systVal
-            newSystErr = systErr
-            if systVal > 2.0:
-                newSystVal = 2.0
-            elif systVal < 0.5:
-                newSystVal = 0.5
+            func = "expo(0)"
+            if self.channel == "0l":
+                func = "[0] + expo(1)"
 
-            qcdSystReduced.SetBinContent(ibin, newSystVal)
-            qcdSystReduced.SetBinError(ibin, newSystErr)
+            fit = ROOT.TF1(name, func, 0.5, nbins-0.5)
 
-            qcdSystAdditive.SetBinContent(ibin, 1.0)
-            qcdSystAdditive.SetBinError(ibin, abs(1.0 - systVal))
+            if self.channel == "0l":
+                fit.SetParameter(0, -50.0)
+                fit.SetParameter(1, 10.0)
+                fit.SetParameter(2, -1.0)
+            else:
+                fit.SetParameter(0, 1.0)
+                fit.SetParameter(1, -1.0)
+               
+            histo.Fit(name, "WLR")
 
-        f = ROOT.TFile.Open("QCD_Shape_Systematic.root", "RECREATE")
-        f.cd()
-        qcdSyst.Write()
-        qcdSystReduced.Write()
-        f.Close()
+            graphErrors = ROOT.TGraphErrors(nbins)
+            for i in range(0, nbins):
+                graphErrors.SetPoint(i+1, i+0.5, 0)
+            ROOT.TVirtualFitter.GetFitter().GetConfidenceIntervals(graphErrors, 0.68)
 
-        return qcdSystAdditive
+            fitHisto = histo.Clone(hName + "_fit"); fitHisto.Reset()
+            nbins = fitHisto.GetNbinsX()
+            for ibin in range(1, nbins+1):
+                binX    = fitHisto.GetBinCenter(ibin)
+                fitVal  = fit.Eval(binX)
+                fitErr  = graphErrors.GetErrorY(ibin-1)
+                fitHisto.SetBinContent(ibin, fitVal)
+                fitHisto.SetBinError(ibin, fitErr)
+
+            N = 100*nbins
+            graphErrorsAux = ROOT.TGraphErrors(N)
+            actualNpoints = 0
+            for i in range(0, N):
+                x = float(nbins)*(float(i)/float(N))
+                if x < 0.49 or x > 4.5:
+                    continue
+                actualNpoints += 1
+                graphErrorsAux.SetPoint(i, x, 0)
+            ROOT.TVirtualFitter.GetFitter().GetConfidenceIntervals(graphErrorsAux, 0.68)
+
+            returnGraph = ROOT.TGraph(2*actualNpoints)
+
+            j = 0
+            for i in range(0, N):
+                x1 = float(nbins)*(float(i)/float(N))
+                if x1 < 0.49 or x1 > 4.5:
+                    continue
+                fitVal    = fit.Eval(x1)
+                fitErr    = graphErrorsAux.GetErrorY(i)
+
+                x2 = float(nbins)*(float(N-i-1)/float(N))
+                if x2 < 0.49 or x2 > 4.5:
+                    continue
+                fitValAux = fit.Eval(x2)
+                fitErrAux = graphErrorsAux.GetErrorY(N-i-1)
+
+                returnGraph.SetPoint(j,               x1, fitVal + fitErr)
+                returnGraph.SetPoint(actualNpoints+j, x2, fitValAux - fitErrAux)
+
+                j += 1
+
+            return fitHisto, fit, returnGraph
+
+        crHistoCollapsed = sumBins(crHisto, "total")
+        srHistoCollapsed = sumBins(srHisto, "total")
+
+        crFitHisto, crFit, crGraph = getFitHisto(crHistoCollapsed, crHisto.GetName(), "crFit")
+        srFitHisto, srFit, srGraph = getFitHisto(srHistoCollapsed, srHisto.GetName(), "srFit")
+
+        qcdFitCorr = crFitHisto.Clone(crHisto.GetName() + "_fit_qcdShapeTF"); qcdFitCorr.Reset()
+        qcdFitCorr.Divide(srFitHisto, crFitHisto)
+
+        name = "QCD_Njets_Shape_Corr_%s_%s%s"%(self.model, self.channel, self.sysName)
+        canvas = ROOT.TCanvas(name, name, 800, 800)
+        canvas.Divide(1,2)
+
+        split      = 0.3
+        upperSplit = 1.0
+        lowerSplit = 1.0
+        scale      = 1.0
+        RightMargin  = 0.1
+        LeftMargin   = 0.1
+        TopMargin    = 0.1
+        BottomMargin = 0.1
+
+        self.addCMSlogo(canvas)
+
+        upperSplit = 1.0-split
+        lowerSplit = split
+        scale = upperSplit / lowerSplit
+
+        canvas.cd(1)
+        ROOT.gPad.SetPad(0.0, split, 1.0, 1.0)
+        ROOT.gPad.SetTopMargin(self.TopMargin / upperSplit)
+        ROOT.gPad.SetBottomMargin(0)
+        ROOT.gPad.SetLeftMargin(self.LeftMargin)
+        ROOT.gPad.SetRightMargin(self.RightMargin)
+        ROOT.gPad.SetLogy()
+
+        titleSize = 0.07
+        labelSize = 0.06
+
+        minimum = srHistoCollapsed.GetBinContent(srHistoCollapsed.GetNbinsX())
+        maximum = crHistoCollapsed.GetBinContent(1)
+
+        crHistoCollapsed.SetTitle("")
+        crHistoCollapsed.GetYaxis().SetTitle("Number of Events")
+        crHistoCollapsed.GetXaxis().SetTitle("N_{jets}")
+        crHistoCollapsed.GetYaxis().SetTitleSize(titleSize)
+        crHistoCollapsed.GetYaxis().SetLabelSize(labelSize)
+        crHistoCollapsed.GetYaxis().SetTitleOffset(0.9)
+        crHistoCollapsed.GetYaxis().SetRangeUser(minimum/10.0, maximum*10.0)
+        crHistoCollapsed.SetLineWidth(4)
+        crHistoCollapsed.SetLineColor(30)
+    
+        srHistoCollapsed.SetLineWidth(4)
+        srHistoCollapsed.SetLineColor(ROOT.kGreen+3)
+
+        crHistoCollapsed.Draw("EHIST")
+        srHistoCollapsed.Draw("EHIST SAME")
+
+        iamLegend = ROOT.TLegend(0.50, 0.70, 0.70, 0.9)
+        iamLegend.AddEntry(crHistoCollapsed, "QCD^{MC}_{CR}", "EL")
+        iamLegend.AddEntry(srHistoCollapsed, "QCD^{MC}_{SR}", "EL")
+        iamLegend.SetTextSize(0.06)
+
+        crFit.SetLineWidth(4)
+        crFit.SetLineColor(30)
+        crFit.SetLineStyle(7)
+        srFit.SetLineWidth(4)
+        srFit.SetLineColor(ROOT.kGreen+3)
+        srFit.SetLineStyle(3)
+
+        crGraph.SetFillColorAlpha(30, 0.5)
+        srGraph.SetFillColorAlpha(ROOT.kGreen+3, 0.3)
+
+        crFit.Draw("LSAME")
+        srFit.Draw("LSAME")
+
+        crGraph.Draw("F SAME")
+        srGraph.Draw("F SAME")
+
+        iamLegend.Draw("SAME")
+
+        self.addExtraInfo(canvas, self.channel)
+
+        canvas.cd(2)
+        ROOT.gPad.SetPad(0.0, 0.0, 1.0, split)
+        ROOT.gPad.SetTopMargin(0)
+        ROOT.gPad.SetBottomMargin(self.BottomMargin / lowerSplit)
+        ROOT.gPad.SetLeftMargin(self.LeftMargin)
+        ROOT.gPad.SetRightMargin(self.RightMargin)
+        ROOT.gPad.SetGridy()
+
+        line = ROOT.TLine(0, 1, qcdFitCorr.GetXaxis().GetXmax(), 1)
+        line.SetLineColor(ROOT.kBlack)
+        line.SetLineStyle(2)
+        line.SetLineWidth(2)
+
+        qcdFitCorr.GetYaxis().SetTitle("TF(SR/CR)")
+        qcdFitCorr.GetXaxis().SetTitle("N_{ jets}")
+        qcdFitCorr.GetYaxis().SetTitleSize(scale*titleSize)
+        qcdFitCorr.GetYaxis().SetLabelSize(scale*labelSize)
+        qcdFitCorr.GetXaxis().SetTitleSize(scale*titleSize)
+        qcdFitCorr.GetYaxis().SetTitleOffset(1.1 / scale)
+        qcdFitCorr.GetXaxis().SetTitleOffset(1.1)
+        qcdFitCorr.GetYaxis().SetNdivisions(5, 5, 0)
+
+        startNjet = 6
+        endNjet = 10
+        if self.channel == "1l":
+            startNjet = 7
+            endNjet = 11
+        elif self.channel == "0l":
+            startNjet = 8
+            endNjet = 12
+
+        qcdFitCorr.GetXaxis().SetLabelSize(scale*labelSize*1.6)
+        qcdFitCorr.GetXaxis().SetLabelOffset(0.05 / scale)
+
+        for ibin in range(1, qcdFitCorr.GetNbinsX()+1):
+
+            label = ""
+            Njet = startNjet + ibin - 1
+            if Njet == endNjet:
+                label = "#geq %d"%(Njet)
+            else:
+                label = str(Njet)
+
+            qcdFitCorr.GetXaxis().SetBinLabel(ibin, label)
+
+        upperBound = 0.85
+        lowerBound = -0.05
+        if self.channel == "2l":
+            upperBound = 0.012
+            lowerBound = -0.0015
+        elif self.channel == "1l":
+            upperBound = 0.14
+            lowerBound = -0.01
+        qcdFitCorr.GetYaxis().SetRangeUser(lowerBound, upperBound)
+        qcdFitCorr.SetLineColor(ROOT.kBlue)
+        qcdFitCorr.SetTitle("")
+        qcdFitCorr.SetLineWidth(3)
+
+        qcdFitCorrErr = qcdFitCorr.Clone(qcdFitCorr.GetName() + "_justError")
+        qcdFitCorrErr.SetFillColorAlpha(ROOT.kBlue, 0.3)
+
+        qcdFitCorr.Draw("HIST")
+        qcdFitCorrErr.Draw("E2SAME")
+        line.Draw("SAME")
+
+        canvas.SaveAs(self.outpath + "/QCD_Shape_TF_%s_%s.pdf"%(self.model, self.channel))
+
+        return qcdFitCorr
 
     def makeOutputPlots(self, reducedPlot = True, systHisto = None):
         for name, h in self.transforFactorsHisto.items():
-            print(name)
-            print(h)
+            #print(name)
+            #print(h)
             tfHisto = h[0]
             qcdSRMC = h[1]
             tfABCDHisto = h[2]
             qcdCRMC = h[3]
-            tfHisto.Print("ALL")
-            tfABCDHisto.Print("ALL")
+            tfABCDshapeHisto = h[4]
             hCRPred     = self.dataQCDOnly.Clone(""    )
             hCRPredUp   = self.dataQCDOnly.Clone("Up"  )
             hCRPredDown = self.dataQCDOnly.Clone("Down")
@@ -334,13 +541,8 @@ class ControlRegionProducer:
             hCRPredUp  .Scale(tfHisto.GetBinContent(1)+tfHisto.GetBinError(1))
             hCRPredDown.Scale(tfHisto.GetBinContent(1)-tfHisto.GetBinError(1))
 
-            # Only make QCD systematic when getting nominal histograms and not already varied ones
-            qcdShapeSystHisto = None
-            if "ABCD_" not in qcdCRMC.histogram.GetName():
-                qcdShapeSystHisto = self.makeQCDsystematic(qcdCRMC.histogram, qcdSRMC.histogram)
-
             for iBin in range(1,hCRPred.GetNbinsX()+1):
-                print(iBin, hCRPred.GetBinError(iBin), hCRPred.GetBinContent(iBin))
+                #print(iBin, hCRPred.GetBinError(iBin), hCRPred.GetBinContent(iBin))
                 sigmaStat = 0.0
                 sigmaTF = 0.0
                 if hCRPred.GetBinContent(iBin)>0.0:
@@ -355,26 +557,33 @@ class ControlRegionProducer:
             hCRPredABCD.SetMarkerStyle(8)
             hCRPredABCD.SetMarkerSize(2)
             hCRPredABCD.SetLineColor(ROOT.TColor.GetColor("#006d2c"))
-            hCRPredABCD.Print("ALL")
+            #hCRPredABCD.Print("ALL")
             for iBin in range(1,hCRPredABCD.GetNbinsX()+1):
 
                 # NOTE: Using single TF here, not per-ABCD TFs
-                tf, etf   = self.getTFPerBin(tfHisto, 1)
+                #tf, etf    = self.getTFPerBin(tfHisto, 1)
+                njetShift  = tfABCDshapeHisto.GetNbinsX()+1
+                tfShape    = tfABCDshapeHisto.GetBinContent(iBin % njetShift)
+                tfShapeErr = tfABCDshapeHisto.GetBinError(iBin % njetShift)
 
-                val       = tf*hCRPredABCD.GetBinContent(iBin)
-                valUp     = (tf+etf)*hCRPredABCD.GetBinContent(iBin)
+                val       = tfShape*hCRPredABCD.GetBinContent(iBin)
+                valUp     = (tfShape+tfShapeErr)*hCRPredABCD.GetBinContent(iBin)
                 sigmaStat = 0.0
                 sigmaTF = 0.0
                 if val > 0.0:
-                    sigmaStat = tf*hCRPredABCD.GetBinError(iBin) / val
+                    sigmaStat = tfShape*hCRPredABCD.GetBinError(iBin) / val
                     sigmaTF   = (valUp - val) /val
                 sigmaTot  = math.sqrt(sigmaStat**2 + sigmaTF**2)
                 errorTot  = sigmaTot*val
-                statError = tf*hCRPredABCD.GetBinError(iBin)
+                statError = tfShape*hCRPredABCD.GetBinError(iBin)
                 hCRPredABCD.SetBinContent(iBin, val)
                 hCRPredABCD.SetBinError(iBin, errorTot)
 
-                qcdCRMC.histogram.SetBinContent(iBin, tf*qcdCRMC.histogram.GetBinContent(iBin))
+                if systHisto != None:
+                    systHisto.SetBinContent(iBin, 1.0)
+                    systHisto.SetBinError(iBin, (systHisto.GetBinError(iBin)**2.0 + (tfShapeErr/tfShape)**2.0)**0.5)
+
+                qcdCRMC.histogram.SetBinContent(iBin, tfShape*qcdCRMC.histogram.GetBinContent(iBin))
 
             canvas = ROOT.TCanvas("", "", 900, 900)
             split           = 0.3
@@ -401,15 +610,6 @@ class ControlRegionProducer:
             ROOT.gPad.SetLeftMargin(self.LeftMargin)
             ROOT.gPad.SetRightMargin(self.RightMargin)
 
-            #cA = qcdSRMC.Integral(0,6)  /hCRPred.Integral(0,6)
-            #cB = qcdSRMC.Integral(7,12) /hCRPred.Integral(7,12)
-            #cC = qcdSRMC.Integral(13,18)/hCRPred.Integral(13,18)
-            #cD = qcdSRMC.Integral(19,25)/hCRPred.Integral(19,25)
-            #for i in range(1,self.dataQCDOnly.GetNbinsX()+1):
-            #    s = cA if i <= 6 else (cB if 7<=i and i<=12 else ( cC if 13<=i and i<=18 else cD))
-            #    x = hCRPred.GetBinContent(i)
-            #    hCRPred.SetBinContent(i, s*x)
-
             canvas.cd(1)
             max = qcdSRMC.histogram.GetMaximum()
             qcdSRMC.histogram.SetMaximum(max*50.0)
@@ -423,7 +623,7 @@ class ControlRegionProducer:
             #hCRPredDown.Draw("same")
             #hCRPred.Draw("same")
             hCRPredABCD.Draw("same")
-            print(hCRPred.Integral(), qcdSRMC.histogram.Integral())
+            #print(hCRPred.Integral(), qcdSRMC.histogram.Integral())
 
             if not reducedPlot:
                 qcdCRMC.histogram.SetLineColor(ROOT.kBlack)
@@ -470,30 +670,15 @@ class ControlRegionProducer:
             ratio.GetXaxis().SetLabelSize(0.12)
             ratio.GetXaxis().SetRangeUser(-0.5, 19.5)
             ratio.Draw()
+
+            if systHisto != None:
+                systHisto.SetFillColor(ROOT.kGray+2)
+                systHisto.SetFillStyle(3354)
+                systHisto.Draw("E2 SAME")
+            ratio.Draw("SAME")
             if not reducedPlot:
                 #ratio2.Draw("same")
                 ratio3.Draw("same hist P")
-
-            if qcdShapeSystHisto != None:
-                qcdShapeSystHisto.SetFillStyle(3253)
-                qcdShapeSystHisto.SetFillColor(ROOT.kGray+1)
-                qcdShapeSystHisto.SetMarkerSize(0)
-                qcdShapeSystHisto.SetMarkerStyle(20)
-                if systHisto == None: qcdShapeSystHisto.Draw("E2 SAME")
-
-            if systHisto != None:
-                combSystHisto = qcdShapeSystHisto.Clone("combinedSyst")
-    
-                for ibin in range(1, combSystHisto.GetNbinsX()+1):
-                    combSystHisto.SetBinContent(ibin, 1.0)
-                    print(qcdShapeSystHisto.GetBinError(ibin), systHisto.GetBinContent(ibin))
-                    combSystHisto.SetBinError(ibin, (qcdShapeSystHisto.GetBinError(ibin)**2.0 + systHisto.GetBinError(ibin)**2.0)**0.5)
-
-                combSystHisto.SetFillStyle(3253)
-                combSystHisto.SetFillColor(ROOT.kGray+1)
-                combSystHisto.SetMarkerSize(0)
-                combSystHisto.SetMarkerStyle(20)
-                combSystHisto.Draw("E2 SAME")
 
             self.addCMSlogo(canvas)
 
@@ -557,8 +742,8 @@ if __name__ == "__main__":
             crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data, mainBG, inclBin, args.channel, args.model, sysName)
             crProducer.getCRData()
             crProducer.getTransferFactors()
-            outfileNames.append(crProducer.write(crName))
             if sysName != "": crProducer.makeOutputPlots()
+            outfileNames.append(crProducer.write(crName))
             crProducer.write_QCD_Data()
             crProducers[sysName] = crProducer
             print("\t\t\n________________\t\t\n")
@@ -636,6 +821,6 @@ if __name__ == "__main__":
 
     ##########
     # Finally hadd all the output systematic variations together to have one root file for combine data card
-    finalHadd = "hadd -f {}/Total_{} {} QCD_Shape_Systematic.root".format(args.outpath, outfileNames[0].replace(args.outpath+"/",""), " ".join(outfileNames))
+    finalHadd = "hadd -f {}/Total_{} {}".format(args.outpath, outfileNames[0].replace(args.outpath+"/",""), " ".join(outfileNames))
     print(finalHadd)
     os.system(finalHadd)
