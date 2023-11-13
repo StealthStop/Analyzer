@@ -29,9 +29,17 @@ def run(inputPath):
 
         lines.append("     & " + " ".ljust(14) + " & %s"%(" & ".join(njetsChunks)) + r"\\")
 
-        f = ROOT.TFile.Open("%s/Total_Run2UL_SYY_%s_QCDCR_Prediction.root"%(inputPath, channel))
+        # For the table, can grab any output since the TFs inside will be the same
+        f = None 
+        model = ""
+        try:
+            f = ROOT.TFile.Open("%s/Total_Run2UL_RPV_%s_QCDCR_Prediction.root"%(inputPath, channel))
+            model = "RPV"
+        except:
+            f = ROOT.TFile.Open("%s/Total_Run2UL_SYY_%s_QCDCR_Prediction.root"%(inputPath, channel))
+            model = "SYY"
         
-        h = f.Get("Run2UL_TF_SYY_%sOverSYY_%s_QCDCRABCD_perNjets"%(channel, channel))
+        h = f.Get("Run2UL_TF_%s_%sOver%s_%s_QCDCRABCD_perNjets"%(model, channel, model, channel))
 
         chunks = ["Run2"]
         if channel == "0l":
