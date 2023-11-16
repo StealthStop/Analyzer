@@ -12,12 +12,21 @@ selections = [
 ]
 
 histograms = {
+    "h_Njets_2l?"                 : {"logY" : True,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "N_{ jets}",         "rebin" : 1, "min" :  5, "max" :   17}},
     "h_Njets_1l?"                 : {"logY" : True,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "N_{ jets}",         "rebin" : 1, "min" :  5, "max" :   17}},
+    "h_Njets_0l?"                 : {"logY" : True,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "N_{ jets}",         "rebin" : 1, "min" :  5, "max" :   17}},
+    "h_DoubleDisCo_SYY_disc1_2l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 1", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_SYY_disc2_2l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 2", "rebin" : 4, "min" :  0, "max" :    1}},
     "h_DoubleDisCo_SYY_disc1_1l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 1", "rebin" : 4, "min" :  0, "max" :    1}},
     "h_DoubleDisCo_SYY_disc2_1l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 2", "rebin" : 4, "min" :  0, "max" :    1}},
-    "h_Njets_0l?"                 : {"logY" : True,  "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "N_{ jets}",         "rebin" : 1, "min" :  5, "max" :   17}},
     "h_DoubleDisCo_SYY_disc1_0l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 1", "rebin" : 4, "min" :  0, "max" :    1}},
     "h_DoubleDisCo_SYY_disc2_0l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 2", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_RPV_disc1_2l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 1", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_RPV_disc2_2l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 2", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_RPV_disc1_1l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 1", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_RPV_disc2_1l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 2", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_RPV_disc1_0l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 1", "rebin" : 4, "min" :  0, "max" :    1}},
+    "h_DoubleDisCo_RPV_disc2_0l?" : {"logY" : False, "Y" : {"title" : "A.U.", "min" : 2e-3}, "X" : {"title" : "NN Discriminant 2", "rebin" : 4, "min" :  0, "max" :    1}},
 
 }
 
