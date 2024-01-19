@@ -130,9 +130,9 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
     if "NonOptimized" in div:
         divName = "NonOptimized "
     elif "MassExclusion" in div:
-        divName = "Mass Exclusion"
+        divName = "High Mass"
     elif "MaxSign" in div:
-        divName = "Max Significance"
+        divName = "Low Mass"
     
     text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.04, modelName)
     text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.08, name     )

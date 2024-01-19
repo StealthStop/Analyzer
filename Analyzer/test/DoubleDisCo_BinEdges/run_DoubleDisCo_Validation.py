@@ -149,10 +149,11 @@ def main():
         #"NonTT"             : ROOT.TFile.Open(args.path + "/" + args.year + "_Non_TT.root"        ),
         "TTX"               : ROOT.TFile.Open(args.path + "/" + args.year + "_TTX.root"           ),
         "BG_OTHER"          : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"      ),
-        "QCD"               : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD.root"           ),
+        "QCD"               : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD_Data.root"      ),
         "Data"              : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"          ),
-        "TT_%s400"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s400.root"%(args.sig)      ),
-        "TT_%s800"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s800.root"%(args.sig)      ),
+        "TT_%s550"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s550.root"%(args.sig)      ),
+        #"TT_%s400_0p5"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s400_0p5.root"%(args.sig)      ),
+        #"TT_%s800"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s800.root"%(args.sig)      ),
         Sig                 : ROOT.TFile.Open(args.path + "/" + args.year + "_%s%s_%s_mStop-%s.root"%(modelLabel, args.sig, modelDecay, args.mass)),
     }
 
@@ -212,7 +213,7 @@ def BryansHack(files, channel, Sig, mass, histName, regions, translator, disc1, 
     tablesPath = {"TT": "test"}
     plotter = None
 
-    theApp = MCcorrectionFactor_TTvar("Run2UL", channel, Sig, mass, translator, edges="", hack=hack)
+    theApp = MCcorrectionFactor_TTvar("Run2UL", channel, Sig, mass, translator, edges="", outpath = None, hack=hack)
     output = theApp.run(disc1, disc2, True, samples=samples, files=files, histName=histName, njets=njets, regions=regions, plotter=plotter, tablesPath=tablesPath, edges="")
    
     return output

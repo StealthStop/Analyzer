@@ -114,11 +114,11 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
 
     name = ""
     if   channel == "0l":
-        name = "Fully-Hadronic"
+        name = "0L"
     elif channel == "1l":
-        name = "Semi-Leptonic"
+        name = "1L"
     elif channel == "2l":
-        name = "Fully-Leptonic"
+        name = "2L"
 
     modelName = ""
     if "SYY" in model:
@@ -130,9 +130,9 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
     if "NonOptimized" in div:
         divName = "NonOptimized "
     elif "MassExclusion" in div:
-        divName = "Mass Exclusion"
+        divName = "High Mass"
     elif "MaxSign" in div:
-        divName = "Max Significance"
+        divName = "Low Mass"
     
     text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.04, modelName)
     text.DrawLatex(LeftMargin + 0.03, TopMargin - 0.08, name     )
@@ -144,13 +144,13 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
 def relabelNjetsBins(hist, channel, labelSize):
 
     if channel == "0l":
-        njets = [8, 13]
+        njets = [8, 12]
 
     elif channel == "1l":
-        njets = [7, 12]
+        njets = [7, 11]
 
     elif channel == "2l":
-        njets = [6, 11]
+        njets = [6, 10]
 
     for bin in range(1, hist.GetNbinsX()+1):
         
@@ -220,8 +220,11 @@ def main():
                  ]
 
 
+    if args.sig == "SYY":
+        args.outpath = args.outpath.replace("SYY", "StealthSYY")
     path = "%s/year_TT_TTvar_Syst_%s_%s_label.root"%(args.outpath, args.sig, args.mass)
    
+    print(path)
  
     years = ["Run2UL"]
    
@@ -346,12 +349,13 @@ def main():
             # calculate statistical unc. on closure coerection
             MCcorr_TT_Unc = f1.Get("Run2UL_maximum_MCcorrectedData_Syst_All")
             #MCcorr_TT_Unc = MCcorr_TT.Clone("MCcorr_TT_Unc")
-            
+          
+            unc_val = MCcorr_TT_Unc.GetBinContent(1)  
             for i in range(1, MCcorr_TT_Unc.GetNbinsX()+1):
                 content        = MCcorr_TT.GetBinContent(i) 
                 contentError   = MCcorr_TT.GetBinError(i)
                 #closureCorrUnc = (contentError / content) 
-                closureSyst = (abs(MCcorr_TT_Unc.GetBinContent(i) - 1) / content)
+                closureSyst = (abs(unc_val - 1) / content)
                 
                 MCcorr_TT_Unc.SetBinContent(i, 1.0)
                 #MCcorr_TT_Unc.SetBinError(i, closureCorrUnc)
@@ -421,7 +425,7 @@ def main():
                         hist.Draw("hist SAME")
                         draw = True
         
-                        legend.AddEntry(MCcorr_TT_Unc, "Stat. Unc. on Corr.", "F")
+                        legend.AddEntry(MCcorr_TT_Unc, "Stat. + Syst. Unc.", "F")
                         
                     else:
                         hist.Draw("hist SAME")

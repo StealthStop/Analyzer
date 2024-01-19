@@ -105,13 +105,13 @@ class HiggsCombineInputs:
             Njet = int(njet.replace("incl", ""))
 
             if self.channel == "0l":
-                hist.SetBinContent((Njet - len(self.njets) - 1), dictionary[njet]) 
+                hist.SetBinContent((Njet - len(self.njets) - 2), dictionary[njet]) 
 
             if self.channel == "1l":
-                hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
+                hist.SetBinContent((Njet - len(self.njets) - 1), dictionary[njet])
 
             if self.channel == "2l":
-                hist.SetBinContent((Njet - len(self.njets) + 1), dictionary[njet])
+                hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
 
         # put the average value of MC corrected data to the dictionary
         self.make_HiggsCombineInputs_RootFiles(hist, ("%s_average_MCcorrectedData_Syst_%s"%(self.year,region)))
@@ -132,13 +132,16 @@ class HiggsCombineInputs:
             Njet = int(njet.replace("incl", ""))
 
             if self.channel == "0l":
-                hist.SetBinContent((Njet - len(self.njets) - 1), dictionary[njet])
+                hist.SetBinContent((Njet - len(self.njets) - 2), dictionary[njet][0])
+                hist.SetBinError((Njet - len(self.njets) - 2), dictionary[njet][1])
 
             if self.channel == "1l":
-                hist.SetBinContent((Njet - len(self.njets)), dictionary[njet])
+                hist.SetBinContent((Njet - len(self.njets) - 1), dictionary[njet][0])
+                hist.SetBinError((Njet - len(self.njets) - 1), dictionary[njet][1])
 
             if self.channel == "2l":
-                hist.SetBinContent((Njet - len(self.njets) + 1), dictionary[njet])
+                hist.SetBinContent((Njet - len(self.njets)), dictionary[njet][0])
+                hist.SetBinError((Njet - len(self.njets)), dictionary[njet][1])
 
         # put the mximum value of MC corrected data to the dicionary
         self.make_HiggsCombineInputs_RootFiles(hist, ("%s_maximum_MCcorrectedData_Syst_%s"%(self.year,region)))

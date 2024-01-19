@@ -38,6 +38,12 @@ class MCcorrectionFactor_TTvar():
 
             self.ttVarsDetect = []
 
+            self.ttVarSigInject = [
+                                #"TT_%s550"%(self.model),
+                                "TT_%s400_0p5"%(self.model),
+                                #"TT_%s800"%(self.model),
+            ]
+
         else:
             self.ttVarsModel = [
                                 "TT_fsrUp",            
@@ -59,11 +65,14 @@ class MCcorrectionFactor_TTvar():
             ]
 
             self.ttVarSigInject = [
-                                "TT_%s400"%(self.model),
-                                "TT_%s800"%(self.model),
+                                "TT_%s400_0p5"%(self.model),
+                                #"TT_%s550"%(self.model),
+                                #"TT_%s800"%(self.model),
             ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect + self.ttVarSigInject
+        #self.ttVar = "TT_%s550"%(self.model)
+        self.ttVar = "TT_%s400_0p5"%(self.model)
 
         # make colors for each TT variance
         self.colors = { "TT"                    : "#525252",
@@ -81,8 +90,9 @@ class MCcorrectionFactor_TTvar():
                         "TT_JERdown"            : "#33A02C",
                         "TT_TuneCP5up"          : "#FDBF6F",
                         "TT_TuneCP5down"        : "#FDBF6F",
-                        "TT_%s400"%(self.model) : "#000000",
-                        "TT_%s800"%(self.model) : "#000000"
+                        #"TT_%s550"%(self.model) : "#525252",
+                        "TT_%s400_0p5"%(self.model) : "#525252",
+                        #"TT_%s800"%(self.model) : "#000000"
         }
 
         self.correctionLabels = { "TT"             : "Nominal",
@@ -99,8 +109,9 @@ class MCcorrectionFactor_TTvar():
                                   "TT_JERdown"     : "JER Down",
                                   "TT_TuneCP5up"   : "Tune Up",
                                   "TT_TuneCP5down" : "Tune Down",
-                                  "TT_%s400"%(self.model) : "%s400 Inj."%(self.model),
-                                  "TT_%s800"%(self.model) : "%s800 Inj."%(self.model)
+                                  #"TT_%s550"%(self.model) : "%s550 Inj."%(self.model),
+                                  "TT_%s400_0p5"%(self.model) : "%s400 Inj. r=0.5"%(self.model),
+                                  #"TT_%s800"%(self.model) : "%s800 Inj."%(self.model)
         }
 
         self.closureLabels = { "TT"             : "w/ Nominal Corr.",
@@ -118,8 +129,9 @@ class MCcorrectionFactor_TTvar():
                                "TT_JERdown"     : "w/ JER Down Corr.",
                                "TT_TuneCP5up"   : "w/ Tune Up Corr.",
                                "TT_TuneCP5down" : "w/ Tune Down Corr.",
-                               "TT_%s400"%(self.model) : "w/ %s400 Inj. Corr."%(self.model),
-                               "TT_%s800"%(self.model) : "w/ %s800 Inj. Corr."%(self.model)
+                               #"TT_%s550"%(self.model) : "w/ %s550 Inj. Corr."%(self.model),
+                               "TT_%s400_0p5"%(self.model) : "w/ %s400 Inj. r=0.5 Corr."%(self.model),
+                               #"TT_%s800"%(self.model) : "w/ %s800 Inj. Corr."%(self.model)
         }
 
         self.valColors = { "Val_BD" : "#DDBB87",
@@ -161,63 +173,63 @@ class MCcorrectionFactor_TTvar():
         # ---------------
         maxCorrData_ttSyst = maximumCorrectedData_ttSyst(tablesPath, self.channel, self.year, "TT_TTvar_Syst", self.sig)
 
-        if self.hack:
-            if self.channel == "0l":
-                someNjets = ["8", "9"]
-            elif self.channel == "1l":
-                someNjets = ["7", "8"]
-            elif self.channel == "2l":
-                someNjets = ["6", "7"]
-        else:
-            someNjets = njets
+        #if self.hack:
+        #    if self.channel == "0l":
+        #        someNjets = ["8"]
+        #    elif self.channel == "1l":
+        #        someNjets = ["7"]
+        #    elif self.channel == "2l":
+        #        someNjets = ["6"]
+        #else:
+        someNjets = njets
 
-        QCDCRInfo = {}
-        # -----------------
-        # Setup QCDCR stuff
-        # -----------------
-        for njet in njets:
-            
-            hist_lists = {}
+        #QCDCRInfo = {}
+        ## -----------------
+        ## Setup QCDCR stuff
+        ## -----------------
+        #for njet in njets:
+        #    
+        #    hist_lists = {}
 
-            for sample in samples:
+        #    for sample in samples:
 
-                # get the fsr/isr, jec/jer higtograms from TT root file
-                ttvarStr = ""
+        #        # get the fsr/isr, jec/jer higtograms from TT root file
+        #        ttvarStr = ""
 
-                if sample == "TT_fsrDown":
-                    ttvarStr = "_fsrDown"
+        #        if sample == "TT_fsrDown":
+        #            ttvarStr = "_fsrDown"
 
-                elif sample == "TT_fsrUp":
-                    ttvarStr = "_fsrUp"
+        #        elif sample == "TT_fsrUp":
+        #            ttvarStr = "_fsrUp"
 
-                elif sample == "TT_isrDown":
-                    ttvarStr = "_isrDown"
+        #        elif sample == "TT_isrDown":
+        #            ttvarStr = "_isrDown"
 
-                elif sample == "TT_isrUp":
-                    ttvarStr = "_isrUp"
+        #        elif sample == "TT_isrUp":
+        #            ttvarStr = "_isrUp"
 
-                elif sample == "TT_JECdown":
-                    ttvarStr = "_JECdown"
+        #        elif sample == "TT_JECdown":
+        #            ttvarStr = "_JECdown"
 
-                elif sample == "TT_JECup":
-                    ttvarStr = "_JECup"
+        #        elif sample == "TT_JECup":
+        #            ttvarStr = "_JECup"
 
-                elif sample == "TT_JERdown":
-                    ttvarStr = "_JERdown"
+        #        elif sample == "TT_JERdown":
+        #            ttvarStr = "_JERdown"
 
-                elif sample == "TT_JERup":
-                    ttvarStr = "_JERup"
+        #        elif sample == "TT_JERup":
+        #            ttvarStr = "_JERup"
 
-                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
-                if ttvarStr == "":
-                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
-                    hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+        #        hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+        #        if ttvarStr == "":
+        #            histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+        #            hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
 
-            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
+        #    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
 
-            QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
+        #    QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
 
-            del theEdgesClass
+        #    del theEdgesClass
 
         # ---------------
         # loop over njets
@@ -256,13 +268,18 @@ class MCcorrectionFactor_TTvar():
                     ttvarStr = "_JERup"
 
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
-                if ttvarStr == "":
-                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
-                    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+                #if ttvarStr == "":
+                #    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                #    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
             maxEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(hist_lists["TT"].GetNbinsX()+1)
             binWidth = hist_lists["TT"].GetXaxis().GetBinWidth(1)
+
+            if self.ttVar is not None:
+                hist_lists[self.ttVar] = files[self.ttVar].Get(histName.replace("${NJET}", njet))
+
+                self.ttVars.append(self.ttVar)
 
             for ttVar in self.ttVars:
 
@@ -279,7 +296,7 @@ class MCcorrectionFactor_TTvar():
                     # -----------------
                     if region == "ABCD":
 
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                         theAggy.aggregate(theEdgesClass, region = region, njet = njet)
 
                         abcdFinalEdges = theEdgesClass.getFinal("edges", "TT")
@@ -292,7 +309,7 @@ class MCcorrectionFactor_TTvar():
                         for r in self.list_boundaries[region]:
                        
                             disc1_edge = ((float(abcdFinalEdges[0]) - 0.2) / (1.0 - 0.4)) * (float(r) - 0.4) + 0.2  
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = r)
 
                     # -----------------------------
@@ -303,7 +320,7 @@ class MCcorrectionFactor_TTvar():
                         for t in self.list_boundaries[region]:
 
                             disc2_edge = ((float(abcdFinalEdges[1]) - 0.2) / (1.0 - 0.4)) * (float(t) - 0.4) + 0.2
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = t)
 
                     # -----------------------------
@@ -315,7 +332,7 @@ class MCcorrectionFactor_TTvar():
                             disc1_edge = ((float(abcdFinalEdges[0]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
                             disc2_edge = ((float(abcdFinalEdges[1]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
 
-                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                             theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
 
                     del theEdgesClass
@@ -340,6 +357,7 @@ class MCcorrectionFactor_TTvar():
         best_correctedDataValue                  = {}
         best_correctedDataValue_Diff             = {}
         calculatedSys                            = {}
+        calculatedSys_withUnc                    = {}
 
         for region in regions:
             averageCorrectedDataValue_forAllRegions[region]  = {}
@@ -352,6 +370,10 @@ class MCcorrectionFactor_TTvar():
         best_correctedDataValue["All"]                  = {}
         best_correctedDataValue_Diff["All"]             = {}
         calculatedSys["All"]                            = {}
+
+        TT_FSR_Sys                                      = {}
+        Data_Sys                                        = {}
+        SignalEffect                                    = {}
 
         # -------------------
         # loop over the njets
@@ -379,16 +401,32 @@ class MCcorrectionFactor_TTvar():
             best_correctedDataValue["All"]                       = None      
             best_correctedDataValue_Diff["All"]                  = -999.0  
 
+            closureCorrPerBoundaryTT = {}
+            closurePerBoundaryTTvar = {}
+
             for region in regions:
                 if "Val_" not in region:
                     continue
 
+                closureCorrPerBoundaryTT[region]          = theAggy.getPerBoundary(variable = "closureCorr", sample = "TT",       region = region, njet = njet)            
+                closurePerBoundaryTTvar[region]           = theAggy.getPerBoundary(variable = "Closure",     sample = self.ttVar, region = region, njet = njet)
+
+                correctedTTVarClosurePerBoundary = {}
+                for key_region in closurePerBoundaryTTvar.keys():
+                    correctedTTVarClosurePerBoundary[key_region] = {}
+                    for key_bin in closurePerBoundaryTTvar[key_region].keys():
+                        temp_val = closurePerBoundaryTTvar[key_region][key_bin][0] * closureCorrPerBoundaryTT[key_region][key_bin][0]
+                        temp_err = temp_val * math.sqrt((closurePerBoundaryTTvar[key_region][key_bin][1] / closurePerBoundaryTTvar[key_region][key_bin][0])**2 + (closureCorrPerBoundaryTT[key_region][key_bin][1] / closureCorrPerBoundaryTT[key_region][key_bin][0])**2)
+                        correctedTTVarClosurePerBoundary[key_region][key_bin] = (temp_val, temp_err)
+
+
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData = {}
-                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"] = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
+                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"] = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)#, manualOverride=correctedTTVarClosurePerBoundary)
 
                 if not self.hack:
                     for ttVar in self.ttVars:
                         MC_TT_corrected_dataClosure_PerBoundaryTTinData[ttVar] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData_%s"%(ttVar), region = region, njet = njet)
+
 
                 # ----------------------------------------------------------------------------
                 # fill a dictionary to get the average and maximum values of MC corrected data 
@@ -396,6 +434,7 @@ class MCcorrectionFactor_TTvar():
                 # ----------------------------------------------------------------------------
                 for ttProcess, boundaryDictionary in MC_TT_corrected_dataClosure_PerBoundaryTTinData.items():
 
+                    #has_one = False
                     if ("TT_" in ttProcess) or ("None" in ttProcess): continue
 
                     for boundaryValue, CorrectedDataClosure in boundaryDictionary.items(): 
@@ -414,9 +453,20 @@ class MCcorrectionFactor_TTvar():
 
                             if (correctedDataValue_Diff > best_correctedDataValue_Diff["All"]):
 
+                                #has_one = True
                                 best_correctedDataValue_Diff["All"] = correctedDataValue_Diff
-                                best_correctedDataValue["All"]      = CorrectedDataClosure[0]
+                                best_correctedDataValue["All"]      = CorrectedDataClosure
+                                best_bv = boundaryValue
+                                SignalEffect[njet] = (correctedTTVarClosurePerBoundary[region][best_bv][0], correctedTTVarClosurePerBoundary[region][best_bv][1])
 
+                        #try: best_bv
+                        #except: best_bv = None
+
+                        #if (CorrectedDataClosure[0] == -999.0) and not has_one and best_bv is not None and best_bv in boundaryDictionary.keys():
+                        #if (CorrectedDataClosure[0] == -999.0): #and not has_one and best_bv is not None and best_bv in boundaryDictionary.keys():
+                        #    best_correctedDataValue["All"] = boundaryDictionary[best_bv]
+                        #    SignalEffect[njet] = (correctedTTVarClosurePerBoundary[region][best_bv][0], correctedTTVarClosurePerBoundary[region][best_bv][1])
+                                
                 if summedCorrectedDataValues_forAllRegions_count[region] != 0.0:
                     averageCorrectedDataValue_forAllRegions[region][njet] = (summedCorrectedDataValues_forAllRegions[region] / summedCorrectedDataValues_forAllRegions_count[region])
 
@@ -462,7 +512,7 @@ class MCcorrectionFactor_TTvar():
                 nEventsDPerBoundaryTT["TT"]                              = theAggy.getPerBoundary(variable = "nEventsD",             sample = "TT",       region = region, njet = njet)
 
                 closureCorrPerBoundaryTT["TT"]                          = theAggy.getPerBoundary(variable = "closureCorr",          sample = "TT",       region = region, njet = njet)            
-                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
+                MC_TT_corrected_dataClosure_PerBoundaryTTinData["TT"]   = theAggy.getPerBoundary(variable = "CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)#, manualOverride=correctedTTVarClosurePerBoundary)
                 MC_TT_corrected_dataClosure_PerBoundaryTTinData["None"] = theAggy.getPerBoundary(variable = "Closure",              sample = "TTinData", region = region, njet = njet)
 
                 # -------------------
@@ -509,12 +559,23 @@ class MCcorrectionFactor_TTvar():
                     TT_TTvar_sys["nEventsApred_TT"][njet]["TT"]  = (NApredTT, NAprederrTT)
 
                     TT_TTvar_sys["MCcorr_TT"][njet]["TT"]        = closureCorrPerBoundaryTT["TT"][1.00]
+                        
                     if not self.hack:
                         TT_TTvar_sys["MCcorr_TTvar"][njet][ttVar]    = closureCorrPerBoundaryTT[ttVar][1.00]
                         TT_TTvar_sys["nEventsA_TTvar"][njet][ttVar]  = nEventsAPerBoundaryTT[ttVar][1.00]
                         TT_TTvar_sys["nEventsApred_TTvar"][njet][ttVar]  = (NApredTTvar, NAprederrTTvar)
                         TT_TTvar_sys["MCcorr_Ratio_MC"][njet][ttVar] = MCcorrRatio_MC_BoundaryTT[ttVar][1.00]
 
+                    if "fsr" in ttVar:
+                        if njet in TT_FSR_Sys.keys():
+                            if abs(1-TT_FSR_Sys[njet][0]) < abs(1-closureCorrPerBoundaryTT[ttVar][1.00][0] / closureCorrPerBoundaryTT["TT"][1.00][0]):
+                                TT_FSR_Sys[njet][0] = closureCorrPerBoundaryTT[ttVar][1.00][0] / closureCorrPerBoundaryTT["TT"][1.00][0]
+                                TT_FSR_Sys[njet][1] = TT_FSR_Sys[njet][0]*math.sqrt((closureCorrPerBoundaryTT[ttVar][1.00][1] / closureCorrPerBoundaryTT[ttVar][1.00][0])**2 + (closureCorrPerBoundaryTT["TT"][1.00][1] / closureCorrPerBoundaryTT["TT"][1.00][0])**2)
+                            else: pass
+                        else:
+                            TT_FSR_Sys[njet] = []
+                            TT_FSR_Sys[njet].append(closureCorrPerBoundaryTT[ttVar][1.00][0] / closureCorrPerBoundaryTT["TT"][1.00][0])
+                            TT_FSR_Sys[njet].append(TT_FSR_Sys[njet][0]*math.sqrt((closureCorrPerBoundaryTT[ttVar][1.00][1] / closureCorrPerBoundaryTT[ttVar][1.00][0])**2 + (closureCorrPerBoundaryTT["TT"][1.00][1] / closureCorrPerBoundaryTT["TT"][1.00][0])**2))
                 # set y axis for higher njets bins
                 #yMin = None; yMax = None
                 #if int(njet.replace("incl", "")) > 8:
@@ -541,8 +602,8 @@ class MCcorrectionFactor_TTvar():
                     plotter["TT"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(closureCorrPerBoundaryTT,      self.ttVars_jet + ["TT"], self.correctionLabels, self.regionGridWidth/2.0, yMin, yMax, 1.0, region,  "Closure Correction [TT]",           "TT_ClosureCorrection_PerBoundary_Jet",   njet, self.colors, self.valColors[region])
 
                     # TTinData = Data - NonTT
-                    plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
-
+                    plotter["Data"].plot_VarVsBoundary_MCcorrectionFactor_TTvar(MC_TT_corrected_dataClosure_PerBoundaryTTinData, self.ttVars + ["TT", "None"], self.closureLabels, self.regionGridWidth/2.0, yMin, yMax,  1.0, region, "Post-Correction Data Closure", "TTinData_CorrectedDataClosure_PerBoundary", njet, self.colors, self.valColors[region])
+                    
                     ## ----------------------------------------
                     ## Make plots for all TT modeling variances
                     ## ----------------------------------------
@@ -581,42 +642,65 @@ class MCcorrectionFactor_TTvar():
         absoluteMaxDiff = 0.0
 
         if self.channel == "0l":
-            someNjets = ["8", "9"]
+            someNjets = ["8"]
         elif self.channel == "1l":
-            someNjets = ["7", "8"]
+            someNjets = ["7"]
         elif self.channel == "2l":
-            someNjets = ["6", "7"]
+            someNjets = ["6"]
+        #if self.channel == "0l":
+        #    someNjets = ["8", "9"]
+        #elif self.channel == "1l":
+        #    someNjets = ["7", "8"]
+        #elif self.channel == "2l":
+        #    someNjets = ["6", "7"]
+
+        #someNjets = njets
 
         for someNjet in someNjets:
             if maximum_CorrectedDataValue_forAllRegions["All"][someNjet] == None: continue 
-            if abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet]) > absoluteMaxDiff:
+            if abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet][0]) > absoluteMaxDiff:
                 absoluteMax = maximum_CorrectedDataValue_forAllRegions["All"][someNjet]
-                absoluteMaxDiff = abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet])
+                absoluteMaxDiff = abs(1.0 - maximum_CorrectedDataValue_forAllRegions["All"][someNjet][0])
 
         njetKeys = naturalSort(maximum_CorrectedDataValue_forAllRegions["All"].keys())
         for key_njet in njetKeys:
-    
+
             maximum_correctedDataValue = maximum_CorrectedDataValue_forAllRegions["All"][key_njet]
 
             if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
-                calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet])
+                calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0])
             else:
-                calculatedSys["All"][key_njet] =  (1.0 / absoluteMax)
+                calculatedSys["All"][key_njet] =  (1.0 / absoluteMax[0])
+            #if maximum_CorrectedDataValue_forAllRegions["All"][key_njet] == None:
+            #    maximum_correctedDataValue = None 
+            #else:
+            #    maximum_correctedDataValue = maximum_CorrectedDataValue_forAllRegions["All"][key_njet]
+
+            #if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
+            #    calculatedSys["All"][key_njet] =  [(1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0])]
+            #    calculatedSys["All"][key_njet].append(calculatedSys["All"][key_njet][0] * (maximum_CorrectedDataValue_forAllRegions["All"][key_njet][1]/maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0]))
+
+            #    calculatedSys_withUnc[key_njet] = calculatedSys["All"][key_njet]
+
+            #else:
+            #    calculatedSys["All"][key_njet] =  [(1.0 / absoluteMax[0])]
+            #    calculatedSys["All"][key_njet].append(calculatedSys["All"][key_njet][0] * (absoluteMax[1]/absoluteMax[0]))
             
+            #    calculatedSys_withUnc[key_njet] = (1.0, maximum_CorrectedDataValue_forAllRegions["All"][key_njet][1])
 
             # ------------------
             # write the tex file
             # ------------------
-            if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
-                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="%.3f"%(maximum_CorrectedDataValue_forAllRegions["All"][key_njet]), ttSyst=calculatedSys["All"][key_njet])
+            if not self.hack:
+                if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None:
+                    maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="%.3f \\pm %.3f"%(maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0], maximum_CorrectedDataValue_forAllRegions["All"][key_njet][1]), ttSyst="%.3f \\pm %.3f"%(calculatedSys["All"][key_njet][0],calculatedSys["All"][key_njet][1]), fsrSyst=TT_FSR_Sys[key_njet], quadSum=math.sqrt((TT_FSR_Sys[key_njet][0])**2+(calculatedSys["All"][someNjets[0]][0])**2))
 
-            else:
-                maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst=calculatedSys["All"][key_njet])
+                else:
+                    maxCorrData_ttSyst.writeLine(njet=key_njet, maxCorrData="-", ttSyst="%.3f \\pm %.3f"%(calculatedSys["All"][someNjets[0]][0], calculatedSys["All"][someNjets[0]][1]), fsrSyst="%.3f \\pm %.3f"%(TT_FSR_Sys[key_njet][0], TT_FSR_Sys[key_njet][1]), quadSum=math.sqrt((TT_FSR_Sys[key_njet][0])**2+(calculatedSys["All"][someNjets[0]][0])**2))
         if self.hack:
             del theAggy
             gc.collect()
-            return calculatedSys["All"], QCDCRInfo
-
+            return calculatedSys["All"]#, QCDCRInfo
         # -------------------------------------------------------------
         # put each variable of TT_TTvar_sys dictionary to the root file
         # -------------------------------------------------------------
@@ -638,4 +722,21 @@ class MCcorrectionFactor_TTvar():
         # close the tex file
         # ------------------
         maxCorrData_ttSyst.writeClose()
+
+        closureCorrPerBoundaryTT = {}
+        dataStatUnc = {}
+        region = "Val_D"
+        for njet in njets:
+            closureCorrPerBoundaryTT[njet]  = theAggy.getPerBoundary(variable = "closureCorr",          sample = "TT",       region = "Val_D", njet=njet)[1.0]
+
+            nEventsBData                              = theAggy.getPerBoundary(variable = "nEventsB",             sample = "Data",       region = region, njet = njet)[1.0][0]
+            nEventsCData                              = theAggy.getPerBoundary(variable = "nEventsC",             sample = "Data",       region = region, njet = njet)[1.0][0]
+            nEventsDData                              = theAggy.getPerBoundary(variable = "nEventsD",             sample = "Data",       region = region, njet = njet)[1.0][0]
+            
+
+            dataStatUnc[njet] = math.sqrt( (math.sqrt(nEventsBData) / nEventsBData)**2 + (math.sqrt(nEventsCData) / nEventsCData)**2 + (math.sqrt(nEventsDData) / nEventsDData)**2 )  
+            
+
+        plotter["Data"].plot_ClosureAll(closureCorrPerBoundaryTT, calculatedSys_withUnc, TT_FSR_Sys, SignalEffect, dataStatUnc, njets)
+        #plotter["Data"].plot_ClosureAll_Fit(closureCorrPerBoundaryTT, calculatedSys_withUnc, TT_FSR_Sys, SignalEffect, dataStatUnc, njets)
 

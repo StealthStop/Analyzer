@@ -55,11 +55,11 @@ class All_Regions:
 
         dilep = True
         # Need to create the QCD regions using the QCDCR prediction
-        if QCDCRInfo is not None and "QCD" in hist.keys():
-            self.make_QCD_Regions(QCDCRInfo)
-            dilep = False
-        if QCDCRInfo is not None:
-            self.make_NonTT_Regions(dilep)
+        #if QCDCRInfo is not None and "QCD" in hist.keys():
+        #    self.make_QCD_Regions(QCDCRInfo)
+        #    dilep = False
+        #if QCDCRInfo is not None:
+        self.make_NonTT_Regions()
 
         # Then determine the "final" choice of bin edges for the region
         if not justEvents:
@@ -964,7 +964,7 @@ class All_Regions:
                 self.add("QCDTF_C", disc1Key, disc2Key, (TFs[2]), "QCD")
                 self.add("QCDTF_D", disc1Key, disc2Key, (TFs[3]), "QCD")
 
-    def make_NonTT_Regions(self, dilep):
+    def make_NonTT_Regions(self):
 
         for disc1Key, disc2Key in self.get("edges",None,None,"TT"):
 
@@ -978,32 +978,20 @@ class All_Regions:
             nOtherEvents_C,    nOtherEventsErr_C    = self.get("nEventsC", disc1Key, disc2Key, "BG_OTHER")
             nOtherEvents_D,    nOtherEventsErr_D    = self.get("nEventsD", disc1Key, disc2Key, "BG_OTHER")
         
-            if not dilep:
-                nQCDEvents_A,    nQCDEventsErr_A    = self.get("nEventsA", disc1Key, disc2Key, "QCDFinal")
-                nQCDEvents_B,    nQCDEventsErr_B    = self.get("nEventsB", disc1Key, disc2Key, "QCDFinal")
-                nQCDEvents_C,    nQCDEventsErr_C    = self.get("nEventsC", disc1Key, disc2Key, "QCDFinal")
-                nQCDEvents_D,    nQCDEventsErr_D    = self.get("nEventsD", disc1Key, disc2Key, "QCDFinal")
+            nQCDEvents_A,    nQCDEventsErr_A    = self.get("nEventsA", disc1Key, disc2Key, "QCD")
+            nQCDEvents_B,    nQCDEventsErr_B    = self.get("nEventsB", disc1Key, disc2Key, "QCD")
+            nQCDEvents_C,    nQCDEventsErr_C    = self.get("nEventsC", disc1Key, disc2Key, "QCD")
+            nQCDEvents_D,    nQCDEventsErr_D    = self.get("nEventsD", disc1Key, disc2Key, "QCD")
 
-                nNonTTEvents_A = nTTXEvents_A + nOtherEvents_A + nQCDEvents_A
-                nNonTTEvents_B = nTTXEvents_B + nOtherEvents_B + nQCDEvents_B
-                nNonTTEvents_C = nTTXEvents_C + nOtherEvents_C + nQCDEvents_C
-                nNonTTEvents_D = nTTXEvents_D + nOtherEvents_D + nQCDEvents_D
+            nNonTTEvents_A = nTTXEvents_A + nOtherEvents_A + nQCDEvents_A
+            nNonTTEvents_B = nTTXEvents_B + nOtherEvents_B + nQCDEvents_B
+            nNonTTEvents_C = nTTXEvents_C + nOtherEvents_C + nQCDEvents_C
+            nNonTTEvents_D = nTTXEvents_D + nOtherEvents_D + nQCDEvents_D
 
-                nNonTTEventsErr_A = math.sqrt(nTTXEventsErr_A ** 2 + nOtherEventsErr_A ** 2 + nQCDEventsErr_A ** 2)
-                nNonTTEventsErr_B = math.sqrt(nTTXEventsErr_B ** 2 + nOtherEventsErr_B ** 2 + nQCDEventsErr_B ** 2)
-                nNonTTEventsErr_C = math.sqrt(nTTXEventsErr_C ** 2 + nOtherEventsErr_C ** 2 + nQCDEventsErr_C ** 2)
-                nNonTTEventsErr_D = math.sqrt(nTTXEventsErr_D ** 2 + nOtherEventsErr_D ** 2 + nQCDEventsErr_D ** 2)
-
-            else:
-                nNonTTEvents_A = nTTXEvents_A + nOtherEvents_A
-                nNonTTEvents_B = nTTXEvents_B + nOtherEvents_B
-                nNonTTEvents_C = nTTXEvents_C + nOtherEvents_C
-                nNonTTEvents_D = nTTXEvents_D + nOtherEvents_D
-
-                nNonTTEventsErr_A = math.sqrt(nTTXEventsErr_A ** 2 + nOtherEventsErr_A ** 2)
-                nNonTTEventsErr_B = math.sqrt(nTTXEventsErr_B ** 2 + nOtherEventsErr_B ** 2)
-                nNonTTEventsErr_C = math.sqrt(nTTXEventsErr_C ** 2 + nOtherEventsErr_C ** 2)
-                nNonTTEventsErr_D = math.sqrt(nTTXEventsErr_D ** 2 + nOtherEventsErr_D ** 2)
+            nNonTTEventsErr_A = math.sqrt(nTTXEventsErr_A ** 2 + nOtherEventsErr_A ** 2 + nQCDEventsErr_A ** 2)
+            nNonTTEventsErr_B = math.sqrt(nTTXEventsErr_B ** 2 + nOtherEventsErr_B ** 2 + nQCDEventsErr_B ** 2)
+            nNonTTEventsErr_C = math.sqrt(nTTXEventsErr_C ** 2 + nOtherEventsErr_C ** 2 + nQCDEventsErr_C ** 2)
+            nNonTTEventsErr_D = math.sqrt(nTTXEventsErr_D ** 2 + nOtherEventsErr_D ** 2 + nQCDEventsErr_D ** 2)
 
             self.add("nEventsA", disc1Key, disc2Key, (nNonTTEvents_A, nNonTTEventsErr_A), "NonTT")
             self.add("nEventsB", disc1Key, disc2Key, (nNonTTEvents_B, nNonTTEventsErr_B), "NonTT")
