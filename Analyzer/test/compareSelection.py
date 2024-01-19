@@ -167,6 +167,8 @@ class comparePlotter:
             channelStr = "Fully-Hadronic"
         elif "1l" in packedInfo:
             channelStr = "Semi-Leptonic"
+        elif "2l" in packedInfo:
+            channelStr = "Fully-Leptonic"
 
         canvas.cd()
 

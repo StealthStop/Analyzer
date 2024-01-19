@@ -14,12 +14,11 @@ ROOT.TH2.SetDefaultSumw2()
 
 class ControlRegionProducer:
 
-    def __init__(self, year, outpath, inpath, controlRegions, controlRegionsNjets, signalRegions, backgrounds, data, mainBG, inclBin, channel=None, model=None, sysName=""):
+    def __init__(self, year, outpath, inpath, controlRegions, signalRegions, backgrounds, data, mainBG, inclBin, channel=None, model=None, sysName=""):
         self.year            = year
         self.outpath         = outpath
         self.inpath          = inpath        
         self.controlRegions  = controlRegions
-        self.controlRegionsNjets  = controlRegionsNjets
         self.signalRegions   = signalRegions
         self.backgrounds     = backgrounds
         self.data            = data
@@ -82,11 +81,11 @@ class ControlRegionProducer:
 
         channelStr = ""
         if "0l" in packedInfo:
-            channelStr = "0L"
+            channelStr = "Fully-Hadronic"
         elif "1l" in packedInfo:
-            channelStr = "1L"
+            channelStr = "Semi-Leptonic"
         elif "2l" in packedInfo:
-            channelStr = "2L"
+            channelStr = "Fully-Leptonic"
 
         canvas.cd(1)
 
@@ -136,50 +135,6 @@ class ControlRegionProducer:
             self.dataQCDOnly = dataHist.Clone("{}_Data_only_{}_{}{}".format(self.year, self.mainBG, hname.replace("h_njets_%s_"%(self.inclBin),"").replace("_ABCD",""),self.sysName))
             print("{}_Data_only_{}_{}{}".format(self.year, self.mainBG, hname.replace("h_njets_%s_"%(self.inclBin),"").replace("_ABCD",""),self.sysName))
             self.dataQCDOnly.Add(totalMC, -1)
-
-            #Correct QCD normalization per ABCD bin
-            #print("Data QCD only", self.dataQCDOnly.Integral())
-            #print("MC   QCD only", mainBGHisto.Integral())
-            #CRCorrection = self.dataQCDOnly.Integral()/mainBGHisto.Integral()
-            #print("CR correction", CRCorrection)
-            #self.dataQCDOnly.Scale(1/CRCorrection)
-            #self.dataQCDOnly.Print("all")
-
-    def getCRDataPerNjets(self, sysName):
-        print("-----Make small MC subtracted Data histograms from the CR-----")
-        self.dataQCDOnlyNjets = []
-        for h in self.controlRegionsNjets: 
-            for hname, hinfo in h.items():
-                newName = hname + sysName
-                newInfo = copy.deepcopy(hinfo)
-                newInfo["X"]["title"] = hinfo["X"]["title"]
-                totalMC = None
-                firstBG = False
-                mainBGHisto = None
-
-                for bname, binfo in self.backgrounds.items():
-                    rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
-                    Hobj = Histogram(None, rootFile, 1.0, 1.0, newName, newInfo, binfo)
-                    if bname == self.mainBG: 
-                        mainBGHisto = Hobj
-                        continue
-                    if not firstBG:
-                        totalMC = Hobj.Clone("totalMC%s"%(newName))
-                        firstBG = True
-                    else:
-                        totalMC.Add(Hobj.histogram)
-                
-                dataHist = None
-                for dname, dinfo in self.data.items():
-                    rootFile = "%s/%s_%s.root"%(self.inpath, self.year, dname)
-                    dataHist = Histogram(None, rootFile, 1.0, 1.0, hname, newInfo, dinfo)
-
-                self.dataQCDOnlyTemp = dataHist.Clone(dataHist.histogram.GetName())
-                self.dataQCDOnlyTemp.Add(totalMC, -1)
-                self.dataQCDOnlyTemp.SetName(newName)
-
-                self.dataQCDOnlyNjets.append(self.dataQCDOnlyTemp)
-        print(self.dataQCDOnlyNjets)
 
             #Correct QCD normalization per ABCD bin
             #print("Data QCD only", self.dataQCDOnly.Integral())
@@ -295,15 +250,6 @@ class ControlRegionProducer:
         elif i <= 4*repeat: tf, etf = tfABCDHisto.GetBinContent(4), tfABCDHisto.GetBinError(4) 
         return tf, etf
 
-    def getTFPerNjet(self, tfABCDHisto, i, repeat=5):
-        tf, etf = 0.0, 0.0
-        if   i % repeat  == 1: tf, etf = tfABCDHisto.GetBinContent(1), tfABCDHisto.GetBinError(1)
-        elif   i % repeat  == 2: tf, etf = tfABCDHisto.GetBinContent(2), tfABCDHisto.GetBinError(2)
-        elif   i % repeat  == 3: tf, etf = tfABCDHisto.GetBinContent(3), tfABCDHisto.GetBinError(3)
-        elif   i % repeat  == 4: tf, etf = tfABCDHisto.GetBinContent(4), tfABCDHisto.GetBinError(4)
-        elif   i % repeat  == 0: tf, etf = tfABCDHisto.GetBinContent(5), tfABCDHisto.GetBinError(5)
-        return tf, etf
-
     def write(self, crName):
         print("-----Save all output histograms-----")
         outfileName = "{}/{}_{}_Prediction.root".format(self.outpath, self.year, crName)
@@ -323,34 +269,20 @@ class ControlRegionProducer:
         outfile.Close()
         return outfileName
 
-    def write_QCD_Data(self, sysName):
+    def write_QCD_Data(self):
 
         outfile = ROOT.TFile.Open(self.outpath + "/Run2UL_QCD_Data.root", "UPDATE")
-        histName = "h_njets_{}incl_{}_{}_ABCD{}".format(11 if self.channel == "1l" else 12 if self.channel == "0l" else 10, self.model, self.channel,sysName)
+        histName = "h_njets_{}_{}_{}_ABCD{}".format(self.inclBin, self.model, self.channel,self.sysName)
         self.QCDPred = ROOT.TH1D(histName, histName, 24, -0.5, 23.5)
 
         for bin in range(1,self.QCDPred.GetNbinsX()):
-            tf, etf = self.getTFPerNjet(self.transforFactorsHisto["{}_TF_{}_{}{}Over{}_{}_QCDCR{}".format(self.year, self.model, self.channel, sysName, self.model, self.channel, sysName)][4], bin)
+            tf, etf = self.getTFPerBin(self.transforFactorsHisto["{}_TF_{}_{}{}Over{}_{}_QCDCR{}".format(self.year, self.model, self.channel, self.sysName, self.model, self.channel, self.sysName)][2], bin)
         
             self.QCDPred.SetBinContent(bin, self.dataQCDOnly.GetBinContent(bin)*tf)
             self.QCDPred.SetBinError(bin, math.sqrt(self.dataQCDOnly.GetBinError(bin)**2+etf**2))
 
         self.QCDPred.Write()
-        self.dataQCDOnly.Write()
 
-        for i in range(0, len(self.dataQCDOnlyNjets)):
-            
-            print(self.transforFactorsHisto.items())
-
-            tf, etf = self.getTFPerNjet(self.transforFactorsHisto["{}_TF_{}_{}{}Over{}_{}_QCDCR{}".format(self.year, self.model, self.channel, sysName, self.model, self.channel, sysName)][4], i+1)
-
-            self.transforFactorsHisto["{}_TF_{}_{}{}Over{}_{}_QCDCR{}".format(self.year, self.model, self.channel, sysName, self.model, self.channel, sysName)][4].Write()
-
-            self.dataQCDOnlyNjets[i].Scale(tf)
-            self.dataQCDOnlyNjets[i].SetName("{}".format(self.dataQCDOnlyNjets[i].GetName().replace("QCDCR_", "")))
-
-            self.dataQCDOnlyNjets[i].Write()
-        
         outfile.Close()
 
     def makeQCDshapeCorr(self, crHisto, srHisto):
@@ -625,7 +557,7 @@ class ControlRegionProducer:
             hCRPredABCD.SetMarkerStyle(8)
             hCRPredABCD.SetMarkerSize(2)
             hCRPredABCD.SetLineColor(ROOT.TColor.GetColor("#006d2c"))
-            hCRPredABCD.Print("ALL")
+            #hCRPredABCD.Print("ALL")
             for iBin in range(1,hCRPredABCD.GetNbinsX()+1):
 
                 # NOTE: Using single TF here, not per-ABCD TFs
@@ -686,7 +618,7 @@ class ControlRegionProducer:
             qcdSRMC.histogram.SetMarkerSize(2)
             qcdSRMC.histogram.GetYaxis().SetTitleOffset(1.2)
             qcdSRMC.histogram.GetXaxis().SetRangeUser(-0.5, 19.5)
-            #qcdSRMC.histogram.Draw()
+            qcdSRMC.histogram.Draw()
             #hCRPredUp.Draw("same")
             #hCRPredDown.Draw("same")
             #hCRPred.Draw("same")
@@ -704,7 +636,7 @@ class ControlRegionProducer:
             leg.SetBorderSize(0)
             leg.SetTextSize(0.05)
             #leg.AddEntry(hCRPred,     "Scaled QCD CR Data", "p")
-            #leg.AddEntry(qcdSRMC.histogram, "QCD_{MC}^{SR}",                        "lp")
+            leg.AddEntry(qcdSRMC.histogram, "QCD_{MC}^{SR}",                        "lp")
             if not reducedPlot:
                 leg.AddEntry(qcdCRMC.histogram, "QCD_{MC}^{CR} (Scaled by TF)",         "lp")
             leg.AddEntry(hCRPredABCD,       "QCD_{Data}^{Pred.} (Scaled by TF)",    "lp")
@@ -737,25 +669,16 @@ class ControlRegionProducer:
             ratio.GetYaxis().SetLabelSize(0.1)
             ratio.GetXaxis().SetLabelSize(0.12)
             ratio.GetXaxis().SetRangeUser(-0.5, 19.5)
-            #ratio.Draw()
+            ratio.Draw()
 
             if systHisto != None:
                 systHisto.SetFillColor(ROOT.kGray+2)
                 systHisto.SetFillStyle(3354)
-                systHisto.SetTitle("")
-                systHisto.GetXaxis().SetTitle("N_{Jets,ABCD}")
-                systHisto.GetXaxis().SetTitleSize(0.12)
-                systHisto.GetYaxis().SetTitleSize(0.12)
-                systHisto.GetYaxis().SetTitleOffset(0.6)
-                systHisto.GetXaxis().SetLabelSize(0.12)
-                systHisto.GetYaxis().SetLabelSize(0.1)
-                systHisto.GetYaxis().SetTitle("Stat. Unc.")
-                systHisto.Draw("E2")
-            #ratio.Draw("SAME")
+                systHisto.Draw("E2 SAME")
+            ratio.Draw("SAME")
             if not reducedPlot:
                 #ratio2.Draw("same")
-                #ratio3.Draw("same hist P")
-                pass
+                ratio3.Draw("same hist P")
 
             self.addCMSlogo(canvas)
 
@@ -783,18 +706,6 @@ if __name__ == "__main__":
     controlRegions = [
         {"h_njets_%s_%s_%s_QCDCR_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets} in each A,B,C,D region", "rebin" : 1,  "min" : 0,  "max" : 24}},},
     ]
-
-    controlRegionsNjets = []
-    
-    finalBin = int(inclBin[:2])
-
-    for i in range(finalBin - 4, finalBin + 1):
-
-        if i == finalBin:
-            controlRegionsNjets.append({"h_DoubleDisCo_%s_disc1_disc2_%s_QCDCR_Njets%iincl_ABCD"%(args.model, args.channel, i) : {"orders" : list(xrange(1,2)), "Y" : {"title" : "Disc. 2", "min" : 0.0, "max": 1.0}, "X" : {"title" : "Disc. 1", "rebin" : 1,  "min" : 0.0,  "max" : 1.0}},})
-        else:
-            controlRegionsNjets.append({"h_DoubleDisCo_%s_disc1_disc2_%s_QCDCR_Njets%i_ABCD"%(args.model, args.channel, i) : {"orders" : list(xrange(1,2)), "Y" : {"title" : "Disc. 2", "min" : 0.0, "max": 1.0}, "X" : {"title" : "Disc. 1", "rebin" : 1,  "min" : 0.0,  "max" : 1.0}},})
-
 
     signalRegions = {
         "h_njets_%s_%s_%s_ABCD"%(inclBin, args.model, args.channel) : {"logY" : True, "orders" : list(xrange(1,2)), "Y" : {"title" : "Events / bin", "min" : 0.2}, "X" : {"title" : "N_{Jets}", "rebin" : 1, "min" : 0, "max" : 24}},
@@ -827,14 +738,14 @@ if __name__ == "__main__":
     crProducers = {}
     for sysName in sys:
         for cr in controlRegions:
+            print(sysName)
             crName = cr.keys()[0].replace("h_njets_%s_"%(inclBin),"").replace("_ABCD",sysName)
-            crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, controlRegionsNjets, signalRegions, backgrounds, data, mainBG, inclBin, args.channel, args.model, sysName)
+            crProducer = ControlRegionProducer(args.year, args.outpath, args.inpath, cr, signalRegions, backgrounds, data, mainBG, inclBin, args.channel, args.model, sysName)
             crProducer.getCRData()
-            crProducer.getCRDataPerNjets(sysName)
             crProducer.getTransferFactors()
             if sysName != "": crProducer.makeOutputPlots()
             outfileNames.append(crProducer.write(crName))
-            crProducer.write_QCD_Data(sysName)
+            crProducer.write_QCD_Data()
             crProducers[sysName] = crProducer
             print("\t\t\n________________\t\t\n")
 
