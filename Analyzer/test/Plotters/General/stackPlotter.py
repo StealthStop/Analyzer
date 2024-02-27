@@ -8,6 +8,7 @@ ROOT.gStyle.SetOptStat("")
 ROOT.gStyle.SetPaintTextFormat("3.2f")
 ROOT.gStyle.SetFrameLineWidth(2)
 ROOT.gStyle.SetEndErrorSize(0)
+ROOT.TGaxis.SetMaxDigits(3)
 ROOT.TH1.SetDefaultSumw2()
 ROOT.TH2.SetDefaultSumw2()
 
@@ -180,7 +181,7 @@ class Histogram:
 #     data         : dictionary containing config info for data
 class StackPlotter:
 
-    def __init__(self, approved, wip, noRatio, noStack, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data):
+    def __init__(self, approved, wip, noRatio, noStack, noData, printNEvents, printInfo, year, outpath, inpath, normMC2Data, normalize, histograms, selections, backgrounds, signals, data, scale2):
 
         self.histograms  = histograms
         self.selections  = selections
@@ -191,6 +192,11 @@ class StackPlotter:
         self.year        = year
         self.inpath      = inpath
         self.outpath     = outpath
+
+        self.scale2      = scale2
+
+        if self.scale2:
+            print("WARNING!!! You're about to divide all MC histograms by a factor of 2. Remove the --scale2 flag if this is not intended...")
         
         if not os.path.exists(self.outpath):
             os.makedirs(self.outpath)
@@ -199,6 +205,7 @@ class StackPlotter:
         self.wip          = wip
         self.noRatio      = noRatio
         self.noStack      = noStack
+        self.noData       = noData
         self.normMC2Data  = normMC2Data
         self.normalize    = normalize
         self.printNEvents = printNEvents
@@ -337,7 +344,7 @@ class StackPlotter:
         space    = 0.015
 
         bkgXmin = 0.70 if self.printNEvents else 0.755
-        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.01
+        bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.02
         bkgXmax = 1.0-self.RightMargin-0.02
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
         
@@ -391,7 +398,8 @@ class StackPlotter:
         mark.SetTextAlign(11)
         mark.SetTextSize(0.055)
         mark.SetTextFont(61)
-        mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
+        #mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
+        mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
 
         mark.SetTextFont(52)
         mark.SetTextSize(0.040)
@@ -403,7 +411,8 @@ class StackPlotter:
             mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Work in Progress")
 
         else:
-            mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Preliminary")
+            #mark.DrawLatex(self.LeftMargin + 0.12, 1 - (self.TopMargin - 0.017), "Preliminary")
+            mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.087), "Preliminary")
 
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
@@ -432,11 +441,11 @@ class StackPlotter:
 
         channelStr = ""
         if "0l" in packedInfo:
-            channelStr = "Fully-Hadronic"
+            channelStr = "0L Channel"
         elif "1l" in packedInfo:
-            channelStr = "Semi-Leptonic"
+            channelStr = "1L Channel"
         elif "2l" in packedInfo:
-            channelStr = "Fully-Leptonic"
+            channelStr = "2L Channel"
 
         canvas.cd()
 
@@ -450,10 +459,10 @@ class StackPlotter:
 
         offset = 0.0
         if modelStr != "":
-            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), modelStr)
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), modelStr)
             offset += 0.05
         if channelStr != "":
-            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), channelStr)
+            text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), channelStr)
             offset += 0.05
         if njetStr != "":
             text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), njetStr)
@@ -527,7 +536,7 @@ class StackPlotter:
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
    
                         # Don't blind for MC
-                        if "blind" in newName:
+                        if "blind" in newName and "Njets" in newName:
                             newName = newName.replace("_blind", "")
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
@@ -626,6 +635,16 @@ class StackPlotter:
 
                     # Add each background histo to the stack in order based on number of entries
                     for count, h in sorted(bhistos.items(), key=lambda x: x[0], reverse=False): 
+
+                        if self.scale2 and "0l" in newName and "QCDCR" not in newName:
+                            h[1].Scale(1.0)
+
+                        if self.scale2 and "1l" in newName and "QCDCR" not in newName:
+                            h[1].Scale(0.5)
+
+                        if self.scale2 and "2l" in newName and "QCDCR" not in newName:
+                            h[1].Scale(0.25)
+
                         bstack.Add(h[1], h[2])
                         nBkgLegend += 1
 
@@ -692,6 +711,9 @@ class StackPlotter:
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
+                        if 'scale' in sinfo.keys():
+                            Hobj.Scale(sinfo['scale'])
+
                         nSigLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nSigLegend, sigLegend)
 
                     # Loop over the data and get their respective histo
@@ -704,20 +726,18 @@ class StackPlotter:
                         if "loption" not in dinfo: dinfo["loption"] = loption
 
                         newName = hname.replace("@", str(order)).replace("?", "%s"%(selection))
-                        print(newName)
-                        print(newInfo)
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, dinfo)
-
-                        print(Hobj.histogram)
 
                         scale = Hobj.Integral()
                         if self.normalize and scale != 0.0:
                             Hobj.Scale(1.0 / scale)
 
-                        nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend)
+                        if not self.noData:
+                            nBkgLegend, firstDraw = Hobj.Draw(canvas, self.printNEvents, firstDraw, nBkgLegend, bkgLegend)
 
                         ROOT.gPad.RedrawAxis()
 
+                        print(Hobj.IsGood())
                         if Hobj.IsGood():
 
                             ratio = Hobj.Clone("ratio")
@@ -750,18 +770,28 @@ class StackPlotter:
                         ROOT.gPad.SetGridy()
                         ratio = Histogram(ratio, None, self.upperSplit/self.scale, self.lowerSplit/self.scale, None, rnewInfo, rinfo, 0.8).histogram
 
+                        if self.scale2 and "0l" in newName and "QCDCR" not in newName:
+                            ratio.Scale(1.0)
+
+                        if self.scale2 and "1l" in newName and "QCDCR" not in newName:
+                            ratio.Scale(2)
+
+                        if self.scale2 and "2l" in newName and "QCDCR" not in newName:
+                            ratio.Scale(4)
+
                         ratio.SetMinimum(0.0); ratio.SetMaximum(2.2)
                         ratio.GetYaxis().SetNdivisions(5, 5, 0)
 
                         ratio.Draw("E0P")
 
-                    canvas.SaveAs("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
+                    canvas.Print("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
 
 if __name__ == "__main__":
 
     usage = "usage: %stackPlotter [options]"
     parser = argparse.ArgumentParser(usage)
     parser.add_argument("--noRatio",      dest="noRatio",      help="No ratio plot",               default=False,  action="store_true") 
+    parser.add_argument("--noData",       dest="noData",       help="No data plot",                default=False,  action="store_true") 
     parser.add_argument("--noStack",      dest="noStack",      help="No stacking of bkgs",         default=False,  action="store_true") 
     parser.add_argument("--approved",     dest="approved",     help="Plot is approved",            default=False,  action="store_true") 
     parser.add_argument("--wip",          dest="wip",          help="Work in Progress",            default=False,  action="store_true")
@@ -769,6 +799,7 @@ if __name__ == "__main__":
     parser.add_argument("--normMC2Data",  dest="normMC2Data",  help="Normalize MC to data",        default=False,  action="store_true") 
     parser.add_argument("--normalize",    dest="normalize",    help="Normalize all to unity",      default=False,  action="store_true") 
     parser.add_argument("--printInfo",    dest="printInfo",    help="Print significance and cuts", default=False,  action="store_true")
+    parser.add_argument("--scale2",       dest="scale2",       help="Hack for dividing all histos by 2", default=False,  action="store_true")
     parser.add_argument("--inpath",       dest="inpath",       help="Path to root files",          default="NULL", required=True)
     parser.add_argument("--outpath",      dest="outpath",      help="Where to put plots",          default="NULL", required=True)
     parser.add_argument("--year",         dest="year",         help="which year",                                  required=True)
@@ -790,5 +821,5 @@ if __name__ == "__main__":
     signals     = importedGoods.signals
     data        = importedGoods.data
 
-    plotter = StackPlotter(args.approved, args.wip, args.noRatio, args.noStack, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data)
+    plotter = StackPlotter(args.approved, args.wip, args.noRatio, args.noStack, args.noData, args.printNEvents, args.printInfo, args.year, args.outpath, args.inpath, args.normMC2Data, args.normalize, histograms, selections, backgrounds, signals, data, args.scale2)
     plotter.makePlots()

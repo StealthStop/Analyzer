@@ -5,7 +5,7 @@ import ROOT
 from collections import OrderedDict
 
 
-selections = ["0l_blind_ABCD", "1l_blind_ABCD", "2l_blind_ABCD", "0l_QCDCR_ABCD", "1l_QCDCR_ABCD", "2l_QCDCR_ABCD"] 
+selections = ["0l_ABCD", "1l_ABCD", "2l_ABCD", "0l_QCDCR_ABCD", "1l_QCDCR_ABCD", "2l_QCDCR_ABCD"] 
 
 histograms = {
 
@@ -44,7 +44,7 @@ histograms = {
     "h_njets_12incl_SYY_0l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
 
     "h_njets_10incl_RPV_2l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
-    "h_njets_11incl_RPV_1l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
+    "h_njets_11incl_RPV_1l_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
     "h_njets_12incl_RPV_0l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
 
 }
