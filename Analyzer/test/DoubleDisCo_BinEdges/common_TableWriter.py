@@ -256,11 +256,11 @@ class maximumCorrectedData_ttSyst(TableWriter):
         self.f.write("\n")
         self.f.write("    \def\\arraystretch{0.7}")
         self.f.write("\n")
-        self.f.write("    \\begin{tabular}{| c | c | c |}")
+        self.f.write("    \\begin{tabular}{| c | c | c | c | c |}")
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
-        self.f.write("        \\textbf{\\njets} & \\textbf{maxi Corrected Data Closure} & \\textbf{\\ttbar syst.} \\\\")
+        self.f.write("        \\textbf{\\njets} & \\textbf{maxi Corrected Data Closure} & \\textbf{\\ttbar syst.} & \\textbf{FSR syst.} & \\textbf{Quad. Sum.}\\\\")
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")
@@ -271,7 +271,7 @@ class maximumCorrectedData_ttSyst(TableWriter):
         if "incl" in njetToWrite:
             njetToWrite = "$\\geq%s$"%(njetToWrite.partition("incl")[0])
         
-        self.f.write("        %s & %s & %.3f \\\\" %(njetToWrite, kwargs["maxCorrData"], kwargs["ttSyst"]))
+        self.f.write("        %s & %s & %s & %s & %.3f\\\\" %(njetToWrite, kwargs["maxCorrData"], kwargs["ttSyst"], kwargs["fsrSyst"], kwargs["quadSum"]))
         self.f.write("\n")
         self.f.write("        \hline")
         self.f.write("\n")

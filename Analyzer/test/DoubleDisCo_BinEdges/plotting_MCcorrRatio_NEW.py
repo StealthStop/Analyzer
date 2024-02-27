@@ -114,11 +114,11 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
 
     name = ""
     if   channel == "0l":
-        name = "Fully-Hadronic"
+        name = "0L"
     elif channel == "1l":
-        name = "Semi-Leptonic"
+        name = "1L"
     elif channel == "2l":
-        name = "Fully-Leptonic"
+        name = "2L"
 
     modelName = ""
     if "SYY" in model:
@@ -144,13 +144,13 @@ def addExtraInfo(canvas, LeftMargin, TopMargin, textsize, model, channel, div):
 def relabelNjetsBins(hist, channel, labelSize):
 
     if channel == "0l":
-        njets = [8, 13]
+        njets = [8, 12]
 
     elif channel == "1l":
-        njets = [7, 12]
+        njets = [7, 11]
 
     elif channel == "2l":
-        njets = [6, 11]
+        njets = [6, 10]
 
     for bin in range(1, hist.GetNbinsX()+1):
         
@@ -172,6 +172,7 @@ def main():
     parser.add_argument("--sig",     dest="sig",     help="signal model RPV, SYY",               default="RPV"                     )
     parser.add_argument("--mass",    dest="mass",    help="signal mass",                         default="550"                     )
     parser.add_argument("--div",     dest="div",     help="NonOptimized, MassEclusion, MaxSign", default="MassExclusion"           )
+    parser.add_argument("--cat",   dest="cat",   help="1=Event Weight, 2=Independent Samples, 3=Jet Based", default=""           )
     parser.add_argument("--outpath", dest="outpath", help="output dir where group dirs",         default="Run2UL_MassExclusion_RPV") 
     
     args = parser.parse_args()
@@ -219,27 +220,62 @@ def main():
                  ]
 
 
+    if args.sig == "SYY":
+        args.outpath = args.outpath.replace("SYY", "StealthSYY")
     path = "%s/year_TT_TTvar_Syst_%s_%s_label.root"%(args.outpath, args.sig, args.mass)
    
+    print(path)
  
     years = ["Run2UL"]
+   
+    if args.cat == "1":
+
+        ttvars = {
+                 "TT",
+                 "TT_fsrUp",            
+                 "TT_fsrDown",          
+                 "TT_isrUp",            
+                 "TT_isrDown",          
+                }
+
+    elif args.cat == "2": 
+
+        ttvars = {
+                 "TT",
+                 "TT_hdampUP",          
+                 "TT_hdampDOWN",        
+                 "TT_TuneCP5up",
+                 "TT_TuneCP5down",
+                 "TT_erdON",
+                }
     
-    ttvars = {
-             "TT",
-             "TT_fsrUp",            
-             "TT_fsrDown",          
-             "TT_isrUp",            
-             "TT_isrDown",          
-             "TT_hdampUP",          
-             "TT_hdampDOWN",        
-             "TT_TuneCP5up",
-             "TT_TuneCP5down",
-             "TT_erdON",
-             "TT_JECup",            
-             "TT_JECdown",          
-             "TT_JERup",            
-             "TT_JERdown",
-            }
+    elif args.cat == "3":
+
+        ttvars = {
+                 "TT",
+                 "TT_JECup",            
+                 "TT_JECdown",          
+                 "TT_JERup",            
+                 "TT_JERdown",
+                }
+
+    else:
+        ttvars = {
+                 "TT",
+                 "TT_fsrUp",            
+                 "TT_fsrDown",          
+                 "TT_isrUp",            
+                 "TT_isrDown",          
+                 "TT_hdampUP",          
+                 "TT_hdampDOWN",        
+                 "TT_TuneCP5up",
+                 "TT_TuneCP5down",
+                 "TT_erdON",
+                 "TT_JECup",            
+                 "TT_JECdown",          
+                 "TT_JERup",            
+                 "TT_JERdown",
+                }
     
     ttvar_colors = {
                     "TT"             : "#000000",
@@ -307,19 +343,23 @@ def main():
             MCcorr_TT.SetTitle("")
             MCcorr_TT.SetLineWidth(4)
             MCcorr_TT.SetLineColor(ROOT.kBlack)
-            MCcorr_TT.GetYaxis().SetTitle("Closure Correction")
+            MCcorr_TT.GetYaxis().SetTitle("Closure Correction Ratio (Var/Nominal)")
 
             # get closure correction histogram to put comparion plot (each ttvar vs tt)
             # calculate statistical unc. on closure coerection
-            MCcorr_TT_Unc = MCcorr_TT.Clone("MCcorr_TT_Unc")
-            
+            MCcorr_TT_Unc = f1.Get("Run2UL_maximum_MCcorrectedData_Syst_All")
+            #MCcorr_TT_Unc = MCcorr_TT.Clone("MCcorr_TT_Unc")
+          
+            unc_val = MCcorr_TT_Unc.GetBinContent(1)  
             for i in range(1, MCcorr_TT_Unc.GetNbinsX()+1):
                 content        = MCcorr_TT.GetBinContent(i) 
                 contentError   = MCcorr_TT.GetBinError(i)
-                closureCorrUnc = (contentError / content) 
+                #closureCorrUnc = (contentError / content) 
+                closureSyst = (abs(unc_val - 1) / content)
                 
                 MCcorr_TT_Unc.SetBinContent(i, 1.0)
-                MCcorr_TT_Unc.SetBinError(i, closureCorrUnc)
+                #MCcorr_TT_Unc.SetBinError(i, closureCorrUnc)
+                MCcorr_TT_Unc.SetBinError(i, closureSyst)
 
             MCcorr_TT_Unc.SetTitle("")
             MCcorr_TT_Unc.SetLineWidth(0)
@@ -385,7 +425,7 @@ def main():
                         hist.Draw("hist SAME")
                         draw = True
         
-                        legend.AddEntry(MCcorr_TT_Unc, "Stat. Unc. on Corr.", "F")
+                        legend.AddEntry(MCcorr_TT_Unc, "Stat. + Syst. Unc.", "F")
                         
                     else:
                         hist.Draw("hist SAME")
@@ -486,18 +526,18 @@ def main():
 
             # MassExclusion
             if args.div == "MassExclusion" and args.sig == "RPV":
-                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")     
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + "_Cat" + args.cat + ".pdf")     
         
             if args.div == "MassExclusion" and args.sig == "SYY":
-                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + "_Cat" + args.cat +  ".pdf")
 
 
             # MaxSign
             if args.div == "MaxSign" and args.sig == "RPV":
-                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + "_Cat" + args.cat + ".pdf")
 
             if args.div == "MaxSign" and args.sig == "SYY":
-                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + ".pdf")
+                canvas.SaveAs("%s/%s_plots_MCcorrectionFactorRatio/"%(args.outpath, year) + year + "_" + args.sig + "_" + args.mass + "_MCcorr_Ratio_MC_" + label + "_Cat" + args.cat + ".pdf")
 
  
         f1.Close()

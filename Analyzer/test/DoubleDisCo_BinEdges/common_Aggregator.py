@@ -51,7 +51,7 @@ class Aggregator:
                 break
 
             for s in ["RPV", "SYY", "SHH"]:
-                if s in sample:
+                if s in sample and "TT_" not in sample:
                     Sig = sample
                     break
 
@@ -88,6 +88,7 @@ class Aggregator:
                 if sample == "TTinData":
                     self.data[self.makeKey(variable = "CorrectedDataClosure",       sample = sample,                                **kwargs)] = regionObj.getFinal("CorrectedDataClosure",       sample)
                     self.data[self.makeKey(variable = "ttVar_CorrectedDataClosure", sample = sample+"_"+regionObj.get_ttVar_Name(), **kwargs)] = regionObj.getFinal("ttVar_CorrectedDataClosure", sample)
+                    self.ttVar = regionObj.get_ttVar_Name()
 
             if "TT_" in sample:
                 self.data[self.makeKey(variable = "MCcorrRatio_MC", sample = sample, **kwargs)] = regionObj.getFinal("MCcorrRatio_MC",          sample)
@@ -116,6 +117,10 @@ class Aggregator:
         payload = {}
         newKwargs = kwargs.copy()
         sample = newKwargs.pop("sample", "None")
+        if "manualOverride" in kwargs:
+            cut_vars = kwargs["manualOverride"]
+        else:
+            cut_vars = None
 
         for boundary in self.boundaries:
 
@@ -128,8 +133,13 @@ class Aggregator:
 
             # this statement for data and data/MC closure correction
             sigFracA = self.data[chefKey][0]
-            if (sigFracA >= 0.05 and "TTinData" in sample):
-                payload[round(boundary, 2)] = (-999.0, 0.0)
+            #if (sigFracA >= 0.05 and "TTinData" in sample):
+            if cut_vars is not None:
+                cut_var = abs(cut_vars[kwargs["region"]][round(boundary,2)][0]-1)
+            else:
+                cut_var = sigFracA
+            if (cut_var > 0.05 and "TTinData" in sample):
+                payload[round(boundary, 2)] = (-999.0, self.data[masterKey][1])
 
             else: 
                 payload[round(boundary, 2)] = self.data[masterKey]
@@ -144,3 +154,4 @@ class Aggregator:
         masterKey = self.makeKey(variable = variable, **kwargs)
 
         return self.data[masterKey]
+
