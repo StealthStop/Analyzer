@@ -853,19 +853,19 @@ class Common_Calculations_Plotters:
     # ---------------------------------------------------------------------------------------
     # plot correction, data-based systematic, FSR systematic, and signal contamination effect
     # ---------------------------------------------------------------------------------------
-    def plot_ClosureAll(self, closeCorr, dataSys, fsrSys, sigContam, dataStatUnc, Njets, name = '', closureTag = '', bkgTag = '', valColor=None, isBlind=False):
+    #def plot_ClosureAll(self, closeCorr, dataSys, fsrSys, sigContam, dataStatUnc, Njets, name = '', closureTag = '', bkgTag = '', valColor=None, isBlind=False):
+    def plot_ClosureAll(self, closeCorr, dataSys, fsrSys, dataStatUnc, Njets, name = '', closureTag = '', bkgTag = '', valColor=None, isBlind=False):
         
         print("closeCorr: ", closeCorr)
         print("dataSys: ", dataSys)
         print("fsrSys: ", fsrSys)
-        print("sigContam: ", sigContam)
         print("Njets: ", Njets)
 
         plt_closeCorr = []; plt_closeCorr_UncY = [];
         plt_dataSys = [];   plt_dataSys_UncY = [];  
         plt_dataSys_OnlyUnc = []; plt_dataSys_OnlyUncY = [];
         plt_fsrSys = [];    plt_fsrSys_UncY = [];   
-        plt_sigContam = []; plt_sigContam_UncY = [];
+        #plt_sigContam = []; plt_sigContam_UncY = [];
         plt_totalSysUnc = []
         plt_totalUnc = []
 
@@ -884,8 +884,8 @@ class Common_Calculations_Plotters:
                 plt_dataSys_UncY.append(dataSys[nj][1])
             plt_fsrSys.append(fsrSys[nj][0])
             plt_fsrSys_UncY.append(fsrSys[nj][1])
-            plt_sigContam.append(sigContam[nj][0])
-            plt_sigContam_UncY.append(sigContam[nj][1])
+            #plt_sigContam.append(sigContam[nj][0])
+            #plt_sigContam_UncY.append(sigContam[nj][1])
             plt_totalSysUnc.append(math.sqrt((1-fsrSys[nj][0])**2 + (closeCorr[nj][1])**2 + (1-dataSys[firstNJ][0])**2))
             plt_totalUnc.append(math.sqrt((1-fsrSys[nj][0])**2 + (closeCorr[nj][1])**2 + dataStatUnc[nj]**2 + (1-dataSys[firstNJ][0])**2))
 
@@ -962,8 +962,8 @@ class Common_Calculations_Plotters:
         elif self.channel == "2l":
             ch = "2L"
 
-        if ch == "1L" and md == "Stealth SYY" and plt_sigContam[-1] > 1.0:
-            plt_sigContam[-1] = 0.9
+        #if ch == "1L" and md == "Stealth SYY" and plt_sigContam[-1] > 1.0:
+        #    plt_sigContam[-1] = 0.9
             
 
         textLabel = '\n'.join(( "%s"%(name), "%s"%(md), "%s"%(ch) ))
@@ -977,7 +977,7 @@ class Common_Calculations_Plotters:
         ax.errorbar(x_ds[1:len(plt_dataSys)], plt_dataSys[1:len(plt_dataSys)], yerr=plt_dataSys_UncY[1:len(plt_dataSys)], label=r'Data Residual Non-Closure', xerr=x_noe[1:len(plt_dataSys)], fmt='', capsize=0, color='blue',   lw=0, elinewidth=1, marker='^', markeredgecolor='blue',   markerfacecolor='blue',   markersize=8.0)
         ax.errorbar(x_dsu, plt_dataSys_OnlyUnc, yerr=plt_dataSys_OnlyUncY, label=r'Blinded Data Residual Non-Closure Unc.', xerr=x_noe[len(plt_dataSys):], fmt='', capsize=0, color='blue',   lw=0, elinewidth=1, marker='^', markeredgecolor='blue',   markerfacecolor='none',   markersize=8.0)
         ax.errorbar([i+0.25 for i in x], plt_fsrSys, yerr=plt_fsrSys_UncY, label=r'FSR Systematic', xerr=x_noe, fmt='', capsize=0, color='green',   lw=0, elinewidth=1, marker='o', markeredgecolor='green',   markerfacecolor='green',   markersize=8.0)
-        eb = ax.errorbar(x, plt_sigContam, label=r'Effect of Signal Contam.', xerr=xe, fmt='', capsize=0, color='black',   lw=0, elinewidth=1, marker='', markersize=0.0)
+        #eb = ax.errorbar(x, plt_sigContam, label=r'Effect of Signal Contam.', xerr=xe, fmt='', capsize=0, color='black',   lw=0, elinewidth=1, marker='', markersize=0.0)
         eb[-1][0].set_linestyle('--')
 
         pc = makeErrorBoxes(x, [1.0]*5, xe, plt_totalSysUnc)

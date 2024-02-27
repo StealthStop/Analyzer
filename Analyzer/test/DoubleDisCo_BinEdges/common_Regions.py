@@ -304,7 +304,7 @@ class All_Regions:
                     nEvents_D = h1.IntegralAndError(firstXBin, xBin-1,   firstYBin, yBin-1,   nEventsErr_D)
                     nEvents_Tot = h1.IntegralAndError(firstXBin, lastXBin, firstYBin, lastYBin, nEventsErr_Tot)
 
-                    #    startOfScan = False
+                    #startOfScan = False
 
                     #else:
                     #    incrementBD = h1.IntegralAndError(firstXBin, xBin-1,   yBin-1, yBin-1, nEventsErr_A)
