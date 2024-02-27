@@ -23,9 +23,9 @@ for YEAR in ${YEARS[@]}; do
                 if [ $command == "BinEdges" ] || [ $command == "All" ]; then
                     echo "running for BinEdges:---------------------------------"
 
-                    python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.74 --disc2edge 0.80 --plotVars2D --plotDisc1VsDisc2 --njets "8" "9" "10" "11" "12incl"  --path ${OUTPATH} --ttVar TT_RPV400_0p5
-                    python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.80 --disc2edge 0.72 --plotVars2D --plotDisc1VsDisc2 --njets "7" "8" "9" "10" "11incl"  --path ${OUTPATH} --ttVar TT_RPV400_0p5
-                    python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.50 --disc2edge 0.50 --plotVars2D --plotDisc1VsDisc2 --njets "6" "7" "8" "9" "10incl"  --path ${OUTPATH} --ttVar TT_RPV400_0p5
+                    python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.74 --disc2edge 0.80 --plotVars2D --plotDisc1VsDisc2 --njets "8" "9" "10" "11" "12incl"  --path ${OUTPATH} 
+                    python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.80 --disc2edge 0.72 --plotVars2D --plotDisc1VsDisc2 --njets "7" "8" "9" "10" "11incl"  --path ${OUTPATH} 
+                    python run_DoubleDisCo_Validation.py --run BinEdges --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.50 --disc2edge 0.50 --plotVars2D --plotDisc1VsDisc2 --njets "6" "7" "8" "9" "10incl"  --path ${OUTPATH} 
 
                 fi
 
@@ -33,9 +33,9 @@ for YEAR in ${YEARS[@]}; do
                 if [ $command == "MCcorrectionFactor_TT" ] || [ $command == "All" ]; then
                     echo "running for MCcorrectionFactor_TT:---------------------------------"
 
-                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.74 --disc2edge 0.80 --plotVarVsBoundary  --njets "8" "9" "10" "11" "12incl" --path ${OUTPATH} --fastMode --ttVar TT_RPV400_0p5 
-                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.80 --disc2edge 0.72 --plotVarVsBoundary  --njets "7" "8" "9" "10" "11incl" --path ${OUTPATH} --fastMode --ttVar TT_RPV400_0p5 
-                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.50 --disc2edge 0.50 --plotVarVsBoundary  --njets "6" "7" "8" "9" "10incl" --path ${OUTPATH} --fastMode --ttVar TT_RPV400_0p5 
+                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.74 --disc2edge 0.80 --plotVarVsBoundary  --njets "8" "9" "10" "11" "12incl" --path ${OUTPATH} --fastMode  
+                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.80 --disc2edge 0.72 --plotVarVsBoundary  --njets "7" "8" "9" "10" "11incl" --path ${OUTPATH} --fastMode  
+                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TT --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.50 --disc2edge 0.50 --plotVarVsBoundary  --njets "6" "7" "8" "9" "10incl" --path ${OUTPATH} --fastMode  
 
                 fi
 
@@ -43,9 +43,9 @@ for YEAR in ${YEARS[@]}; do
                 if [ $command == "MCcorrectionFactor_TTvar" ] || [ $command == "All" ]; then
                     echo "running for MCcorrectionFactor_TTvar:---------------------------------"
 
-                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.74 --disc2edge 0.80 --plotVarVsBoundary --fastMode --njets "8" "9" "10" "11" "12incl" --path ${OUTPATH} --ttVar TT_RPV400_0p5
-                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.80 --disc2edge 0.72 --plotVarVsBoundary --fastMode --njets "7" "8" "9" "10" "11incl" --path ${OUTPATH} --ttVar TT_RPV400_0p5
-                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.50 --disc2edge 0.50 --plotVarVsBoundary --fastMode --njets "6" "7" "8" "9" "10incl" --path ${OUTPATH} --ttVar TT_RPV400_0p5
+                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 0l --sig ${MODEL} --mass ${MASS} --disc1edge 0.74 --disc2edge 0.80 --plotVarVsBoundary --fastMode --njets "8" "9" "10" "11" "12incl" --path ${OUTPATH} 
+                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 1l --sig ${MODEL} --mass ${MASS} --disc1edge 0.80 --disc2edge 0.72 --plotVarVsBoundary --fastMode --njets "7" "8" "9" "10" "11incl" --path ${OUTPATH} 
+                    python run_DoubleDisCo_Validation.py --run MCcorrectionFactor_TTvar --year ${YEAR} --outpath Run2UL_MassExclusion_12_13_23_Inject_0p5_RPV --channel 2l --sig ${MODEL} --mass ${MASS} --disc1edge 0.50 --disc2edge 0.50 --plotVarVsBoundary --fastMode --njets "6" "7" "8" "9" "10incl" --path ${OUTPATH} 
 
                 fi
 

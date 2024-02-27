@@ -314,7 +314,6 @@ class BinEdges():
                             # significance including non-closure
                             plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,0], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  5.0, njet, name=region, variable="Sign_includingNonClosure"        )
                             plotter[hist_key].plot_Var_vsDisc1Disc2(significances_includingNonClosure[:,1], edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  5.0, njet, name=region, variable="SignUnc_includingNonClosure"     )
-                            print(significances_includingNonClosure[:,1])
                             # sigFracs A, B, C, D
                             if region == "ABCD":
                                 plotter[hist_key].plot_Var_vsDisc1Disc2(allRegionsSigFracs_TT[region]["A"][:,0],   edges, float(allRegionsFinalEdges[region][0]), float(allRegionsFinalEdges[region][1]), minEdge, maxEdge, binWidth, absMin, 20.0, 0.0,  0.8, njet, name=region, variable="SigFrac%s"%(self.translator[region]["A"]))

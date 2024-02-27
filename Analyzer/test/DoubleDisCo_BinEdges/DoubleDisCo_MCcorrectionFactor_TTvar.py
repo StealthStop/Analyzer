@@ -40,7 +40,7 @@ class MCcorrectionFactor_TTvar():
 
             self.ttVarSigInject = [
                                 #"TT_%s550"%(self.model),
-                                "TT_%s400_0p5"%(self.model),
+                                #"TT_%s400_0p5"%(self.model),
                                 #"TT_%s800"%(self.model),
             ]
 
@@ -65,14 +65,15 @@ class MCcorrectionFactor_TTvar():
             ]
 
             self.ttVarSigInject = [
-                                "TT_%s400_0p5"%(self.model),
+                                #"TT_%s400_0p5"%(self.model),
                                 #"TT_%s550"%(self.model),
                                 #"TT_%s800"%(self.model),
             ]
 
         self.ttVars = self.ttVarsModel + self.ttVarsDetect + self.ttVarSigInject
         #self.ttVar = "TT_%s550"%(self.model)
-        self.ttVar = "TT_%s400_0p5"%(self.model)
+        #self.ttVar = "TT_%s400_0p5"%(self.model)
+        self.ttVar = None
 
         # make colors for each TT variance
         self.colors = { "TT"                    : "#525252",
@@ -91,7 +92,7 @@ class MCcorrectionFactor_TTvar():
                         "TT_TuneCP5up"          : "#FDBF6F",
                         "TT_TuneCP5down"        : "#FDBF6F",
                         #"TT_%s550"%(self.model) : "#525252",
-                        "TT_%s400_0p5"%(self.model) : "#525252",
+                      #  "TT_%s400_0p5"%(self.model) : "#525252",
                         #"TT_%s800"%(self.model) : "#000000"
         }
 
@@ -110,7 +111,7 @@ class MCcorrectionFactor_TTvar():
                                   "TT_TuneCP5up"   : "Tune Up",
                                   "TT_TuneCP5down" : "Tune Down",
                                   #"TT_%s550"%(self.model) : "%s550 Inj."%(self.model),
-                                  "TT_%s400_0p5"%(self.model) : "%s400 Inj. r=0.5"%(self.model),
+                                  #"TT_%s400_0p5"%(self.model) : "%s400 Inj. r=0.5"%(self.model),
                                   #"TT_%s800"%(self.model) : "%s800 Inj."%(self.model)
         }
 
@@ -130,7 +131,7 @@ class MCcorrectionFactor_TTvar():
                                "TT_TuneCP5up"   : "w/ Tune Up Corr.",
                                "TT_TuneCP5down" : "w/ Tune Down Corr.",
                                #"TT_%s550"%(self.model) : "w/ %s550 Inj. Corr."%(self.model),
-                               "TT_%s400_0p5"%(self.model) : "w/ %s400 Inj. r=0.5 Corr."%(self.model),
+                               #"TT_%s400_0p5"%(self.model) : "w/ %s400 Inj. r=0.5 Corr."%(self.model),
                                #"TT_%s800"%(self.model) : "w/ %s800 Inj. Corr."%(self.model)
         }
 
@@ -409,7 +410,7 @@ class MCcorrectionFactor_TTvar():
                     continue
 
                 closureCorrPerBoundaryTT[region]          = theAggy.getPerBoundary(variable = "closureCorr", sample = "TT",       region = region, njet = njet)            
-                closurePerBoundaryTTvar[region]           = theAggy.getPerBoundary(variable = "Closure",     sample = self.ttVar, region = region, njet = njet)
+                #closurePerBoundaryTTvar[region]           = theAggy.getPerBoundary(variable = "Closure",     sample = self.ttVar, region = region, njet = njet)
 
                 correctedTTVarClosurePerBoundary = {}
                 for key_region in closurePerBoundaryTTvar.keys():
@@ -457,7 +458,7 @@ class MCcorrectionFactor_TTvar():
                                 best_correctedDataValue_Diff["All"] = correctedDataValue_Diff
                                 best_correctedDataValue["All"]      = CorrectedDataClosure
                                 best_bv = boundaryValue
-                                SignalEffect[njet] = (correctedTTVarClosurePerBoundary[region][best_bv][0], correctedTTVarClosurePerBoundary[region][best_bv][1])
+                                #SignalEffect[njet] = (correctedTTVarClosurePerBoundary[region][best_bv][0], correctedTTVarClosurePerBoundary[region][best_bv][1])
 
                         #try: best_bv
                         #except: best_bv = None
@@ -667,10 +668,14 @@ class MCcorrectionFactor_TTvar():
 
             maximum_correctedDataValue = maximum_CorrectedDataValue_forAllRegions["All"][key_njet]
 
+            calculatedSys["All"][key_njet] = []
+
             if maximum_correctedDataValue != -999 and maximum_correctedDataValue != None and key_njet in someNjets:
-                calculatedSys["All"][key_njet] =  (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0])
+                calculatedSys["All"][key_njet].append((1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0]))
+                calculatedSys["All"][key_njet].append((maximum_CorrectedDataValue_forAllRegions["All"][key_njet][1]/maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0]) * (1.0 / maximum_CorrectedDataValue_forAllRegions["All"][key_njet][0]))
             else:
-                calculatedSys["All"][key_njet] =  (1.0 / absoluteMax[0])
+                calculatedSys["All"][key_njet].append(1.0 / absoluteMax[0])
+                calculatedSys["All"][key_njet].append((absoluteMax[1] / absoluteMax[0]) * (1.0 / absoluteMax[0]))
             #if maximum_CorrectedDataValue_forAllRegions["All"][key_njet] == None:
             #    maximum_correctedDataValue = None 
             #else:
@@ -737,6 +742,7 @@ class MCcorrectionFactor_TTvar():
             dataStatUnc[njet] = math.sqrt( (math.sqrt(nEventsBData) / nEventsBData)**2 + (math.sqrt(nEventsCData) / nEventsCData)**2 + (math.sqrt(nEventsDData) / nEventsDData)**2 )  
             
 
-        plotter["Data"].plot_ClosureAll(closureCorrPerBoundaryTT, calculatedSys_withUnc, TT_FSR_Sys, SignalEffect, dataStatUnc, njets)
+        #plotter["Data"].plot_ClosureAll(closureCorrPerBoundaryTT, calculatedSys_withUnc, TT_FSR_Sys, dataStatUnc, njets)
+        #plotter["Data"].plot_ClosureAll(closureCorrPerBoundaryTT, calculatedSys_withUnc, TT_FSR_Sys, SignalEffect, dataStatUnc, njets)
         #plotter["Data"].plot_ClosureAll_Fit(closureCorrPerBoundaryTT, calculatedSys_withUnc, TT_FSR_Sys, SignalEffect, dataStatUnc, njets)
 

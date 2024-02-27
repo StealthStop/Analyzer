@@ -544,8 +544,8 @@ def main():
 
                 maxSys = -999.9
                 for val in ttSys[channel]["({}, {})".format(d1, d2)].values():
-                    if abs(val - 1) > abs(maxSys - 1) or maxSys == -999.9:
-                        maxSys = val
+                    if abs(val[0] - 1) > abs(maxSys - 1) or maxSys == -999.9:
+                        maxSys = val[0]
                 
                 ttSys[channel]["({}, {})".format(d1, d2)]["max"] = maxSys
     print(ttSys)

@@ -151,7 +151,7 @@ def main():
         "BG_OTHER"          : ROOT.TFile.Open(args.path + "/" + args.year + "_BG_OTHER.root"      ),
         "QCD"               : ROOT.TFile.Open(args.path + "/" + args.year + "_QCD_Data.root"      ),
         "Data"              : ROOT.TFile.Open(args.path + "/" + args.year + "_Data.root"          ),
-        "TT_%s550"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s550.root"%(args.sig)      ),
+        #"TT_%s550"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s550.root"%(args.sig)      ),
         #"TT_%s400_0p5"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s400_0p5.root"%(args.sig)      ),
         #"TT_%s800"%(args.sig) : ROOT.TFile.Open(args.path + "/" + args.year + "_TT_%s800.root"%(args.sig)      ),
         Sig                 : ROOT.TFile.Open(args.path + "/" + args.year + "_%s%s_%s_mStop-%s.root"%(modelLabel, args.sig, modelDecay, args.mass)),
