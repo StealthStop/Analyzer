@@ -398,8 +398,8 @@ class StackPlotter:
         mark.SetTextAlign(11)
         mark.SetTextSize(0.055)
         mark.SetTextFont(61)
-        #mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
-        mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
+        mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
+        #mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
 
         mark.SetTextFont(52)
         mark.SetTextSize(0.040)
@@ -535,10 +535,6 @@ class StackPlotter:
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, bname)
    
-                        # Don't blind for MC
-                        if "blind" in newName and "Njets" in newName:
-                            newName = newName.replace("_blind", "")
-
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
                         
                         if Hobj.IsGood(): mcScale += Hobj.Integral()
@@ -565,10 +561,6 @@ class StackPlotter:
                     for sname, sinfo in self.signals.items():
 
                         rootFile = "%s/%s_%s.root"%(self.inpath, self.year, sname)
-
-                        # Don't blind for MC
-                        if "blind" in newName:
-                            newName = newName.replace("_blind", "")
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
                         if Hobj.IsGood():
@@ -606,10 +598,6 @@ class StackPlotter:
     
                         if "option"  not in binfo: binfo["option"]  = option
                         if "loption" not in binfo: binfo["loption"] = loption
-
-                        # Don't blind for MC
-                        if "blind" in newName:
-                            newName = newName.replace("_blind", "")
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, binfo)
 
@@ -691,10 +679,6 @@ class StackPlotter:
 
                         if "option"  not in sinfo: sinfo["option"]  = option 
                         if "loption" not in sinfo: sinfo["loption"] = loption
-
-                        # Don't blind for MC
-                        if "blind" in newName:
-                            newName = newName.replace("_blind", "")
 
                         Hobj = Histogram(None, rootFile, self.upperSplit, self.lowerSplit, newName, newInfo, sinfo)
 
