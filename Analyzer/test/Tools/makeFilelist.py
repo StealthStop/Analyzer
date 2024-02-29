@@ -8,8 +8,9 @@ from collections import defaultdict, OrderedDict
 
 class FileLister:
 
-    def __init__(self, production, tag, doSkim=False):
+    def __init__(self, usergroup, production, tag, doSkim=False):
 
+        self.usergroup    = usergroup
         self.production   = production
         self.tag          = tag
         self.doSkim       = doSkim
@@ -17,13 +18,13 @@ class FileLister:
         # Whether we are generating file lists for a TreeMaker ntuple data set or a skimmed data set
         # created by our MakeMiniTree, we need to adjust some input paths, tree names, output folder names, etc
         if not doSkim:
-            self.filesDir     = "/store/user/lpcsusyhad/SusyRA2Analysis2015/Run2Production%s"%(production)
+            self.filesDir     = "/store/user/%s/SusyRA2Analysis2015/Run2Production%s"%(usergroup, production)
             self.ttreePath    = "TreeMaker2/PreSelection"
             self.ttreePathSig = "PreSelection"
             self.tempFileName = "tmp.txt"
             self.workingDir   = "filelists_Kevin_%s/"%(production)
         else:
-            self.filesDir     = "/store/user/lpcsusystealth/StealthStop/Skims"
+            self.filesDir     = "/store/user/%s/StealthStop/Skims"%(usergroup)
             self.ttreePath    = "PreSelection"
             self.ttreePathSig = "PreSelection"
             self.tempFileName = "tmp.txt"
@@ -45,7 +46,8 @@ class FileLister:
         self.samples["2017"]    = defaultdict(list)
         self.samples["2018"]    = defaultdict(list)
 
-        self.sigMasses = list(range(300, 1450, 50))
+        self.sigMasses = list(range(300,1550,50))
+        self.ctaus = [0.01, 0.1, 1, 10, 100, 1000]
 
         self.wroteHeader = False
 
@@ -194,8 +196,15 @@ class FileLister:
                     name  = self.makeNiceName(process)
                     names = []
 
-                    if ("RPV" in name or "SYY" in name or "SHH" in name) and "300to1400" in name:
-                        names = [name.replace("300to1400", str(mass)) for mass in self.sigMasses]
+                    if ("SHH" in name or "SYY" in name) and "300to1500" in name:
+                        for stopMass in self.sigMasses:
+                            if stopMass % 200 != 0: continue
+                            for lspMass in [100, stopMass-225]:
+                                for ctau in self.ctaus:
+                                    names.append(name.replace("300to1500", str(stopMass)).replace("lowandhigh", str(lspMass)).replace("0p01to1000", str(ctau).replace(".", "p")))
+
+                    elif ("RPV" in name or "SYY" in name or "SHH" in name) and "300to1400" in name:
+                        names = [name.replace("300to1400", str(mass)) if mass < 1500 for mass in self.sigMasses]
                     else:
                         names = [name]
                     
@@ -272,7 +281,7 @@ class FileLister:
             sampleDirs = self.listDirsEOS("%s/%s%s"%(self.filesDir, eraDir, extraSubDir))
             for sampleDir in sampleDirs:
 
-                if "300to1400" in sampleDir:
+                if "300to1500" in sampleDir or "300to1400" in sampleDir:
                     continue
 
                 fileList = self.listFilesEOS("%s/%s%s/%s"%(self.filesDir, eraDir, extraSubDir, sampleDir))
@@ -286,11 +295,11 @@ class FileLister:
                     era = ""
                     if   ("UL2016" in eraDir and "HIPM" in eraDir) or "UL16APV" in eraDir or "preVFP" in eraDir: 
                         era = "2016APV"
-                    elif "UL2016" in eraDir or "UL16" in eraDir or "postVFP" in eraDir: 
+                    elif "UL2016" in eraDir or "UL16" in eraDir or "postVFP" in eraDir or "Summer16v3" in eraDir: 
                         era = "2016"
-                    elif "UL2017" in eraDir or "UL17" in eraDir or "2017" in eraDir: 
+                    elif "UL2017" in eraDir or "UL17" in eraDir or "2017" in eraDir or "Fall17" in eraDir: 
                         era = "2017"
-                    elif "UL2018" in eraDir or "UL18" in eraDir or "2018" in eraDir: 
+                    elif "UL2018" in eraDir or "UL18" in eraDir or "2018" in eraDir or "Autumn18" in eraDir: 
                         era = "2018"
                     else:
                         continue
@@ -452,9 +461,10 @@ class FileLister:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--prod", dest="prod", help="Unique tag for output", type=str,            default="V20")
-    parser.add_argument("--tag" , dest="tag" , help="Path to PU file"      , type=str,            default="UL_v2")
-    parser.add_argument("--skim", dest="skim", help="Make for skim"        , action="store_true", default=False)
+    parser.add_argument("--prod"     , dest="prod"     , help="Unique tag for output", type=str,            default="V17")
+    parser.add_argument("--tag"      , dest="tag"      , help="Path to PU file"      , type=str,            default="2017_V17")
+    parser.add_argument("--usergroup", dest="usergroup", help="which EOS user group" , type=str,            default="lpcsusyhad")
+    parser.add_argument("--skim"     , dest="skim"     , help="Make for skim"        , action="store_true", default=False)
     args = parser.parse_args()
     
-    theLister = FileLister(args.prod, args.tag, args.skim)
+    theLister = FileLister(args.usergroup, args.prod, args.tag, args.skim)

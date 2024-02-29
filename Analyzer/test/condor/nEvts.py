@@ -71,7 +71,7 @@ if __name__ == "__main__":
     options, args = parser.parse_args()
 
     ss = SampleSet(options.sampleSetCfg)
-    samples = [(name, f.replace("/eos/uscms", "root://cmseos.fnal.gov/"), tree) for name, f, tree in ss.sampleSetList()]
+    samples = [(name, f, tree) for name, f, tree in ss.sampleSetList()]
 
     for name, f, tree in samples:
         if re.search(options.dataSetPattern, name):
