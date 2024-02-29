@@ -20,13 +20,21 @@ if __name__ == '__main__':
     parser.add_argument("--era"      , dest="era"      , help="Era for signal samples" , type=str, default="Summer20UL16"            )
     parser.add_argument("--model"    , dest="model"    , help="Signal model to split"  , type=str, default="RPV"                     )
     parser.add_argument("--ttreePath", dest="ttreePath", help="TTree name to read"     , type=str, default="TreeMaker2/PreSelection" )
+    parser.add_argument("--usergroup", dest="usergroup", help="which EOS group to use" , type=str, default="lpcsusyhad"              )
     parser.add_argument("--noSubmit" , dest="noSubmit" , help="Do not submit to condor",           default=False, action="store_true")
     args = parser.parse_args()
 
-    masses = list(range(300, 1450, 50))
+    stopMasses = list(range(300, 1450, 50)) 
+    if "DS" in args.model:
+        stopMasses = [300,500,700,900,1100,1300,1500]
+    ctaus = [0.01,0.1,1,10,100,1000]
 
     model = ""
-    if "RPV" in args.model:
+    if "SYYDS" in args.model:
+        model = "StealthSYY_2t6j_mStop-300to1500_mSo-lowandhigh_ctau-0p01to1000_TuneCP5_13TeV-madgraphMLM-pythia8"
+    elif "SHHDS" in args.model:
+        model = "StealthSHH_2t4b_mStop-300to1500_mSo-lowandhigh_ctau-0p01to1000_TuneCP5_13TeV-madgraphMLM-pythia8"
+    elif "RPV" in args.model:
         model = "RPV_2t6j_mStop-300to1400_mN1-100_TuneCP5_13TeV-madgraphMLM-pythia8"
     elif "SYY" in args.model:
         model = "StealthSYY_2t6j_mStop-300to1400_mSo-100_TuneCP5_13TeV-madgraphMLM-pythia8"
@@ -35,12 +43,17 @@ if __name__ == '__main__':
 
     fullInputPath = "%s/%s/%s/"%(args.eosPath, args.era, model)
 
-    USER = "lpcsusyhad"
-    outputDir = "/eos/uscms/store/user/%s/%s/%s"%(USER, args.outPath, args.era)
-    for mass in masses:
-        temp = ("%s/%s/"%(outputDir, model)).replace("300to1400", str(mass))
-        if not os.path.isdir(temp):
-            os.makedirs(temp)
+    outputDir = "/eos/uscms/store/user/%s/%s/%s"%(args.usergroup, args.outPath, args.era)
+    if "DS" in args.model:
+        for stopMass in stopMasses:
+            for lspMass in [100, stopMass - 225]:
+                for ctau in ctaus:
+                    temp = ("%s/%s/"%(outputDir, model)).replace("300to1500", str(stopMass)).replace("lowandhigh", str(lspMass)).replace("0p01to1000", str(ctau).replace(".", "p"))
+                    os.system("eos root://cmseos.fnal.gov/ mkdir -p %s"%(temp))
+    else:
+        for stopMass in stopMasses:
+            temp = ("%s/%s/"%(outputDir, model)).replace("300to1400", str(stopMass))
+            os.system("eos root://cmseos.fnal.gov/ mkdir -p %s"%(temp))
 
     # Make directory for condor submission logs and output
     if not os.path.isdir("%s/log-files" % (args.outPath)):
