@@ -157,7 +157,7 @@ public:
         std::string hadronicFileName                  = "allInOne_hadronicSF_UL.root";
         std::string btagEffFileName                   = "allInOne_BTagEff_UL.root";
         std::string meanFileName                      = "allInOne_SFMean_UL.root";
-        std::string toptaggerFileName                 = "allInOne_TopTagEffandSF_UL_new.root";
+        std::string toptaggerFileName                 = "allInOne_TopTagEffandSF_UL.root";
 
         // Determines if an analyzer is compatible with fastmode
         // If it is not, then the fastMode flag is essentially neutralized
