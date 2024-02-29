@@ -87,17 +87,6 @@ def main():
                        "SingleElectron"                :    50,
     }
 
-    filesPerJobSkim = {"Data_SingleMuon" : 40,
-                       "Data_JetHT"      : 10,
-                       "TT"              : 10,
-                       "TTX"             : 4,
-                       "ST"              : 6,
-                       "Diboson"         : 20,
-                       "Triboson"        : 20,
-                       "WJets"           : 20,
-                       "DYJetsToLL_M-50" : 20,
-    }
-
     srcDir   = environ["CMSSW_BASE"] + "/src"
     testDir  = environ["CMSSW_BASE"] + "/src/%s/test"%(repo) 
     userName = environ["USER"]
@@ -242,7 +231,7 @@ def main():
             # When running skim jobs with the MiniTreeMaker analyzer,
             # The number of files per job is custom tuned based on skimming efficiency
             # Custom numbers for each main collection are in filesPerJobSkim
-            if options.analyze == "MakeMiniTree" or options.analyze == "MakeTopTagSFTree":
+            if options.analyze == "MakeMiniTree":
                 proc = n.partition("_")[-1]
         
                 if dataSetName in filesPerJobSkim:
