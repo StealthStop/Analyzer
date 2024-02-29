@@ -13,7 +13,11 @@ class Splitter:
 
         self.inputFile = inputFile
         self.ttreePath = ttreePath
-        self.masses = list(range(300, 1450, 50))
+        self.stopMasses = list(range(300,1450,50))
+        self.ctaus = [""]
+        if "300to1500" in inputFile:
+            self.stopMasses = [300,500,700,900,1100,1300,1500]
+            self.ctaus = [0.01,0.1,1,10,100,1000]
 
         self.splitFile()
 
@@ -36,23 +40,44 @@ class Splitter:
         # "Dumb" loop over all possible masses each time
         # Not every mass will be found in a given input file
         # So just delete output files that contain no events
-        for mass in self.masses:
+        for stopMass in self.stopMasses:
 
-            newName = oldName.replace("300to1400", str(mass))
+            if "300to1400" in self.inputFile:
+                newName = oldName.replace("300to1400", str(stopMass))
 
-            os.makedirs(newName)
-        
-            outFile = ROOT.TFile("%s/%s"%(newName,fileStub), "RECREATE")
-            newTree = t.CopyTree("SignalParameters[0]==%d"%(mass))
+                os.makedirs(newName)
 
-            if newTree.GetEntries() != 0:
-                outFile.Write()
-                outFile.Close()
-                print("%s [INFO]: Created file: %s/%s"%(self.timeStamp(), newName, fileStub))
+                outFile = ROOT.TFile("%s/%s"%(newName,fileStub), "RECREATE")
+                newTree = t.CopyTree("SignalParameters[0]==%d"%(stopMass))
+
+                if newTree.GetEntries() != 0:
+                    outFile.Write()
+                    outFile.Close()
+                    print("%s [INFO]: Created file: %s/%s"%(self.timeStamp(), newName, fileStub))
+                else:
+                    outFile.Close()
+                    shutil.rmtree(newName)
+                    print("%s [INFO]: Removed empty file: %s"%(self.timeStamp(), newName))
+    
             else:
-                outFile.Close()
-                shutil.rmtree(newName)
-                print("%s [INFO]: Removed empty file: %s"%(self.timeStamp(), newName))
+                for lspMass in [100, stopMass - 225]:
+                    for ctau in self.ctaus:
+
+                        newName = oldName.replace("300to1500", str(stopMass)).replace("lowandhigh", str(lspMass)).replace("0p01to1000", str(ctau).replace(".", "p"))
+
+                        os.makedirs(newName)
+        
+                        outFile = ROOT.TFile("%s/%s"%(newName,fileStub), "RECREATE")
+                        newTree = t.CopyTree("SignalParameters[0]==%d&&SignalParameters[1]==%d&&SignalParameters[2]>=%f&&SignalParameters[2]<=%f"%(stopMass,lspMass,0.5*ctau,1.5*ctau))
+
+                        if newTree.GetEntries() != 0:
+                            outFile.Write()
+                            outFile.Close()
+                            print("%s [INFO]: Created file: %s/%s"%(self.timeStamp(), newName, fileStub))
+                        else:
+                            outFile.Close()
+                            shutil.rmtree(newName)
+                            print("%s [INFO]: Removed empty file: %s"%(self.timeStamp(), newName))
 
 # User can choose the path to the input ROOT file and the path to the TTree name from the command line
 # Example call:
