@@ -56,54 +56,54 @@ class MCcorrectionFactor_TT():
         # -------------------------------------------------------
         theAggy = Aggregator(samples, njets, regions, self.list_boundaries["Val_BD"])
 
-        QCDCRInfo = {}
+        #QCDCRInfo = {}
         # -----------------
         # Setup QCDCR stuff
         # -----------------
-        for njet in njets:
-            
-            hist_lists = {}
+        #for njet in njets:
+        #    
+        #    hist_lists = {}
 
-            for sample in samples:
+        #    for sample in samples:
 
-                # get the fsr/isr, jec/jer higtograms from TT root file
-                ttvarStr = ""
+        #        # get the fsr/isr, jec/jer higtograms from TT root file
+        #        ttvarStr = ""
 
-                if sample == "TT_fsrDown":
-                    ttvarStr = "_fsrDown"
+        #        if sample == "TT_fsrDown":
+        #            ttvarStr = "_fsrDown"
 
-                elif sample == "TT_fsrUp":
-                    ttvarStr = "_fsrUp"
+        #        elif sample == "TT_fsrUp":
+        #            ttvarStr = "_fsrUp"
 
-                elif sample == "TT_isrDown":
-                    ttvarStr = "_isrDown"
+        #        elif sample == "TT_isrDown":
+        #            ttvarStr = "_isrDown"
 
-                elif sample == "TT_isrUp":
-                    ttvarStr = "_isrUp"
+        #        elif sample == "TT_isrUp":
+        #            ttvarStr = "_isrUp"
 
-                elif sample == "TT_JECdown":
-                    ttvarStr = "_JECdown"
+        #        elif sample == "TT_JECdown":
+        #            ttvarStr = "_JECdown"
 
-                elif sample == "TT_JECup":
-                    ttvarStr = "_JECup"
+        #        elif sample == "TT_JECup":
+        #            ttvarStr = "_JECup"
 
-                elif sample == "TT_JERdown":
-                    ttvarStr = "_JERdown"
+        #        elif sample == "TT_JERdown":
+        #            ttvarStr = "_JERdown"
 
-                elif sample == "TT_JERup":
-                    ttvarStr = "_JERup"
+        #        elif sample == "TT_JERup":
+        #            ttvarStr = "_JERup"
 
-                hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
-                if ttvarStr == "":
-                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
-                    hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+        #        hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
+        #        if ttvarStr == "":
+        #            histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+        #            hist_lists[sample+"_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
 
 
-            theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
+        #    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar="", disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, justEvents=True)
 
-            QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
+        #    QCDCRInfo[njet] = theEdgesClass.getQCDCRValues()
 
-            del theEdgesClass
+        #    del theEdgesClass
 
         # ---------------
         # loop over njets
@@ -142,9 +142,9 @@ class MCcorrectionFactor_TT():
                     ttvarStr = "_JERup"
 
                 hist_lists[sample] = files[sample].Get(histName.replace("${NJET}", njet) + ttvarStr)
-                if ttvarStr == "":
-                    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
-                    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
+                #if ttvarStr == "":
+                #    histNameQCDCR = histName.split("Njets")[0] + "QCDCR_Njets" + histName.split("Njets")[1]
+                #    hist_lists[sample + "_QCDCR"] = files[sample].Get(histNameQCDCR.replace("${NJET}", njet))
 
 
             minEdge  = hist_lists["TT"].GetXaxis().GetBinLowEdge(1) 
@@ -164,7 +164,7 @@ class MCcorrectionFactor_TT():
                 # -----------------
                 if region == "ABCD":
 
-                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                    theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=disc1edge, disc2Edge=disc2edge, fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                     theAggy.aggregate(theEdgesClass, region = region, njet = njet)
 
                     abcdFinalEdges = theEdgesClass.getFinal("edges", "TT")
@@ -177,7 +177,7 @@ class MCcorrectionFactor_TT():
                     for r in self.list_boundaries[region]:
                    
                         disc1_edge = ((float(abcdFinalEdges[0]) - 0.2) / (1.0 - 0.4)) * (float(r) - 0.4) + 0.2  
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc2Edge=abcdFinalEdges[1], rightBoundary=float(r), disc1Edge=float(disc1_edge), fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                         theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = r)
 
                 # -----------------------------
@@ -188,7 +188,7 @@ class MCcorrectionFactor_TT():
                     for t in self.list_boundaries[region]:
 
                         disc2_edge = ((float(abcdFinalEdges[1]) - 0.2) / (1.0 - 0.4)) * (float(t) - 0.4) + 0.2
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, disc1Edge=abcdFinalEdges[0], topBoundary=float(t), disc2Edge=float(disc2_edge), fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                         theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = t)
 
                 # -----------------------------
@@ -201,7 +201,7 @@ class MCcorrectionFactor_TT():
                         disc1_edge = ((float(abcdFinalEdges[0]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
                         disc2_edge = ((float(abcdFinalEdges[1]) - 0.3) / (1.0 - 0.6)) * (float(d) - 0.6) + 0.3
 
-                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode, QCDCRInfo=QCDCRInfo)
+                        theEdgesClass = All_Regions(hist_lists, Sig=self.sig, ttVar=self.ttVar, rightBoundary=float(d), topBoundary=float(d), disc1Edge=float(disc1_edge), disc2Edge=float(disc2_edge), fastMode=fastMode)#, QCDCRInfo=QCDCRInfo)
                         theAggy.aggregate(theEdgesClass, region = region, njet = njet, boundary = d)
 
             # ---------------------------
@@ -264,6 +264,7 @@ class MCcorrectionFactor_TT():
             sigFractionA_PerBoundaryTT        = {}; sigFractionB_PerBoundaryTT = {}; sigFractionC_PerBoundaryTT = {}; sigFractionD_PerBoundaryTT = {}
             closureCorrPerBoundaryTT          = {}
             closureCorrPerBoundaryTTvar       = {}
+            closurePerBoundaryTTvar           = {}
 
             # TTinData = Data - NonTT
             weighted_nTTEventsA_PerBoundaryTTinData = {}; nonClosurePerBoundaryTTinData = {}; closurePerBoundaryTTinData = {}; CorrectedDataClosure_PerBoundaryTTinData = {} 
@@ -282,12 +283,33 @@ class MCcorrectionFactor_TT():
                 sigFractionD_PerBoundaryTT[region]        = theAggy.getPerBoundary(variable = "sigFractionD",                     region = region, njet = njet)
                 closureCorrPerBoundaryTT[region]          = theAggy.getPerBoundary(variable = "closureCorr", sample = "TT",       region = region, njet = njet)            
                 closureCorrPerBoundaryTTvar[region]       = theAggy.getPerBoundary(variable = "closureCorr", sample = self.ttVar, region = region, njet = njet)            
+                closurePerBoundaryTTvar[region]           = theAggy.getPerBoundary(variable = "Closure",     sample = self.ttVar, region = region, njet = njet)
+
+                closureCorrRatiosPerBoundary = {}
+                closureCorrDiffsPerBoundary = {}
+                for key_region in closureCorrPerBoundaryTT.keys():
+                    closureCorrRatiosPerBoundary[key_region] = {}
+                    closureCorrDiffsPerBoundary[key_region] = {}
+                    for key_bin in closureCorrPerBoundaryTT[key_region].keys():
+                        temp_val = closureCorrPerBoundaryTTvar[key_region][key_bin][0] / closureCorrPerBoundaryTT[key_region][key_bin][0]
+                        temp_diff = closureCorrPerBoundaryTTvar[key_region][key_bin][0] - closureCorrPerBoundaryTT[key_region][key_bin][0]
+                        temp_err = temp_val * math.sqrt((closureCorrPerBoundaryTTvar[key_region][key_bin][1]/closureCorrPerBoundaryTTvar[key_region][key_bin][0])**2 + (closureCorrPerBoundaryTT[key_region][key_bin][1]/closureCorrPerBoundaryTT[key_region][key_bin][0])**2)
+                        closureCorrRatiosPerBoundary[key_region][key_bin] = (temp_val, temp_err)
+                        closureCorrDiffsPerBoundary[key_region][key_bin] = (temp_diff, temp_err)
+
+                correctedTTVarClosurePerBoundary = {}
+                for key_region in closurePerBoundaryTTvar.keys():
+                    correctedTTVarClosurePerBoundary[key_region] = {}
+                    for key_bin in closurePerBoundaryTTvar[key_region].keys():
+                        temp_val = closurePerBoundaryTTvar[key_region][key_bin][0] * closureCorrPerBoundaryTT[key_region][key_bin][0]
+                        temp_err = temp_val * math.sqrt((closurePerBoundaryTTvar[key_region][key_bin][1] / closurePerBoundaryTTvar[key_region][key_bin][0])**2 + (closureCorrPerBoundaryTT[key_region][key_bin][1] / closureCorrPerBoundaryTT[key_region][key_bin][0])**2)
+                        correctedTTVarClosurePerBoundary[key_region][key_bin] = (temp_val, temp_err)
 
                 # TTinData = Data - NonTT
                 weighted_nTTEventsA_PerBoundaryTTinData[region]        = theAggy.getPerBoundary(variable = "nEventsA",                   sample = "TTinData", region = region, njet = njet)
                 nonClosurePerBoundaryTTinData[region]                  = theAggy.getPerBoundary(variable = "nonClosure",                 sample = "TTinData", region = region, njet = njet)
-                closurePerBoundaryTTinData[region]                     = theAggy.getPerBoundary(variable = "Closure",                    sample = "TTinData", region = region, njet = njet)
-                CorrectedDataClosure_PerBoundaryTTinData[region]       = theAggy.getPerBoundary(variable = "CorrectedDataClosure",       sample = "TTinData", region = region, njet = njet)
+                closurePerBoundaryTTinData[region]                     = theAggy.getPerBoundary(variable = "Closure",                    sample = "TTinData", region = region, njet = njet)#, manualOverride=correctedTTVarClosurePerBoundary)
+                CorrectedDataClosure_PerBoundaryTTinData[region]       = theAggy.getPerBoundary(variable = "CorrectedDataClosure",       sample = "TTinData", region = region, njet = njet)#, manualOverride=correctedTTVarClosurePerBoundary)
                 ttVar_CorrectedDataClosure_PerBoundaryTTinData[region] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
 
             # set y axis for higher njets bins
@@ -302,16 +324,20 @@ class MCcorrectionFactor_TT():
                 # TT
                 #plotter["TT"].plot_VarVsBoundary(weighted_nTTeventsA_PerBoundaryTT, self.regionGridWidth/2.0, None, None, None, "Weighted Events in A [MC]", "TT_weighted_nTTeventsA_PerBoundary", njet, self.valColors)
                 #plotter["TT"].plot_VarVsBoundary(nonClosurePerBoundaryTT,           self.regionGridWidth/2.0, 0.0,  0.3,  None, "Non-Closure [MC]",          "TT_NonClosure_PerBoundary",          njet, self.valColors)
-                #plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'A\'",              "TT_SigFracA_PerBoundary",            njet, self.valColors) 
-                #plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'B\'",              "TT_SigFracB_PerBoundary",            njet, self.valColors)
-                #plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'C\'",              "TT_SigFracC_PerBoundary",            njet, self.valColors)
-                #plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'D\'",              "TT_SigFracD_PerBoundary",            njet, self.valColors)
+                plotter["TT"].plot_VarVsBoundary(sigFractionA_PerBoundaryTT,        self.regionGridWidth/2.0,  0.0,  1.0,  1.0, "SigFrac\'A\'",              "TT_SigFracA_PerBoundary",            njet, self.valColors) 
+                plotter["TT"].plot_VarVsBoundary(sigFractionB_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'B\'",              "TT_SigFracB_PerBoundary",            njet, self.valColors)
+                plotter["TT"].plot_VarVsBoundary(sigFractionC_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'C\'",              "TT_SigFracC_PerBoundary",            njet, self.valColors)
+                plotter["TT"].plot_VarVsBoundary(sigFractionD_PerBoundaryTT,        self.regionGridWidth/2.0, None, None, None, "SigFrac\'D\'",              "TT_SigFracD_PerBoundary",            njet, self.valColors)
                 plotter["TT"].plot_VarVsBoundary(closureCorrPerBoundaryTT,          self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [TT]",  "TT_ClosureCorrection_PerBoundary",   njet, self.valColors)
-                #plotter[self.ttVar].plot_VarVsBoundary(closureCorrPerBoundaryTTvar, self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [%s]"%(self.ttVar), "%s_ClosureCorrection_PerBoundary"%(self.ttVar),   njet, self.valColors)
+                plotter[self.ttVar].plot_VarVsBoundary(closureCorrPerBoundaryTTvar, self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction [%s]"%(self.ttVar), "%s_ClosureCorrection_PerBoundary"%(self.ttVar),   njet, self.valColors)
 
+                plotter[self.ttVar].plot_VarVsBoundary(correctedTTVarClosurePerBoundary, self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Residual Non-Closure (%s)"%(self.ttVar), "%s_CorrectedDataClosure"%(self.ttVar),   njet, self.valColors)
+                plotter[self.ttVar].plot_VarVsBoundary(closureCorrRatiosPerBoundary, self.regionGridWidth/2.0, yMin, yMax, 1.0,   "Closure Correction %s / Closure Correciton Nominal"%(self.ttVar), "%s_ClosureCorrection_Ratio"%(self.ttVar),   njet, self.valColors)
+                plotter[self.ttVar].plot_VarVsBoundary(closureCorrDiffsPerBoundary, self.regionGridWidth/2.0, None, None, None,   "Closure Correction %s - Closure Correciton Nominal"%(self.ttVar), "%s_ClosureCorrection_Diff"%(self.ttVar),   njet, self.valColors)
+                    
                 # TTinData = Data - NonTT
                 #plotter["Data"].plot_VarVsBoundary(weighted_nTTEventsA_PerBoundaryTTinData,            self.regionGridWidth/2.0, None, None, None, "Weighted Events in A [Data]",  "TTinData_weighted_nTTeventsA_PerBoundary",     njet, self.valColors)
                 #plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,                      self.regionGridWidth/2.0, 0.0, 0.3,   None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",              njet, self.valColors)
                 plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                     self.regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",           "TTinData_DataClosure_PerBoundary",                     njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(CorrectedDataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary",            njet, self.valColors)
-                #plotter["Data"].plot_VarVsBoundary(ttVar_CorrectedDataClosure_PerBoundaryTTinData, self.regionGridWidth/2.0, yMin, yMax,  1.0, "Corrected Data Closure", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)
+                plotter["Data"].plot_VarVsBoundary(CorrectedDataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "Residual Non-Closure", "TTinData_CorrectedDataClosure_PerBoundary",            njet, self.valColors)
+                #plotter["Data"].plot_VarVsBoundary(ttVar_CorrectedDataClosure_PerBoundaryTTinData, self.regionGridWidth/2.0, yMin, yMax,  1.0, "Residual Non-Closure", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)

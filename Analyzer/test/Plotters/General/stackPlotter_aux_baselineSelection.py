@@ -5,7 +5,7 @@ import ROOT
 from collections import OrderedDict
 
 
-selections = ["0l_blind_ABCD", "1l_blind_ABCD", "2l_blind_ABCD", "0l_QCDCR_ABCD", "1l_QCDCR_ABCD", "2l_QCDCR_ABCD"] 
+selections = ["0l_ABCD", "1l_ABCD", "2l_ABCD", "0l_QCDCR_ABCD", "1l_QCDCR_ABCD", "2l_QCDCR_ABCD"] 
 
 histograms = {
 
@@ -31,13 +31,20 @@ histograms = {
     "h_HT_?"       : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "H_{T} [GeV]",     "rebin" : 10, "min" : 0, "max" : 3500}},
     "h_Mbl_?"      : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "M_{b,l} [GeV]",   "rebin" : 3,  "min" : 0, "max" :  360}}, 
     "h_Mll_?"      : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "M_{l,l} [GeV]",   "rebin" : 3,  "min" : 0, "max" :  360}},
+    "h_Jet1_Flavb_?" : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet 1 Flavb",    "rebin" : 1, "min" :  0,    "max" : 1}},
+    "h_Jet2_Flavb_?" : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet 2 Flavb",    "rebin" : 1, "min" :  0,    "max" : 1}},
+    "h_Jet3_Flavb_?" : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet 3 Flavb",    "rebin" : 1, "min" :  0,    "max" : 1}},
+    "h_Jet4_Flavb_?" : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet 4 Flavb",    "rebin" : 1, "min" :  0,    "max" : 1}},
+    "h_Jet5_Flavb_?" : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet 5 Flavb",    "rebin" : 1, "min" :  0,    "max" : 1}},
+    "h_Jet6_Flavb_?" : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Jet 6 Flavb",    "rebin" : 1, "min" :  0,    "max" : 1}},
+
 
     "h_njets_10incl_SYY_2l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
     "h_njets_11incl_SYY_1l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
     "h_njets_12incl_SYY_0l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
 
     "h_njets_10incl_RPV_2l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
-    "h_njets_11incl_RPV_1l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
+    "h_njets_11incl_RPV_1l_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
     "h_njets_12incl_RPV_0l_QCDCR_ABCD"    : {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "N_{jets} in each A,B,C,D region",        "rebin" : 1, "min" : -0.5, "max" : 23.5}},
 
 }
@@ -54,8 +61,8 @@ backgrounds = {
 }
 
 signals = OrderedDict([
-    ("RPV_2t6j_mStop-400",        {"name" : "RPV m_{ #tilde{t}} = 400 GeV",               "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    ("RPV_2t6j_mStop-300",        {"name" : "RPV m_{ #tilde{t}} = 300 GeV",               "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
     ("RPV_2t6j_mStop-800",        {"name" : "RPV m_{ #tilde{t}} = 800 GeV",               "color" : 7, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
-    ("StealthSYY_2t6j_mStop-400", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 400 GeV", "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
-    ("StealthSYY_2t6j_mStop-800", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 800 GeV", "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0})
+    #("StealthSYY_2t6j_mStop-300", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 300 GeV", "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
+    #("StealthSYY_2t6j_mStop-800", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 800 GeV", "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0})
 ])

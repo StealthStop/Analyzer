@@ -22,10 +22,10 @@ void HadTriggers_Analyzer::InitHistos()
     std::vector<std::string> trigTags     { "trig"                                                                                    };
     std::vector<std::string> nBJetCutTags { "1bjetCut", "ge1bjetCut", "2bjetCut", "ge2bjetCut", "3bjetCut", "ge3bjetCut", "ge4bjetCut"};
 
-    const int htbins   = 6;
+    const int htbins   = 8;
     const int ptbins   = 4;
     const int bjetbins = 3;
-    double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000};
+    double htbinEdges[htbins + 1]     = {500, 550, 600, 650, 700, 800, 1000, 1500, 2000};
     double ptbinEdges[ptbins + 1 ]    = {45, 50, 55, 60, 90                };
     double bjetbinEdges[bjetbins + 1] = {1.5, 2.5, 3.5, 8                  };
 
@@ -99,7 +99,7 @@ void HadTriggers_Analyzer::Loop(NTupleReader& tr, double, int maxevents, bool)
         // Print Event Number
         // ------------------
         if(maxevents != -1 && tr.getEvtNum() >= maxevents) break;        
-        //if( tr.getEvtNum() % 1000 == 0 ) printf("  Event %i\n", tr.getEvtNum() ) ;
+        if( tr.getEvtNum() % 1000 == 0 ) printf("  Event %i\n", tr.getEvtNum() ) ;
 
         // ----------------------
         // Print list of triggers

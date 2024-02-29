@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 import matplotlib as mpl
 mpl.use('Agg')
@@ -56,6 +57,7 @@ class Common_Calculations_Plotters:
         abcdError = []; abcdErrorUnc = []
         abcdPull  = []; abcdPullUnc  = []
         pullDenom = []; zeros        = []
+        closureCorrections = []; closureCorrectionsUnc = []
         
         totalChi2 = 0.0; ndof = 0
 
@@ -91,6 +93,8 @@ class Common_Calculations_Plotters:
                 pullUnc         = 1.0
                 closureError    = 1.0 - ( bkgPred[i][0] / bkgObs[i][0] )
                 closureErrorUnc = ((bkgPred[i][1] / bkgObs[i][0])**2.0 + (bkgObs[i][1] * bkgPred[i][0] / bkgObs[i][0]**2.0)**2.0)**0.5
+                closureCorrection = ( bkgPred[i][0] / bkgObs[i][0] )
+                closureCorrectionUnc = closureErrorUnc
                 pullDenominator = ( bkgPred[i][1]**2 + bkgObs[i][1]**2 )**0.5 / bkgPred[i][0]
                 zero            = 0.0
 
@@ -106,6 +110,8 @@ class Common_Calculations_Plotters:
                     abcdErrorUnc.append(0)
                     pullDenom.append(0)
                     zeros.append(999)
+                    closureCorrections.append(999)
+                    closureCorrectionsUnc.append(0)
 
                 else:
                     pred.append(bkgPred[i][0])
@@ -118,6 +124,8 @@ class Common_Calculations_Plotters:
                     abcdErrorUnc.append(closureErrorUnc)
                     pullDenom.append(pullDenominator)
                     zeros.append(zero)
+                    closureCorrections.append(closureCorrection)
+                    closureCorrectionsUnc.append(closureCorrectionUnc)
                     totalChi2 += pull ** 2.0
                     ndof      += 1                    
 
@@ -154,17 +162,17 @@ class Common_Calculations_Plotters:
 
         ch = ""
         if self.channel == "0l":
-            ch = "Fully-Hadronic"
+            ch = "0L"
         elif self.channel == "1l":
-            ch = "Semi-Leptonic"
+            ch = "1L"
         elif self.channel == "2l":
-            ch = "Fully-Leptonic"
+            ch = "2L"
 
         textLabel = '\n'.join(( "%s"%(name), "%s"%(md), "%s"%(ch) ))
         ax1.text(0.66, 0.80, textLabel, transform=ax.transAxes, color="black",  fontsize=9,  fontweight='normal', va='center', ha='left' )
         #ax1.text(0.5, 0.95, name,      transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center') 
 
-        ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
+        ax1.set_ylabel('Num. Events', fontsize=11)
         ax1.errorbar(x, pred, yerr=predUnc, label=r'Predicted $t\bar{t}+jets$', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
         ax1.errorbar(x, obs,  yerr=obsUnc,  label=r'Observed $t\bar{t}+jets$',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
@@ -177,15 +185,25 @@ class Common_Calculations_Plotters:
         ax2.set_ylabel('Non-Closure', fontsize=12)
         ax2.set_ylim([-0.59, 0.59])   
 
-        # pull 
+        # Closure Correction Value
         ax3 = fig.add_subplot(4, 1, 4)
         ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-        ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
-        ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
+        ax3.errorbar(x, closureCorrections, yerr=closureCorrectionsUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
+        ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax3.set_xlabel('Number of jets', fontsize=12)
-        ax3.set_ylabel('Pull',           fontsize=12) 
-        ax3.set_ylim([-5.9, 5.9])
+        ax3.set_ylabel('Correction', fontsize=12) 
+        ax3.set_ylim([-0.1, 2.1])
+
+        # pull 
+        #ax3 = fig.add_subplot(4, 1, 4)
+        #ax3.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+        #ax3.errorbar(x, abcdPull, yerr=abcdPullUnc, xerr=xUnc, fmt='', capsize=0, color='purple', lw=0, elinewidth=2, marker='o', markeredgecolor='purple', markerfacecolor='purple', markersize=5.0)
+        #ax3.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
+        #ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
+        #ax3.set_xlabel('Number of jets', fontsize=12)
+        #ax3.set_ylabel('Pull',           fontsize=12) 
+        #ax3.set_ylim([-5.9, 5.9])
  
         #plt.show()
         plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
@@ -335,11 +353,11 @@ class Common_Calculations_Plotters:
 
         ch = ""
         if self.channel == "0l":
-            ch = "Fully-Hadronic"
+            ch = "0L"
         elif self.channel == "1l":
-            ch = "Semi-Leptonic"
+            ch = "1L"
         elif self.channel == "2l":
-            ch = "Fully-Leptonic"
+            ch = "2L"
 
         nj = ""
         if "incl" in Njets:
@@ -515,11 +533,11 @@ class Common_Calculations_Plotters:
 
         ch = ""
         if self.channel == "0l":
-            ch = "Fully-Hadronic"
+            ch = "0L"
         elif self.channel == "1l":
-            ch = "Semi-Leptonic"
+            ch = "1L"
         elif self.channel == "2l":
-            ch = "Fully-Leptonic"
+            ch = "2L"
 
         nj = ""
         if "incl" in Njets:
@@ -596,11 +614,11 @@ class Common_Calculations_Plotters:
             
         ch = ""
         if self.channel == "0l":
-            ch = "Fully-Hadronic"
+            ch = "0L"
         elif self.channel == "1l":
-            ch = "Semi-Leptonic"
+            ch = "1L"
         elif self.channel == "2l":
-            ch = "Fully-Leptonic"
+            ch = "2L"
         
         nj = ""
         if "incl" in Njets:
@@ -746,11 +764,11 @@ class Common_Calculations_Plotters:
 
                 ch = ""
                 if self.channel == "0l":
-                    ch = "Fully-Hadronic"
+                    ch = "0L"
                 elif self.channel == "1l":
-                    ch = "Semi-Leptonic"
+                    ch = "1L"
                 elif self.channel == "2l":
-                    ch = "Fully-Leptonic"
+                    ch = "2L"
 
                 textLabel = '\n'.join(( "%s"%(name), "%s"%(md), "%s"%(ch) ))
                 ax1.text(0.66, 0.70, textLabel, transform=ax.transAxes, color="black",  fontsize=9,  fontweight='normal', va='center', ha='left' )
@@ -758,10 +776,10 @@ class Common_Calculations_Plotters:
 
                 ax1.errorbar(x, bkg_pred,  yerr=bkg_predUnc,  label=r'Predicted $t\bar{t}+jets$', xerr=xUnc, fmt='', capsize=0, color='red',       lw=0, elinewidth=2, marker='o', markeredgecolor='red',       markerfacecolor='red',       markersize=5.0)
                 ax1.errorbar(x, bkg_obs,   yerr=bkg_obsUnc,   label=r'Observed $t\bar{t}+jets$',  xerr=xUnc, fmt='', capsize=0, color='black',     lw=0, elinewidth=2, marker='o', markeredgecolor='black',     markerfacecolor='black',     markersize=5.0)
-                ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data',             xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=2, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=5.0)
-                ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',              xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=2, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=5.0)
+                #ax1.errorbar(x, data_pred, yerr=data_predUnc, label='Predicted Data',             xerr=xUnc, fmt='', capsize=0, color='palegreen', lw=0, elinewidth=2, marker='o', markeredgecolor='palegreen', markerfacecolor='palegreen', markersize=5.0)
+                #ax1.errorbar(x, data_obs,  yerr=data_obsUnc,  label='Observed Data',              xerr=xUnc, fmt='', capsize=0, color='green',     lw=0, elinewidth=2, marker='o', markeredgecolor='green',     markerfacecolor='green',     markersize=5.0)
                 ax1.set_xticklabels([])
-                ax1.set_ylabel('Unweighted Event Counts', fontsize=11)
+                ax1.set_ylabel('Num. Events', fontsize=11)
                 ax1.set_yscale('log')
                 ax1.set_ylim([5.0, 2e4])
             
@@ -771,7 +789,7 @@ class Common_Calculations_Plotters:
                 ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5]) 
                 ax2.errorbar(x, MC_closureCorrection,     yerr=MC_closureCorrection_Unc,     xerr=xUnc, label='Closure Correction',     fmt='', capsize=0, color='limegreen',      lw=0, elinewidth=2, marker='o', markeredgecolor='limegreen',      markerfacecolor='limegreen',      markersize=5.0)
                 ax2.errorbar(x, DataClosure,              yerr=DataClosure_Unc,              xerr=xUnc, label='Data Closure',           fmt='', capsize=0, color='crimson',        lw=0, elinewidth=2, marker='o', markeredgecolor='crimson',        markerfacecolor='crimson',        markersize=5.0)
-                ax2.errorbar(x, MC_corrected_DataClosure, yerr=MC_corrected_DataClosure_Unc, xerr=xUnc, label='Corrected Data Closure', fmt='', capsize=0, color='cornflowerblue', lw=0, elinewidth=2, marker='o', markeredgecolor='cornflowerblue', markerfacecolor='cornflowerblue', markersize=5.0)
+                #ax2.errorbar(x, MC_corrected_DataClosure, yerr=MC_corrected_DataClosure_Unc, xerr=xUnc, label='Corrected Data Closure', fmt='', capsize=0, color='cornflowerblue', lw=0, elinewidth=2, marker='o', markeredgecolor='cornflowerblue', markerfacecolor='cornflowerblue', markersize=5.0)
                 ax2.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
                 ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
                 ax2.set_ylabel('Closure Correction [MC]', fontsize=11)
@@ -830,3 +848,167 @@ class Common_Calculations_Plotters:
                 evtsNjetsPred_Var.append((predVar_A, predUncVar_A))
 
         self.plot_ttVar_ClosureNjets(np.array(evtsNjets), np.array(evtsNjetsPred), np.array(evtsNjets_Var), np.array(evtsNjetsPred_Var), Njets, name, closureTag, varTag)
+
+
+    # ---------------------------------------------------------------------------------------
+    # plot correction, data-based systematic, FSR systematic, and signal contamination effect
+    # ---------------------------------------------------------------------------------------
+    #def plot_ClosureAll(self, closeCorr, dataSys, fsrSys, sigContam, dataStatUnc, Njets, name = '', closureTag = '', bkgTag = '', valColor=None, isBlind=False):
+    def plot_ClosureAll(self, closeCorr, dataSys, fsrSys, dataStatUnc, Njets, name = '', closureTag = '', bkgTag = '', valColor=None, isBlind=False):
+        
+        print("closeCorr: ", closeCorr)
+        print("dataSys: ", dataSys)
+        print("fsrSys: ", fsrSys)
+        print("Njets: ", Njets)
+
+        plt_closeCorr = []; plt_closeCorr_UncY = [];
+        plt_dataSys = [];   plt_dataSys_UncY = [];  
+        plt_dataSys_OnlyUnc = []; plt_dataSys_OnlyUncY = [];
+        plt_fsrSys = [];    plt_fsrSys_UncY = [];   
+        #plt_sigContam = []; plt_sigContam_UncY = [];
+        plt_totalSysUnc = []
+        plt_totalUnc = []
+
+        firstNJ = Njets[0]
+
+        skipRest = False
+        for nj in Njets:
+            plt_closeCorr.append(closeCorr[nj][0])
+            plt_closeCorr_UncY.append(closeCorr[nj][1])
+            if dataSys[nj][0] == 1.0 or skipRest:
+                skipRest = True
+                plt_dataSys_OnlyUnc.append(1.0)
+                plt_dataSys_OnlyUncY.append(dataSys[nj][1])
+            else:
+                plt_dataSys.append(dataSys[nj][0])
+                plt_dataSys_UncY.append(dataSys[nj][1])
+            plt_fsrSys.append(fsrSys[nj][0])
+            plt_fsrSys_UncY.append(fsrSys[nj][1])
+            #plt_sigContam.append(sigContam[nj][0])
+            #plt_sigContam_UncY.append(sigContam[nj][1])
+            plt_totalSysUnc.append(math.sqrt((1-fsrSys[nj][0])**2 + (closeCorr[nj][1])**2 + (1-dataSys[firstNJ][0])**2))
+            plt_totalUnc.append(math.sqrt((1-fsrSys[nj][0])**2 + (closeCorr[nj][1])**2 + dataStatUnc[nj]**2 + (1-dataSys[firstNJ][0])**2))
+
+
+        xe = [0.5] * 5
+        x_noe = [0.0] * 5
+        y_noe = [0.0] * 5
+            
+        # ------------------------------------------   
+        # make a band for signal contam
+        # ------------------------------------------  
+        def makeErrorBoxes(x, zeros, xUnc, yUnc, hatch=""):
+
+            # list for all the error patches
+            errorBoxes = []
+
+            # loop over data points / create box from errors at each point
+            for xc, yc, xe, ye in zip(x, zeros, xUnc, yUnc):
+                rect = Rectangle( (xc-xe, yc-ye), 2*xe, 2*ye )
+                errorBoxes.append(rect)
+
+            # create patch collection with specified colour/alpha
+            pc = PatchCollection(errorBoxes, facecolor='gray', alpha=0.5, edgecolor='none')
+
+            return pc
+ 
+        # ------------------
+        # plot usual closure
+        # ------------------
+        fig = plt.figure(figsize=(5, 5))
+        ax  = fig.add_subplot(111)
+        fig.subplots_adjust(hspace=0, left=0.15, right=0.95, top=0.95)
+    
+        lowerNjets  = float(Njets[0])
+        higherNjets = float( (Njets[(-1)]).replace("incl","") )
+   
+        x = range(int(lowerNjets), int(higherNjets) + 1)
+        x_ds = []
+        x_dsu = []
+
+        skipRest = False
+        for nj in Njets:
+            if dataSys[nj][0] == 1.0 or skipRest:
+                skipRest = True
+                x_dsu.append([i for i in x if str(i) in nj][0])
+            else:
+                x_ds.append([i for i in x if str(i) in nj][0])
+ 
+        #ax.spines['top'].set_color('none')
+        #ax.spines['bottom'].set_color('none')
+        #ax.spines['left'].set_color('none')
+        #ax.spines['right'].set_color('none')
+        #ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
+    
+        # unweighted event counts
+        #ax1 = fig.add_subplot(4, 1, (1, 2))  
+        #fig.subplots_adjust(left=0.15, right=0.95)
+        #ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+        
+        ax = self.addCMSlabel(ax)
+
+        # put model, channel labels
+        md = ""
+        if self.model == "SYY":
+            md = "Stealth SYY"
+        else:
+            md = self.model
+
+        ch = ""
+        if self.channel == "0l":
+            ch = "0L"
+        elif self.channel == "1l":
+            ch = "1L"
+        elif self.channel == "2l":
+            ch = "2L"
+
+        #if ch == "1L" and md == "Stealth SYY" and plt_sigContam[-1] > 1.0:
+        #    plt_sigContam[-1] = 0.9
+            
+
+        textLabel = '\n'.join(( "%s"%(name), "%s"%(md), "%s"%(ch) ))
+        ax.text(0.02, 0.90, textLabel, transform=ax.transAxes, color="black",  fontsize=9,  fontweight='normal', va='center', ha='left' )
+        #ax.text(0.5, 0.95, name,      transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center') 
+
+        ax.set_ylabel('Closure Effect', fontsize=11)
+        ax.set_xlabel('$N_{Jets}$', fontsize=11)
+        ax.errorbar([i-0.25 for i in x], plt_closeCorr, yerr=plt_closeCorr_UncY, label=r'Closure Correction', xerr=x_noe, fmt='', capsize=0, color='red',   lw=0, elinewidth=1, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=8.0)
+        ax.errorbar([x_ds[0]], [plt_dataSys[0]], yerr=[plt_dataSys_UncY[0]], label=r'Data Residual Non-Closure (Systematic)', xerr=[x_noe[0]], fmt='', capsize=0, color='blue',   lw=0, elinewidth=1, marker='o', markeredgecolor='blue',   markerfacecolor='blue',   markersize=8.0)
+        ax.errorbar(x_ds[1:len(plt_dataSys)], plt_dataSys[1:len(plt_dataSys)], yerr=plt_dataSys_UncY[1:len(plt_dataSys)], label=r'Data Residual Non-Closure', xerr=x_noe[1:len(plt_dataSys)], fmt='', capsize=0, color='blue',   lw=0, elinewidth=1, marker='^', markeredgecolor='blue',   markerfacecolor='blue',   markersize=8.0)
+        ax.errorbar(x_dsu, plt_dataSys_OnlyUnc, yerr=plt_dataSys_OnlyUncY, label=r'Blinded Data Residual Non-Closure Unc.', xerr=x_noe[len(plt_dataSys):], fmt='', capsize=0, color='blue',   lw=0, elinewidth=1, marker='^', markeredgecolor='blue',   markerfacecolor='none',   markersize=8.0)
+        ax.errorbar([i+0.25 for i in x], plt_fsrSys, yerr=plt_fsrSys_UncY, label=r'FSR Systematic', xerr=x_noe, fmt='', capsize=0, color='green',   lw=0, elinewidth=1, marker='o', markeredgecolor='green',   markerfacecolor='green',   markersize=8.0)
+        #eb = ax.errorbar(x, plt_sigContam, label=r'Effect of Signal Contam.', xerr=xe, fmt='', capsize=0, color='black',   lw=0, elinewidth=1, marker='', markersize=0.0)
+        eb[-1][0].set_linestyle('--')
+
+        pc = makeErrorBoxes(x, [1.0]*5, xe, plt_totalSysUnc)
+        ax.add_collection(pc)
+
+        pc = makeErrorBoxes(x, [1.0]*5, xe, plt_totalUnc)
+        ax.add_collection(pc)
+
+        sys = mpl.patches.Patch(color='gray', label='Syst. Unc')
+        statSys = mpl.patches.Patch(color='gray', label='Stat. + Syst. Unc', alpha=0.5)
+        
+        handles, labels = plt.gca().get_legend_handles_labels()
+        handles.append(sys)
+        handles.append(statSys)
+        
+        #plt.show()
+        plt.xticks([int(Njet.replace("incl","")) for Njet in Njets])
+        plt.grid(axis = 'y', linestyle = '-')
+   
+        #box = ax.get_position()
+        #ax.set_position([box.x0, box.y0, box.width * 0.9, box.height*0.85])
+
+        lgd = ax.legend(handles=handles, loc='center left', numpoints=1, frameon=False, bbox_to_anchor=(1, 0.5))
+   
+        #plt.subplots_adjust(top=0.88)
+ 
+        fig.savefig('%s/%s_AllClosure_Njets_%s.pdf' % (self.outputDir, self.year, self.channel), bbox_inches='tight', dpi=300)
+   
+        plt.ylim(0.5, 2.0)
+
+        fig.savefig('%s/%s_AllClosure_Njets_%s_zoom.pdf' % (self.outputDir, self.year, self.channel), bbox_inches='tight', dpi=300)
+ 
+        plt.close(fig)
+

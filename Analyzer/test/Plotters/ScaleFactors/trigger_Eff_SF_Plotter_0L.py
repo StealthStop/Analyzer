@@ -82,7 +82,7 @@ def addCMSlogo(canvas, year, TopMargin, LeftMargin, RightMargin, SF=1.0):
 #   -- numerator   = preselections + triggers
 #   -- efficiency  = numerator / denominator
 # -------------------------------------------
-def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKey):
+def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var, varKey, bjet_cut):
 
     XMin = 0;    XMax = 1; RatioXMin = 0; RatioXMax = 1
     YMin = 0.30; YMax = 1; RatioYMin = 0; RatioYMax = 0.30
@@ -165,7 +165,7 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen, year, dataset, mc, var
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
     ScaleFactor.Draw("E1 P")
-    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/" + year + "_jet_trig_ge1bjetCut_" + var + "_TriggerEfficiency" + ".pdf")
+    canvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/" + year + "_jet_trig_{}_".format(bjet_cut) + var + "_TriggerEfficiency" + ".pdf")
 
 # --------------------------
 # Make 2D Scale Factor plots
@@ -202,7 +202,7 @@ def make_ScaleFactor_Plots(dataNum, dataDen, mcNum, mcDen, year, outputFile, xTi
     #ScaleFactor.GetXaxis().SetRangeUser(500,1500)
     #ScaleFactor.GetYaxis().SetRangeUser(45,120) # (40,120)
     ScaleFactor.SetContour(255)
-    
+ 
     # fill SF to canvas
     theName = dataNum.GetName().replace("h2_num", year) 
     aCanvas = ROOT.TCanvas("c_ScaleFactor_%s"%(theName), "c_ScaleFactor_%s"%(theName), 1400, 1400)
@@ -213,6 +213,7 @@ def make_ScaleFactor_Plots(dataNum, dataDen, mcNum, mcDen, year, outputFile, xTi
     ROOT.gPad.SetLeftMargin(0.09)
     ROOT.gPad.SetRightMargin(0.11)
     ROOT.gPad.SetTicks()
+    ROOT.gPad.SetLogx()
     ScaleFactor.Draw("COLZ E TEXT")
     addCMSlogo(aCanvas, year, TopMargin=0.12, LeftMargin=0.09, RightMargin=0.11, SF=1.0)
     aCanvas.SaveAs("triggerEfficiencySF_plots/triggerEffSFS_0l/%s.pdf"%(theName+"_TriggerSF"))
@@ -250,7 +251,7 @@ def main():
     # -------------------------------
     # root years & paths & histograms
     # ------------------------------- 
-    path_jetTriggers    = "/uscms_data/d3/semrat/SUSY/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_FullStatusTalk/hadd_Run2UL_HadronicTriggerEfficiencySF/"
+    path_jetTriggers    = "/uscms/home/bcrossma/nobackup/analysis/CMSSW_11_2_0_pre5/src/Analyzer/Analyzer/test/condor/Thesis_AN_FullStatusTalk/hadd_Run2UL_HadronicTriggerEfficiencySF/"
 
     years = [
         "2016preVFP" ,
@@ -271,12 +272,12 @@ def main():
 
     varList_jetTrigSF = [
         "1bjetCut_wJetHt6thJetPtBin",
-        #"2bjetCut_wJetHt6thJetPtBin",
-        #"3bjetCut_wJetHt6thJetPtBin",
-        #"ge1bjetCut_wJetHt6thJetPtBin",
+        "2bjetCut_wJetHt6thJetPtBin",
+        "3bjetCut_wJetHt6thJetPtBin",
+        "ge1bjetCut_wJetHt6thJetPtBin",
         "ge2bjetCut_wJetHt6thJetPtBin",
-        #"ge3bjetCut_wJetHt6thJetPtBin",
-        #"ge4bjetCut_wJetHt6thJetPtBin",
+        "ge3bjetCut_wJetHt6thJetPtBin",
+        "ge4bjetCut_wJetHt6thJetPtBin",
     ]
 
     # --------------------------
@@ -301,11 +302,17 @@ def main():
         # --------------------------------
         for var in varList_jetTrigEff:
             ROOT.TH1.AddDirectory(0)                                      
-            h_SingleMuon_Denominator = f2.Get("h_den_jet_trig_ge1bjetCut_%s"%(var))
-            h_SingleMuon_Numerator   = f2.Get("h_num_jet_trig_ge1bjetCut_%s"%(var))
-            h_TT_Denominator         = f1.Get("h_den_jet_trig_ge1bjetCut_%s"%(var))
-            h_TT_Numerator           = f1.Get("h_num_jet_trig_ge1bjetCut_%s"%(var))
-            make_Efficiency_Plots(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon", "TT", var, varKeys_jetTrig[var])
+            h_SingleMuon_Denominator = f2.Get("h_den_jet_trig_1bjetCut_%s"%(var))
+            h_SingleMuon_Numerator   = f2.Get("h_num_jet_trig_1bjetCut_%s"%(var))
+            h_TT_Denominator         = f1.Get("h_den_jet_trig_1bjetCut_%s"%(var))
+            h_TT_Numerator           = f1.Get("h_num_jet_trig_1bjetCut_%s"%(var))
+            make_Efficiency_Plots(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon", "TT", var, varKeys_jetTrig[var], "1bjetCut")
+
+            h_SingleMuon_Denominator = f2.Get("h_den_jet_trig_ge2bjetCut_%s"%(var))
+            h_SingleMuon_Numerator   = f2.Get("h_num_jet_trig_ge2bjetCut_%s"%(var))
+            h_TT_Denominator         = f1.Get("h_den_jet_trig_ge2bjetCut_%s"%(var))
+            h_TT_Numerator           = f1.Get("h_num_jet_trig_ge2bjetCut_%s"%(var))
+            make_Efficiency_Plots(h_SingleMuon_Numerator, h_SingleMuon_Denominator, h_TT_Numerator, h_TT_Denominator, year, "_SingleMuon", "TT", var, varKeys_jetTrig[var], "ge2bjetCut")
 
         for var in varList_jetTrigSF:
             ROOT.TH1.AddDirectory(0)

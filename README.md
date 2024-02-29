@@ -37,24 +37,19 @@ make -j4
 
 We set up separate top tagger cfg files for each year, because different b tagger working points (WPs) are used.
 Now we switch to DeepFlavor for b-tagging and top tagger also implements the medium DeepFlavor working point for each year.
-So, we have two set of releases, implmenting DeepFlavor WPs.
-`First set` is normal version.
-`Second set` is for registering the top tagger SFs
-Note that in the second set, we set up both DeepResolved and DeepAK8 WPs as 0.00 to get any top candidates in between WP 0 and 1 for calculating the SFs.
-Then, in the Framework/Framework/include/RunTopTagger.h, we set these WPs as whatever they were before.
+So, we have two sets of releases, implementing DeepFlavor WPs.
+The first set is the normal version, where the merged and resolved top tagger working points are passed to the tagger at run time.
 
+A second set of configs is available.
+Note that in the second set, we set up both DeepResolved and DeepAK8 WPs as 0.00 to get any top candidates in between WP 0 and 1 for calculating the SFs.
+
+In the Framework/Framework/include/RunTopTagger.h, the resolved and merged working points are explicity applied when counting the number of tops.
 ```
 cmsenv
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2598_DeepResolvedwp0.95_DeepAK8wp0.937_2016preVFPUL -f TopTaggerCfg_2016preVFP.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2489_DeepResolvedwp0.95_DeepAK8wp0.937_2016postVFPUL -f TopTaggerCfg_2016postVFP.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.3040_DeepResolvedwp0.95_DeepAK8wp0.895_2017UL -f TopTaggerCfg_2017.cfg -o
 getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2783_DeepResolvedwp0.95_DeepAK8wp0.895_2018UL -f TopTaggerCfg_2018.cfg -o
-
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2598_DeepResolvedwp0.00_DeepAK8wp0.00_2016preVFPUL -f TopTaggerCfg_2016preVFP.cfg -o
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2489_DeepResolvedwp0.00_DeepAK8wp0.00_2016postVFPUL -f TopTaggerCfg_2016postVFP.cfg -o
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.3040_DeepResolvedwp0.00_DeepAK8wp0.00_2017UL -f TopTaggerCfg_2017.cfg -o
-getTaggerCfg.sh -t StealthStop_DeepFlavorWp0.2783_DeepResolvedwp0.00_DeepAK8wp0.00_2018UL -f TopTaggerCfg_2018.cfg -o
-
 ```
 
 We have two set of Double DisCo NN, one for RPV model and another one SYY model.

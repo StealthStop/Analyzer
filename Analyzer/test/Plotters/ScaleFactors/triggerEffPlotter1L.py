@@ -1,13 +1,6 @@
-import ROOT, os, sys, argparse
-
-ROOT.gROOT.SetBatch(True)
-ROOT.gStyle.SetOptStat("")
-ROOT.gStyle.SetLineWidth(2)
-ROOT.gStyle.SetFrameLineWidth(1)
-#ROOT.gStyle.SetEndErrorSize(0)
-ROOT.gStyle.SetPaintTextFormat("3.3f")
-ROOT.TH1.SetDefaultSumw2()
-ROOT.TH2.SetDefaultSumw2()
+import argparse, os, sys, math
+from array import array
+from ctypes import c_int
 
 # --------------------------------------------
 # --------------------------------------------
@@ -20,6 +13,15 @@ parser.add_argument("--year"    , dest="year"    , help="Which year of run II"  
 parser.add_argument("--tag"     , dest="tag"     , help="Unique tag for output"       , type=str, required=True)
 arg = parser.parse_args()
 
+import ROOT
+ROOT.gROOT.SetBatch(True)
+ROOT.gStyle.SetOptStat("")
+ROOT.gStyle.SetLineWidth(2)
+ROOT.gStyle.SetFrameLineWidth(1)
+#ROOT.gStyle.SetEndErrorSize(0)
+ROOT.gStyle.SetPaintTextFormat("3.3f")
+ROOT.TH1.SetDefaultSumw2()
+ROOT.TH2.SetDefaultSumw2()
 
 # -----------------
 # set minimum error
@@ -102,40 +104,91 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen):
     YTitleSize = 0.05;  YLabelSize = 0.05;  YTitleOffset = 0.9
 
     # get data efficiency
-    dataRatio = dataNum.Clone()
-    dataRatio.SetTitle("")
-    dataRatio.GetYaxis().SetTitle("L1+HLT Efficiency")
-    dataRatio.GetXaxis().SetLabelSize(0)
-    dataRatio.GetYaxis().SetTitleSize(0.05)
-    dataRatio.GetYaxis().SetLabelSize(0.05)
+    #dataRatio = dataNum.Clone()
+    dataNum.GetYaxis().SetTitle("L1+HLT Efficiency")
+    dataNum.AddBinContent(dataNum.GetNbinsX(), dataNum.GetBinContent(dataNum.GetNbinsX()+1))
+    dataDen.GetYaxis().SetTitle("L1+HLT Efficiency")
+    dataDen.AddBinContent(dataDen.GetNbinsX(), dataDen.GetBinContent(dataDen.GetNbinsX()+1))
+    dataRatio = ROOT.TEfficiency(dataNum, dataDen)
+    #dataRatio.SetTitle("")
+    #dataRatio.GetYaxis().SetTitle("L1+HLT Efficiency")
+    #dataRatio.GetXaxis().SetLabelSize(0)
+    #dataRatio.GetYaxis().SetTitleSize(0.15)
+    #dataRatio.GetYaxis().SetLabelSize(0.15)
     dataRatio.SetLineWidth(3)
     dataRatio.SetLineColor(1)
     dataRatio.SetMarkerColor(1)
-    dataRatio.SetMarkerSize(3.0)
+    dataRatio.SetMarkerSize(2.0)
     dataRatio.SetMarkerStyle(20)
-    dataRatio.Divide(dataNum, dataDen, 1, 1, "B")
-    dataRatio.GetYaxis().SetRangeUser(0.4, 1.1)
+
+    ##dataRatio.Divide(dataNum, dataDen, 1, 1, "B")
+    #dataRatio.GetYaxis().SetRangeUser(0.4, 1.1)
     # get mc efficiency
-    mcRatio = mcNum.Clone()
+    #mcRatio = mcNum.Clone()
+    mcNum.GetYaxis().SetTitle("L1+HLT Efficiency")
+    mcNum.AddBinContent(mcNum.GetNbinsX(), mcNum.GetBinContent(mcNum.GetNbinsX()+1))
+    mcDen.GetYaxis().SetTitle("L1+HLT Efficiency")
+    mcDen.AddBinContent(mcDen.GetNbinsX(), mcDen.GetBinContent(mcDen.GetNbinsX()+1))
+    mcRatio = ROOT.TEfficiency(mcNum, mcDen)
     mcRatio.SetLineWidth(3)
     mcRatio.SetLineColor(2)
     mcRatio.SetMarkerColor(2)
-    mcRatio.SetMarkerSize(3.0)
+    mcRatio.SetMarkerSize(2.0)
     mcRatio.SetMarkerStyle(20)
-    mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
-    mcRatio.GetYaxis().SetRangeUser(0.4, 1.1)
+    ##mcRatio.Divide(mcNum, mcDen, 1, 1, "B")
+    #mcRatio.GetYaxis().SetRangeUser(0.4, 1.1)
     # get errors
-    updateErrors(dataRatio,dataDen)
-    updateErrors(mcRatio,mcDen)
+    #updateErrors(dataRatio,dataDen)
+    #updateErrors(mcRatio,mcDen)
     # get scale factor
-    dataMcRatio = dataNum.Clone()
-    dataMcRatio.Divide(dataRatio, mcRatio)
+    dataRatioGraph = dataRatio.CreateGraph()
+    mcRatioGraph = mcRatio.CreateGraph()
+    dataMcRatio = dataRatioGraph.Clone()
+    for i in range(1,dataMcRatio.GetN()+1):
+        x_vals = dataRatioGraph.GetX()
+        try:
+            temp_err_high = math.sqrt((dataRatioGraph.GetErrorYhigh(i-1) / dataRatioGraph.Eval(x_vals[i-1]))**2 + (mcRatioGraph.GetErrorYhigh(i-1) / mcRatioGraph.Eval(x_vals[i-1]))**2)
+            temp_err_low = math.sqrt((dataRatioGraph.GetErrorYlow(i-1) / dataRatioGraph.Eval(x_vals[i-1]))**2 + (mcRatioGraph.GetErrorYlow(i-1) / mcRatioGraph.Eval(x_vals[i-1]))**2)
+        except:
+            temp_err_high = 1
+            temp_err_low = 1
+
+        temp_err_x_low = dataRatioGraph.GetErrorXlow(i-1)
+        temp_err_x_high = dataRatioGraph.GetErrorXhigh(i-1)
+
+        temp_y_val = dataRatioGraph.Eval(x_vals[i-1]) / mcRatioGraph.Eval(x_vals[i-1])
+        #print(temp_y_val, x_vals[i-1], temp_err_high, temp_err_low, temp_err_x_high, temp_err_x_low)
+
+        if math.isnan(temp_err_high):
+            temp_err_high = 0
+       
+        if "nonisomuon" in dataset and "eta" not in XTitle:
+            print("hi")
+ 
+        dataMcRatio.SetPoint(i-1, x_vals[i-1], temp_y_val)
+        dataMcRatio.SetPointEYhigh(i-1, temp_err_high)
+        dataMcRatio.SetPointEYlow(i-1, temp_err_low)
+        dataMcRatio.SetPointEXhigh(i-1, temp_err_x_high)
+        dataMcRatio.SetPointEXlow(i-1, temp_err_x_low)
+        
+    #dataMcRatio.GetXaxis().SetLimits(x_vals[0]-dataMcRatio.GetErrorXlow(0), x_vals[len(x_vals)-1]+dataMcRatio.GetErrorXlow(len(x_vals)-1))
+    if "eta" in XTitle:
+        dataMcRatio.GetXaxis().SetLimits(-2.9,2.9)
+    else:
+        dataMcRatio.GetXaxis().SetLimits(30,320)
+
+    #dataMcRatio_top = dataNum.Clone()
+    #dataMcRatio_top.Divide(dataDen.Clone())
+    #dataMcRatio_bottom = mcNum.Clone()
+    #dataMcRatio_bottom.Divide(mcDen.Clone())
+    #dataMcRatio_top.Divide(dataMcRatio_bottom.Clone())
+    #dataMcRatio = dataMcRatio_top.Clone()
     dataMcRatio.SetMinimum(0.8)
     dataMcRatio.SetMaximum(1.2)
     dataMcRatio.GetYaxis().SetNdivisions(-304)
     dataMcRatio.SetTitle("")
     dataMcRatio.SetLineWidth(3)
-    dataMcRatio.SetMarkerSize(3.0)
+    dataMcRatio.SetMarkerSize(0.5)
     dataMcRatio.SetMarkerStyle(20)
     dataMcRatio.SetMarkerColor(dataMcRatio.GetLineColor())
     dataMcRatio.GetXaxis().SetTitleSize(PadFactor*XTitleSize)
@@ -165,9 +218,35 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen):
     ROOT.gPad.SetBottomMargin(BottomMargin)
     ROOT.gPad.SetRightMargin(RightMargin)
     ROOT.gPad.SetTicks()
-    dataRatio.Draw("E1 P")
-    mcRatio.Draw("E1 P SAME")
-    
+
+    mcRatio.Draw("AP")
+    dataRatio.Draw("P SAME")
+    aCanvas.Update()
+
+    # Formating TEfficiency via TGraphAsymmErrors
+    mcGraph = mcRatio.GetPaintedGraph()
+    mcGraph.SetTitle("")
+    mcGraph.GetYaxis().SetTitle("L1+HLT Efficiency")
+    mcGraph.GetXaxis().SetLabelSize(0)
+    mcGraph.GetXaxis().SetRangeUser(30,320)
+    mcGraph.GetYaxis().SetTitleSize(0.05)
+    mcGraph.GetYaxis().SetLabelSize(0.05)
+    mcGraph.GetYaxis().SetRangeUser(0.45,1.1)
+    #mcGraph.GetXaxis().SetRange(1,mcGraph.GetNbinsX()+1)
+
+    dataGraph = dataRatio.GetPaintedGraph()
+    dataGraph.SetTitle("")
+    dataGraph.GetYaxis().SetTitle("L1+HLT Efficiency")
+    dataGraph.GetXaxis().SetLabelSize(0)
+    dataGraph.GetXaxis().SetRangeUser(30,320)
+    dataGraph.GetYaxis().SetTitleSize(0.05)
+    dataGraph.GetYaxis().SetLabelSize(0.05)
+    dataGraph.GetYaxis().SetRangeUser(0.45,1.1)
+    #dataGraph.GetXaxis().SetRange(1,dataGraph.GetNbinsX()+1)
+
+    aCanvas.Modified()
+    aCanvas.Update()
+
     iamLegend = ROOT.TLegend(0.63, 0.05, 0.99, 0.27, "", "trNDC")
     iamLegend.SetTextSize(0.035)
     iamLegend.SetBorderSize(0)
@@ -188,7 +267,11 @@ def make_Efficiency_Plots(dataNum, dataDen, mcNum, mcDen):
     ROOT.gPad.SetLeftMargin(LeftMargin)
     ROOT.gPad.SetTicks()
     ROOT.gPad.SetGridy()
-    dataMcRatio.Draw("E1 P")
+    dataMcRatio.Draw("APE")
+    dataMcRatio.GetXaxis().SetRangeUser(30,320)
+
+    aCanvas.Modified()
+    aCanvas.Update()
     aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s_TriggerEfficiency.pdf"%(tag,theName))
 
 # --------------------------
@@ -289,17 +372,43 @@ def make_ScaleFactor_Plots(dataNum, dataDen, mcNum, mcDen, aName, outputFile):
     ROOT.gPad.SetTicks()
     dataMcRatio.Draw("COLZ E TEXT")
     addCMSlogo(aCanvas, year, TopMargin=0.12, LeftMargin=0.09, RightMargin=0.11, SF=1.0)
+    if not os.path.isdir("./triggerEfficiencySF_plots/%s"%(tag)):
+        os.makedirs("./triggerEfficiencySF_plots/%s"%(tag))
     aCanvas.SaveAs("triggerEfficiencySF_plots/%s/%s%s_TriggerSF.pdf"%(tag,year,theName))
+    print("made pdf: {}".format("triggerEfficiencySF_plots/%s/%s%s_TriggerSF.pdf"%(tag,year,theName)))
+
+def GetOverflow(hist):
+
+    if "Eta" in hist.GetName():
+        return hist
+
+    bin_edges = []
+
+    for i in range(1,hist.GetNbinsX()+1):
+        bin_edges.append(hist.GetBinLowEdge(i))
+
+    bin_edges.append(bin_edges[-1] + 40)
+    
+    bin_content = []
+    bin_errors = []
+    for i in range(1, hist.GetNbinsX()+2):
+        bin_content.append(hist.GetBinContent(i))
+        bin_errors.append(hist.GetBinError(i))
+
+    print(bin_edges)
+
+    return {'content': bin_content, 'error': bin_errors, "edges": bin_edges}
 
 
 if __name__ == '__main__':
 
     effTags      = [ "den", "num" ] 
-    lepTags      = [ "el", "mu"   ]
+    #lepTags      = ["nonIsoMu"]
+    lepTags      = [ "el", "mu"]
     binTags      = [ "Eta", "Pt"  ]
     ptTags       = [ "pt40"       ]
     trigTags     = [ "trig"       ] 
-    nJetCutTags  = [ "ge5jetCut"  ]
+    nJetCutTags  = [ "ge1jetCut", "ge5jetCut", "le3jetCut", "le5jetCut" ]
 
     basePath = arg.basePath
     inputDir = arg.inputDir
@@ -308,21 +417,26 @@ if __name__ == '__main__':
     dataset  = arg.dataset
 
     fullPath = basePath + "/" + inputDir
-    mcFile   = ROOT.TFile.Open(fullPath + "/" + year + "_TT.root")
+    if dataset == "nonisomuon":
+        mcFile   = ROOT.TFile.Open(fullPath + "/" + year + "_QCD.root")
+    else:
+        mcFile   = ROOT.TFile.Open(fullPath + "/" + year + "_TT.root")
     dataFile = 0
     if dataset == "electron": 
         dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleElectron.root")
     elif dataset == "muon": 
         dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleMuon.root")
+    elif dataset == "nonisomuon": 
+        dataFile = ROOT.TFile.Open(fullPath + "/" + year + "_Data_SingleElectron.root")
 
     outputPath     = "./triggerEfficiencySF_plots/triggerEffSFS_1l/"
     outputFileName = "%s_Leptonic_Triggers_SF.root"%(year)
-    outputFile     = ROOT.TFile.Open("%s/%s"%(outputPath,outputFileName), "UPDATE")
+    outputFile     = ROOT.TFile.Open("%s/%s"%(outputPath,outputFileName), "WRITE")
 
     
     for lepTag in lepTags:
     
-        if (lepTag == "el" and dataset == "electron") or (lepTag == "mu" and dataset == "muon"): continue
+        if (lepTag == "el" and dataset == "electron") or (lepTag == "mu" and dataset == "muon") or (lepTag == "nonisomuon" and dataset == "muon"): continue
     
         for ptTag in ptTags:
     
@@ -358,6 +472,36 @@ if __name__ == '__main__':
                         mcFile.cd()
                         hMcNum = mcFile.Get(numerTag1)
                         hMcDen = mcFile.Get(denomTag1)
+                        #hDataNum_dict = GetOverflow(hDataNum)
+                        #hDataDen_dict = GetOverflow(hDataDen)
+                        #hMcNum_dict = GetOverflow(hMcNum)
+                        #hMcDen_dict = GetOverflow(hMcDen)
+
+                        #if not "Eta" in hDataNum.GetTitle():
+
+                        #    hDataNum = ROOT.TH1D("", "", 10, array('d', hDataNum_dict["edges"]))
+                        #    #hDataNum = ROOT.TH1D("{}".format(hDataNum.GetTitle()), "{}".format(hDataNum.GetTitle()), 10, array('d', hDataNum_dict["edges"]))
+                        #    for i in range(hDataNum.GetNbinsX()+1):
+                        #        hDataNum.SetBinContent(i, hDataNum_dict['content'][i-1])
+                        #        hDataNum.SetBinError(i, hDataNum_dict['error'][i-1])
+
+                        #    hDataDen = ROOT.TH1D("", "", 10, array('d', hDataDen_dict["edges"]))
+                        #    #hDataDen = ROOT.TH1D("{}".format(hDataDen.GetTitle()), "{}".format(hDataDen.GetTitle()), c_int(hDataDen.GetNbinsX()+1), array('d', hDataDen_dict["edges"]))
+                        #    for i in range(hDataDen.GetNbinsX()+1):
+                        #        hDataDen.SetBinContent(i, hDataDen_dict['content'][i-1])
+                        #        hDataDen.SetBinError(i, hDataDen_dict['error'][i-1])
+
+                        #    hMcNum = ROOT.TH1D("", "", 10, array('d', hDataDen_dict["edges"]))
+                        #    #hMcNum = ROOT.TH1D("{}".format(hMcNum.GetTitle()), "{}".format(hMcNum.GetTitle()), c_int(hMcNum.GetNbinsX()+1), array('d', hMcNum_dict["edges"]))
+                        #    for i in range(hMcNum.GetNbinsX()+1):
+                        #        hMcNum.SetBinContent(i, hMcNum_dict['content'][i-1])
+                        #        hMcNum.SetBinError(i, hMcNum_dict['error'][i-1])
+                        #        
+                        #    hMcDen = ROOT.TH1D("", "", 10, array('d', hDataDen_dict["edges"]))
+                        #    #hMcDen = ROOT.TH1D("{}".format(hMcDen.GetTitle()), "{}".format(hMcDen.GetTitle()), c_int(hMcDen.GetNbinsX()+1), array('d', hMcDen_dict["edges"]))
+                        #    for i in range(hMcDen.GetNbinsX()+1):
+                        #        hMcDen.SetBinContent(i, hMcDen_dict['content'][i-1])
+                        #        hMcDen.SetBinError(i, hMcDen_dict['error'][i-1])
 
                         if hDataNum == None or hDataDen == None or hMcNum == None or hMcDen == None: continue
 
