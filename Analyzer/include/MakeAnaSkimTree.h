@@ -24,10 +24,12 @@ public :
    void InitHistos();
    void WriteHistos(TFile* outfile); 
 
-   MiniTupleMaker *myAnaSkimTuple;
-   TTree          *myTree;
+   std::map<std::string, MiniTupleMaker*> myAnaSkimTuples;
+   std::map<std::string, TTree*>          myTrees;
 
-   bool treeInit;
+   std::map<std::string, bool> treeInits;
+   std::vector<std::string> jecvars;
+   std::vector<std::string> ttvars;
 };
 
 #endif

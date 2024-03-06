@@ -75,7 +75,7 @@ private:
             else if(module=="MakeMVAVariables_1l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",        false, true, 7, 1, "_1l");
             else if(module=="MakeMVAVariables_NonIsoMuon_1l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",  false, true, 7, 1, "_1l");
             else if(module=="MakeMVAVariables_2l")                   tr.emplaceModule<MakeMVAVariables>(false, "", "GoodJets_pt30",        false, true, 6, 2, "_2l");
-            else if(module=="MakeMVAVariables_NonIsoMuon_2l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",  false, true, 7, 2, "_2l");
+            else if(module=="MakeMVAVariables_NonIsoMuon_2l")        tr.emplaceModule<MakeMVAVariables>(false, "", "NonIsoMuonJets_pt30",  false, true, 6, 2, "_2l");
             else if(module=="Baseline")                              tr.emplaceModule<Baseline>();
             else if(module=="StopGenMatch")                          tr.emplaceModule<StopGenMatch>();
             else if(module=="MegaJetCombine")                        tr.emplaceModule<MegaJetCombine>();
@@ -601,6 +601,8 @@ public:
                 "DoubleDisCo_NonIsoMuon_0l_SYY",
                 "DoubleDisCo_NonIsoMuon_1l_RPV",
                 "DoubleDisCo_NonIsoMuon_1l_SYY",
+                "DoubleDisCo_NonIsoMuon_2l_RPV",
+                "DoubleDisCo_NonIsoMuon_2l_SYY",
             };
             registerModules(tr, std::move(modulesList));
         }
