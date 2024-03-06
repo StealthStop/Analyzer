@@ -16,37 +16,32 @@ def red(string):
 # Process the return and format into a clean list of strings
 def listPath(path, onEOS=False):
 
+    # Depending on using xrdfs ls or bash ls, the position of the file sizes will be different
     proc = None
+    pos = None
     if onEOS:
-        proc = subprocess.Popen(["xrdfs", "root://cmseos.fnal.gov", "ls", path], stdout=subprocess.PIPE)
+        proc = subprocess.Popen(["xrdfs", "root://cmseos.fnal.gov", "ls", "-l", path], stdout=subprocess.PIPE)
+        pos = 3
     else:
-        proc = subprocess.Popen(["ls", path], stdout=subprocess.PIPE)
-
-    payload = proc.stdout.readlines()
+        proc = subprocess.Popen(["ls", "-l", path], stdout=subprocess.PIPE)
+        pos = 4
 
     lines = []
-    for line in payload:
-        line = str(line).rstrip("\n")
+    fileList = proc.stdout.readlines()
+    for line in fileList:
 
-        # Check the size, if clearly a broken file (< 512 bytes) do not count as "done"
+        chunks = None
         if ".root" in line:
+            raw = line.rstrip("\n").split(" ")
+            chunks = filter(str.strip, raw)
+            size = chunks[pos]
 
-            proc = subprocess.Popen(["xrdfs", "root://cmseos.fnal.gov", "stat", line], stdout=subprocess.PIPE)
-            info = proc.stdout.readlines()
-            size = None
-            for stat in info:
-                if "Size" in stat:
-                    size = stat.partition("Size:")[-1].replace(" ", "").rstrip()
-                    break
-                else:
-                    continue
-                    
             if int(size) < 512:
                 continue
 
         # Ensure that each element in the list has its full path
         if not onEOS:
-            line = path + "/" + line
+            line = path + "/" + chunks[-1]
         lines.append(line)
 
     return lines
@@ -57,7 +52,7 @@ def listPath(path, onEOS=False):
 def getMissingJobs(rootFiles, logFiles):
 
     # Subfunction to take a list of files and extract the job ID
-    def extractJobs(listOfFiles, checkError = False):
+    def extractJobs(listOfFiles):
 
         jobIDs = {}
         for f in listOfFiles:
@@ -72,13 +67,7 @@ def getMissingJobs(rootFiles, logFiles):
             if sampleset not in jobIDs:
                 jobIDs[sampleset] = []
 
-            if checkError:
-                try:
-                    subprocess.check_output("grep \"TNet\" %s"%(os.path.abspath(f).replace(".log", ".stderr")), shell=True)
-                except:
-                    jobIDs[sampleset].append(jobid)
-            else:
-                jobIDs[sampleset].append(jobid)
+            jobIDs[sampleset].append(jobid)
 
         sortedJobIDs = {}
         for sample, idList in jobIDs.items():
@@ -86,9 +75,16 @@ def getMissingJobs(rootFiles, logFiles):
 
         return sortedJobIDs
 
+    logDir = os.path.dirname(logFiles[0])
+    proc = subprocess.Popen("grep -l TNet %s/*.stderr"%(logDir), stdout=subprocess.PIPE, shell=True)
+    errFiles = []
+    fileList = proc.stdout.readlines()
+    for line in fileList:
+        errFiles.append(line.rstrip("\n"))
+
     finishedJobs = extractJobs(rootFiles)
     totalJobs    = extractJobs(logFiles)
-    errFreeJobs  = extractJobs(logFiles, checkError=True)
+    errorJobs    = extractJobs(errFiles)
       
     nFilesPerJob = {}
     missingJobs = {}
@@ -105,9 +101,11 @@ def getMissingJobs(rootFiles, logFiles):
             continue
             
         finishedJobIDs = finishedJobs[sample]
-        errFreeJobIDs  = errFreeJobs[sample]
+        errorJobIDs    = []
+        if sample in errorJobs:
+            errorJobIDs = errorJobs[sample]
         for jobID in allJobIDs:
-            if jobID not in finishedJobIDs or jobID not in errFreeJobIDs: 
+            if jobID not in finishedJobIDs or jobID in errorJobIDs: 
 
                 if sample not in missingJobs:
                     missingJobs[sample] = []
@@ -122,7 +120,6 @@ def main():
     parser.add_option ('-s',        dest='fastMode',                action='store_true', default = False,         help="Run Analyzer in fast mode")
     parser.add_option ('-u',        dest='userOverride',  type='string',                 default = '',            help="Override username with something else")
     parser.add_option ('--jobdir',  dest='jobdir',        type='string',                 default = '.',           help="Name of directory where output of each condor job goes")
-    parser.add_option ('--analyze', dest='analyze',                                      default = 'Analyze1Lep', help="AnalyzeBackground, AnalyzeEventSelection, Analyze0Lep, Analyze1Lep, MakeNJetDists")    
     options, args = parser.parse_args()
 
     userName = os.environ["USER"]
@@ -138,7 +135,7 @@ def main():
     workingDir = options.jobdir
     eosDir     = "/store/user/%s/StealthStop/%s"%(userName, options.jobdir)
 
-    jobSubdirs = listPath(eosDir + "/output-files", onEOS=True)
+    jobSubdirs = [jobSubdir.rstrip("\n").split(" ")[-1] for jobSubdir in listPath(eosDir + "/output-files", onEOS=True)]
 
     sc = SampleCollection(testDir + "/sampleSets.cfg", testDir + "/sampleCollections.cfg")
 
@@ -161,6 +158,14 @@ def main():
         rootFiles = listPath(jobSubdir, onEOS=True)
         logFiles  = glob.glob(workingDir + "/" + logsDir + "/*.log")
 
+        outFile = logFiles[0].replace(".log", ".stdout")
+        analyzer = None
+        with open(outFile) as f:
+            for line in f:
+                if "Running the" == line[0:11]:
+                    analyzer = line.split(" ")[2]
+                    break
+
         nFilesPerJob, missingJobs = getMissingJobs(rootFiles, logFiles)
 
         for sample, missingJobIDs in missingJobs.items():
@@ -175,7 +180,7 @@ def main():
 
             for missingJobID in missingJobIDs:
 
-                fileParts.append("Arguments = %s %i %i %s %s %s %s %d %d\n"%(sample, nFilesPerJob[sample], missingJobID, filelist, options.analyze, os.environ["CMSSW_VERSION"], redirector + eosDir + "/" + stubDir, cmsConnect, options.fastMode))
+                fileParts.append("Arguments = %s %i %i %s %s %s %s %d %d\n"%(sample, nFilesPerJob[sample], missingJobID, filelist, analyzer, os.environ["CMSSW_VERSION"], redirector + eosDir + "/" + stubDir, cmsConnect, options.fastMode))
                 fileParts.append("Output    = %s/%s/MyAnalysis_%s_%i.stdout\n"%(workingDir, logsDir, sample, missingJobID))
                 fileParts.append("Error     = %s/%s/MyAnalysis_%s_%i.stderr\n"%(workingDir, logsDir, sample, missingJobID))
                 fileParts.append("Log       = %s/%s/MyAnalysis_%s_%i.log\n"%(workingDir,    logsDir, sample, missingJobID))
