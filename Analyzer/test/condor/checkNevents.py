@@ -52,17 +52,18 @@ if __name__ == '__main__':
         if "#" in line or line == "\n":
             newSampleSet.write(line)
             continue
-    
+
         chunks = (line.replace(" ", "")).split(",")
         sampleName = chunks[0]
-        predPos    = chunks[-3].rstrip()
-        predNeg    = chunks[-2].rstrip()
 
         # If sample was not run over with nEvts.py
         # just put back the line in the new sampleSet file
         if sampleName not in obsCounts:
             newSampleSet.write(line)
             continue
+
+        predPos    = chunks[-3].rstrip()
+        predNeg    = chunks[-2].rstrip()
 
         obsPos = obsCounts[sampleName]["npos"]
         obsNeg = obsCounts[sampleName]["nneg"]
