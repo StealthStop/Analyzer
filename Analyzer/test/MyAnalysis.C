@@ -29,6 +29,7 @@
 #include "Analyzer/Analyzer/include/MakeNNVariables.h"
 #include "Analyzer/Analyzer/include/AnalyzeGenStop.h"
 #include "Analyzer/Analyzer/include/AnalyzeXsec.h"
+#include "Analyzer/Analyzer/include/MakeCutflow.h"
 
 #include "TH1D.h"
 #include "TFile.h"
@@ -192,13 +193,13 @@ int main(int argc, char *argv[])
         {"HEM_Analyzer",               run<HEM_Analyzer>              },
         {"TopTaggerSF_Analyzer",       run<TopTaggerSF_Analyzer>      },
         {"ISRJets_Analyzer",           run<ISRJets_Analyzer>          },
-        {"HadTriggers_Analyzer",       run<HadTriggers_Analyzer>      },
+        //{"HadTriggers_Analyzer",       run<HadTriggers_Analyzer>      },
         {"StealthHemispheres",         run<StealthHemispheres>        },
         {"AnalyzeTemplate",            run<AnalyzeTemplate>           },
         {"MakeNNVariables",            run<MakeNNVariables>           },
         {"AnalyzeGenStop",             run<AnalyzeGenStop>            },
         {"AnalyzeXsec",                run<AnalyzeXsec>               },
-
+        {"MakeCutflow",                run<MakeCutflow>               },
     }; 
 
     try

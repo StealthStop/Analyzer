@@ -80,10 +80,22 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
         {"h_njets_10incl_RPV",             20, -0.5, 19.5},
         {"h_njets_11incl_RPV",             20, -0.5, 19.5},
         {"h_njets_12incl_RPV",             20, -0.5, 19.5},
+        {"h_njets_10incl_RPV_neg",             20, -0.5, 19.5},
+        {"h_njets_11incl_RPV_neg",             20, -0.5, 19.5},
+        {"h_njets_12incl_RPV_neg",             20, -0.5, 19.5},
+        {"h_njets_10incl_RPV_pos",             20, -0.5, 19.5},
+        {"h_njets_11incl_RPV_pos",             20, -0.5, 19.5},
+        {"h_njets_12incl_RPV_pos",             20, -0.5, 19.5},
         {"h_njets_13incl_RPV",             20, -0.5, 19.5},
         {"h_njets_10incl_SYY",             20, -0.5, 19.5},
         {"h_njets_11incl_SYY",             20, -0.5, 19.5},
         {"h_njets_12incl_SYY",             20, -0.5, 19.5},
+        {"h_njets_10incl_SYY_neg",             20, -0.5, 19.5},
+        {"h_njets_11incl_SYY_neg",             20, -0.5, 19.5},
+        {"h_njets_12incl_SYY_neg",             20, -0.5, 19.5},
+        {"h_njets_10incl_SYY_pos",             20, -0.5, 19.5},
+        {"h_njets_11incl_SYY_pos",             20, -0.5, 19.5},
+        {"h_njets_12incl_SYY_pos",             20, -0.5, 19.5},
         {"h_njets_13incl_SYY",             20, -0.5, 19.5},
         {"h_HT",                          720,    0, 7200},
         {"h_dRbjets",                     180,    0,    6},
@@ -96,7 +108,11 @@ AnalyzeDoubleDisCo::AnalyzeDoubleDisCo() : initHistos(false)
 
     hist2DInfos = {
         {"h_DoubleDisCo_RPV_disc1_disc2", 100,    0,    1, 100,    0,   1},
+        {"h_DoubleDisCo_RPV_disc1_disc2_neg", 100,    0,    1, 100,    0,   1},
+        {"h_DoubleDisCo_RPV_disc1_disc2_pos", 100,    0,    1, 100,    0,   1},
         {"h_DoubleDisCo_SYY_disc1_disc2", 100,    0,    1, 100,    0,   1},
+        {"h_DoubleDisCo_SYY_disc1_disc2_neg", 100,    0,    1, 100,    0,   1},
+        {"h_DoubleDisCo_SYY_disc1_disc2_pos", 100,    0,    1, 100,    0,   1},
         {"h_pt_jetRank_cm",               150,    0, 1500,  10,    0,  10},
         {"h_ptrHT_jetRank_cm",            150,    0,    1,  10,    0,  10},
         {"h_nRtops_vs_nMtops",              7, -0.5,  6.5,   7, -0.5, 6.5},
@@ -778,6 +794,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             std::vector<bool>                                       Baseline                       ;
             std::vector<bool>                                       Baseline_noIsoCut              ;
             std::vector<bool>                                       Baseline_blind                 ;
+            std::vector<bool>                                       Baseline_trigEff               ;
             std::vector<double>                                     weight                         ;
             //std::vector<double>                                     weight_reshape                 ;
             std::vector<double>                                     weight_fsrUp                   ;
@@ -937,6 +954,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                 NMTops.push_back(tr.getVar<int>("ntops_1jet"                                       + jecvar));
                 HT_pt30.push_back(tr.getVar<double>("HT_trigger_pt30"                              + jecvar));
                 Baseline.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good"             + jecvar));
+                Baseline_trigEff.push_back(tr.getVar<bool>("passBaseline" + channel + "l_trigEff"             + jecvar));
                 Baseline_noIsoCut.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_noIsoMuonCut"             + jecvar));
                 Baseline_blind.push_back(tr.getVar<bool>("passBaseline" + channel + "l_Good_blind" + jecvar));
                 Mbl.push_back(tr.getVar<double>("Mbl"                                              + jecvar));
@@ -1319,29 +1337,32 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
             const std::map<std::string, bool> cut_map
             {
                 {"_0l"                , Baseline[0]},
+                {"_0l_noTrig"         , Baseline_trigEff[0]},
                 //{"_0l_noIsoMuonCut"   , Baseline_noIsoCut[0]},
                 {"_1l"                , Baseline[1]},
+                {"_1l_noTrig"         , Baseline_trigEff[1]},
                 //{"_1l_Reshape"        , Baseline[1]},
                 //{"_1l_noIsoMuonCut"   , Baseline_noIsoCut[1]},
                 //{"_1l_el"             , Baseline[1] and NGoodElectrons == 1},
                 //{"_1l_mu"             , Baseline[1] and NGoodMuons     == 1},
                 {"_2l"                , Baseline[2]},
+                {"_2l_noTrig"         , Baseline_trigEff[2]},
                 //{"_2l_noIsoMuonCut"   , Baseline_noIsoCut[2]},
                 //{"_2l_elel"           , Baseline[2] and NGoodElectrons == 2},
                 //{"_2l_mumu"           , Baseline[2] and NGoodMuons     == 2},
                 //{"_2l_elmu"           , Baseline[2] and NGoodElectrons == 1 and NGoodMuons == 1},
-                {"_0l_blind"          , Baseline_blind[0]},
-                {"_1l_blind"          , Baseline_blind[1]},                         
+                //{"_0l_blind"          , Baseline_blind[0]},
+                //{"_1l_blind"          , Baseline_blind[1]},                         
                 //{"_1l_blind_el"       , Baseline_blind[1] and NGoodElectrons == 1},
                 //{"_1l_blind_mu"       , Baseline_blind[1] and NGoodMuons     == 1},
-                {"_2l_blind"          , Baseline_blind[2]}, 
+                //{"_2l_blind"          , Baseline_blind[2]}, 
                 //{"_2l_blind_elel"     , Baseline_blind[2] and NGoodElectrons == 2},
                 //{"_2l_blind_mumu"     , Baseline_blind[2] and NGoodMuons     == 2},
                 //{"_2l_blind_elmu"     , Baseline_blind[2] and NGoodElectrons == 1 and NGoodMuons == 1},
-                {"_0l_QCDCR"          , Baseline_CR[0]}, 
-                {"_1l_QCDCR"          , Baseline_CR[1]}, 
-                {"_2l_QCDCR"          , Baseline_CR[2]}, 
-                {"_2l_2NonIso_QCDCR"  , Baseline_CR[3]}, 
+                //{"_0l_QCDCR"          , Baseline_CR[0]}, 
+                //{"_1l_QCDCR"          , Baseline_CR[1]}, 
+                //{"_2l_QCDCR"          , Baseline_CR[2]}, 
+                //{"_2l_2NonIso_QCDCR"  , Baseline_CR[3]}, 
             };
 
             // Put assume 7 jets and 2 leptons for making the histograms
@@ -1585,6 +1606,7 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                             // Can easily be extended later if want to make plots in val regions
                             if (kv.second and inNjetsBin and region == "ABCD")
                             {
+
                                 if (njets == "Incl" and jecvar == "" and ttvar == "")
                                 {
 
@@ -1997,10 +2019,22 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                     my_histos["h_DoubleDisCo_RPV_disc1" + name]->Fill(RPV_disc1, w);
                                     my_histos["h_DoubleDisCo_RPV_disc2" + name]->Fill(RPV_disc2, w);
                                     my_2d_histos["h_DoubleDisCo_RPV_disc1_disc2" + name]->Fill(RPV_disc1, RPV_disc2, w);
+                                    if (w >= 0.0)
+                                    {
+                                        my_2d_histos["h_DoubleDisCo_RPV_disc1_disc2_pos" + name]->Fill(RPV_disc1, RPV_disc2, w);
+                                    } else {
+                                        my_2d_histos["h_DoubleDisCo_RPV_disc1_disc2_neg" + name]->Fill(RPV_disc1, RPV_disc2, -w);
+                                    }
                                     my_histos["h_DoubleDisCo_RPV_massReg" + name]->Fill(!isQCD ? DoubleDisCo_RPV_massReg[channel] : DoubleDisCo_RPV_massReg_CR[channel], w);
                                     my_histos["h_DoubleDisCo_SYY_disc1" + name]->Fill(SYY_disc1, w);
                                     my_histos["h_DoubleDisCo_SYY_disc2" + name]->Fill(SYY_disc2, w);
                                     my_2d_histos["h_DoubleDisCo_SYY_disc1_disc2" + name]->Fill(SYY_disc1, SYY_disc2, w);
+                                    if (w >= 0.0)
+                                    {
+                                        my_2d_histos["h_DoubleDisCo_SYY_disc1_disc2_pos" + name]->Fill(SYY_disc1, SYY_disc2, w);
+                                    } else {
+                                        my_2d_histos["h_DoubleDisCo_SYY_disc1_disc2_neg" + name]->Fill(SYY_disc1, SYY_disc2, -w);
+                                    }
                                     my_histos["h_DoubleDisCo_SYY_massReg" + name]->Fill(!isQCD ? DoubleDisCo_SYY_massReg[channel] : DoubleDisCo_SYY_massReg_CR[channel], w);
                                 }
                             }
@@ -2032,6 +2066,17 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                         my_histos["h_njets_10incl_RPV" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, w);
                                         my_histos["h_njets_11incl_RPV" + name]->Fill(theGoodJets>=11 ? 11 - 7 + shift*5 : theGoodJets - 7 + shift*5, w);
                                         my_histos["h_njets_12incl_RPV" + name]->Fill(theGoodJets>=12 ? 12 - 8 + shift*5 : theGoodJets - 8 + shift*5, w);
+                                        if (w >= 0)
+                                        {
+                                            my_histos["h_njets_10incl_RPV_pos" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, w);
+                                            my_histos["h_njets_11incl_RPV_pos" + name]->Fill(theGoodJets>=11 ? 11 - 7 + shift*5 : theGoodJets - 7 + shift*5, w);
+                                            my_histos["h_njets_12incl_RPV_pos" + name]->Fill(theGoodJets>=12 ? 12 - 8 + shift*5 : theGoodJets - 8 + shift*5, w);
+                                        } else {
+                                            my_histos["h_njets_10incl_RPV_neg" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, -w);
+                                            my_histos["h_njets_11incl_RPV_neg" + name]->Fill(theGoodJets>=11 ? 11 - 7 + shift*5 : theGoodJets - 7 + shift*5, -w);
+                                            my_histos["h_njets_12incl_RPV_neg" + name]->Fill(theGoodJets>=12 ? 12 - 8 + shift*5 : theGoodJets - 8 + shift*5, -w);
+                                        }
+                                        
                                         my_histos["h_njets_13incl_RPV" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*5 : theGoodJets - 8 + shift*5, w);
                                     }
 
@@ -2042,6 +2087,17 @@ void AnalyzeDoubleDisCo::Loop(NTupleReader& tr, double, int maxevents, bool isQu
                                         my_histos["h_njets_10incl_SYY" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, w);
                                         my_histos["h_njets_11incl_SYY" + name]->Fill(theGoodJets>=11 ? 11 - 7 + shift*5 : theGoodJets - 7 + shift*5, w);
                                         my_histos["h_njets_12incl_SYY" + name]->Fill(theGoodJets>=12 ? 12 - 8 + shift*5 : theGoodJets - 8 + shift*5, w);
+                                        if (w >= 0)
+                                        {
+                                            my_histos["h_njets_10incl_SYY_pos" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, w);
+                                            my_histos["h_njets_11incl_SYY_pos" + name]->Fill(theGoodJets>=11 ? 11 - 7 + shift*5 : theGoodJets - 7 + shift*5, w);
+                                            my_histos["h_njets_12incl_SYY_pos" + name]->Fill(theGoodJets>=12 ? 12 - 8 + shift*5 : theGoodJets - 8 + shift*5, w);
+                                        } else {
+                                            my_histos["h_njets_10incl_SYY_neg" + name]->Fill(theGoodJets>=10 ? 10 - 6 + shift*5 : theGoodJets - 6 + shift*5, -w);
+                                            my_histos["h_njets_11incl_SYY_neg" + name]->Fill(theGoodJets>=11 ? 11 - 7 + shift*5 : theGoodJets - 7 + shift*5, -w);
+                                            my_histos["h_njets_12incl_SYY_neg" + name]->Fill(theGoodJets>=12 ? 12 - 8 + shift*5 : theGoodJets - 8 + shift*5, -w);
+                                        }
+                                        
                                         my_histos["h_njets_13incl_SYY" + name]->Fill(theGoodJets>=13 ? 13 - 8 + shift*5 : theGoodJets - 8 + shift*5, w);
                                     }
                                 }
