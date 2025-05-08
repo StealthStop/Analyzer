@@ -407,8 +407,8 @@ class StackPlotter:
         mark.SetTextAlign(11)
         mark.SetTextSize(0.055)
         mark.SetTextFont(61)
-        mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
-        #mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
+        #mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
+        mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
 
         mark.SetTextFont(52)
         mark.SetTextSize(0.040)
@@ -453,13 +453,13 @@ class StackPlotter:
         channelStr = ""
         if "0l" in packedInfo:
             #channelStr = "\\mathrm{0}\\ell\\;\\mathrm{ Channel}"
-            channelStr = "All-Hadronic"
+            channelStr = "All-hadronic"
         elif "1l" in packedInfo:
             #channelStr = "\\mathrm{1}\\ell\\;\\mathrm{ Channel}"
-            channelStr = "Semi-Leptonic"
+            channelStr = "Single lepton"
         elif "2l" in packedInfo:
             #channelStr = "\\mathrm{2}\\ell\\;\\mathrm{ Channel}"
-            channelStr = "Fully-Leptonic"
+            channelStr = "Fully leptonic"
 
         canvas.cd()
 

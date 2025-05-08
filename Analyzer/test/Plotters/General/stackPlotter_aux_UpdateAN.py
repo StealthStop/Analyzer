@@ -119,20 +119,23 @@ histograms = {
 #    histograms["h_combined%sthJet_Mass_cm_%s"%(comboJet, selection)]    = {"logY" : False, "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet mass [GeV]"%(comboJet),   "rebin" : 2, "min" :  0,    "max" :  150}}
 #    histograms["h_combined%sthJet_Energy_cm_%s"%(comboJet, selection)]  = {"logY" : True,  "Y" : {"title" : "Number of Events", "min" : 0.2}, "X" : {"title" : "Combined %s to Last Jet Energy [GeV]"%(comboJet), "rebin" : 8, "min" :  0,    "max" : 1500}}
 #
+
+colors = ["#5790fc", "#f89c20", "#e42536", "#964a8b", "#9c9ca1", "#7a21dd"]
+
 data = {
-    "TT" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
+    "Data" : {"name" : "Data", "color" : ROOT.kBlack, "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1.3}
 } 
 
 backgrounds = {
-    "TT"       : {"name" : "t#bar{t} + jets", "color" : 40,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "QCD"      : {"name" : "QCD multijet",    "color" : 30,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "TTX"      : {"name" : "t#bar{t} + X",    "color" : 38,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
-    "BG_OTHER" : {"name" : "Other",           "color" : 41,  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    "TT"       : {"name" : "t#bar{t} + jets", "color" : colors[4],  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    "QCD"      : {"name" : "QCD multijet",    "color" : colors[1],  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    "TTX"      : {"name" : "t#bar{t} + X",    "color" : colors[5],  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
+    "BG_OTHER" : {"name" : "Other",           "color" : colors[0],  "lstyle" : 1, "mstyle" : 8, "lsize" : 0, "msize" : 0},
 }
 
 signals = OrderedDict([
-    "RPV_2t6j_mStop-400",        {"name" : "RPV m_{ #tilde{t}} = 400 GeV (5#times#sigma_{#tilde{t}#bar{#tilde{t}}})",               "color" : 2, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0, "scale": 5.0},
-    "RPV_2t6j_mStop-800",        {"name" : "RPV m_{ #tilde{t}} = 800 GeV (100#times#sigma_{#tilde{t}#bar{#tilde{t}}})",               "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0, "scale": 100.0},
+    ("RPV_2t6j_mStop-400",        {"name" : "RPV m_{ #tilde{t}} = 400 GeV (5#times#sigma_{#tilde{t}#bar{#tilde{t}}})",               "color" : colors[3], "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0, "scale": 5.0}),
+    ("RPV_2t6j_mStop-800",        {"name" : "RPV m_{ #tilde{t}} = 800 GeV (100#times#sigma_{#tilde{t}#bar{#tilde{t}}})",               "color" : colors[2], "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0, "scale": 100.0}),
     #("StealthSYY_2t6j_mStop-400", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 400 GeV", "color" : 4, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0}),
     #("StealthSYY_2t6j_mStop-800", {"name" : "Stealth SY#bar{Y} m_{ #tilde{t}} = 800 GeV", "color" : 6, "lstyle" : 2, "mstyle" : 8, "lsize" : 3, "msize" : 0})
 ])
