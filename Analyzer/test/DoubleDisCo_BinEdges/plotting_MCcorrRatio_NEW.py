@@ -364,7 +364,7 @@ def main():
             MCcorr_TT_Unc.SetTitle("")
             MCcorr_TT_Unc.SetLineWidth(0)
             MCcorr_TT_Unc.SetFillColorAlpha(ROOT.kGray, 0.8)
-            MCcorr_TT_Unc.GetYaxis().SetTitle("Closure Correction Ratio [TTvar / TT]")
+            MCcorr_TT_Unc.GetYaxis().SetTitle("#kappa_{var.} / #kappa_{nom.}")
             MCcorr_TT_Unc.GetXaxis().SetTitle("N_{jets}")
 
             relabelNjetsBins(MCcorr_TT_Unc, label.partition("_")[0], 1.1 * 0.05)

@@ -681,7 +681,7 @@ class Common_Calculations_Plotters:
                 
 
                 #ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="^", markeredgecolor="black", markerfacecolor=color[region])
-            ax[0].errorbar(x2[region], y2[region], yerr=yUnc2[region], label="%s (Data)"%(label_map[region]), fmt='', color=color[region], lw=0, markersize=10, elinewidth=2, marker="^", markeredgecolor=color[region], markerfacecolor=color[region])
+            ax[0].errorbar(x2[region], y2[region], yerr=yUnc2[region], label="%s (Data)"%(label_map[region]), fmt='', color=color[region], lw=0, markersize=15, elinewidth=2, marker="^", markeredgecolor=color[region], markerfacecolor=color[region])
 
             if yMin != None and yMax != None:
                 ax[0].set_ylim((yMin, yMax))
@@ -710,7 +710,7 @@ class Common_Calculations_Plotters:
                 #    yUnc[region] = [math.sqrt(val**2 + dataSys**2) for val in yUnc[region]]
                 #    ratioUnc[region] = [math.sqrt(val**2 + dataSys**2) for val in ratioUnc[region]]
 
-                    ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s (Sim.)"%(label_map[region]), fmt='', color=color[region], lw=0, elinewidth=2, markersize=10, marker=".", markeredgecolor=color[region], markerfacecolor=color[region])
+                    ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s (Sim.)"%(label_map[region]), fmt='', color=color[region], lw=0, elinewidth=2, markersize=15, marker=".", markeredgecolor=color[region], markerfacecolor=color[region])
 
             for idx, region in enumerate(regions):
                 ratio[region] = [x if x != 0.0 else -999.0 for x in ratio[region]]
