@@ -18,7 +18,7 @@ def makeExeAndFriendsTarball(filestoTransfer, fname, path):
     for fn in removeCopies(filestoTransfer):
         system("cd %s; ln -s %s" % (fname, fn))
         
-    tarallinputs = "tar czf %s/%s.tar.gz %s --dereference"% (path, fname, fname)
+    tarallinputs = "tar cvzf %s/%s.tar.gz %s --dereference "% (path, fname, fname)
     system(tarallinputs)
     system("rm -r %s" % fname)
 
@@ -177,30 +177,30 @@ def main():
                        #testDir + "/reshaping_deepJet_106XUL18_v2.csv",
                        ]
     
-    print "--------------Files to Transfer-----------------"
+    print("--------------Files to Transfer-----------------")
     for i in filestoTransfer:    
-        print i
-    print "------------------------------------------------"
+        print(i)
+    print("------------------------------------------------")
     
     sc = SampleCollection(testDir + "/sampleSets.cfg", testDir + "/sampleCollections.cfg")
     if options.dataCollections or options.dataCollectionslong:
         scl = sc.sampleCollectionList()
         for sampleCollection in scl:
             sl = sc.sampleList(sampleCollection)
-            print sampleCollection
+            print(sampleCollection)
             if options.dataCollectionslong:
                 sys.stdout.write("\t")
                 for sample in sl:
                     sys.stdout.write("%s  "%sample[1])
-                print ""
-                print ""
+                print("")
+                print("")
         exit(0)
     
     datasets = []
     if options.datasets:
         datasets = options.datasets.split(',')
     else:
-        print "No dataset specified"
+        print("No dataset specified")
         exit(0)
     
     fileParts = []
@@ -208,7 +208,8 @@ def main():
     fileParts.append("Executable           = run_Analyzer_condor.sh\n")
     fileParts.append("Transfer_Input_Files = %s/%s.tar.gz, %s/exestuff.tar.gz\n" % (options.outPath,environ["CMSSW_VERSION"],options.outPath))
     fileParts.append("Request_Memory       = 2.5 Gb\n")
-    fileParts.append("x509userproxy        = $ENV(X509_USER_PROXY)\n\n")
+    fileParts.append("x509userproxy        = $ENV(X509_USER_PROXY)\n")
+    fileParts.append('+ApptainerImage = "/cvmfs/unpacked.cern.ch/registry.hub.docker.com/cmssw/el7:x86_64"\n\n')
 
     nFilesPerJob = options.numfile
     numberOfJobs = 0
@@ -222,7 +223,7 @@ def main():
             system('mkdir -p %s/%s' %(workingDir, logsDir))
         else:
             pass
-            #print red("Job directory \"%s/%s\" already exists and cannot proceed safely ! Exiting..."%(workingDir, logsDir))
+            #print(red("Job directory \"%s/%s\" already exists and cannot proceed safely ! Exiting..."%(workingDir, logsDir))
             #exit(0)
    
         dataSetName = ds.partition("_")[-1]
@@ -241,7 +242,7 @@ def main():
                 else:
                     nFilesPerJob = options.numfile
 
-            print "SampleSet:", n, ", nEvents:", e
+            print("SampleSet:", n, ", nEvents:", e)
             f = open(environ["CMSSW_BASE"] + "/src/Analyzer/Analyzer/test/" + s)
             if not f == None:
                 count = 0
@@ -258,22 +259,24 @@ def main():
                     fileParts.append("Queue\n\n")
     
                 f.close()
-    
-    fout = open("condor_submit.txt", "w")
-    fout.write(''.join(fileParts))
+  
+    print(len(fileParts))
+ 
+    with open("condor_submit.txt", 'w') as fout:
+        fout.write(''.join(fileParts))
     fout.close()
 
     if not options.dataCollections and not options.dataCollectionslong:
         makeExeAndFriendsTarball(filestoTransfer, "exestuff", options.outPath)
-        system("tar --exclude-caches-all --exclude-vcs -zcf %s/${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION} --exclude=src --exclude=tmp" % options.outPath)
+        system("tar --exclude-caches-all --exclude-vcs --exclude=src --exclude=tmp -zvcf %s/${CMSSW_VERSION}.tar.gz -C ${CMSSW_BASE}/.. ${CMSSW_VERSION}" % options.outPath)
         
     if not options.noSubmit: 
         system("echo 'condor_submit condor_submit.txt'")
         system('condor_submit condor_submit.txt')
     else:
-        print "------------------------------------------"
-        print "Number of Jobs:", numberOfJobs
-        print "------------------------------------------"
+        print("------------------------------------------")
+        print("Number of Jobs:", numberOfJobs)
+        print("------------------------------------------")
 
 if __name__ == "__main__":
     main()

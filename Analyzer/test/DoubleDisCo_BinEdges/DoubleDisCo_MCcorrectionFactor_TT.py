@@ -265,6 +265,7 @@ class MCcorrectionFactor_TT():
             closureCorrPerBoundaryTT          = {}
             closureCorrPerBoundaryTTvar       = {}
             closurePerBoundaryTTvar           = {}
+            closurePerBoundaryTT              = {}
 
             # TTinData = Data - NonTT
             weighted_nTTEventsA_PerBoundaryTTinData = {}; nonClosurePerBoundaryTTinData = {}; closurePerBoundaryTTinData = {}; CorrectedDataClosure_PerBoundaryTTinData = {} 
@@ -308,7 +309,9 @@ class MCcorrectionFactor_TT():
                 # TTinData = Data - NonTT
                 weighted_nTTEventsA_PerBoundaryTTinData[region]        = theAggy.getPerBoundary(variable = "nEventsA",                   sample = "TTinData", region = region, njet = njet)
                 nonClosurePerBoundaryTTinData[region]                  = theAggy.getPerBoundary(variable = "nonClosure",                 sample = "TTinData", region = region, njet = njet)
+                nonClosurePerBoundaryTT[region]                           = theAggy.getPerBoundary(variable = "nonClosure",                    sample = "TT",       region = region, njet = njet)
                 closurePerBoundaryTTinData[region]                     = theAggy.getPerBoundary(variable = "Closure",                    sample = "TTinData", region = region, njet = njet)#, manualOverride=correctedTTVarClosurePerBoundary)
+                closurePerBoundaryTT[region]                           = theAggy.getPerBoundary(variable = "Closure",                    sample = "TT",       region = region, njet = njet)
                 CorrectedDataClosure_PerBoundaryTTinData[region]       = theAggy.getPerBoundary(variable = "CorrectedDataClosure",       sample = "TTinData", region = region, njet = njet)#, manualOverride=correctedTTVarClosurePerBoundary)
                 ttVar_CorrectedDataClosure_PerBoundaryTTinData[region] = theAggy.getPerBoundary(variable = "ttVar_CorrectedDataClosure", sample = "TTinData", region = region, njet = njet)
 
@@ -339,5 +342,7 @@ class MCcorrectionFactor_TT():
                 #plotter["Data"].plot_VarVsBoundary(weighted_nTTEventsA_PerBoundaryTTinData,            self.regionGridWidth/2.0, None, None, None, "Weighted Events in A [Data]",  "TTinData_weighted_nTTeventsA_PerBoundary",     njet, self.valColors)
                 #plotter["Data"].plot_VarVsBoundary(nonClosurePerBoundaryTTinData,                      self.regionGridWidth/2.0, 0.0, 0.3,   None, "Non-Closure [Data]",           "TTinData_NonClosure_PerBoundary",              njet, self.valColors)
                 plotter["Data"].plot_VarVsBoundary(closurePerBoundaryTTinData,                     self.regionGridWidth/2.0, yMin, yMax,  1.0, "Data Closure",           "TTinData_DataClosure_PerBoundary",                     njet, self.valColors)
-                plotter["Data"].plot_VarVsBoundary(CorrectedDataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "Residual Non-Closure", "TTinData_CorrectedDataClosure_PerBoundary",            njet, self.valColors)
+                plotter["Data"].plot_VarVsBoundaryRatio(nonClosurePerBoundaryTT, nonClosurePerBoundaryTTinData, self.regionGridWidth/2.0, -0.15, 0.15,  0.0, "Data Closure",           "TTinData_DataClosure_PerBoundary",                     njet, self.valColors)
+                #plotter["Data"].plot_VarVsBoundaryRatio(nonClosurePerBoundaryTT, nonClosurePerBoundaryTTinData, self.regionGridWidth/2.0, -0.15, 0.15,  0.0, "Data Closure",           "TTinData_DataClosure_PerBoundary_WithSys",                     njet, self.valColors, extraSys=True)
+                plotter["Data"].plot_VarVsBoundary(CorrectedDataClosure_PerBoundaryTTinData,       self.regionGridWidth/2.0, yMin, yMax,  1.0, "Corrected Data Closure", "TTinData_CorrectedDataClosure_PerBoundary",            njet, self.valColors)
                 #plotter["Data"].plot_VarVsBoundary(ttVar_CorrectedDataClosure_PerBoundaryTTinData, self.regionGridWidth/2.0, yMin, yMax,  1.0, "Residual Non-Closure", "TTinData_MC_%s_corrected_dataClosure_PerBoundary"%(self.ttVar), njet, self.valColors)

@@ -11,6 +11,12 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PatchCollection
+import matplotlib.ticker as ticker
+
+from collections import OrderedDict
+import mplhep as hep
+plt.style.use([hep.style.ROOT,hep.style.CMS]) # For now ROOT defaults to CMS
+plt.style.use({'legend.frameon':False,'legend.fontsize':16,'legend.edgecolor':'black'})
 
 class Common_Calculations_Plotters:
 
@@ -25,11 +31,17 @@ class Common_Calculations_Plotters:
 
         self.outputDir = outputDir
 
-    def addCMSlabel(self, ax):
+    def addCMSlabel(self, ax, fontsize=None):
 
-        ax.text(0.0,  1.003, 'CMS',                     transform=ax.transAxes, fontsize=16, fontweight='bold',   va='bottom', ha='left')
-        ax.text(0.15, 1.010, '%s'%(self.cmsLabel),      transform=ax.transAxes, fontsize=11, fontstyle='italic',  va='bottom', ha='left')
-        ax.text(1.0,  1.010, '%s (13 TeV)'%(self.year), transform=ax.transAxes, fontsize=11, fontweight='normal', va='bottom', ha='right')
+        if fontsize == None:
+            ax.text(0.0,  1.003, 'CMS',                     transform=ax.transAxes, fontsize=16, fontweight='bold',   va='bottom', ha='left')
+            ax.text(0.15, 1.010, '%s'%(self.cmsLabel),      transform=ax.transAxes, fontsize=11, fontstyle='italic',  va='bottom', ha='left')
+            ax.text(1.0,  1.010, '%s (13 TeV)'%(self.year), transform=ax.transAxes, fontsize=11, fontweight='normal', va='bottom', ha='right')
+
+        else:
+            ax.text(0.0,  1.003, 'CMS',                     transform=ax.transAxes, fontsize=16*fontsize, fontweight='bold',   va='bottom', ha='left')
+            #ax.text(0.08, 1.010, '%s'%(self.cmsLabel),      transform=ax.transAxes, fontsize=11*fontsize, fontstyle='italic',  va='bottom', ha='left')
+            ax.text(1.0,  1.010, 'Run 2 (13 TeV)', transform=ax.transAxes, fontsize=11*fontsize, fontweight='normal', va='bottom', ha='right')
     
         return ax
 
@@ -111,7 +123,7 @@ class Common_Calculations_Plotters:
                     pullDenom.append(0)
                     zeros.append(999)
                     closureCorrections.append(999)
-                    closureCorrectionsUnc.append(0)
+                    closureCorrectionsUnc.append(999)
 
                 else:
                     pred.append(bkgPred[i][0])
@@ -128,6 +140,11 @@ class Common_Calculations_Plotters:
                     closureCorrectionsUnc.append(closureCorrectionUnc)
                     totalChi2 += pull ** 2.0
                     ndof      += 1                    
+
+        closureCorrections = [float(1./cc) for cc in closureCorrections]
+
+        print(closureCorrections)
+        print(closureCorrectionsUnc)
 
         # ------------------
         # plot usual closure
@@ -146,7 +163,7 @@ class Common_Calculations_Plotters:
         ax.tick_params(labelcolor='w', top=False, bottom=False, left=False, right=False)
     
         # unweighted event counts
-        ax1 = fig.add_subplot(4, 1, (1, 2))  
+        ax1 = fig.add_subplot(4, 1, (1, 3))  
         fig.subplots_adjust(left=0.15, right=0.95)
         ax1.set_yscale('log')
         ax1.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
@@ -173,17 +190,17 @@ class Common_Calculations_Plotters:
         #ax1.text(0.5, 0.95, name,      transform=ax.transAxes, color=valColor, fontsize=11, fontweight='bold',   va='center', ha='center') 
 
         ax1.set_ylabel('Num. Events', fontsize=11)
-        ax1.errorbar(x, pred, yerr=predUnc, label=r'Predicted $t\bar{t}+jets$', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
-        ax1.errorbar(x, obs,  yerr=obsUnc,  label=r'Observed $t\bar{t}+jets$',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
+        ax1.errorbar(x, pred, yerr=predUnc, label=r'$N_{A,Pred.}$', xerr=xUnc, fmt='', capsize=0, color='red',   lw=0, elinewidth=2, marker='o', markeredgecolor='red',   markerfacecolor='red',   markersize=5.0)
+        ax1.errorbar(x, obs,  yerr=obsUnc,  label=r'$N_{A}$',  xerr=xUnc, fmt='', capsize=0, color='black', lw=0, elinewidth=2, marker='o', markeredgecolor='black', markerfacecolor='black', markersize=5.0)
 
         # closure   
-        ax2 = fig.add_subplot(4, 1, 3)
-        ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
-        ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
-        ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
-        ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
-        ax2.set_ylabel('Non-Closure', fontsize=12)
-        ax2.set_ylim([-0.59, 0.59])   
+        #ax2 = fig.add_subplot(4, 1, 3)
+        #ax2.set_xlim([lowerNjets - 0.5, higherNjets + 0.5])
+        #ax2.errorbar(x, abcdError, yerr=abcdErrorUnc, xerr=xUnc, fmt='', capsize=0, color='blue', lw=0, elinewidth=2, marker='o', markeredgecolor='blue', markerfacecolor='blue', markersize=5.0)
+        #ax2.axhline(y=0.0, color='black', linestyle='dashed', lw=1.5)
+        #ax2.grid(axis='y', color='black', linestyle='dashed', which='both')
+        #ax2.set_ylabel('Non-Closure', fontsize=12)
+        #ax2.set_ylim([-0.59, 0.59])   
 
         # Closure Correction Value
         ax3 = fig.add_subplot(4, 1, 4)
@@ -192,8 +209,8 @@ class Common_Calculations_Plotters:
         ax3.axhline(y=1.0, color='black', linestyle='dashed', lw=1.5)
         ax3.grid(axis='y', color='black', linestyle='dashed', which='both')
         ax3.set_xlabel('Number of jets', fontsize=12)
-        ax3.set_ylabel('Correction', fontsize=12) 
-        ax3.set_ylim([-0.1, 2.1])
+        ax3.set_ylabel(r'$\kappa$', fontsize=12) 
+        ax3.set_ylim([-0.2, 2.2])
 
         # pull 
         #ax3 = fig.add_subplot(4, 1, 4)
@@ -498,6 +515,12 @@ class Common_Calculations_Plotters:
 
         regions = var.keys()
 
+        nice_region_labels = {
+            "Val_BD": "Val. I",
+            "Val_CD": "Val. II",
+            "Val_D": "Val. III",
+        }
+
         x    = {region : [] for region in regions}
         y    = {region : [] for region in regions}
         yUnc = {region : [] for region in regions} 
@@ -506,6 +529,8 @@ class Common_Calculations_Plotters:
         fig = plt.figure(figsize=(5, 5))
         ax = plt.gca()
 
+        regions.reverse()
+
         for region in regions:
             for boundary, value in var[region].items():
                 x[region].append(boundary)
@@ -513,7 +538,7 @@ class Common_Calculations_Plotters:
                 yUnc[region].append(value[1])
                 xUnc[region].append(xWidth)
 
-            ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
+            ax.errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(nice_region_labels[region]), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
 
             if yMin != None and yMax != None:
                 ax.set_ylim((yMin, yMax))
@@ -559,6 +584,191 @@ class Common_Calculations_Plotters:
 
         plt.close(fig)
 
+    # --------------------------------------------------------------------
+    # Same plotting function as above but with a ratio between Data and MC
+    # --------------------------------------------------------------------
+    def plot_VarVsBoundaryRatio(self, var1, var2, xWidth, yMin = None, yMax = None, lineY = None, ylabel = "", tag = "", Njets = -1, color=None, extraSys=False):
+
+        regions = var1.keys()
+
+        label_map = {
+            "Val_BD": "Val I",
+            "Val_CD": "Val II",
+            "Val_D": "Val III",
+            }
+
+        x    = {region : [] for region in regions}
+        y    = {region : [] for region in regions}
+        yUnc = {region : [] for region in regions} 
+        xUnc = {region : [] for region in regions}
+
+        yMin = -0.15
+        yMax = 0.15
+
+        fig, ax = plt.subplots(2,1, figsize=(12,10), gridspec_kw={"height_ratios": [3,1]})
+        #ax = plt.gca()
+
+        for idx, region in enumerate(regions):
+            for boundary, value in var1[region].items():
+                x[region].append(boundary + 0.05 * (2.*(idx-1.5) + 0.5)/8.)
+                y[region].append(value[0])
+                yUnc[region].append(value[1])
+                xUnc[region].append(xWidth)
+
+                yMin = min(yMin, min(y[region])*1.4)
+                yMax = max(yMax, max(y[region])*1.4)
+
+                if abs(yMin) > yMax:
+                    yMax = -yMin
+                else:
+                    yMin = -yMax   
+
+                #ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="o", markeredgecolor=color[region], markerfacecolor=color[region])
+            if not extraSys:
+                ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s (Sim.)"%(label_map[region]), fmt='', color=color[region], lw=0, elinewidth=2, markersize=10, marker=".", markeredgecolor=color[region], markerfacecolor=color[region])
+
+            if yMin != None and yMax != None:
+                ax[0].set_ylim((yMin, yMax))
+                ax[0].set_xlim((0.375, 1.025))
+                #ax[0].xaxis.set_ticks(np.arange(0.4, 1.05, 0.05))
+                #ax[0].xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
+
+                #ax[0].tick_params(axis='x', labelsize=16)
+                ax[0].tick_params(axis='y', labelsize=16)
+                ax[1].set_xlim((0.375, 1.025))
+                ax[1].tick_params(axis='x', labelsize=16)
+                ax[1].tick_params(axis='y', labelsize=16)
+
+        print(x)
+        print(y)
+
+        x2    = {region : [] for region in regions}
+        y2    = {region : [] for region in regions}
+        yUnc2 = {region : [] for region in regions} 
+        xUnc2 = {region : [] for region in regions}
+
+        ratio = {region : [] for region in regions}
+        ratioUnc = {region : [] for region in regions}
+
+        temp_sys = {region : [] for region in regions}
+
+        yMinRatio = -0.15
+        yMaxRatio = 0.15
+
+        for idx, region in enumerate(regions):
+            for i, (boundary, value) in enumerate(var2[region].items()):
+                x2[region].append(boundary + 0.05 *(2. * (idx-1.5) + 1.5)/8.)
+                y2[region].append(value[0])
+                yUnc2[region].append(value[1])
+                xUnc2[region].append(xWidth)
+
+                if y[region][-1] != -999.0 and y2[region][-1] != -999.0:
+                    ratio[region].append(y2[region][i] - y[region][i])
+                    ratioUnc[region].append(math.sqrt(yUnc2[region][i]**2 + yUnc[region][i]**2))
+                    temp_sys[region].append(abs(1-y2[region][i]) / abs(1-y[region][i]))
+                else:
+                    ratio[region].append(0.0)
+                    ratioUnc[region].append(0.0)
+                    temp_sys[region].append(1.0)
+             
+                yMinRatio = min(yMinRatio, min(ratio[region])*1.4)
+                yMaxRatio = max(yMaxRatio, max(ratio[region])*1.4)
+
+                if abs(yMinRatio) > yMaxRatio:
+                    yMaxRatio = -yMinRatio
+                else:
+                    yMinRatio = -yMaxRatio   
+                
+
+                #ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s"%(region), xerr=xUnc[region], fmt='', capsize=0, color=color[region], lw=0, elinewidth=2, marker="^", markeredgecolor="black", markerfacecolor=color[region])
+            ax[0].errorbar(x2[region], y2[region], yerr=yUnc2[region], label="%s (Data)"%(label_map[region]), fmt='', color=color[region], lw=0, markersize=15, elinewidth=2, marker="^", markeredgecolor=color[region], markerfacecolor=color[region])
+
+            if yMin != None and yMax != None:
+                ax[0].set_ylim((yMin, yMax))
+                #ax[0].xaxis.set_ticks(np.arange(0.4, 1.05, 0.05))
+                #ax[0].xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
+                ax[0].tick_params(
+                    axis='x',          # changes apply to the x-axis
+                    which='both',      # both major and minor ticks are affected
+                    bottom=False,      # ticks along the bottom edge are off
+                    top=False,         # ticks along the top edge are off
+                    labelbottom=False)
+                ax[1].set_ylim((yMinRatio, yMaxRatio))
+                ax[1].xaxis.set_ticks(np.arange(0.4, 1.05, 0.05))
+                ax[1].xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
+
+    
+            if extraSys:
+                dataSys = 0.0
+                for idx, region in enumerate(regions):
+                    dataSys = max(max(abs(1-max(temp_sys[region])), abs(1-min(temp_sys[region]))), dataSys)
+
+                    if dataSys == 999.0:
+                        dataSys = 0.0
+
+                #for idx, region in enumerate(regions):
+                #    yUnc[region] = [math.sqrt(val**2 + dataSys**2) for val in yUnc[region]]
+                #    ratioUnc[region] = [math.sqrt(val**2 + dataSys**2) for val in ratioUnc[region]]
+
+                    ax[0].errorbar(x[region], y[region], yerr=yUnc[region], label="%s (Sim.)"%(label_map[region]), fmt='', color=color[region], lw=0, elinewidth=2, markersize=15, marker=".", markeredgecolor=color[region], markerfacecolor=color[region])
+
+            for idx, region in enumerate(regions):
+                ratio[region] = [x if x != 0.0 else -999.0 for x in ratio[region]]
+
+        for xval in np.arange(0.375,1.075,0.05):
+            ax[0].axvline(x=xval, linestyle="dotted")
+            ax[1].axvline(x=xval, linestyle="dotted")
+
+        ax[1].set_xlabel("Boundary Value", fontsize=20)
+        ax[1].set_ylabel("Data - Sim.", fontsize=20)
+        ax[0].set_ylabel("Non-Closure", fontsize=20)
+        ax[0].legend(loc='lower right', numpoints=1, ncol=2, fontsize=20)
+
+        ax[0] = self.addCMSlabel(ax[0], fontsize = 1.4)
+
+        for region in regions:
+            ax[1].errorbar(x2[region], ratio[region], yerr=ratioUnc[region], label="%s"%(region), fmt='', color=color[region], lw=0, markersize=10, elinewidth=2, marker="^", markeredgecolor=color[region], markerfacecolor=color[region])
+            if extraSys:
+                #ax[1].plot(x2[region], ratio[region])
+                x_fill = np.arange(0.1, 1.5, 0.05)
+                ax[1].fill_between(x_fill, [0-dataSys for x in x_fill], [0+dataSys for x in x_fill], alpha=0.2, color="grey")
+
+        # put model, channel, njet labels
+        md = ""
+        if self.model == "SYY":
+            md = "Stealth SYY"
+        else:
+            md = self.model
+
+        ch = ""
+        if self.channel == "0l":
+            ch = "0L"
+        elif self.channel == "1l":
+            ch = "1L"
+        elif self.channel == "2l":
+            ch = "2L"
+
+        nj = ""
+        if "incl" in Njets:
+            nj = "$N_{jets} \geq$ %s"%(Njets.replace("incl",""))
+        else:
+            nj = "$N_{jets}$ = %s"%(Njets)
+
+        textLabel = '\n'.join(( "%s"%(md), "%s"%(ch), nj ))
+        ax[0].text(0.03, 0.9, textLabel, transform=ax[0].transAxes, color="black", fontsize=20, fontweight='normal',  va='center', ha='left')
+
+        #
+        if lineY != None:
+            l1 = ml.Line2D([0.0, 1.10], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
+            l2 = ml.Line2D([0.0, 1.10], [lineY, lineY], color="black", linewidth=2, linestyle="dashed")
+            ax[0].add_line(l1); 
+            ax[1].add_line(l2); 
+
+        fig.tight_layout()
+        fig.subplots_adjust(top=0.95, right=0.95)
+        fig.savefig('%s/%s_%s_Njets%s_%s_Ratio.pdf' % (self.outputDir, self.year, tag, Njets, self.channel), dpi=fig.dpi)
+
+        plt.close(fig)
 
     # -------------------------------------------------------------
     # plot variable as a function of per boundary for all variances
@@ -978,7 +1188,7 @@ class Common_Calculations_Plotters:
         ax.errorbar(x_dsu, plt_dataSys_OnlyUnc, yerr=plt_dataSys_OnlyUncY, label=r'Blinded Data Residual Non-Closure Unc.', xerr=x_noe[len(plt_dataSys):], fmt='', capsize=0, color='blue',   lw=0, elinewidth=1, marker='^', markeredgecolor='blue',   markerfacecolor='none',   markersize=8.0)
         ax.errorbar([i+0.25 for i in x], plt_fsrSys, yerr=plt_fsrSys_UncY, label=r'FSR Systematic', xerr=x_noe, fmt='', capsize=0, color='green',   lw=0, elinewidth=1, marker='o', markeredgecolor='green',   markerfacecolor='green',   markersize=8.0)
         #eb = ax.errorbar(x, plt_sigContam, label=r'Effect of Signal Contam.', xerr=xe, fmt='', capsize=0, color='black',   lw=0, elinewidth=1, marker='', markersize=0.0)
-        eb[-1][0].set_linestyle('--')
+        #eb[-1][0].set_linestyle('--')
 
         pc = makeErrorBoxes(x, [1.0]*5, xe, plt_totalSysUnc)
         ax.add_collection(pc)
@@ -1012,3 +1222,4 @@ class Common_Calculations_Plotters:
  
         plt.close(fig)
 
+        return ([i-0.25 for i in x], plt_closeCorr, plt_closeCorr_UncY), (x_ds, plt_dataSys, plt_dataSys_UncY), (x_dsu, plt_dataSys_OnlyUnc, plt_dataSys_OnlyUncY), ([i+0.25 for i in x], plt_fsrSys, plt_fsrSys_UncY), (x, [1.0]*5, plt_totalSysUnc), (x, [1.0]*5, plt_totalUnc)

@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+# This Python file uses the following encoding: utf-8
 
 import ROOT, random, os, argparse, string, copy, math, ctypes
 ROOT.PyConfig.IgnoreCommandLineOptions = True
@@ -140,18 +141,23 @@ class Histogram:
             self.histogram.GetXaxis().SetTitleOffset(self.xDim["offset"]);           self.histogram.GetYaxis().SetTitleOffset(self.yDim["offset"] * upperSplit * aux)
             self.histogram.GetXaxis().SetTitle(self.info["X"]["title"]);             self.histogram.GetYaxis().SetTitle(self.info["Y"]["title"])
 
+            if isinstance(self.info["color"], str):
+                col = ROOT.TColor.GetColor(self.info["color"])
+            else:
+                col = self.info["color"]
+            
             if "lcolor" in self.info:
                 self.histogram.SetLineColor(self.info["lcolor"])
                 self.histogram.SetMarkerColor(self.info["lcolor"])
             else:
-                self.histogram.SetLineColor(self.info["color"])
-                self.histogram.SetMarkerColor(self.info["color"])
+                self.histogram.SetLineColor(col)
+                self.histogram.SetMarkerColor(col)
 
             self.histogram.SetMarkerSize(self.info["msize"]); self.histogram.SetMarkerStyle(self.info["mstyle"])
             self.histogram.SetLineWidth(self.info["lsize"]);  self.histogram.SetLineStyle(self.info["lstyle"])
     
             if "loption" in self.info and "L" not in self.info["loption"]:
-                self.histogram.SetFillColorAlpha(self.info["color"], 1.0)
+                self.histogram.SetFillColorAlpha(col, 1.0)
 
             if "fstyle" in self.info:
                 self.histogram.SetFillStyle(self.info["fstyle"])
@@ -340,10 +346,12 @@ class StackPlotter:
 
     def makeLegends(self, nBkgs, nSigs, doLogY, theMin, theMax):
 
-        textSize = 0.028 / self.upperSplit
+        #textSize = 0.028 / self.upperSplit
+        textSize = 0.035 / self.upperSplit
         space    = 0.015
 
-        bkgXmin = 0.70 if self.printNEvents else 0.755
+        #bkgXmin = 0.70 if self.printNEvents else 0.755
+        bkgXmin = 0.60 if self.printNEvents else 0.70
         bkgYmax = 1.0-(self.TopMargin/self.upperSplit)-0.02
         bkgXmax = 1.0-self.RightMargin-0.02
         bkgYmin = bkgYmax-nBkgs*(textSize+space)
@@ -357,7 +365,8 @@ class StackPlotter:
         bkgLegend.SetBorderSize(0)
         bkgLegend.SetTextSize(textSize)
 
-        sigXmin = self.LeftMargin+0.26
+        #sigXmin = self.LeftMargin+0.26
+        sigXmin = self.LeftMargin+0.15
         sigYmax = bkgYmax
         sigXmax = bkgXmin
         sigYmin = bkgYmax-nSigs*(textSize+space) 
@@ -398,8 +407,8 @@ class StackPlotter:
         mark.SetTextAlign(11)
         mark.SetTextSize(0.055)
         mark.SetTextFont(61)
-        mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
-        #mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
+        #mark.DrawLatex(self.LeftMargin, 1 - (self.TopMargin - 0.015), "CMS")
+        mark.DrawLatex(self.LeftMargin + 0.02, 1 - (self.TopMargin + 0.05), "CMS")
 
         mark.SetTextFont(52)
         mark.SetTextSize(0.040)
@@ -417,9 +426,11 @@ class StackPlotter:
         mark.SetTextFont(42)
         mark.SetTextAlign(31)
         if "Run 2" in self.year:
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
+            #mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "Run 2 (13 TeV)")
+            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "138 fb^{-1} (13 TeV)")
         else:
-            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+            #mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "%s (13 TeV)"%(self.year))
+            mark.DrawLatex(1 - self.RightMargin, 1 - (self.TopMargin - 0.017), "138 fb^{-1} (13 TeV)")
 
     def addExtraInfo(self, canvas, packedInfo):
 
@@ -441,15 +452,19 @@ class StackPlotter:
 
         channelStr = ""
         if "0l" in packedInfo:
-            channelStr = "0L Channel"
+            #channelStr = "\\mathrm{0}\\ell\\;\\mathrm{ Channel}"
+            channelStr = "All-hadronic"
         elif "1l" in packedInfo:
-            channelStr = "1L Channel"
+            #channelStr = "\\mathrm{1}\\ell\\;\\mathrm{ Channel}"
+            channelStr = "Single lepton"
         elif "2l" in packedInfo:
-            channelStr = "2L Channel"
+            #channelStr = "\\mathrm{2}\\ell\\;\\mathrm{ Channel}"
+            channelStr = "Fully leptonic"
 
         canvas.cd()
 
         text = ROOT.TLatex()
+        #text = ROOT.TMathText()
         text.SetNDC(True)
 
         text.SetTextAlign(13)
@@ -460,12 +475,17 @@ class StackPlotter:
         offset = 0.0
         if modelStr != "":
             text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), modelStr)
+            #text.DrawMathText(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), modelStr)
             offset += 0.05
         if channelStr != "":
             text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), channelStr)
+            #text.DrawMathText(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), channelStr)
+            #mt = ROOT.TMathText()
+            #mt.DrawMathText(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.12 + offset), channelStr)
             offset += 0.05
         if njetStr != "":
             text.DrawLatex(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), njetStr)
+            #text.DrawMathText(self.LeftMargin + 0.03, 1 - (self.TopMargin + 0.02 + offset), njetStr)
 
     # Main function to compose the full stack plot with or without a ratio panel
     def makePlots(self):
@@ -721,7 +741,6 @@ class StackPlotter:
 
                         ROOT.gPad.RedrawAxis()
 
-                        print(Hobj.IsGood())
                         if Hobj.IsGood():
 
                             ratio = Hobj.Clone("ratio")
@@ -747,7 +766,7 @@ class StackPlotter:
 
                         rinfo = {"name" : "ratio", "color" : ROOT.kBlack,  "lstyle" : 1, "mstyle" : 8, "lsize" : 3, "msize" : 1 / self.upperSplit}
                         rnewInfo = copy.deepcopy(newInfo)
-                        rnewInfo["Y"]["title"] = "#frac{Data}{Pred.}"
+                        rnewInfo["Y"]["title"] = "#frac{Data}{Sim.}"
                         rnewInfo["X"]["rebin"] = 1
 
                         canvas.cd(2)
@@ -769,6 +788,7 @@ class StackPlotter:
                         ratio.Draw("E0P")
 
                     canvas.Print("%s/%s_%s.pdf"%(self.outpath, self.year, newName))
+                    canvas.SaveAs("%s/%s_%s.root"%(self.outpath, self.year, newName))
 
 if __name__ == "__main__":
 

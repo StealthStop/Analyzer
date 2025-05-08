@@ -146,6 +146,32 @@ class HiggsCombineInputs:
         # put the mximum value of MC corrected data to the dicionary
         self.make_HiggsCombineInputs_RootFiles(hist, ("%s_maximum_MCcorrectedData_Syst_%s"%(self.year,region)))
 
+    def put_allClosure_toRootFile(self, closure_corr, data_sys, data_sys_yunc, fsr_sys, total_sys_unc, total_unc, region):
+
+        h_closure_corr = ROOT.TH1F("AllClosure_closure_corr", "AllClosure_closure_corr", len(self.njets), 0, len(self.njets))
+        h_data_sys = ROOT.TH1F("AllClosure_data_sys", "AllClosure_data_sys", len(self.njets), 0, len(self.njets))
+        h_data_sys_yunc = ROOT.TH1F("AllClosure_data_sys_yunc", "AllClosure_data_sys_yunc", len(self.njets), 0, len(self.njets))
+        h_fsr_sys = ROOT.TH1F("AllClosure_fsr_sys", "AllClosure_fsr_sys", len(self.njets), 0, len(self.njets))
+        h_total_sys_unc = ROOT.TH1F("AllClosure_total_sys_unc", "AllClosure_total_sys_unc", len(self.njets), 0, len(self.njets))
+        h_total_unc = ROOT.TH1F("AllClosure_total_unc", "AllClosure_total_unc", len(self.njets), 0, len(self.njets))
+        
+       
+        hists = [h_closure_corr, h_data_sys, h_data_sys_yunc, h_fsr_sys, h_total_sys_unc, h_total_unc]
+
+        for i, vals in enumerate([closure_corr, data_sys, data_sys_yunc, fsr_sys, total_sys_unc, total_unc]):
+            
+            x = vals[0]
+            y = vals[1]
+            yunc = vals[2]
+
+            for j, nj in enumerate(x):
+
+                hists[i].SetBinContent(j, y[j])
+                hists[i].SetBinError(j, yunc[j])
+             
+            new_name = "%s_" + hists[i].GetName() + "_%s"
+
+            self.make_HiggsCombineInputs_RootFiles(hists[i], new_name%(self.year, region))
 
     # -------------------
     # close the root file
